@@ -1,0 +1,21 @@
+---
+title: "Monthly Reviews"
+tags:
+  - type/meta
+  - audience/human
+  - audience/agent
+updated: 2026-08-10
+---
+
+# Monthly Reviews
+
+Monthly review notes in `YYYY-MM-review.md` format.
+
+## Contents
+
+_Empty — add your first monthly review when you have one._
+
+## Related
+
+- [[03_Journal/periodic/README|Periodic Notes]] — Parent hub
+- [[09_Templates/template-monthly-review]] — Monthly review template

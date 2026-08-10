@@ -1,0 +1,39 @@
+---
+title: "Template - Comparison"
+tags:
+  - type/meta
+  - audience/agent
+updated: 2026-02-21
+---
+
+# {{title}}
+
+## Context
+- What decision is being made?
+- What is the environment / constraints?
+
+## Requirements
+### Must-have
+- -
+
+### Nice-to-have
+- -
+
+## Options
+List the candidate options.
+
+## Comparison Table
+| Option | Pros | Cons | Failure Modes | Complexity | Cost | Notes |
+|---|---|---|---|---:|---:|---|
+| A |  |  |  |  |  |  |
+| B |  |  |  |  |  |  |
+
+## Recommendation
+- Best default:
+- Most reliable:
+- Lowest complexity:
+- Most flexible:
+
+## Decision Record Link
+If this results in a decision, link to a decision record:
+- [[04_Projects/.../decision-records/YYYY-MM-DD-...]]
