@@ -11705,7 +11705,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10035,
+   "sizeBytes": 10253,
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
@@ -13107,7 +13107,8 @@
   },
   "10_Agents/solutions/vault-tooling/index-merge-conflicts.md": {
    "backlinks": [
-    "10_Agents/solutions/vault-tooling/README.md"
+    "10_Agents/solutions/vault-tooling/README.md",
+    "AGENTS.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -13129,31 +13130,36 @@
     {
      "level": 2,
      "line": 12,
-     "text": "Problem"
-    },
-    {
-     "level": 2,
-     "line": 16,
-     "text": "Symptoms"
+     "text": "Status"
     },
     {
      "level": 2,
      "line": 22,
-     "text": "Solution"
+     "text": "Problem"
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 26,
+     "text": "Symptoms"
+    },
+    {
+     "level": 2,
+     "line": 32,
+     "text": "Solution (fallback, when the driver is not configured)"
+    },
+    {
+     "level": 2,
+     "line": 46,
      "text": "Prevention"
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 53,
      "text": "Related"
     }
    ],
    "links": [],
-   "sizeBytes": 1521,
+   "sizeBytes": 2758,
    "title": "Index Merge Conflicts",
    "updated": "2026-08-11"
   },
@@ -13470,57 +13476,57 @@
     },
     {
      "level": 2,
-     "line": 209,
+     "line": 210,
      "text": "9. CLI command semantics"
     },
     {
      "level": 2,
-     "line": 226,
+     "line": 227,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 228,
+     "line": 229,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 232,
+     "line": 233,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 244,
+     "line": 245,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 249,
+     "line": 250,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 255,
+     "line": 256,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 280,
+     "line": 281,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 291,
+     "line": 292,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 304,
+     "line": 305,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 311,
+     "line": 312,
      "text": "14. Curation signals (ops plan Phase 4)"
     }
    ],
@@ -13584,7 +13590,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 230,
+     "line": 231,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -13595,7 +13601,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 236,
+     "line": 237,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13606,7 +13612,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 313,
+     "line": 314,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13614,7 +13620,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 35325,
+   "sizeBytes": 36217,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },
@@ -13895,6 +13901,17 @@
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
      "target": "02_Inbox/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 45,
+     "placeholder": false,
+     "raw": "[[10_Agents/solutions/vault-tooling/index-merge-conflicts]]",
+     "resolved": "10_Agents/solutions/vault-tooling/index-merge-conflicts.md",
+     "target": "10_Agents/solutions/vault-tooling/index-merge-conflicts",
      "warnings": []
     },
     {
@@ -14228,7 +14245,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6388,
+   "sizeBytes": 6853,
    "title": "Agents",
    "updated": "2026-08-11"
   },
@@ -14279,37 +14296,37 @@
     },
     {
      "level": 2,
-     "line": 48,
+     "line": 50,
      "text": "Validation and the vault index"
     },
     {
      "level": 2,
-     "line": 59,
+     "line": 61,
      "text": "Personal vs work"
     },
     {
      "level": 2,
-     "line": 68,
+     "line": 70,
      "text": "Structure"
     },
     {
      "level": 2,
-     "line": 84,
+     "line": 86,
      "text": "Entrypoints"
     },
     {
      "level": 2,
-     "line": 91,
+     "line": 93,
      "text": "Frameworks"
     },
     {
      "level": 2,
-     "line": 97,
+     "line": 99,
      "text": "Agent rules (summary)"
     }
    ],
    "links": [],
-   "sizeBytes": 5654,
+   "sizeBytes": 6170,
    "title": "Second Brain Template",
    "updated": "2026-08-11"
   }
