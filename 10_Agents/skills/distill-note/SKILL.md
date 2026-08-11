@@ -19,7 +19,7 @@ Distillation here is structural, not decorative: a captured note becomes an atom
 ## Steps
 
 1. **Read the source note and find the atomic claim** — the one idea the note exists to carry. If it carries several independent claims, it needs atomizing first (one claim per note; at triage that's [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]'s job), then distill each piece.
-2. **Check for an existing home:** `python3 10_Agents/tools/brain/brain.py search "<claim terms>"` — if a zettel or resource note already covers this claim, merge into it (update by replacement) instead of minting a duplicate. One topic, one note.
+2. **Check for an existing home:** `python3 10_Agents/tools/brain/brain.py search "<claim terms>"` — if a zettel or resource note already covers this claim, merge into it (update by replacement) instead of minting a duplicate. One topic, one note. If that existing note is `workflow/canonical`, propose the merge via Inbox rather than editing it directly (canonical change control still applies, even on the owner-direct path).
 3. **Reshape onto [[09_Templates/template-zettel|template-zettel]]:**
    - Title = the claim itself, stated declaratively ("Index-first retrieval beats embeddings at personal scale"), never a topic label ("Retrieval notes").
    - The body opens with a **summary layer**: 1–3 sentences stating the claim and why it matters, readable entirely on its own.

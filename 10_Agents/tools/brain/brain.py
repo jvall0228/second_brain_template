@@ -856,7 +856,7 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
             missing.append(rel)
         if not (rel in OVERSIZED_EXEMPT_PATHS or rel.startswith("07_Archives/")):
             text, _ = load_text(root, rel)
-            lines = text.count("\n") + 1 if text else 0
+            lines = len(text.splitlines()) if text else 0
             if rec["sizeBytes"] > CURATE_MAX_BYTES or lines > CURATE_MAX_LINES:
                 oversized.append(
                     {"lines": lines, "path": rel, "sizeBytes": rec["sizeBytes"]}
@@ -922,15 +922,20 @@ URL_RE = re.compile(r"https?://[^\s<>()\[\]\"'`]+")
 
 
 def collect_urls(root: Path, notes: list[str]) -> dict[str, str]:
-    """url -> first note path mentioning it."""
+    """url -> first note path mentioning it. Frontmatter and code (fenced
+    blocks + inline spans) are excluded, matching the link/tag extractors —
+    so example URLs in code samples are never probed as source URLs."""
     found: dict[str, str] = {}
     for rel in notes:
         text, _ = load_text(root, rel)
         if text is None:
             continue
-        for m in URL_RE.finditer(text):
-            url = m.group(0).rstrip(".,;:!?")
-            found.setdefault(url, rel)
+        lines = text.split("\n")
+        _fm, _errs, body_start, _has = parse_frontmatter(lines)
+        for _lineno, _raw, masked in body_lines_masked(lines, body_start):
+            for m in URL_RE.finditer(masked):
+                url = m.group(0).rstrip(".,;:!?")
+                found.setdefault(url, rel)
     return found
 
 

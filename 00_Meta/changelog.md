@@ -12,6 +12,14 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] review-fixes | Adversarial review: doc-consistency + brain hygiene
+
+A multi-agent adversarial review of the CODE-operations branch returned no blocking defects; its 12 confirmed findings (doc drift + code hygiene) are fixed here:
+
+- **brain:** `collect_urls` now excludes fenced/inline code and frontmatter (example URLs in code are no longer probed as dead source links); the oversized line count uses `splitlines()` (was off-by-one on newline-terminated notes). Tests added for the dead-URL classifier (403/405 skip, 404/URLError → dead), the total-bootstrap-budget warning, and code-fence URL exclusion — suite now 33.
+- **Contradictions removed:** [[00_Meta/prd]] §6.2/§7 updated to the two-lane write rule and the `02_Outbox/` directory (they had lagged the shipped reality); recommended-automations' "never write outside `02_Inbox/`" scoped to *inbound flows* only (rhythm jobs write to each skill's own home); [[00_Meta/conventions]] § Expiration exempt list now names `09_Templates/`+`CLAUDE.md`, and the changelog-format claim no longer overstates grep coverage.
+- **Consistency:** cadence table gained a Yearly row (periodic-review already supports it); distill-note's merge-into-existing step gained the canonical carve-out its sibling skills carry; curate's link to conventions § Expiration dropped a fragile backtick heading anchor; the three onboarding skills share one CODE-stage label.
+
 ## [2026-08-11] restructure | Split harness research per-harness; resolve expires backfill review
 
 Owner approved the four action items in the (now archived) [[07_Archives/inbox/2026-08-11-expires-backfill-report|`expires:` backfill review]]:

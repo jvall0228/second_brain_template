@@ -23,7 +23,7 @@ Turn recurring vault operations into scheduled flows the owner doesn't have to r
 
 - **Preference ladder** for each flow's source access (PRD §19 M7): (1) environment-specific custom tooling (CLI or MCP) → (2) first-party CLI → (3) first-party MCP server/connector.
 - **Credentials never enter the repo** (PRD §16.2): schedules and scripts are committed; auth stays in the environment (CLI sessions, env vars, the harness's connector store).
-- Every inbound flow **writes through the `inbox-capture` rules** — dated kebab filenames, full frontmatter, `workflow/draft` — so triage stays uniform. Automations never write outside `02_Inbox/` except `daily-log` context flows, which follow that skill's rules.
+- Every inbound flow **writes through the `inbox-capture` rules** — dated kebab filenames, full frontmatter, `workflow/draft` — so triage stays uniform. **Inbound flows** never write outside `02_Inbox/` except `daily-log` context flows, which follow that skill's rules. Rhythm jobs instead write to each invoked skill's own home (reviews to `03_Journal/`, maintenance to `00_Meta/status.md`) — they inherit that skill's write posture, not the Inbox-only rule.
 - **The unattended contract:** a scheduled run has nobody to ask. It executes only self-contained outcomes; anything needing judgment becomes a report note in the Inbox; its final output is the **deliverable** (the log entry, the report, the review draft) — never a plan, a question, or a request for input. Scheduled runs inherit the strictest write posture of the skills they invoke.
 - **No automation ever ships from `02_Outbox/`** — the weekly sweep *flags* lingering packets; shipping stays the owner's act, always.
 
@@ -42,7 +42,7 @@ Turn recurring vault operations into scheduled flows the owner doesn't have to r
 |-----|---------|-------------|
 | Daily-log scaffold | daily | today's log created/updated per `daily-log` |
 | Triage prep — triage-inbox through its report step | weekly | triage report in the Inbox (moves still wait for the owner) |
-| Review draft — periodic-review for the closing period | weekly/monthly/quarterly | pre-filled review note, `workflow/draft` |
+| Review draft — periodic-review for the closing period | weekly/monthly/quarterly/yearly | pre-filled review note, `workflow/draft` |
 | Outbox sweep — list `02_Outbox/` packets older than a week | weekly | flag list in the triage report |
 | Maintenance — vault-maintenance | monthly | fixes committed, findings reported |
 | Curation — curate (no `--check-urls` unattended by default) | monthly/quarterly | curate report in the Inbox |

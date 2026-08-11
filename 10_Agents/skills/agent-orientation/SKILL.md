@@ -12,7 +12,7 @@ expires: 2027-08-11
 
 # Agent Orientation
 
-**CODE stage:** Onboarding & environment.
+**CODE stage:** Onboarding.
 
 Map what this environment can reach, agree on what's worth ingesting, and generate the access layer — the vault reaches outward from here.
 

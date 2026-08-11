@@ -86,6 +86,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | Weekly | [[10_Agents/skills/triage-inbox/SKILL\|triage-inbox]] → [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (weekly) → Outbox sweep (flag lingering `02_Outbox/` packets) | End of week |
 | Monthly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (monthly) + [[10_Agents/skills/vault-maintenance/SKILL\|vault-maintenance]] + [[10_Agents/skills/curate/SKILL\|curate]] | Month end |
 | Quarterly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (quarterly, updates the Now page) + [[10_Agents/skills/curate/SKILL\|curate]] + [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] audit | Quarter end |
+| Yearly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (yearly) | Year end |
 
 Ad hoc, not scheduled: capture and retrieval ([[10_Agents/skills/inbox-capture/SKILL|inbox-capture]], [[10_Agents/skills/vault-answer/SKILL|vault-answer]], [[10_Agents/skills/express-packet/SKILL|express-packet]]) run when needed; surgery ([[10_Agents/skills/merge-notes/SKILL|merge-notes]]) runs on approval only.
 

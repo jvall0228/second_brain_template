@@ -464,6 +464,7 @@ class CurationTests(unittest.TestCase):
             "src.md": note(
                 "See https://example.com/a. And (https://example.com/b) plus "
                 "`https://example.com/code-span`\n"
+                "```\nhttps://example.com/fenced\n```\n"
             )
         }
         with tempfile.TemporaryDirectory() as td:
@@ -471,6 +472,51 @@ class CurationTests(unittest.TestCase):
             urls = brain.collect_urls(root, ["src.md"])
             self.assertIn("https://example.com/a", urls)
             self.assertIn("https://example.com/b", urls)
+            # code spans and fenced blocks are excluded, like every other extractor
+            self.assertNotIn("https://example.com/code-span", urls)
+            self.assertNotIn("https://example.com/fenced", urls)
+
+    def test_check_urls_classification(self):
+        import urllib.error
+
+        files = {
+            "src.md": note(
+                "prose links: https://ok.example/a https://dead.example/b "
+                "https://forbidden.example/c https://gone.example/d\n"
+            )
+        }
+
+        def fake_urlopen(req, timeout=None):
+            url = req.full_url
+            if "ok.example" in url:
+                return contextlib.nullcontext()
+            if "forbidden.example" in url:
+                raise urllib.error.HTTPError(url, 403, "Forbidden", None, None)
+            if "gone.example" in url:
+                raise urllib.error.HTTPError(url, 404, "Not Found", None, None)
+            raise urllib.error.URLError("dns failure")
+
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            with mock.patch("urllib.request.urlopen", side_effect=fake_urlopen):
+                dead = brain.check_urls(root, ["src.md"])
+            urls = {d["url"] for d in dead}
+            self.assertIn("https://gone.example/d", urls)     # 404 -> dead
+            self.assertIn("https://dead.example/b", urls)      # URLError -> dead
+            self.assertNotIn("https://forbidden.example/c", urls)  # 403 -> HEAD-hostile, skipped
+            self.assertNotIn("https://ok.example/a", urls)     # 200 -> alive
+
+    def test_bootstrap_budget_total_warning(self):
+        # Inflate a bootstrap doc past BOOTSTRAP_TOTAL_BUDGET (keep the tag
+        # table intact so validate can still read the taxonomy).
+        big_conventions = self.CONVENTIONS + "\n" + ("padding line\n" * 4000)
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, {"00_Meta/conventions.md": big_conventions})
+            ctx = brain.context_report(root)
+            self.assertGreater(ctx["totalBytes"], brain.BOOTSTRAP_TOTAL_BUDGET)
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
+                _, warnings = brain.run_validate(root, check_index=False)
+            self.assertTrue(any(f["rule"] == "bootstrap-budget-total" for f in warnings))
 
 
 class CliTests(unittest.TestCase):

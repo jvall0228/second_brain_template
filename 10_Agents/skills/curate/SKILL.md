@@ -20,7 +20,7 @@ Epistemic integrity, where [[10_Agents/skills/vault-maintenance/SKILL|vault-main
 
 1. **Get the report:** `python3 10_Agents/tools/brain/brain.py curate --json` (add `--check-urls` only when the owner asks — it's network-bound and slow).
 2. **Work each flagged note to one of four outcomes.** Read the note first; never decide from the report line alone:
-   1. **Still good** → bump `updated:` and set a fresh `expires:` per the TTL table in [[00_Meta/conventions#Expiration (`expires:`)]]. Agent-executable directly.
+   1. **Still good** → bump `updated:` and set a fresh `expires:` per the TTL table in [[00_Meta/conventions]] § Expiration. Agent-executable directly.
    2. **Stale claims** → re-verify via [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] in corrective mode (merge fixes into the note, note the re-verification date). Agent-executable; canonical notes still follow canonical change control.
    3. **Dead** (superseded, no longer true, no longer relevant) → **propose** archiving to `07_Archives/` — never archive unprompted.
    4. **Too big** (oversized signal) → **propose** a split, naming the intended pieces; execution goes through [[10_Agents/skills/merge-notes/SKILL|merge-notes]] after approval.

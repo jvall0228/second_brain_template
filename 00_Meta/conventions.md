@@ -70,7 +70,7 @@ Default TTLs by volatility:
 | Retrieval-dated research | 6 months | resource notes built from web sources |
 | Evergreen / canonical | 12 months | conventions, zettels, project and area notes |
 
-**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`, and any note tagged `type/decision` (a decision record is an event dated at the point it was made, wherever it lives). `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
+**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`, and any note tagged `type/decision` (a decision record is an event dated at the point it was made, wherever it lives). `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. (`09_Templates/` and the root `CLAUDE.md` are exempt too, via their own frontmatter exception sections above.) Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
 
 ### Template Placeholder Exception
 
@@ -144,7 +144,7 @@ Agents detecting what changed:
 2. Read [[00_Meta/changelog]] for structural changes
 3. Use `git log -n 10` for detailed file-level history
 
-**Changelog entry format** (forward-only since 2026-08-11; older entries keep their original headers): `## [YYYY-MM-DD] <operation> | <summary>` — one grep (`grep '^## \['`) answers "what changed and when" for humans, agents, and tooling alike. `<operation>` is a short kebab-case verb phrase (`add-skill`, `restructure`, `backfill`); the bullets below the header carry the detail.
+**Changelog entry format** — new entries use `## [YYYY-MM-DD] <operation> | <summary>`, grep-parseable via `grep '^## \['`. Forward-only: entries before the 2026-08-11 `recategorize` entry keep their original `## YYYY-MM-DD — Title` headers, so the grep matches new-format entries, not the full history. `<operation>` is a short kebab-case verb phrase (`add-skill`, `restructure`, `backfill`); the bullets below the header carry the detail.
 
 **Duty to bump:** any edit to a note — creation or modification — must set `updated:` to the current date. The recency signal decays without this.
 
