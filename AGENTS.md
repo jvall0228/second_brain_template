@@ -90,6 +90,10 @@ When creating structured notes, use templates from `09_Templates/`:
 
 See [[09_Templates/README]] for the full selection guide.
 
+## Editor Surfaces
+
+The vault supports two editors, and both are part of its contract: **Obsidian** (primary; config in `.obsidian/`) and **VS Code** (config in `.vscode/`; see [[00_Meta/prd]] §6.5). If your change touches vault structure, navigation, templates, or link semantics, it must account for **both** surfaces — see the editor-surface parity item in the [[10_Agents/docs/operating-rules]] checklist. VS Code snippets are generated from `09_Templates/` by the pre-commit hook; never edit `.vscode/second-brain.code-snippets` by hand.
+
 ## Recency
 
 To detect recent changes: check `updated:` fields, read [[00_Meta/changelog]], or use `git log`.

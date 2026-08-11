@@ -1149,7 +1149,8 @@
     "10_Agents/skills/README.md",
     "10_Agents/tools/README.md",
     "10_Agents/tools/brain/spec.md",
-    "10_Agents/tools/vscode/README.md"
+    "10_Agents/tools/vscode/README.md",
+    "AGENTS.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -1326,87 +1327,87 @@
     },
     {
      "level": 2,
-     "line": 287,
+     "line": 288,
      "text": "15. Recency (\"what changed?\")"
     },
     {
      "level": 2,
-     "line": 293,
+     "line": 294,
      "text": "16. Assets and data sensitivity"
     },
     {
      "level": 3,
-     "line": 294,
+     "line": 295,
      "text": "16.1 Asset lifecycle"
     },
     {
      "level": 3,
-     "line": 299,
+     "line": 300,
      "text": "16.2 Data sensitivity"
     },
     {
      "level": 2,
-     "line": 307,
+     "line": 308,
      "text": "17. Multi-agent concurrency"
     },
     {
      "level": 2,
-     "line": 312,
+     "line": 313,
      "text": "18. Validation and enforcement"
     },
     {
      "level": 2,
-     "line": 318,
+     "line": 319,
      "text": "19. Milestones (status as of 2026-08-11)"
     },
     {
      "level": 3,
-     "line": 319,
+     "line": 320,
      "text": "M0: Bootstrap Minimum — **Done**"
     },
     {
      "level": 3,
-     "line": 323,
+     "line": 324,
      "text": "M1: Repo skeleton expansion — **Done**"
     },
     {
      "level": 3,
-     "line": 326,
+     "line": 327,
      "text": "M2: Canonical navigation — **Done**"
     },
     {
      "level": 3,
-     "line": 329,
+     "line": 330,
      "text": "M3: Templates + agent docs — **Done**"
     },
     {
      "level": 3,
-     "line": 332,
+     "line": 333,
      "text": "M4: Navigation integrity — **Done**"
     },
     {
      "level": 3,
-     "line": 335,
+     "line": 336,
      "text": "M5: Vault Index CLI (`brain`) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 344,
+     "line": 345,
      "text": "M6: Agent Plugin Library (core) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 350,
+     "line": 351,
      "text": "M7: Environment Integration — **Done (2026-08-11, template scope)**"
     },
     {
      "level": 2,
-     "line": 358,
+     "line": 359,
      "text": "20. Acceptance criteria (M0, objective)"
     },
     {
      "level": 2,
-     "line": 368,
+     "line": 369,
      "text": "21. Open considerations (document-only, not blockers)"
     }
    ],
@@ -1536,7 +1537,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 290,
+     "line": 286,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 291,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1547,7 +1559,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 290,
+     "line": 291,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1558,7 +1570,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 313,
+     "line": 314,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1569,7 +1581,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 315,
+     "line": 316,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -1580,7 +1592,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 316,
+     "line": 317,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1591,7 +1603,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 336,
+     "line": 337,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1602,7 +1614,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 342,
+     "line": 343,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -1613,7 +1625,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 365,
+     "line": 366,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1624,7 +1636,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 372,
+     "line": 373,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1632,7 +1644,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 35247,
+   "sizeBytes": 35603,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -7429,7 +7441,9 @@
     "02_Inbox/2026-08-11-vscode-editor-support.md",
     "10_Agents/README.md",
     "10_Agents/docs/README.md",
-    "10_Agents/tools/vscode/README.md"
+    "10_Agents/tools/brain/spec.md",
+    "10_Agents/tools/vscode/README.md",
+    "AGENTS.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -10164,162 +10178,162 @@
     },
     {
      "level": 2,
-     "line": 22,
+     "line": 27,
      "text": "2. Corpus"
     },
     {
      "level": 2,
-     "line": 32,
+     "line": 37,
      "text": "3. Text model"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 43,
      "text": "4. Frontmatter grammar"
     },
     {
      "level": 3,
-     "line": 42,
+     "line": 47,
      "text": "4.1 Block detection"
     },
     {
      "level": 3,
-     "line": 48,
+     "line": 53,
      "text": "4.2 Line grammar (inside the block)"
     },
     {
      "level": 3,
-     "line": 64,
+     "line": 69,
      "text": "4.3 Scalars"
     },
     {
      "level": 3,
-     "line": 71,
+     "line": 76,
      "text": "4.4 Lists"
     },
     {
      "level": 3,
-     "line": 76,
+     "line": 81,
      "text": "4.5 Typed fields"
     },
     {
      "level": 2,
-     "line": 88,
+     "line": 93,
      "text": "5. Wikilink grammar"
     },
     {
      "level": 3,
-     "line": 90,
+     "line": 95,
      "text": "5.1 Recognized forms"
     },
     {
      "level": 3,
-     "line": 102,
+     "line": 107,
      "text": "5.2 Exclusion zones"
     },
     {
      "level": 3,
-     "line": 112,
+     "line": 117,
      "text": "5.3 Recorded fields"
     },
     {
      "level": 2,
-     "line": 116,
+     "line": 121,
      "text": "6. Link resolution"
     },
     {
      "level": 3,
-     "line": 122,
+     "line": 127,
      "text": "6.1 Resolution table"
     },
     {
      "level": 3,
-     "line": 126,
+     "line": 131,
      "text": "6.2 Algorithm"
     },
     {
      "level": 3,
-     "line": 139,
+     "line": 144,
      "text": "6.3 Case mismatches"
     },
     {
      "level": 3,
-     "line": 143,
+     "line": 148,
      "text": "6.4 Backlinks and warnings"
     },
     {
      "level": 2,
-     "line": 148,
+     "line": 153,
      "text": "7. Body extraction"
     },
     {
      "level": 3,
-     "line": 150,
+     "line": 155,
      "text": "7.1 Headings"
     },
     {
      "level": 3,
-     "line": 154,
+     "line": 159,
      "text": "7.2 Inline tags"
     },
     {
      "level": 2,
-     "line": 160,
+     "line": 165,
      "text": "8. Index schema and determinism"
     },
     {
      "level": 3,
-     "line": 162,
+     "line": 167,
      "text": "8.1 Shape"
     },
     {
      "level": 3,
-     "line": 192,
+     "line": 197,
      "text": "8.2 Deterministic serialization"
     },
     {
      "level": 2,
-     "line": 202,
+     "line": 207,
      "text": "9. CLI command semantics"
     },
     {
      "level": 2,
-     "line": 217,
+     "line": 222,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 219,
+     "line": 224,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 223,
+     "line": 228,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 235,
+     "line": 240,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 240,
+     "line": 245,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 2,
-     "line": 246,
+     "line": 251,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 257,
+     "line": 262,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 270,
+     "line": 275,
      "text": "13. Future considerations (out of M5 scope)"
     }
    ],
@@ -10350,7 +10364,29 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 45,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -10361,7 +10397,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 221,
+     "line": 226,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -10372,7 +10408,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 227,
+     "line": 232,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -10380,7 +10416,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 26357,
+   "sizeBytes": 27337,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },
@@ -10526,11 +10562,16 @@
     {
      "level": 2,
      "line": 93,
-     "text": "Recency"
+     "text": "Editor Surfaces"
     },
     {
      "level": 2,
      "line": 97,
+     "text": "Recency"
+    },
+    {
+     "level": 2,
+     "line": 101,
      "text": "Key Links"
     }
    ],
@@ -10794,6 +10835,28 @@
      "fragment": null,
      "line": 95,
      "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 95,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 99,
+     "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
      "target": "00_Meta/changelog",
@@ -10803,7 +10866,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 99,
+     "line": 103,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -10814,7 +10877,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 100,
+     "line": 104,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -10825,7 +10888,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 100,
+     "line": 104,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -10836,7 +10899,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 100,
+     "line": 104,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -10847,7 +10910,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 101,
+     "line": 105,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -10858,7 +10921,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 102,
+     "line": 106,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -10869,7 +10932,7 @@
      "display": "Projects",
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 107,
      "placeholder": false,
      "raw": "[[04_Projects/README|Projects]]",
      "resolved": "04_Projects/README.md",
@@ -10880,7 +10943,7 @@
      "display": "Areas",
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 107,
      "placeholder": false,
      "raw": "[[05_Areas/README|Areas]]",
      "resolved": "05_Areas/README.md",
@@ -10891,7 +10954,7 @@
      "display": "Resources",
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 107,
      "placeholder": false,
      "raw": "[[06_Resources/README|Resources]]",
      "resolved": "06_Resources/README.md",
@@ -10902,7 +10965,7 @@
      "display": "Archives",
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 107,
      "placeholder": false,
      "raw": "[[07_Archives/README|Archives]]",
      "resolved": "07_Archives/README.md",
@@ -10913,7 +10976,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 108,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -10924,7 +10987,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 105,
+     "line": 109,
      "placeholder": false,
      "raw": "[[09_Templates/README]]",
      "resolved": "09_Templates/README.md",
@@ -10932,7 +10995,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4818,
+   "sizeBytes": 5365,
    "title": "Agents",
    "updated": "2026-08-11"
   },

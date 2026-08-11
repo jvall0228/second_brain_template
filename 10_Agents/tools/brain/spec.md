@@ -17,6 +17,11 @@ This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, in
 
 Design inspiration is Obsidian's MetadataCache; the starting point is [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]. Where this spec deliberately diverges from Obsidian or from the implementation plan, the divergence is listed in §11 and §12.
 
+**Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([[00_Meta/prd]] §6.5) — and `brain` is the compatibility keystone between them:
+- The **link-resolution model (§6) tracks Obsidian's**: a link that resolves differently in `brain` than in Obsidian is a bug in one of them, and every intentional divergence must be recorded in §11.
+- The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
+- Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [[10_Agents/docs/operating-rules]] (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
+
 Normative language: **must** = required behavior; **records an error/warning** = the finding is stored in the index or produced by `validate` (§10), never silently dropped.
 
 ## 2. Corpus

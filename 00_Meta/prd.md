@@ -283,6 +283,7 @@ See [[09_Templates/README]] for the selection guide.
 - **Predictability:** stable file paths and naming conventions for agent automation.
 - **Safety for edits:** canonical notes clearly marked; agents guided to propose changes carefully.
 - **Low overhead:** conventions lightweight enough to preserve capture speed.
+- **Editor compatibility:** Obsidian (primary) and VS Code (§6.5) are the supported editor surfaces. Any spec or structural change must consider both — new note contracts, navigation, templates, and link semantics land on `.obsidian/`, `.vscode/`, and the `brain` spec together (parity duty: §6.5 and the [[10_Agents/docs/operating-rules]] checklist).
 
 ## 15. Recency ("what changed?")
 - `updated:` in frontmatter is the **primary recency signal**. **Any edit to a note must bump `updated:` to the current date** — the recency contract fails without this duty.
