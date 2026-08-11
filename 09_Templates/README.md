@@ -30,6 +30,10 @@ Reusable note templates for creating structured content. Use these when creating
 
 All templates also carry `workflow/draft` in their suggested tags — an instantiated note keeps it until triage (see [[00_Meta/conventions#Tag Namespaces]]).
 
+## Variants (`variants/`)
+
+`variants/` holds context-specific **source material** — currently work-context versions of the daily log and weekly review — used by [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]'s context-specialization step to rewrite the shipped periodic templates in place for a work fork. Variant files are **not** templates: nothing resolves them by name, and snippet generation ignores them. See [[09_Templates/variants/README]].
+
 ## Placeholder Syntax
 
 - **Custom placeholders**: `{{UPPER_SNAKE_CASE}}` — literal text, fill in manually

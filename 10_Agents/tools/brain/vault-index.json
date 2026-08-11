@@ -1123,10 +1123,13 @@
     "10_Agents/README.md",
     "10_Agents/docs/operating-rules.md",
     "10_Agents/docs/task-patterns.md",
+    "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/curate/SKILL.md",
     "10_Agents/skills/express-packet/SKILL.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
+    "10_Agents/skills/research-to-resource/SKILL.md",
+    "10_Agents/skills/triage-inbox/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
    ],
@@ -1172,51 +1175,61 @@
     {
      "level": 3,
      "line": 61,
+     "text": "Provenance"
+    },
+    {
+     "level": 3,
+     "line": 65,
      "text": "Expiration (`expires:`)"
     },
     {
      "level": 3,
-     "line": 75,
+     "line": 79,
      "text": "Template Placeholder Exception"
     },
     {
      "level": 3,
-     "line": 79,
+     "line": 83,
      "text": "Adapter File Exception"
     },
     {
      "level": 2,
-     "line": 83,
+     "line": 87,
      "text": "Tag Namespaces"
     },
     {
+     "level": 3,
+     "line": 102,
+     "text": "restricted/private"
+    },
+    {
      "level": 2,
-     "line": 97,
+     "line": 106,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 110,
+     "line": 119,
      "text": "Change Control"
     },
     {
      "level": 3,
-     "line": 120,
+     "line": 129,
      "text": "Draft → Canonical Promotion"
     },
     {
      "level": 2,
-     "line": 132,
+     "line": 141,
      "text": "Bootstrap Context Budgets"
     },
     {
      "level": 2,
-     "line": 136,
+     "line": 145,
      "text": "Operating Rhythm"
     },
     {
      "level": 2,
-     "line": 140,
+     "line": 149,
      "text": "Recency"
     }
    ],
@@ -1236,7 +1249,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 81,
+     "line": 85,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1247,7 +1260,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 89,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1258,7 +1271,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 89,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1269,7 +1282,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 104,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 112,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1280,7 +1304,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 113,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -1291,7 +1315,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 108,
+     "line": 117,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -1302,7 +1326,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 127,
+     "line": 136,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1313,7 +1337,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 128,
+     "line": 137,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1324,7 +1348,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 130,
+     "line": 139,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1335,7 +1359,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 143,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1346,7 +1370,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 143,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -1357,7 +1381,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 143,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -1368,7 +1392,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 143,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -1379,7 +1403,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 143,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1390,7 +1414,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 138,
+     "line": 147,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -1401,7 +1425,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 144,
+     "line": 153,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1409,7 +1433,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9115,
+   "sizeBytes": 10229,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -2764,6 +2788,7 @@
     "09_Templates/template-monthly-review.md",
     "09_Templates/template-quarterly-review.md",
     "09_Templates/template-weekly-review.md",
+    "09_Templates/variants/work-weekly-review.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/skills/periodic-review/SKILL.md",
     "AGENTS.md"
@@ -7988,6 +8013,7 @@
    "backlinks": [
     "00_Meta/index.md",
     "00_Meta/prd.md",
+    "09_Templates/variants/README.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -8015,11 +8041,16 @@
     {
      "level": 2,
      "line": 33,
+     "text": "Variants (`variants/`)"
+    },
+    {
+     "level": 2,
+     "line": 37,
      "text": "Placeholder Syntax"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 42,
      "text": "Related"
     }
    ],
@@ -8036,10 +8067,32 @@
      "warnings": []
     },
     {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[09_Templates/variants/README]]",
+     "resolved": "09_Templates/variants/README.md",
+     "target": "09_Templates/variants/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 44,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -8050,7 +8103,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -8058,7 +8111,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1984,
+   "sizeBytes": 2446,
    "title": "Templates",
    "updated": "2026-08-11"
   },
@@ -8338,6 +8391,8 @@
    "backlinks": [
     "04_Projects/README.md",
     "04_Projects/example-project/decision-records/README.md",
+    "09_Templates/variants/work-daily-log.md",
+    "09_Templates/variants/work-weekly-review.md",
     "10_Agents/skills/express-packet/SKILL.md",
     "AGENTS.md"
    ],
@@ -9193,6 +9248,366 @@
    "title": "{{ZETTEL_TITLE}}",
    "updated": null
   },
+  "09_Templates/variants/README.md": {
+   "backlinks": [
+    "09_Templates/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/meta",
+     "audience/agent",
+     "audience/human"
+    ],
+    "title": "Template Variants",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "Template Variants"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Contract: variants are not templates"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 12,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 30,
+     "placeholder": false,
+     "raw": "[[09_Templates/README]]",
+     "resolved": "09_Templates/README.md",
+     "target": "09_Templates/README",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 31,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2426,
+   "title": "Template Variants",
+   "updated": "2026-08-11"
+  },
+  "09_Templates/variants/work-daily-log.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/journal",
+     "workflow/draft",
+     "audience/human"
+    ],
+    "title": "{{date}}",
+    "updated": "{{date}}"
+   },
+   "frontmatterErrors": [
+    "invalid-updated"
+   ],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "{{date}}"
+    },
+    {
+     "level": 2,
+     "line": 12,
+     "text": "Related"
+    },
+    {
+     "level": 2,
+     "line": 17,
+     "text": "Preview"
+    },
+    {
+     "level": 3,
+     "line": 19,
+     "text": "Standup"
+    },
+    {
+     "level": 3,
+     "line": 25,
+     "text": "Goals"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "Schedule"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Review"
+    },
+    {
+     "level": 3,
+     "line": 53,
+     "text": "Activity Log"
+    },
+    {
+     "level": 3,
+     "line": 57,
+     "text": "Meeting Notes"
+    },
+    {
+     "level": 3,
+     "line": 64,
+     "text": "Blockers"
+    },
+    {
+     "level": 3,
+     "line": 70,
+     "text": "Decisions"
+    },
+    {
+     "level": 3,
+     "line": 76,
+     "text": "Backlog"
+    },
+    {
+     "level": 2,
+     "line": 82,
+     "text": "Reflection"
+    },
+    {
+     "level": 3,
+     "line": 93,
+     "text": "Thoughts"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": true,
+     "raw": "[[{{RELATED_WEEKLY_REVIEW}}]]",
+     "resolved": null,
+     "target": "{{RELATED_WEEKLY_REVIEW}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 15,
+     "placeholder": true,
+     "raw": "[[{{PREVIOUS_DAILY_NOTE}}]]",
+     "resolved": null,
+     "target": "{{PREVIOUS_DAILY_NOTE}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 72,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-decision-record]]",
+     "resolved": "09_Templates/template-decision-record.md",
+     "target": "09_Templates/template-decision-record",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 1579,
+   "title": "{{date}}",
+   "updated": null
+  },
+  "09_Templates/variants/work-weekly-review.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/journal",
+     "workflow/draft",
+     "audience/human"
+    ],
+    "title": "{{WEEK_ID}} Review",
+    "updated": "{{date}}"
+   },
+   "frontmatterErrors": [
+    "invalid-updated"
+   ],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "{{WEEK_ID}} Review"
+    },
+    {
+     "level": 2,
+     "line": 12,
+     "text": "Related"
+    },
+    {
+     "level": 2,
+     "line": 17,
+     "text": "Get Clear"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "text": "Get Current — Projects"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Get Current — Areas"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Preview"
+    },
+    {
+     "level": 3,
+     "line": 32,
+     "text": "Goals"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "Schedule"
+    },
+    {
+     "level": 2,
+     "line": 52,
+     "text": "Review"
+    },
+    {
+     "level": 3,
+     "line": 54,
+     "text": "Activity Log"
+    },
+    {
+     "level": 3,
+     "line": 58,
+     "text": "Summary"
+    },
+    {
+     "level": 3,
+     "line": 62,
+     "text": "Wins"
+    },
+    {
+     "level": 3,
+     "line": 68,
+     "text": "Blockers & Risks"
+    },
+    {
+     "level": 3,
+     "line": 74,
+     "text": "Decisions Log"
+    },
+    {
+     "level": 3,
+     "line": 80,
+     "text": "Backlog"
+    },
+    {
+     "level": 3,
+     "line": 86,
+     "text": "Alignment"
+    },
+    {
+     "level": 2,
+     "line": 92,
+     "text": "Reflection"
+    },
+    {
+     "level": 3,
+     "line": 105,
+     "text": "Thoughts"
+    },
+    {
+     "level": 2,
+     "line": 109,
+     "text": "Next Week Focus"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": true,
+     "raw": "[[{{RELATED_MONTHLY_REVIEW}}]]",
+     "resolved": null,
+     "target": "{{RELATED_MONTHLY_REVIEW}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 15,
+     "placeholder": true,
+     "raw": "[[{{RELATED_DAILY_NOTE}}]]",
+     "resolved": null,
+     "target": "{{RELATED_DAILY_NOTE}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-decision-record]]",
+     "resolved": "09_Templates/template-decision-record.md",
+     "target": "09_Templates/template-decision-record",
+     "warnings": []
+    },
+    {
+     "display": "Now page",
+     "embed": false,
+     "fragment": null,
+     "line": 88,
+     "placeholder": false,
+     "raw": "[[01_Profile/now|Now page]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2105,
+   "title": "{{WEEK_ID}} Review",
+   "updated": null
+  },
   "10_Agents/README.md": {
    "backlinks": [
     "00_Meta/conventions.md",
@@ -9522,17 +9937,17 @@
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 68,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 70,
+     "line": 72,
      "text": "Session-End Flush"
     },
     {
      "level": 2,
-     "line": 80,
+     "line": 82,
      "text": "Related"
     }
    ],
@@ -9593,10 +10008,32 @@
      "warnings": []
     },
     {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 62,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": "restricted/private",
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 64,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces|restricted/private]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
      "display": "brain",
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 65,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -9607,7 +10044,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 66,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -9618,7 +10055,7 @@
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 74,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -9629,7 +10066,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 75,
+     "line": 77,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -9640,7 +10077,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 84,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -9651,7 +10088,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 83,
+     "line": 85,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -9662,7 +10099,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 84,
+     "line": 86,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -9670,7 +10107,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4978,
+   "sizeBytes": 5544,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -10208,6 +10645,11 @@
     {
      "level": 2,
      "line": 43,
+     "text": "Restricted content → `.cursorignore`"
+    },
+    {
+     "level": 2,
+     "line": 53,
      "text": "Reference configs"
     }
    ],
@@ -10233,9 +10675,20 @@
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 45,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2768,
+   "sizeBytes": 3848,
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -11479,17 +11932,17 @@
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 45,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2035,
+   "sizeBytes": 2405,
    "title": "Skill: Inbox Capture",
    "updated": "2026-08-11"
   },
@@ -11718,7 +12171,10 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
+    "09_Templates/README.md",
+    "09_Templates/variants/README.md",
     "10_Agents/skills/README.md",
+    "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -11768,12 +12224,12 @@
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 71,
      "text": "Orchestration rules"
     },
     {
      "level": 2,
-     "line": 71,
+     "line": 75,
      "text": "Exit criteria (\"onboarded\")"
     }
    ],
@@ -11856,10 +12312,21 @@
      "warnings": []
     },
     {
+     "display": "09_Templates/variants/",
+     "embed": false,
+     "fragment": null,
+     "line": 59,
+     "placeholder": false,
+     "raw": "[[09_Templates/variants/README|09_Templates/variants/]]",
+     "resolved": "09_Templates/variants/README.md",
+     "target": "09_Templates/variants/README",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 62,
      "placeholder": false,
      "raw": "[[09_Templates/template-project]]",
      "resolved": "09_Templates/template-project.md",
@@ -11870,7 +12337,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 62,
      "placeholder": false,
      "raw": "[[09_Templates/template-area]]",
      "resolved": "09_Templates/template-area.md",
@@ -11881,7 +12348,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -11892,7 +12359,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -11903,7 +12370,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -11914,7 +12381,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 60,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -11925,7 +12392,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 65,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -11936,7 +12403,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 65,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -11944,7 +12411,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8068,
+   "sizeBytes": 9367,
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
   },
@@ -12156,12 +12623,24 @@
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 41,
      "text": "References"
     }
    ],
-   "links": [],
-   "sizeBytes": 3766,
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 36,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 4291,
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -12242,12 +12721,12 @@
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 48,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 1902,
+   "sizeBytes": 2204,
    "title": "Skill: Solution Capture",
    "updated": "2026-08-11"
   },
@@ -12286,16 +12765,27 @@
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 38,
      "text": "References"
     }
    ],
    "links": [
     {
+     "display": null,
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 31,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 33,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -12306,7 +12796,7 @@
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 42,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -12314,7 +12804,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3481,
+   "sizeBytes": 4204,
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
   },
@@ -13494,113 +13984,118 @@
      "text": "8.2 Deterministic serialization"
     },
     {
-     "level": 2,
+     "level": 3,
      "line": 210,
+     "text": "8.3 Restricted-note reduction (issue #17)"
+    },
+    {
+     "level": 2,
+     "line": 220,
      "text": "9. CLI command semantics"
     },
     {
      "level": 2,
-     "line": 228,
+     "line": 238,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 230,
+     "line": 240,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 234,
+     "line": 244,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 246,
+     "line": 256,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 251,
+     "line": 261,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 257,
+     "line": 267,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 282,
+     "line": 292,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 293,
+     "line": 303,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 306,
+     "line": 316,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 313,
+     "line": 323,
      "text": "14. Curation signals (ops plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 326,
+     "line": 336,
      "text": "15. Vault config (`00_Meta/config.yaml`) — issue #2"
     },
     {
      "level": 3,
-     "line": 330,
+     "line": 340,
      "text": "15.1 Location, optionality, change control"
     },
     {
      "level": 3,
-     "line": 337,
+     "line": 347,
      "text": "15.2 Grammar bounds"
     },
     {
      "level": 3,
-     "line": 343,
+     "line": 353,
      "text": "15.3 Key registry"
     },
     {
      "level": 3,
-     "line": 361,
+     "line": 371,
      "text": "15.4 Validate semantics"
     },
     {
      "level": 3,
-     "line": 365,
+     "line": 375,
      "text": "15.5 `config` command"
     },
     {
      "level": 2,
-     "line": 369,
+     "line": 379,
      "text": "16. Health report (`brain report`) — issue #16"
     },
     {
      "level": 3,
-     "line": 373,
+     "line": 383,
      "text": "16.1 Sections"
     },
     {
      "level": 3,
-     "line": 383,
+     "line": 393,
      "text": "16.2 JSON shape"
     },
     {
      "level": 3,
-     "line": 387,
+     "line": 397,
      "text": "16.3 `--since YYYY-MM-DD`"
     },
     {
      "level": 3,
-     "line": 391,
+     "line": 401,
      "text": "16.4 Thresholds"
     }
    ],
@@ -13664,7 +14159,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 232,
+     "line": 242,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -13675,7 +14170,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 238,
+     "line": 248,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13686,7 +14181,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 315,
+     "line": 252,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 252,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13697,15 +14203,37 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 350,
+     "line": 325,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 360,
      "placeholder": false,
      "raw": "[[06_Resources/vscode-editor-support]]",
      "resolved": "06_Resources/vscode-editor-support.md",
      "target": "06_Resources/vscode-editor-support",
      "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 361,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
     }
    ],
-   "sizeBytes": 48572,
+   "sizeBytes": 52319,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

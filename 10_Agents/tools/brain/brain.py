@@ -560,6 +560,33 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
     return {"assets": assets, "notes": records, "schemaVersion": SCHEMA_VERSION}
 
 
+# §8.3 restricted-note reduction (issue #17). Frontmatter tags only —
+# bodyTags are informal (§10.2 posture) and never trigger restriction.
+RESTRICTED_TAG = "restricted/private"
+
+
+def note_frontmatter_tags(rec: dict) -> list[str]:
+    tags = rec["frontmatter"].get("tags")
+    return tags if isinstance(tags, list) else ([tags] if isinstance(tags, str) else [])
+
+
+def is_restricted(rec: dict) -> bool:
+    return RESTRICTED_TAG in note_frontmatter_tags(rec)
+
+
+def reduce_restricted(index: dict) -> dict:
+    """§8.3: reduce restricted notes for the COMMITTED index — keep
+    path/title/frontmatter(tags)/updated/sizeBytes/frontmatterErrors/links/
+    backlinks, empty the body-derived fields (headings, bodyTags) the index
+    would otherwise re-leak. Emptied, never omitted: the §8.1 shape holds,
+    so no schemaVersion bump. In-memory query indexes stay unreduced (§8.3)."""
+    for rec in index["notes"].values():
+        if is_restricted(rec):
+            rec["headings"] = []
+            rec["bodyTags"] = []
+    return index
+
+
 def serialize(index: dict) -> bytes:
     return (json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True) + "\n").encode(
         "utf-8"
@@ -616,7 +643,7 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 #
 # Module-internal section, deliberately self-contained: the planned `shared`
 # module (#31) seeds from here. Public surface for later consumers
-# (M9.2–M9.5: #12 context, #16 report, #15 environments, #26 sync, …):
+# (M9.2–M9.5: #16 report, #15 environments, #26 sync, …):
 #
 #   load_config(root)              -> (config map, findings)   — never raises
 #   parse_config(text)             -> (config map, findings)
@@ -624,6 +651,7 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 #   write_exception_prefixes(config) -> tuple of dir prefixes agents may write
 #   agent_write_allowed(rel, config) -> bool  (Inbox-first + exceptions)
 #   extension_trust(config)        -> policy string (default "first-party")
+#   vault_context(config)          -> context string (default "personal")
 #
 # The config is OPTIONAL: an absent file (or empty/all-comment file) yields
 # ({}, []) and every behavior stays at its built-in default. Malformed
@@ -631,14 +659,15 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 # crash, and never a behavior change beyond ignoring the malformed part.
 
 CONFIG_RELPATH = "00_Meta/config.yaml"
-CONFIG_IMPLEMENTED_KEYS = frozenset({"extension_trust", "report", "write_exceptions"})
+CONFIG_IMPLEMENTED_KEYS = frozenset(
+    {"context", "extension_trust", "report", "write_exceptions"}
+)
 # Named-but-unimplemented keys reserved for the issues that claimed them
-# (#12 context, #15 environments, #32 modules, #18 provenance,
+# (#15 environments, #32 modules, #18 provenance,
 # #26 sync, #6 template_version). Parsed and tolerated with no finding, so
 # a forward-looking config never fails an older brain.
 CONFIG_RESERVED_KEYS = frozenset(
     {
-        "context",
         "environments",
         "modules",
         "provenance",
@@ -654,6 +683,8 @@ REPORT_CONFIG_KEYS = frozenset({"inbox_days", "stale_days"})
 AGENT_WRITE_DEFAULT_PREFIXES = ("02_Inbox/", "02_Outbox/", "10_Agents/solutions/")
 DEFAULT_EXTENSION_TRUST = "first-party"
 EXTENSION_TRUST_VALUES = frozenset({"first-party", "relaxed"})
+DEFAULT_CONTEXT = "personal"
+CONTEXT_VALUES = frozenset({"personal", "work"})
 
 CONFIG_KEY_RE = re.compile(r"^( *)([A-Za-z0-9_-]+):(?:$|\s+(.*)$|\s+$)")
 
@@ -839,6 +870,17 @@ def report_thresholds(config: dict) -> dict:
     return thresholds
 
 
+def vault_context(config: dict) -> str:
+    """Effective vault context (issue #12): the scalar recorded by
+    onboard-owner's fork-time specialization step, or the personal default
+    when absent/malformed. Parse-and-report only — brain drives no behavior
+    from it; templates are specialized at onboarding time, in place."""
+    value = config.get("context")
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return DEFAULT_CONTEXT
+
+
 def check_config(
     root: Path, config: dict, findings: list[dict]
 ) -> tuple[list[dict], list[dict]]:
@@ -950,6 +992,25 @@ def check_config(
                     "config-unknown-value",
                     f"extension_trust {raw!r} is not a documented policy "
                     "(first-party | relaxed)",
+                )
+            )
+    if "context" in config:
+        raw = config["context"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, str):
+            errors.append(
+                _cfg_finding(
+                    None, "config-invalid-value", "context must be a scalar string"
+                )
+            )
+        elif raw.strip() not in CONTEXT_VALUES:
+            warnings.append(
+                _cfg_finding(
+                    None,
+                    "config-unknown-value",
+                    f"context {raw!r} is not a documented context "
+                    "(personal | work)",
                 )
             )
     return errors, warnings
@@ -1096,6 +1157,10 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                 "collides case-insensitively with " + ", ".join(group[1:]),
             )
 
+    # §8.3/§10.2 restricted containment: notes tagged restricted/private
+    # (frontmatter tags only — bodyTags never trigger restriction).
+    restricted_paths = {p for p, r in index["notes"].items() if is_restricted(r)}
+
     for rel in notes:
         rec = index["notes"][rel]
         template = is_template(rel)
@@ -1167,6 +1232,24 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                             "unknown-tag-value",
                             f"tag {tag!r} is not in the conventions value list",
                         )
+                # §10.2 missing-author (issue #18 provenance): an Inbox note
+                # tagged as agent-authored draft should say which harness wrote
+                # it. Warning only — absence elsewhere means pre-convention or
+                # human-authored. Template placeholders satisfy per §10.3, and
+                # `09_Templates/` never sits under `02_Inbox/` anyway.
+                if (
+                    rel.startswith("02_Inbox/")
+                    and not template
+                    and "audience/agent" in tags
+                    and "workflow/draft" in tags
+                    and not fm.get("author")
+                ):
+                    warn(
+                        rel,
+                        "missing-author",
+                        "agent-authored Inbox note has no author: field "
+                        "(see conventions § Provenance)",
+                    )
 
         for link in rec["links"]:
             if link["placeholder"]:
@@ -1178,6 +1261,17 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                     message += " (title matches: " + ", ".join(hints) + ")"
                 err(rel, "unresolved-link", message, link["line"])
             else:
+                if link["resolved"] in restricted_paths and rel not in restricted_paths:
+                    # §10.2 restricted-link (issue #17): context bleed —
+                    # restricted -> restricted links stay clean.
+                    warn(
+                        rel,
+                        "restricted-link",
+                        f"{link['raw']} links a restricted/private note "
+                        f"({link['resolved']}) from a non-restricted one — "
+                        "never quote or summarize its content here",
+                        link["line"],
+                    )
                 for w in link["warnings"]:
                     if w == "ambiguous":
                         warn(rel, "ambiguous-link", f"{link['raw']} is ambiguous; resolved to {link['resolved']}", link["line"])
@@ -1238,7 +1332,7 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
 
     if check_index:
         tnotes, tassets = index_corpus(root)
-        fresh = serialize(build_index(root, tnotes, tassets))
+        fresh = serialize(reduce_restricted(build_index(root, tnotes, tassets)))
         index_path = root / INDEX_RELPATH
         if not index_path.exists() or index_path.read_bytes() != fresh:
             err(INDEX_RELPATH, "stale-index", "stale index — run `brain index`")
@@ -1636,7 +1730,7 @@ def emit(payload, as_json: bool, human_lines):
 
 def cmd_index(root: Path, args) -> int:
     notes, assets = index_corpus(root)
-    data = serialize(build_index(root, notes, assets))
+    data = serialize(reduce_restricted(build_index(root, notes, assets)))
     path = root / INDEX_RELPATH
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(data)
@@ -1854,6 +1948,7 @@ def cmd_config(root: Path, args) -> int:
     config, findings = load_config(root)
     cfg_errors, cfg_warnings = check_config(root, config, findings)
     payload = {
+        "context": vault_context(config),
         "errors": cfg_errors,
         "extensionTrust": extension_trust(config),
         "path": CONFIG_RELPATH,
@@ -1868,6 +1963,7 @@ def cmd_config(root: Path, args) -> int:
         "write exceptions (agent-writable prefixes):",
         *(f"  {p}" for p in payload["writeExceptions"]),
         f"extension trust: {payload['extensionTrust']}",
+        f"context: {payload['context']}",
     ]
     for f in cfg_errors:
         lines.append(f"ERROR {f['rule']}: {f['message']}")

@@ -58,6 +58,10 @@ updated: YYYY-MM-DD
 ---
 ```
 
+### Provenance
+
+Optional fields marking agent-written notes (`audience/agent` says who a note is *for*, not who wrote it): `author:` — the **harness identifier** (`claude-code`, `copilot`, …; not a model id or person); `session:` — a session URL, PR, or task ref when one exists (may expose workspace identifiers; work forks can use opaque ids). **Expected for agent notes, absent for human notes**; no migration of old notes. `brain validate` warns (`missing-author`, spec §10.2) on an agent-tagged `02_Inbox/` draft with no `author:`; templates exempt.
+
 ### Expiration (`expires:`)
 
 Knowledge notes carry an optional-but-expected `expires: YYYY-MM-DD` — a best-effort "re-verify by" date set at write time, **hard-capped at one year** after `updated:`. It drives the curation loop (`brain curate` + the curate skill): claims decay, and the date says how fast.
@@ -91,12 +95,17 @@ Tags use **slash-delimited namespaces**. **This table is the authoritative tag t
 | `topic/*` | Subject matter | Free-form (e.g., `software`, `physics`, `health`, `ttrpg`, `finance`, `identity`) |
 | `workflow/*` | Lifecycle stage | `canonical`, `draft`, `review`, `needs-review` |
 | `status/*` | Actionability | `active`, `someday`, `done` |
+| `restricted/*` | Privacy marking | `private` |
 
 Notes tagged `workflow/canonical` are foundational vault docs. They require a PR or explicit human approval to modify.
 
+### restricted/private
+
+`restricted/private` marks content that must not spread beyond its note. **Not access control** ([[00_Meta/prd]] §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction to path/title/tags (brain spec §8.3), the `restricted-link` validate warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
+
 ## Agent Write Rules
 
-Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via the express-packet skill; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
+Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via the express-packet skill; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
 
 **Standing exceptions:**
 
