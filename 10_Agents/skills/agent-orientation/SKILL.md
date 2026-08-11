@@ -20,7 +20,7 @@ Orientation is not open-ended discovery: it produces a **structured inventory no
 
 ## Interface ranking ladder (apply to every inventory entry)
 
-When a source needs access tooling, prefer in this order (PRD §19 M7, decision #9; extended per #13):
+When a source needs access tooling, prefer in this order (PRD §8.4, decision #9; extended per #13):
 
 1. **Environment-specific custom tooling** — a CLI script or MCP integration built for this environment
 2. **The vendor's first-party CLI** (e.g. `gh`, `gcloud`, `m365`, mail/calendar CLIs)
@@ -165,11 +165,11 @@ session: <session-or-pr-ref>
 7. **Generate the access layer for each adopted source:**
    - **Tooling** under `10_Agents/tools/<source>/` — a script (stdlib-first, config via env vars) where the rung is a CLI or wrapped API; an access doc naming the exact harness tools where the rung is MCP/connector.
    - **A paired skill** at `10_Agents/skills/<source>-capture/SKILL.md` describing when and how to pull from the source and capture into the vault **via the `inbox-capture` rules**.
-   - Both tagged `workflow/draft` (agent-generated; the owner promotes — PRD §9.3). Everything must pass `python3 10_Agents/tools/brain/brain.py validate`.
+   - The inventory, capture skill, and any Markdown tool documentation are tagged `workflow/draft` (agent-generated; the owner promotes — PRD §§6.2 and 11). Non-note scripts/config inherit the paired documentation's draft state; placement under `10_Agents/` does not make them canonical-by-policy. Everything must pass `python3 10_Agents/tools/brain/brain.py validate`.
 8. **Hand off:** propose recurring flows to `recommended-automations` (it reads this environment's inventory note); register everything generated for `self-maintenance` audits (it probes the inventory's recorded sources on its cycle).
 
 ## References
 
 - [[10_Agents/environments/README]] — the environment-scoped landing convention (minimal slice of #15)
 - `10_Agents/harnesses/<name>/wiring.md` — what this harness can reach and how (static; verify live)
-- `00_Meta/prd.md` §19 M7, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers
+- `00_Meta/prd.md` §8.4, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers

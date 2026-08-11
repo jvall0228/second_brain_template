@@ -120,7 +120,8 @@ Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by de
 
 **Standing exceptions:**
 
-- Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [[10_Agents/README]]), environment inventory notes to `10_Agents/environments/<env-slug>/` (agent-orientation output; see its README), and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
+- Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [[10_Agents/README]]) and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
+- Live, user-invoked [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]] may write its documented draft inventory, access tool, and capture skill. Markdown uses `workflow/draft`; other files inherit it until promotion.
 - A live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
 
 **Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`; check first, on collision append a numeric suffix (`-2`), never overwrite another agent's note.
@@ -132,10 +133,11 @@ See [[02_Inbox/README]] for Inbox-specific guidance.
 | Scope | Method |
 |-------|--------|
 | `workflow/canonical` notes | PR or explicit human approval required |
+| Canonical-by-policy artifacts without note tags | PR or explicit human approval required |
 | `02_Inbox/` content | Direct commits allowed |
 | All other notes | Direct commits allowed |
 
-Canonical notes form the vault's structural foundation — changes to them affect agent behavior across all sessions.
+Template-shipped skills/tools, `00_Meta/config.yaml`, and tagless adapters are canonical-by-policy. Orientation bundles stay draft until promotion; paths alone do not confer canonical status.
 
 ### Draft → Canonical Promotion
 
@@ -146,6 +148,8 @@ Promoting a `workflow/draft` note to `workflow/canonical` is an owner decision, 
 3. Swap `workflow/draft` → `workflow/canonical`.
 4. The note is reachable: linked from [[00_Meta/index]] and/or its directory README.
 5. Structural promotions (new skills, new policies) get a [[00_Meta/changelog]] entry.
+
+Promoting an access-tool/capture-skill bundle is one owner decision: promote its Markdown, after which non-note files become canonical-by-policy.
 
 For expanded agent guidance, see [[10_Agents/README]].
 

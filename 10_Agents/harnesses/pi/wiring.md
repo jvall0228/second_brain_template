@@ -38,7 +38,7 @@ Pi shells out normally; no approval config needed beyond project trust.
 
 ## Harness-specific notes
 
-- **No MCP support** — Pi extends via TypeScript extensions instead. This is exactly the preference ladder's first rung (PRD §19 M7): any M7 external-source access for Pi is a custom extension or CLI, never an MCP server.
+- **No MCP support** — Pi extends via TypeScript extensions instead. This is exactly the preference ladder's first rung (PRD §8.4): external-source access for Pi is a custom extension or CLI, never an MCP server.
 - **No ignore mechanism** of any kind — feeds the open privacy-policy decision (PRD §21).
 - Prompt templates (`.pi/prompts/*.md`) exist, but skills are the portable unit — ship none.
 

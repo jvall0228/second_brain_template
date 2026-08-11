@@ -30,11 +30,15 @@ Before creating or modifying a note, read:
 
 When updating an existing note, **replace** the sections the new content conflicts with or obsoletes — never append a new section alongside a stale one. Append-only editing bloats notes into contradictory context dumps that mislead every future reader, human or agent. A note must always read as the current state of knowledge; git history preserves every prior version for posterity, so deleting outdated content loses nothing. Appending is right only for genuinely additive structures — logs, journals, changelog-style records — where entries are events, not claims.
 
+For [[00_Meta/prd]] specifically, edit superseded requirements in place and describe only shipped behavior, the live roadmap, and genuinely unresolved decisions. Record a structural PRD change once in [[00_Meta/changelog]]; Git holds detailed revision history. Do not add revision banners, compatibility addenda, resolved incident narratives, or duplicate consideration logs to the PRD.
+
 ## Canonical Note Handling
 
-Notes tagged `workflow/canonical` are vault infrastructure. Agents must **not** modify them directly.
+Notes tagged `workflow/canonical` are vault infrastructure. The same protection applies to canonical-by-policy artifacts without note tags: template-shipped skills/tools, `00_Meta/config.yaml`, and named entrypoint/editor/harness adapters. Agents modify either class only through a pull request or current, explicit human approval.
 
-To propose a change to a canonical note:
+Location alone does not make an artifact canonical. A live, user-invoked `agent-orientation` session may create the inventory and paired access-tool/capture-skill bundle at the paths in its contract. The inventory, skill, and tool documentation remain `workflow/draft`; non-note files inherit that bundle state until the owner promotes the whole bundle.
+
+Without that authority, propose a change:
 
 1. Write a note to `02_Inbox/` explaining the proposed change
 2. Tag it `workflow/needs-review`
@@ -60,7 +64,8 @@ Before writing any note, verify:
 - [ ] Tags use defined namespaces (see [[00_Meta/conventions#Tag Namespaces]])
 - [ ] Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note
 - [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/conventions]] § Provenance)
-- [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet (unless explicitly directed elsewhere, or a `10_Agents/solutions/` note)
+- [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, or live user-invoked `agent-orientation` inventory plus paired draft bundle)
+- [ ] A generated orientation bundle is still draft: its inventory, skill, and tool documentation say `workflow/draft`, and no non-note file is treated as canonical-by-policy before owner promotion
 - [ ] **Restricted containment** ([[00_Meta/conventions#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
 - [ ] Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])
 - [ ] **Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping

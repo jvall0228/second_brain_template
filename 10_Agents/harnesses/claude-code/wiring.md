@@ -48,7 +48,7 @@ Pre-approve it with a permission allow rule (see `settings-example.json`) so que
 ## Harness-specific notes
 
 - **Permission denies** can hard-enforce change control (deny `Edit` on `00_Meta/**`, `01_Profile/**`) — stricter than the vault's approval-based policy, so the reference config includes them for adopters who want belt-and-suspenders; note an approved canonical edit then requires loosening the rule. There is **no `.claudeignore`** — privacy exclusion is deny `Read()` rules, and the vault-wide privacy policy is still an open owner decision (PRD §21).
-- **MCP:** `.mcp.json` at the repo root registers project-scope servers. The vault ships none (the vault MCP server is permanently out of scope; PRD §19 M7) — M7 integrations may add external-source servers here.
+- **MCP:** `.mcp.json` at the repo root registers project-scope servers. The vault ships none (the vault MCP server is permanently out of scope; PRD §19.1) — environment integrations may add external-source servers here under PRD §8.4.
 - **Output styles** are Claude-Code-only; the vault keeps voice/tone in `01_Profile/preferences.md` instead. An adopter may add a personal output style; the template ships none.
 
 ## Reference config

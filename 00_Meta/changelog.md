@@ -26,6 +26,12 @@ Notable structural changes to the vault. For individual file history, use `git l
   auth/timeout/subprocess, and contract tests cover the fail-closed paths without
   making a real connector or metadata call.
 
+## [2026-08-11] rewrite-prd | Current-state dual-editor product contract (issues #71, #72, #73)
+
+- Rewrote [[00_Meta/prd]] in place as the current product contract: owner/agent audiences, both supported editors, architecture and write lanes, canonical/config/privacy contracts, tooling, journeys, acceptance, shipped M0–M12, the approved Ready roadmap, and only genuine unresolved gates.
+- Removed revision banners, addenda, resolved consideration logs, M0-only acceptance framing, and shipped-as-planned language. Historical release detail remains here and in Git rather than being duplicated in the PRD.
+- Updated [[00_Meta/status]] through M12, reconciled canonical-by-policy and generated-draft write lanes across the active agent rules, and added a PRD-specific edit-in-place rule to [[10_Agents/docs/operating-rules]].
+
 ## [2026-08-11] feature | Recommended components: agent-library registry + onboarder install (follow-up to #7)
 
 - **New registry `10_Agents/components/manifest.json`** (schema v1) is the machine-readable source of truth for installable **recommended components**, making third-party components a first-class part of the agent library without vendoring: six components across four kinds — `skill` (i-have-adhd, karpathy), `memory-block` (karpathy `CLAUDE.md` guidance), `overlay` (the Cursor/Copilot harness primitives surfaced as components), and `vault-config-preset` (a `work-fork` starting config applied via a new `merge-config` install). Documented in [[10_Agents/components/README]].

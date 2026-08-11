@@ -10,7 +10,7 @@ updated: 2026-08-11
 # Second Brain — Status
 
 **Date:** 2026-08-11
-**State:** Fresh template — awaiting your content
+**State:** Framework complete; fresh template awaiting owner content
 
 > This note is deliberately **not** tagged `workflow/canonical`: it is a living snapshot that agents may update directly (e.g. milestone status, checklist progress) with a direct commit.
 
@@ -18,11 +18,12 @@ updated: 2026-08-11
 
 ## Snapshot
 
-- Full PARA + journal structure in place (`00_` through `10_`); every directory has a README.
-- Bootstrap and canonical navigation docs are present (`AGENTS`, `now`, `preferences`, `conventions`, `index`, `defaults`).
-- All note templates and agent operating docs are wired in.
+- Full PARA + Journal structure, bootstrap, canonical navigation, and 12 note templates are in place.
+- Both supported editors are wired: tracked Obsidian settings and VS Code settings, tasks, extensions, and generated snippets.
+- The deterministic `brain` index/validation CLI, hooks, CI, adoption smoke, health reporting, tasks, and optional semantic-search path are shipped.
+- Twenty canonical Agent Skills, seven harness adapters, environment orientation, reversible onboarding, pull-only template sync, and the propose-only self-improvement loop are shipped.
 - Profile notes are blank templates — fill them in before pointing agents at the vault.
-- One example note is seeded per section; delete them once you've seen the pattern.
+- README and `adopt_examples.json` list the complete seed set; atomic onboarder cleanup remains Ready issue #84.
 
 ## Milestone Status
 
@@ -30,14 +31,19 @@ Per the roadmap in [[00_Meta/prd]] §19:
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
-| M0 | Bootstrap minimum | Done |
-| M1 | Skeleton + section READMEs | Done |
-| M2 | Index + defaults | Done |
-| M3 | Templates + agent docs (incl. solutions library) | Done |
-| M4 | Navigation integrity | Done |
-| M5 | `brain` vault-index CLI | Done (2026-08-11) |
-| M6 | Agent plugin library core (SKILL.md skills, onboarding, harness adapters) | Done (2026-08-11) |
-| M7 | Environment integration (orientation, ingestion automations, self-maintenance) | Done (2026-08-11, template scope — recurs per adopter environment) |
+| M0–M4 | Bootstrap, structure, navigation, templates, agent docs, link integrity | Done |
+| M5 | `brain` index, queries, validation, hooks, and CI | Done (2026-08-11) |
+| M6 | Agent Skills library, onboarding, and harness adapters | Done (2026-08-11) |
+| M7 | Environment orientation, recommended automations, and self-maintenance | Done (2026-08-11, template scope) |
+| M8 | Test foundation, hardening, secret scan, regeneration, adopter smoke | Done (2026-08-11) |
+| M9 | Config, provenance, restrictions, context variants, health report | Done (2026-08-11) |
+| M10 | Structured orientation, overlays, components, owner onboarding | Done (2026-08-11) |
+| M11 | Tasks and optional semantic search | Done (2026-08-11) |
+| M12 | Pull-only template sync and self-improvement loop | Done (2026-08-11) |
+
+## Active Ready Roadmap
+
+The approved execution plan is [[02_Inbox/2026-08-11-ready-backlog-implementation-plan]]. Its #71/#72/#73 PRD package is implemented in the current contract; the remaining packages stay roadmap work until each passes tests, validation, generated-file freshness, adversarial review, and integration on `main`. Current state and unresolved owner gates are summarized in [[00_Meta/prd]] §§19–21.
 
 ## Getting-Started Checklist
 

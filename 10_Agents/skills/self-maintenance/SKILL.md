@@ -32,5 +32,5 @@ Everything agent-generated under `10_Agents/` — `workflow/draft` skills and to
 
 ## References
 
-- `00_Meta/prd.md` §9.3 (write policy), §11 (promotion), §19 M7
+- `00_Meta/prd.md` §6.2 (write policy), §11 (promotion), §8.4 (environment integrations)
 - `10_Agents/skills/vault-maintenance/SKILL.md` — the vault-side sibling of this skill
