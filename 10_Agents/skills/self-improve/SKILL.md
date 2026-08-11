@@ -5,7 +5,7 @@ title: "Skill: Self-Improve"
 tags:
   - type/reference
   - audience/agent
-  - workflow/draft
+  - workflow/canonical
 updated: 2026-08-11
 expires: 2027-08-11
 ---
@@ -18,7 +18,7 @@ Make the fork **self-improving** (issue #22): agents observe how the owner actua
 
 ## Ground rules (guardrails)
 
-- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([[00_Meta/prd]] §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**; everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
+- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([[00_Meta/prd]] §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [[AGENTS]] / [[00_Meta/conventions]] § Agent Write Rules and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
 - **Rate limit: max 3 proposals open at once** (open PRs + untriaged Inbox proposal notes from this loop, counted together). Issue #22 requires a rate limit ("max N open at once") without fixing N; this skill sets N = 3 so the owner is never spammed into rubber-stamping. At the limit, hold further proposals for the next cycle — rank and keep the best three.
 - **Owner content is out of bounds** except as read-only evidence. The loop maintains the fork's *spec* (conventions, skills, templates, agent docs, tooling); journal/profile/PARA notes are never proposal targets — they are only observed.
 - **Never push upstream.** The fork pulls from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] is pull-only); this loop personalizes the fork in the opposite direction and inherits the same hard rule: agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. A fork improvement worth generalizing is flagged to the owner as "worth upstreaming?" — the owner carries it upstream by hand if they choose. (Also stated in [[10_Agents/docs/operating-rules]].)

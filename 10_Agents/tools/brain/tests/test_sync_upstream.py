@@ -110,18 +110,33 @@ class ClassifyTableCoverageTests(unittest.TestCase):
             entries.add(entry.name + "/" if entry.is_dir() else entry.name)
         return entries
 
-    def test_every_top_level_path_covered_exactly_once(self):
+    # Template-shipped top-level entries the path map must always cover.
+    # Fork-added top-level paths are deliberately NOT failures: the skill's
+    # "when in doubt, treat as owner content" ground rule classifies them,
+    # and a fork's own additions must not break its test suite.
+    TEMPLATE_TOP_LEVEL = frozenset(
+        {
+            "AGENTS.md", "CLAUDE.md", "README.md",
+            "00_Meta/", "01_Profile/", "02_Inbox/", "02_Outbox/",
+            "03_Journal/", "04_Projects/", "05_Areas/", "06_Resources/",
+            "07_Archives/", "08_Assets/", "09_Templates/", "10_Agents/",
+        }
+    )
+
+    def test_every_template_top_level_path_covered(self):
         mapping = self.path_map()
         repo = self.repo_top_level()
         self.assertEqual(
-            repo - set(mapping),
+            (self.TEMPLATE_TOP_LEVEL & repo) - set(mapping),
             set(),
-            "top-level paths missing from the classify path map",
+            "template top-level paths missing from the classify path map",
         )
+        # Rows must name real paths — but only template-known ones are
+        # required, so a leaner fork doesn't fail on rows for pruned dirs.
         self.assertEqual(
-            set(mapping) - repo,
+            (set(mapping) & self.TEMPLATE_TOP_LEVEL) - repo,
             set(),
-            "stale classify rows naming no existing top-level path",
+            "classify rows naming template paths absent from this tree",
         )
 
     def test_every_lane_is_a_known_lane(self):

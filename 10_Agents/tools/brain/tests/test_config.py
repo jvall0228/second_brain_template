@@ -141,6 +141,23 @@ class WriteExceptionTests(unittest.TestCase):
         self.assertTrue(brain.agent_write_allowed("06_Resources\\new.md", config))
         self.assertFalse(brain.agent_write_allowed("05_Areas/new.md", config))
 
+    def test_single_file_standing_exceptions(self):
+        # The rejected-proposals append-only log is agent-writable even
+        # though 10_Agents/docs/ is otherwise PR-only (M12.2 carve-out).
+        self.assertTrue(
+            brain.agent_write_allowed("10_Agents/docs/rejected-proposals.md", {})
+        )
+        # The rest of the directory stays gated.
+        self.assertFalse(
+            brain.agent_write_allowed("10_Agents/docs/operating-rules.md", {})
+        )
+        # Traversal into the allowed file still fails closed.
+        self.assertFalse(
+            brain.agent_write_allowed(
+                "10_Agents/docs/../docs/rejected-proposals.md", {}
+            )
+        )
+
     def test_traversal_in_checked_path_fails_closed(self):
         # The checked rel is untrusted input: a prefix match must not
         # authorize climbing back out of the allowed directory.
