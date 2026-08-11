@@ -12,6 +12,11 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — VS Code Alternative-Editor Support
+
+- Owner-directed: the vault is now usable in VS Code when Obsidian is unavailable. Shipped root-scope `.vscode/` workspace config (the `.obsidian/` counterpart, dot-path outside the note corpus per [[00_Meta/prd]] §9.3): `extensions.json` recommends Foam (wikilinks/backlinks/graph/tags/daily notes), Markdown All in One, markdownlint, mermaid preview support, and Live Preview for HTML rendering — with Prettier explicitly unwanted; `settings.json` routes daily notes to `03_Journal/periodic/daily/`, pastes images into `08_Assets/`, disables Foam's link-reference-definition writes (diff hygiene), relaxes markdownlint for frontmatter-first notes, and excludes `vault-index.json` from search.
+- [[00_Meta/prd]] revision 2.2 records the decision as new §6.5 (Obsidian stays primary). Requirements brainstorm, online research, and the full `.obsidian` → `.vscode` feature mapping captured in `02_Inbox/2026-08-11-vscode-editor-support.md` (untriaged).
+
 ## 2026-08-11 — Copilot Research Deduped
 
 - Owner-directed policy, folded into two canonical skills: notes are **atomic — one topic, one note**. [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] now requires corrective research to merge into the existing note (git keeps history; no parallel "supersedes X" notes left under banners), and [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] gained a duplication-scan step that proposes merges to the human. Companion rule in the same pass: **update by replacement, not accumulation** — merges and updates rewrite or delete conflicting sections instead of appending beside them (git history is the archive; appending is for logs/journals only). General form in `10_Agents/docs/operating-rules.md`, reinforced in both skills.
