@@ -4,7 +4,8 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-02-21
+updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Profile

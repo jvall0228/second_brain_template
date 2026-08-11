@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Onboard Owner
+
+**CODE stage:** Onboarding.
 
 Turn a fresh copy of this template into *someone's* second brain. This is the human counterpart to [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]: that skill wires up the software; this one welcomes the owner. Requirements history: `07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md`.
 
@@ -53,9 +56,9 @@ Update the checklist as each stage completes or is skipped (skipping is a valid,
 1. **Welcome.** The payoff pitch (above). Ask what they're hoping this helps with; let their answer steer emphasis. Gauge familiarity — if they already know Obsidian or PKM, compress the teaching accordingly.
 2. **Profile interview.** Conversationally fill the three profile notes from their answers — [[01_Profile/now]] (current focus, active projects, key dates), [[01_Profile/preferences]] (how they like to be talked to and what output should look like), [[01_Profile/defaults]] (timezone, locale, units). Write real notes; replace the fill-in guidance stubs. Read each back in summary for their OK.
 3. **Seed real content.** Projects and responsibilities that surfaced in the interview become notes in `04_Projects/` and `05_Areas/` (1–2 each is plenty), built from [[09_Templates/template-project]] / [[09_Templates/template-area]].
-4. **First capture → triage, together.** Ask for something real on their mind; capture it via [[10_Agents/skills/inbox-capture/SKILL|inbox-capture]], then triage it together via [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]] — this teaches the daily loop: say "remember this" anytime; the Inbox catches it; filing happens later, together.
+4. **First capture → triage, together.** Ask for something real on their mind; capture it via [[10_Agents/skills/inbox-capture/SKILL|inbox-capture]], then triage it together via [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]] — this teaches the daily loop: say "remember this" anytime; the Inbox catches it; filing happens later, together. Then sketch **the rhythm** in one breath — daily log, weekly tidy-up and review, monthly health check, quarterly refresh (the cadence table in [[10_Agents/skills/README]]) — as "the vault stays useful because we check in on it; I'll handle the mechanics."
 5. **Wire up the harness.** Offer to run [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] for whatever assistant they're using right now, framed as "let me make sure I remember all this next time we talk."
-6. **Connect their world.** Offer [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]], translating its interview into plain offers ("should I be able to see your calendar?"). If sources are adopted, offer [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] as "I can check that regularly and file what matters."
+6. **Connect their world.** Offer [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]], translating its interview into plain offers ("should I be able to see your calendar?"). If sources are adopted, offer [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] as "I can check that regularly and file what matters" — and pitch its **rhythm jobs** the same plain way ("I can also run the weekly tidy-up and draft your reviews on schedule; you just read them").
 7. **Clean up the training wheels.** The template ships one worked example per section, meant to be deleted once real content exists. Offer to remove them wherever stage 3 put something real.
 8. **Close.** Run a full `brain validate`; fix anything it raises. Recap in three sentences what exists now and the one habit that matters ("just tell me things — I'll remember"). Archive the checklist per the state rules above.
 

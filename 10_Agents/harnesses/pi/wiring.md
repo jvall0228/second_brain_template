@@ -7,11 +7,12 @@ tags:
   - topic/software
   - workflow/canonical
 updated: 2026-08-11
+expires: 2026-11-11
 ---
 
 # Pi Wiring
 
-Facts verified 2026-08-11 against the [pi-mono docs](https://github.com/badlogic/pi-mono) (see [[06_Resources/harness-primitives-research#Pi|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against the [pi-mono docs](https://github.com/badlogic/pi-mono) (see [[06_Resources/harness-pi|research]]); re-verify before relying on paths.
 
 ## Entrypoint loading
 

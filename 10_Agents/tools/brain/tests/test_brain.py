@@ -12,7 +12,9 @@ import sys
 import tempfile
 import time
 import unittest
+from datetime import date
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import brain  # noqa: E402
@@ -293,6 +295,228 @@ class ValidateTests(unittest.TestCase):
         self.assertTrue(brain.PERIODIC_RE.match("2026-W01-review.md"))
         self.assertTrue(brain.PERIODIC_RE.match("2026-Q3-review.md"))
         self.assertFalse(brain.PERIODIC_RE.match("2026-W1-review.md"))
+
+
+def note(body: str = "", **fm_extra) -> str:
+    fm = {"title": "x", "updated": "2026-08-01", **fm_extra}
+    lines = ["---", f'title: {fm["title"]}', "tags:", "  - type/note"]
+    for k, v in fm.items():
+        if k not in ("title", "tags"):
+            lines.append(f"{k}: {v}")
+    lines += ["---", body, ""]
+    return "\n".join(lines)
+
+
+class CurationTests(unittest.TestCase):
+    CONVENTIONS = None
+
+    @classmethod
+    def setUpClass(cls):
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+
+    def vault(self, td, files):
+        return make_vault(Path(td), {"00_Meta/conventions.md": self.CONVENTIONS, **files})
+
+    def test_invalid_expires(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(
+                td,
+                {
+                    "bad-date.md": note(expires="2026-13-40"),
+                    "empty-val.md": note(expires=""),
+                    "good.md": note(expires="2027-01-01"),
+                    "09_Templates/template-t.md": note(expires="{{expires}}"),
+                },
+            )
+            errors, _ = brain.run_validate(root, check_index=False)
+            paths = {f["path"] for f in errors if f["rule"] == "invalid-expires"}
+            self.assertEqual(paths, {"bad-date.md", "empty-val.md"})
+
+    def test_curation_warnings_gated(self):
+        files = {"plain.md": note()}
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", False):
+                _, warnings = brain.run_validate(root, check_index=False)
+            self.assertFalse(any(f["rule"] == "missing-expires" for f in warnings))
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
+                _, warnings = brain.run_validate(root, check_index=False)
+            self.assertTrue(
+                any(f["rule"] == "missing-expires" and f["path"] == "plain.md" for f in warnings)
+            )
+
+    def test_missing_expires_exemptions(self):
+        files = {
+            "02_Inbox/2026-08-11-capture.md": note(),
+            "02_Outbox/2026-08-11-packet.md": note(),
+            "03_Journal/day.md": note(),
+            "07_Archives/old.md": note(),
+            "10_Agents/solutions/fix.md": note(),
+            "00_Meta/changelog.md": note(),
+            "00_Meta/status.md": note(),
+            "needs-one.md": note(),
+        }
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
+                _, warnings = brain.run_validate(root, check_index=False)
+            missing = {f["path"] for f in warnings if f["rule"] == "missing-expires"}
+            self.assertEqual(missing, {"needs-one.md"})
+
+    def test_type_decision_exempt_from_expires_not_orphan(self):
+        # A type/decision note needs no expires: (event record), but an unlinked
+        # one is still an orphan — the two exemptions are deliberately different.
+        files = {
+            "04_Projects/p/decision-records/2025-01-10-dr.md": (
+                "---\ntitle: DR\ntags:\n  - type/decision\n"
+                "updated: 2025-01-10\n---\n\nbody\n"
+            ),
+            "claim.md": note(),  # ordinary note: should be flagged missing-expires
+        }
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            cur = brain.compute_curation(root, index, date(2026, 8, 11))
+            self.assertNotIn("04_Projects/p/decision-records/2025-01-10-dr.md", cur["missingExpires"])
+            self.assertIn("claim.md", cur["missingExpires"])
+            # exempt from expires, but not from the orphan check
+            self.assertIn("04_Projects/p/decision-records/2025-01-10-dr.md", cur["orphans"])
+
+    def test_beyond_cap_and_oversized_warnings(self):
+        big = note("word\n" * 401, expires="2027-02-01")
+        files = {
+            "over-cap.md": note(expires="2028-01-01"),  # updated 2026-08-01
+            "big.md": big,
+        }
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
+                _, warnings = brain.run_validate(root, check_index=False)
+            rules = {(f["rule"], f["path"]) for f in warnings}
+            self.assertIn(("expires-beyond-cap", "over-cap.md"), rules)
+            self.assertIn(("oversized", "big.md"), rules)
+
+    def test_compute_curation_signals(self):
+        files = {
+            "expired.md": note("[[stale-hub]]", expires="2020-01-01"),
+            "fresh.md": note("[[expired]] ![[08_Assets/used.png]]", expires="2999-01-01"),
+            "stale-hub.md": note("[[fresh]]", updated="2020-01-01", expires="2999-01-01"),
+            "orphan.md": note(expires="2999-01-01"),
+            "08_Assets/used.png": b"x",
+            "08_Assets/unused.png": b"x",
+        }
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            cur = brain.compute_curation(root, index, date(2026, 8, 11))
+            self.assertEqual([r["path"] for r in cur["expired"]], ["expired.md"])
+            self.assertEqual([r["path"] for r in cur["stale"]], ["stale-hub.md"])
+            self.assertEqual(cur["stale"][0]["backlinks"], 1)
+            self.assertEqual(cur["stale"][0]["score"], cur["stale"][0]["daysOld"] * 2)
+            self.assertIn("orphan.md", cur["orphans"])
+            self.assertNotIn("fresh.md", cur["orphans"])
+            self.assertEqual(cur["unreferencedAssets"], ["08_Assets/unused.png"])
+            self.assertEqual(cur["missingExpires"], [])
+
+    def test_context_report_and_budget_warning(self):
+        files = {"AGENTS.md": "a" * 9000}
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            ctx = brain.context_report(root)
+            by_path = {r["path"]: r for r in ctx["docs"]}
+            self.assertEqual(by_path["AGENTS.md"]["sizeBytes"], 9000)
+            self.assertIsNone(by_path["01_Profile/now.md"]["sizeBytes"])
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
+                _, warnings = brain.run_validate(root, check_index=False)
+            self.assertTrue(
+                any(f["rule"] == "bootstrap-budget" and f["path"] == "AGENTS.md" for f in warnings)
+            )
+
+    def test_curate_and_context_cli(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = brain.main(["curate", "--json", "--vault", str(FIXTURE)])
+        self.assertEqual(code, 0)
+        data = json.loads(out.getvalue())
+        self.assertEqual(
+            sorted(data),
+            [
+                "beyondCap",
+                "expired",
+                "missingExpires",
+                "orphans",
+                "oversized",
+                "stale",
+                "unreferencedAssets",
+            ],
+        )
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = brain.main(["context", "--json", "--vault", str(FIXTURE)])
+        self.assertEqual(code, 0)
+        ctx = json.loads(out.getvalue())
+        self.assertEqual(sorted(ctx), ["docs", "totalBudget", "totalBytes"])
+
+    def test_collect_urls(self):
+        files = {
+            "src.md": note(
+                "See https://example.com/a. And (https://example.com/b) plus "
+                "`https://example.com/code-span`\n"
+                "```\nhttps://example.com/fenced\n```\n"
+            )
+        }
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            urls = brain.collect_urls(root, ["src.md"])
+            self.assertIn("https://example.com/a", urls)
+            self.assertIn("https://example.com/b", urls)
+            # code spans and fenced blocks are excluded, like every other extractor
+            self.assertNotIn("https://example.com/code-span", urls)
+            self.assertNotIn("https://example.com/fenced", urls)
+
+    def test_check_urls_classification(self):
+        import urllib.error
+
+        files = {
+            "src.md": note(
+                "prose links: https://ok.example/a https://dead.example/b "
+                "https://forbidden.example/c https://gone.example/d\n"
+            )
+        }
+
+        def fake_urlopen(req, timeout=None):
+            url = req.full_url
+            if "ok.example" in url:
+                return contextlib.nullcontext()
+            if "forbidden.example" in url:
+                raise urllib.error.HTTPError(url, 403, "Forbidden", None, None)
+            if "gone.example" in url:
+                raise urllib.error.HTTPError(url, 404, "Not Found", None, None)
+            raise urllib.error.URLError("dns failure")
+
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            with mock.patch("urllib.request.urlopen", side_effect=fake_urlopen):
+                dead = brain.check_urls(root, ["src.md"])
+            urls = {d["url"] for d in dead}
+            self.assertIn("https://gone.example/d", urls)     # 404 -> dead
+            self.assertIn("https://dead.example/b", urls)      # URLError -> dead
+            self.assertNotIn("https://forbidden.example/c", urls)  # 403 -> HEAD-hostile, skipped
+            self.assertNotIn("https://ok.example/a", urls)     # 200 -> alive
+
+    def test_bootstrap_budget_total_warning(self):
+        # Inflate a bootstrap doc past BOOTSTRAP_TOTAL_BUDGET (keep the tag
+        # table intact so validate can still read the taxonomy).
+        big_conventions = self.CONVENTIONS + "\n" + ("padding line\n" * 4000)
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, {"00_Meta/conventions.md": big_conventions})
+            ctx = brain.context_report(root)
+            self.assertGreater(ctx["totalBytes"], brain.BOOTSTRAP_TOTAL_BUDGET)
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
+                _, warnings = brain.run_validate(root, check_index=False)
+            self.assertTrue(any(f["rule"] == "bootstrap-budget-total" for f in warnings))
 
 
 class CliTests(unittest.TestCase):

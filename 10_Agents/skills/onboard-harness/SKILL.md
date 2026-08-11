@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Onboard Harness
+
+**CODE stage:** Onboarding.
 
 Make the vault's skills and context available in **every session** of a harness, not just when working inside this repo. User scope, symlink-first, manifest-driven, idempotent, reversible.
 

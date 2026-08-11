@@ -7,6 +7,7 @@ tags:
   - topic/software
   - workflow/draft
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # VS Code Tools

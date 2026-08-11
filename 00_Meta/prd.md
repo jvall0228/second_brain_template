@@ -6,6 +6,7 @@ tags:
   - audience/human
   - audience/agent
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # PRD: Second Brain Knowledge Management System (Markdown + Git + Obsidian + Agents)
@@ -59,8 +60,8 @@ This order is **contractual** and is listed first in `AGENTS.md`:
 > **Planned (M5 — not yet built):** a `brain` CLI for querying a vault index. Until it ships, agents navigate via [[00_Meta/index]] and directory READMEs.
 
 ### 6.2 Agent write pattern (active policy)
-- Agents write new notes to `02_Inbox/` by default (the **Inbox-first rule**).
-- Non-Inbox destinations are allowed only when the human explicitly names the destination in the current request.
+- Agent writes are **two-lane**, both review-gated: content *for the vault* goes to `02_Inbox/` by default (the **Inbox-first rule**); outbound deliverables *for the world* go to `02_Outbox/` via the `express-packet` skill — the owner reviews and ships, and **agents never ship** absent an explicit per-item instruction.
+- Other (non-Inbox, non-Outbox) destinations are allowed only when the human explicitly names the destination in the current request.
 - **Standing exceptions:** agents may append solution notes to `10_Agents/solutions/` (see §9.2); once M6 ships the plugin library, agents may also add or update **agent-generated** skills and tools under `10_Agents/skills/` and `10_Agents/tools/` (see §9.3 — generated items carry `workflow/draft` until promoted; template-shipped plugins are canonical).
 - Agents should not modify canonical profile files unless explicitly instructed.
 
@@ -95,6 +96,7 @@ Top-level directories (must exist; number prefixes required for ordering):
 - `00_Meta/` — conventions, index (MoC), changelog, status snapshot, this PRD
 - `01_Profile/` — canonical personal context: `now`, `preferences`, `defaults`, plus `identity`, `work`, `tooling-stack`, `long-running-themes`
 - `02_Inbox/` — raw capture / triage queue
+- `02_Outbox/` — outbound deliverables awaiting owner review and shipping (shares the `02_` prefix — both are review gates, no renumbering)
 - `03_Journal/` — **subjective** knowledge and experience: `periodic/{daily,weekly,monthly,quarterly,yearly}/` reviews (Bullet Journal) plus `ideas/`, `insights/`, `memories/`, `people/`, `plans/`
 - `04_Projects/` — PARA Projects
 - `05_Areas/` — PARA Areas

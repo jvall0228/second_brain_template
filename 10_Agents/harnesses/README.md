@@ -6,6 +6,7 @@ tags:
   - audience/human
   - workflow/canonical
 updated: 2026-08-11
+expires: 2026-11-11
 ---
 
 # Harness Adapters

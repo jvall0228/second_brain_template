@@ -6,6 +6,7 @@ tags:
   - audience/agent
   - audience/human
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Conventions
@@ -19,6 +20,7 @@ Top-level directories use **numeric prefixes** for deterministic sort order. Eac
 - `00_Meta/` — Vault-level meta docs (this file lives here).
 - `01_Profile/` — Owner identity and context (Now, Preferences).
 - `02_Inbox/` — Landing zone for all new and unsorted content.
+- `02_Outbox/` — Outbound deliverables awaiting owner review and shipping (shares the `02_` prefix: both are review gates, no renumbering).
 - `03_Journal/` — Personal knowledge and experience (periodic notes + ideas, insights, memories, people, plans).
 - `04_Projects/` — Active projects with defined outcomes (PARA: Projects).
 - `05_Areas/` — Ongoing responsibilities (PARA: Areas).
@@ -56,6 +58,20 @@ updated: YYYY-MM-DD
 ---
 ```
 
+### Expiration (`expires:`)
+
+Knowledge notes carry an optional-but-expected `expires: YYYY-MM-DD` — a best-effort "re-verify by" date set at write time, **hard-capped at one year** after `updated:`. It drives the curation loop (`brain curate` + the curate skill): claims decay, and the date says how fast.
+
+Default TTLs by volatility:
+
+| Content | TTL | Examples |
+|---------|-----|----------|
+| Wiring / product facts | 3 months | harness wiring docs, tool-surface research |
+| Retrieval-dated research | 6 months | resource notes built from web sources |
+| Evergreen / canonical | 12 months | conventions, zettels, project and area notes |
+
+**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`, and any note tagged `type/decision` (a decision record is an event dated at the point it was made, wherever it lives). `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. (`09_Templates/` and the root `CLAUDE.md` are exempt too, via their own frontmatter exception sections above.) Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
+
 ### Template Placeholder Exception
 
 Files in `09_Templates/` may use placeholder tokens such as `{{date}}`, `{{title}}`, and `{{...}}` in frontmatter and body. Any instantiated note created from a template must replace placeholders and set `updated` to a real ISO date.
@@ -80,7 +96,7 @@ Notes tagged `workflow/canonical` are foundational vault docs. They require a PR
 
 ## Agent Write Rules
 
-Agents write to `02_Inbox/` by default. Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
+Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via the express-packet skill; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
 
 **Standing exceptions:**
 
@@ -101,7 +117,25 @@ See [[02_Inbox/README]] for Inbox-specific guidance.
 
 Canonical notes form the vault's structural foundation — changes to them affect agent behavior across all sessions.
 
+### Draft → Canonical Promotion
+
+Promoting a `workflow/draft` note to `workflow/canonical` is an owner decision, checked off in order:
+
+1. The owner has explicitly approved the promotion (in-session direction counts).
+2. The note passes `brain validate` clean and its content is current (bump `updated:`, refresh `expires:` to the evergreen TTL).
+3. Swap `workflow/draft` → `workflow/canonical`.
+4. The note is reachable: linked from [[00_Meta/index]] and/or its directory README.
+5. Structural promotions (new skills, new policies) get a [[00_Meta/changelog]] entry.
+
 For expanded agent guidance, see [[10_Agents/README]].
+
+## Bootstrap Context Budgets
+
+The bootstrap docs ([[AGENTS]], [[01_Profile/now]], [[01_Profile/preferences]], [[01_Profile/defaults]], this file, [[00_Meta/index]]) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `python3 10_Agents/tools/brain/brain.py context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
+
+## Operating Rhythm
+
+The canonical cadence table — which skills run daily, weekly, monthly, and quarterly — lives in [[10_Agents/skills/README]] § The Rhythm. Automations wire that table; documents don't duplicate it.
 
 ## Recency
 
@@ -109,6 +143,8 @@ Agents detecting what changed:
 1. Check `updated:` field in frontmatter (primary signal)
 2. Read [[00_Meta/changelog]] for structural changes
 3. Use `git log -n 10` for detailed file-level history
+
+**Changelog entry format** — new entries use `## [YYYY-MM-DD] <operation> | <summary>`, grep-parseable via `grep '^## \['`. Forward-only: entries before the 2026-08-11 `recategorize` entry keep their original `## YYYY-MM-DD — Title` headers, so the grep matches new-format entries, not the full history. `<operation>` is a short kebab-case verb phrase (`add-skill`, `restructure`, `backfill`); the bullets below the header carry the detail.
 
 **Duty to bump:** any edit to a note — creation or modification — must set `updated:` to the current date. The recency signal decays without this.
 

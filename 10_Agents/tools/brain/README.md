@@ -7,6 +7,7 @@ tags:
   - topic/software
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # `brain` — Vault Index CLI
@@ -39,6 +40,8 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 | `show <note>` | The full index record for one note |
 | `recent [n]` | Notes by `updated:` descending (default 10) |
 | `validate` | Convention checks; exit 0 clean / 1 errors / 2 warnings. `--check-index` also verifies the committed index is fresh |
+| `curate` | Re-review signals: expired / missing / over-cap `expires:`, oversized, stale (backlink-weighted), orphans, unreferenced assets. `--check-urls` adds network URL probes (opt-in; never pre-commit) |
+| `context` | Bootstrap docs' sizes against their context budgets (spec §14; tunables live in one constants block in `brain.py`) |
 
 ## The committed index
 

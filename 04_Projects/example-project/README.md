@@ -4,7 +4,8 @@ tags:
   - type/project
   - status/active
   - audience/human
-updated: 2026-08-10
+updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Example Project
