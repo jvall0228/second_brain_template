@@ -25,6 +25,10 @@ Twelve harness-agnostic skills in the Agent Skills format (folder-per-skill `SKI
 
 - [[10_Agents/tools/brain/README|brain]] — the vault index CLI: structured queries (`list`, `search`, `links`, `tags`, `show`, `recent`) plus `validate`; the committed `vault-index.json` it maintains is readable without running anything. See [[10_Agents/tools/README|Tools]] for the directory rules.
 
+## Environments
+
+Environment-scoped notes (one directory per machine/execution environment), starting with the orientation inventory that [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]] produces. Never bootstrap-linked; each note self-guards with an applicability preamble. See [[10_Agents/environments/README|Environments]] for the convention (full scoping machinery deferred to #15).
+
 ## Solutions
 
 A running knowledge base of solutions to recurring problems agents hit while working in the vault, organized by category. Add a note whenever you solve something worth not re-deriving later. See [[10_Agents/solutions/README|Solutions]] for the category index.
