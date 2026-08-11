@@ -144,6 +144,8 @@ Agents detecting what changed:
 2. Read [[00_Meta/changelog]] for structural changes
 3. Use `git log -n 10` for detailed file-level history
 
+**Changelog entry format** (forward-only since 2026-08-11; older entries keep their original headers): `## [YYYY-MM-DD] <operation> | <summary>` — one grep (`grep '^## \['`) answers "what changed and when" for humans, agents, and tooling alike. `<operation>` is a short kebab-case verb phrase (`add-skill`, `restructure`, `backfill`); the bullets below the header carry the detail.
+
 **Duty to bump:** any edit to a note — creation or modification — must set `updated:` to the current date. The recency signal decays without this.
 
 Agents should **not** re-read files whose `updated:` date hasn't changed since last read. `updated:` has day granularity: for same-day changes, `git log` is authoritative.

@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Curate
 
+**CODE stage:** System (outside the loop) — epistemic integrity of distilled knowledge.
+
 Epistemic integrity, where [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] is mechanical integrity: this skill keeps the vault's *claims* current, not its links and frontmatter. Detection is `brain`'s job; this skill supplies the judgment.
 
 ## Steps

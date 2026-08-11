@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Distill Note
 
+**CODE stage:** Distill.
+
 Distillation here is structural, not decorative: a captured note becomes an atomic, evergreen claim that a future reader — human or agent — can build on without the original context.
 
 ## Steps

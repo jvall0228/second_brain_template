@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Vault Answer
 
+**CODE stage:** Express — vault knowledge leaves as cited answers; substantive ones are recaptured (Express → Capture).
+
 Retrieval discipline for questions the vault should answer. The vault is the source of truth; the model's own knowledge is a clearly labeled supplement, never a silent substitute.
 
 ## Steps

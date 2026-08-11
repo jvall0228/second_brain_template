@@ -144,85 +144,101 @@
     {
      "level": 2,
      "line": 15,
+     "text": "[2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)"
+    },
+    {
+     "level": 2,
+     "line": 21,
      "text": "2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)"
     },
     {
      "level": 2,
-     "line": 22,
+     "line": 28,
      "text": "2026-08-11 — Express & Outbox (Ops Plan Phase 5)"
     },
     {
      "level": 2,
-     "line": 29,
+     "line": 35,
      "text": "2026-08-11 — Curation & Signals (Ops Plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 42,
      "text": "2026-08-11 — Note Surgery (Ops Plan Phase 3)"
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 47,
      "text": "2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)"
     },
     {
      "level": 2,
-     "line": 47,
+     "line": 53,
      "text": "2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)"
     },
     {
      "level": 2,
-     "line": 56,
+     "line": 62,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 62,
+     "line": 68,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 69,
+     "line": 75,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 76,
+     "line": 82,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 82,
+     "line": 88,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 88,
+     "line": 94,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 98,
+     "line": 104,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 103,
+     "line": 109,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 109,
+     "line": 115,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 120,
+     "line": 126,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
    "links": [
+    {
+     "display": "conventions § Recency",
+     "embed": false,
+     "fragment": "Recency",
+     "line": 13,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Recency|conventions § Recency]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
     {
      "display": null,
      "embed": false,
@@ -240,6 +256,39 @@
      "fragment": null,
      "line": 17,
      "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -249,7 +298,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 18,
+     "line": 24,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -260,7 +309,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 19,
+     "line": 25,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -271,7 +320,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 19,
+     "line": 25,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -282,7 +331,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 20,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -293,7 +342,7 @@
      "display": "express-packet",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 31,
      "placeholder": false,
      "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
      "resolved": "10_Agents/skills/express-packet/SKILL.md",
@@ -304,33 +353,11 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 32,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
      "target": "AGENTS",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 26,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 26,
-     "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
      "warnings": []
     },
     {
@@ -345,10 +372,32 @@
      "warnings": []
     },
     {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 32,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 38,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 40,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
@@ -359,7 +408,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 44,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -370,7 +419,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 45,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -381,7 +430,7 @@
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 43,
+     "line": 49,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -392,7 +441,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 44,
+     "line": 50,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -403,7 +452,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 45,
+     "line": 51,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -414,7 +463,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 49,
+     "line": 55,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -425,7 +474,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 53,
+     "line": 59,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -436,7 +485,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 53,
+     "line": 59,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -447,7 +496,7 @@
      "display": "the harness research's Copilot section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 54,
+     "line": 60,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -458,7 +507,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -469,7 +518,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -480,7 +529,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -491,7 +540,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -502,7 +551,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 65,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -513,7 +562,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 65,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -524,7 +573,7 @@
      "display": "that section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 64,
+     "line": 70,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|that section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -535,7 +584,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 71,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -546,7 +595,7 @@
      "display": "the wiring doc",
      "embed": false,
      "fragment": null,
-     "line": 66,
+     "line": 72,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -557,7 +606,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 66,
+     "line": 72,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -568,7 +617,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 66,
+     "line": 72,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -579,7 +628,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 67,
+     "line": 73,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -590,7 +639,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 74,
+     "line": 80,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -601,7 +650,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 78,
+     "line": 84,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -612,7 +661,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 91,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -623,7 +672,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 86,
+     "line": 92,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -634,18 +683,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 90,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 100,
+     "line": 96,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -658,6 +696,17 @@
      "fragment": null,
      "line": 106,
      "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 112,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -667,7 +716,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 113,
+     "line": 119,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -678,7 +727,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 114,
+     "line": 120,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -689,7 +738,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 114,
+     "line": 120,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -700,7 +749,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 118,
+     "line": 124,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -708,7 +757,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 21768,
+   "sizeBytes": 22922,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -1014,7 +1063,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8439,
+   "sizeBytes": 8824,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -2780,7 +2829,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10024,
+   "sizeBytes": 10021,
    "title": "Implementation Plan: CODE Operations & Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
@@ -9182,8 +9231,10 @@
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
+    "10_Agents/skills/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
-    "10_Agents/skills/recommended-automations/SKILL.md"
+    "10_Agents/skills/recommended-automations/SKILL.md",
+    "AGENTS.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -9207,16 +9258,51 @@
     {
      "level": 2,
      "line": 18,
-     "text": "Shipped skills"
+     "text": "The CODE Loop in This Vault"
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 29,
+     "text": "Shipped skills"
+    },
+    {
+     "level": 3,
+     "line": 31,
+     "text": "Capture"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "Organize"
+    },
+    {
+     "level": 3,
+     "line": 47,
+     "text": "Distill"
+    },
+    {
+     "level": 3,
+     "line": 53,
+     "text": "Express"
+    },
+    {
+     "level": 3,
+     "line": 60,
+     "text": "System"
+    },
+    {
+     "level": 3,
+     "line": 71,
+     "text": "Onboarding & environment"
+    },
+    {
+     "level": 2,
+     "line": 79,
      "text": "The Rhythm (cadence table)"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 92,
      "text": "Rules"
     }
    ],
@@ -9233,10 +9319,21 @@
      "warnings": []
     },
     {
+     "display": null,
+     "embed": false,
+     "fragment": "The Rhythm (cadence table)",
+     "line": 27,
+     "placeholder": false,
+     "raw": "[[#The Rhythm (cadence table)]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "",
+     "warnings": []
+    },
+    {
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 35,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL\\|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -9244,32 +9341,10 @@
      "warnings": []
     },
     {
-     "display": "triage-inbox",
-     "embed": false,
-     "fragment": null,
-     "line": 23,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/triage-inbox/SKILL\\|triage-inbox]]",
-     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
-     "target": "10_Agents/skills/triage-inbox/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "distill-note",
-     "embed": false,
-     "fragment": null,
-     "line": 24,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/distill-note/SKILL\\|distill-note]]",
-     "resolved": "10_Agents/skills/distill-note/SKILL.md",
-     "target": "10_Agents/skills/distill-note/SKILL",
-     "warnings": []
-    },
-    {
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 36,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -9277,65 +9352,10 @@
      "warnings": []
     },
     {
-     "display": "periodic-review",
-     "embed": false,
-     "fragment": null,
-     "line": 26,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
-     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
-     "target": "10_Agents/skills/periodic-review/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 27,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
-     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
-     "target": "10_Agents/skills/vault-maintenance/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "link-repair",
-     "embed": false,
-     "fragment": null,
-     "line": 28,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/link-repair/SKILL\\|link-repair]]",
-     "resolved": "10_Agents/skills/link-repair/SKILL.md",
-     "target": "10_Agents/skills/link-repair/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "merge-notes",
-     "embed": false,
-     "fragment": null,
-     "line": 29,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/merge-notes/SKILL\\|merge-notes]]",
-     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
-     "target": "10_Agents/skills/merge-notes/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "curate",
-     "embed": false,
-     "fragment": null,
-     "line": 30,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
-     "resolved": "10_Agents/skills/curate/SKILL.md",
-     "target": "10_Agents/skills/curate/SKILL",
-     "warnings": []
-    },
-    {
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 37,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL\\|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -9346,7 +9366,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 38,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL\\|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -9354,131 +9374,10 @@
      "warnings": []
     },
     {
-     "display": "vault-answer",
-     "embed": false,
-     "fragment": null,
-     "line": 33,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-answer/SKILL\\|vault-answer]]",
-     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
-     "target": "10_Agents/skills/vault-answer/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "express-packet",
-     "embed": false,
-     "fragment": null,
-     "line": 34,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/express-packet/SKILL\\|express-packet]]",
-     "resolved": "10_Agents/skills/express-packet/SKILL.md",
-     "target": "10_Agents/skills/express-packet/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "onboard-harness",
-     "embed": false,
-     "fragment": null,
-     "line": 35,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
-     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
-     "target": "10_Agents/skills/onboard-harness/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 36,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL\\|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "agent-orientation",
-     "embed": false,
-     "fragment": null,
-     "line": 37,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
-     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
-     "target": "10_Agents/skills/agent-orientation/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "recommended-automations",
-     "embed": false,
-     "fragment": null,
-     "line": 38,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/recommended-automations/SKILL\\|recommended-automations]]",
-     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
-     "target": "10_Agents/skills/recommended-automations/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "self-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 39,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
-     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
-     "target": "10_Agents/skills/self-maintenance/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "recommended-automations",
-     "embed": false,
-     "fragment": null,
-     "line": 43,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
-     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
-     "target": "10_Agents/skills/recommended-automations/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 43,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 43,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": "daily-log",
-     "embed": false,
-     "fragment": null,
-     "line": 47,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
-     "resolved": "10_Agents/skills/daily-log/SKILL.md",
-     "target": "10_Agents/skills/daily-log/SKILL",
-     "warnings": []
-    },
-    {
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 48,
+     "line": 44,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL\\|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -9489,7 +9388,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 48,
+     "line": 45,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -9497,21 +9396,43 @@
      "warnings": []
     },
     {
-     "display": "periodic-review",
+     "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 49,
+     "line": 51,
      "placeholder": false,
-     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
-     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
-     "target": "10_Agents/skills/periodic-review/SKILL",
+     "raw": "[[10_Agents/skills/distill-note/SKILL\\|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-answer",
+     "embed": false,
+     "fragment": null,
+     "line": 57,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-answer/SKILL\\|vault-answer]]",
+     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
+     "target": "10_Agents/skills/vault-answer/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "express-packet",
+     "embed": false,
+     "fragment": null,
+     "line": 58,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/express-packet/SKILL\\|express-packet]]",
+     "resolved": "10_Agents/skills/express-packet/SKILL.md",
+     "target": "10_Agents/skills/express-packet/SKILL",
      "warnings": []
     },
     {
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 49,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -9522,7 +9443,183 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 49,
+     "line": 65,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
+     "resolved": "10_Agents/skills/curate/SKILL.md",
+     "target": "10_Agents/skills/curate/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "link-repair",
+     "embed": false,
+     "fragment": null,
+     "line": 66,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/link-repair/SKILL\\|link-repair]]",
+     "resolved": "10_Agents/skills/link-repair/SKILL.md",
+     "target": "10_Agents/skills/link-repair/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "merge-notes",
+     "embed": false,
+     "fragment": null,
+     "line": 67,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/merge-notes/SKILL\\|merge-notes]]",
+     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
+     "target": "10_Agents/skills/merge-notes/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 68,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL\\|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "self-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 69,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
+     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
+     "target": "10_Agents/skills/self-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 75,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL\\|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 77,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 85,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 86,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL\\|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 86,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 87,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 87,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
+     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
+     "target": "10_Agents/skills/vault-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "curate",
+     "embed": false,
+     "fragment": null,
+     "line": 87,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
@@ -9533,7 +9630,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 50,
+     "line": 88,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -9544,7 +9641,7 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 50,
+     "line": 88,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
@@ -9555,7 +9652,7 @@
      "display": "self-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 50,
+     "line": 88,
      "placeholder": false,
      "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
      "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
@@ -9566,7 +9663,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 52,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -9577,7 +9674,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 52,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -9588,7 +9685,7 @@
      "display": "express-packet",
      "embed": false,
      "fragment": null,
-     "line": 52,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
      "resolved": "10_Agents/skills/express-packet/SKILL.md",
@@ -9599,7 +9696,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 52,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -9610,7 +9707,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 94,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -9618,7 +9715,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5775,
+   "sizeBytes": 6640,
    "title": "Agent Skills",
    "updated": "2026-08-11"
   },
@@ -9651,22 +9748,22 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Integration preference ladder (apply at every step)"
     },
     {
      "level": 2,
-     "line": 27,
+     "line": 29,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2990,
+   "sizeBytes": 3033,
    "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
   },
@@ -9698,17 +9795,17 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 37,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 43,
      "text": "References"
     }
    ],
@@ -9717,7 +9814,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 15,
+     "line": 17,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -9728,7 +9825,7 @@
      "display": null,
      "embed": false,
      "fragment": "Expiration (          )",
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Expiration (          )]]",
      "resolved": "00_Meta/conventions.md",
@@ -9739,7 +9836,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 24,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -9750,7 +9847,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -9761,7 +9858,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 33,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -9772,7 +9869,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 45,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -9783,7 +9880,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 46,
+     "line": 48,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -9791,7 +9888,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3553,
+   "sizeBytes": 3644,
    "title": "Skill: Curate",
    "updated": "2026-08-11"
   },
@@ -9822,22 +9919,22 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 24,
+     "line": 26,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 29,
+     "line": 31,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 1727,
+   "sizeBytes": 1753,
    "title": "Skill: Daily Log",
    "updated": "2026-08-11"
   },
@@ -9869,17 +9966,17 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 32,
+     "line": 34,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "References"
     }
    ],
@@ -9888,7 +9985,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 19,
+     "line": 21,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -9899,7 +9996,7 @@
      "display": "template-zettel",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[09_Templates/template-zettel|template-zettel]]",
      "resolved": "09_Templates/template-zettel.md",
@@ -9910,7 +10007,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 42,
      "placeholder": false,
      "raw": "[[09_Templates/template-zettel]]",
      "resolved": "09_Templates/template-zettel.md",
@@ -9921,7 +10018,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 43,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -9932,7 +10029,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 42,
+     "line": 44,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -9943,7 +10040,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 43,
+     "line": 45,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -9951,7 +10048,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3208,
+   "sizeBytes": 3234,
    "title": "Skill: Distill Note",
    "updated": "2026-08-11"
   },
@@ -9984,17 +10081,17 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 32,
+     "line": 34,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "References"
     }
    ],
@@ -10003,7 +10100,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 24,
      "placeholder": false,
      "raw": "[[09_Templates/template-decision-record]]",
      "resolved": "09_Templates/template-decision-record.md",
@@ -10014,7 +10111,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 24,
      "placeholder": false,
      "raw": "[[09_Templates/template-comparison]]",
      "resolved": "09_Templates/template-comparison.md",
@@ -10025,7 +10122,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 26,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -10036,7 +10133,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 27,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -10047,7 +10144,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 27,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -10058,7 +10155,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 31,
      "placeholder": false,
      "raw": "[[02_Outbox/README]]",
      "resolved": "02_Outbox/README.md",
@@ -10069,7 +10166,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 42,
      "placeholder": false,
      "raw": "[[02_Outbox/README]]",
      "resolved": "02_Outbox/README.md",
@@ -10080,7 +10177,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 43,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -10091,7 +10188,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 42,
+     "line": 44,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -10099,7 +10196,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3490,
+   "sizeBytes": 3588,
    "title": "Skill: Express Packet",
    "updated": "2026-08-11"
   },
@@ -10131,22 +10228,22 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 38,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 43,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2009,
+   "sizeBytes": 2035,
    "title": "Skill: Inbox Capture",
    "updated": "2026-08-11"
   },
@@ -10177,22 +10274,22 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 32,
+     "line": 34,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 39,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2154,
+   "sizeBytes": 2198,
    "title": "Skill: Link Repair",
    "updated": "2026-08-11"
   },
@@ -10226,27 +10323,27 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Merge — two or more notes share a subject"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 28,
      "text": "Split — one note has outgrown one topic"
     },
     {
      "level": 2,
-     "line": 34,
+     "line": 36,
      "text": "Rename / move — the safe procedure"
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 43,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 48,
+     "line": 50,
      "text": "References"
     }
    ],
@@ -10255,7 +10352,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 15,
+     "line": 17,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -10266,7 +10363,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 50,
+     "line": 52,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -10277,7 +10374,7 @@
      "display": "link-repair",
      "embed": false,
      "fragment": null,
-     "line": 51,
+     "line": 53,
      "placeholder": false,
      "raw": "[[10_Agents/skills/link-repair/SKILL|link-repair]]",
      "resolved": "10_Agents/skills/link-repair/SKILL.md",
@@ -10288,7 +10385,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 53,
+     "line": 55,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -10296,7 +10393,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3664,
+   "sizeBytes": 3708,
    "title": "Skill: Merge Notes",
    "updated": "2026-08-11"
   },
@@ -10330,27 +10427,27 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Inputs"
     },
     {
      "level": 2,
-     "line": 24,
+     "line": 26,
      "text": "Install algorithm"
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 45,
      "text": "Re-run and uninstall"
     },
     {
      "level": 2,
-     "line": 48,
+     "line": 50,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 56,
      "text": "References"
     }
    ],
@@ -10359,7 +10456,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 31,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -10367,7 +10464,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4888,
+   "sizeBytes": 4917,
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
@@ -10400,37 +10497,37 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "The ruling constraint: the owner may be non-technical"
     },
     {
      "level": 2,
-     "line": 27,
+     "line": 29,
      "text": "Teaching: tone and best practices"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "Write policy during onboarding"
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 44,
      "text": "State: the onboarding checklist"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 54,
      "text": "Stages"
     },
     {
      "level": 2,
-     "line": 65,
+     "line": 67,
      "text": "Orchestration rules"
     },
     {
      "level": 2,
-     "line": 69,
+     "line": 71,
      "text": "Exit criteria (\"onboarded\")"
     }
    ],
@@ -10439,7 +10536,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 15,
+     "line": 17,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -10450,7 +10547,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 27,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -10461,7 +10558,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 27,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -10472,7 +10569,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 27,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -10483,7 +10580,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 57,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -10494,7 +10591,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 57,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -10505,7 +10602,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 57,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -10516,7 +10613,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 58,
      "placeholder": false,
      "raw": "[[09_Templates/template-project]]",
      "resolved": "09_Templates/template-project.md",
@@ -10527,7 +10624,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 58,
      "placeholder": false,
      "raw": "[[09_Templates/template-area]]",
      "resolved": "09_Templates/template-area.md",
@@ -10538,7 +10635,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 59,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -10549,7 +10646,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 59,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -10560,7 +10657,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 59,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -10571,7 +10668,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 60,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -10582,7 +10679,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 61,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -10593,7 +10690,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 61,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -10601,7 +10698,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8039,
+   "sizeBytes": 8068,
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
   },
@@ -10632,43 +10729,21 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Cadence map"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 28,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 42,
      "text": "References"
     }
    ],
    "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 35,
-     "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
-     "warnings": []
-    },
-    {
-     "display": "merge-notes",
-     "embed": false,
-     "fragment": null,
-     "line": 36,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
-     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
-     "target": "10_Agents/skills/merge-notes/SKILL",
-     "warnings": []
-    },
     {
      "display": null,
      "embed": false,
@@ -10679,9 +10754,31 @@
      "resolved": "01_Profile/now.md",
      "target": "01_Profile/now",
      "warnings": []
+    },
+    {
+     "display": "merge-notes",
+     "embed": false,
+     "fragment": null,
+     "line": 38,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
+     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
+     "target": "10_Agents/skills/merge-notes/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 39,
+     "placeholder": false,
+     "raw": "[[01_Profile/now]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
     }
    ],
-   "sizeBytes": 3012,
+   "sizeBytes": 3146,
    "title": "Skill: Periodic Review",
    "updated": "2026-08-11"
   },
@@ -10715,32 +10812,32 @@
     },
     {
      "level": 2,
-     "line": 20,
+     "line": 22,
      "text": "Ground rules"
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 30,
      "text": "Inbound flows (adapt per owner)"
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 39,
      "text": "Rhythm jobs (from the cadence table)"
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 51,
      "text": "Scheduling mechanism per harness"
     },
     {
      "level": 2,
-     "line": 61,
+     "line": 63,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 68,
+     "line": 70,
      "text": "References"
     }
    ],
@@ -10749,7 +10846,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 18,
+     "line": 20,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -10760,7 +10857,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 70,
+     "line": 72,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -10768,7 +10865,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5291,
+   "sizeBytes": 5358,
    "title": "Skill: Recommended Automations",
    "updated": "2026-08-11"
   },
@@ -10803,22 +10900,22 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 30,
+     "line": 32,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 3599,
+   "sizeBytes": 3766,
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -10848,22 +10945,22 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Scope"
     },
     {
      "level": 2,
-     "line": 21,
+     "line": 23,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 30,
+     "line": 32,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2480,
+   "sizeBytes": 2524,
    "title": "Skill: Self Maintenance",
    "updated": "2026-08-11"
   },
@@ -10894,17 +10991,17 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 45,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 1876,
+   "sizeBytes": 1902,
    "title": "Skill: Solution Capture",
    "updated": "2026-08-11"
   },
@@ -10938,12 +11035,12 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 37,
      "text": "References"
     }
    ],
@@ -10952,7 +11049,7 @@
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -10963,7 +11060,7 @@
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 41,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -10971,7 +11068,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3366,
+   "sizeBytes": 3481,
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
   },
@@ -11003,17 +11100,17 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 29,
+     "line": 31,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 37,
      "text": "References"
     }
    ],
@@ -11022,7 +11119,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -11033,7 +11130,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 26,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -11044,7 +11141,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -11055,7 +11152,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 29,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -11066,7 +11163,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -11077,7 +11174,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 40,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -11088,7 +11185,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 41,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -11099,7 +11196,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 42,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -11110,7 +11207,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 43,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -11118,7 +11215,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3073,
+   "sizeBytes": 3198,
    "title": "Skill: Vault Answer",
    "updated": "2026-08-11"
   },
@@ -11151,17 +11248,17 @@
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 19,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 32,
+     "line": 34,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "References"
     }
    ],
@@ -11170,7 +11267,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -11181,7 +11278,7 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 36,
+     "line": 38,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
@@ -11189,7 +11286,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2587,
+   "sizeBytes": 2656,
    "title": "Skill: Vault Maintenance",
    "updated": "2026-08-11"
   },
@@ -12704,13 +12801,24 @@
      "fragment": null,
      "line": 110,
      "placeholder": false,
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 111,
+     "placeholder": false,
      "raw": "[[09_Templates/README]]",
      "resolved": "09_Templates/README.md",
      "target": "09_Templates/README",
      "warnings": []
     }
    ],
-   "sizeBytes": 5244,
+   "sizeBytes": 5350,
    "title": "Agents",
    "updated": "2026-08-11"
   },

@@ -10,7 +10,13 @@ updated: 2026-08-11
 
 # Changelog
 
-Notable structural changes to the vault. For individual file history, use `git log`.
+Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
+
+## [2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)
+
+- [[10_Agents/skills/README]] restructured into CODE-staged sections (Capture / Organize / Distill / Express / System / Onboarding) with "The CODE Loop in This Vault" intro mapping stage → skills → directories (R5); skill names stay imperative verbs — categorization, no renames (R1). [[AGENTS]] points at the loop in one Key Links line.
+- Every SKILL.md now opens with a one-line **CODE stage:** note (R1), with boundary notes where a skill spans stages (R4): research-to-resource is Capture + Distill; periodic-review's weekly cadence is the Organize heartbeat; vault-answer and express-packet close the Express → Capture loop.
+- Changelog entry headers standardized to the grep-parseable form above (R21), documented in [[00_Meta/conventions]] § Recency — this entry is the first compliant one; history is untouched.
 
 ## 2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)
 
@@ -125,4 +131,4 @@ Resolved the findings of the spec review in `2026-08-11-prd-review.md` (then in 
 - Seeded one worked example per section (project, area, resource, person, idea, daily log, weekly review) — delete these once you've learned the pattern.
 - Preserved structure, conventions, note templates, and agent operating docs.
 
-<!-- Add a dated entry here each time you make a structural change to the vault. -->
+<!-- Add an entry at the top for each structural change: ## [YYYY-MM-DD] <operation> | <summary> -->

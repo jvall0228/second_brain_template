@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Periodic Review
 
+**CODE stage:** Organize — the weekly review is the vault's Organize heartbeat; longer cadences add reflection and goal alignment.
+
 Produce the review note for a period in `03_Journal/periodic/<cadence>/`, grounded in the period's real activity.
 
 ## Cadence map

@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Merge Notes
 
+**CODE stage:** System (outside the loop).
+
 Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]'s duplication scan, reviews); this skill only **executes what the human has already approved**, naming the exact notes involved.
 
 ## Merge — two or more notes share a subject

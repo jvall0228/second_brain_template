@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Triage Inbox
 
+**CODE stage:** Organize — takes Capture's output and files it into PARA; hands `type/zettel` items to Distill.
+
 Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the skill; moving is the human's call.**
 
 ## Steps

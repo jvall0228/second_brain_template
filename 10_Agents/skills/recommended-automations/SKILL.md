@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Recommended Automations
 
+**CODE stage:** System (outside the loop) — schedules the loop.
+
 Turn recurring vault operations into scheduled flows the owner doesn't have to remember. Two families:
 
 1. **Inbound flows** — external sources captured into the vault (email, calendar, chat, transcripts).

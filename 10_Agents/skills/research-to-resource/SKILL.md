@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Research to Resource
 
+**CODE stage:** Capture + Distill (boundary skill) — research is captured and distilled in one pass: provenance is the capture, the note shape is the distillation.
+
 Convert research output into reference material that stays useful after the session ends.
 
 ## Steps

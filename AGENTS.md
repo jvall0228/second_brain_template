@@ -107,4 +107,5 @@ To detect recent changes: check `updated:` fields, read [[00_Meta/changelog]], o
 - Inbox: [[02_Inbox/README]]
 - PARA roots: [[04_Projects/README|Projects]] | [[05_Areas/README|Areas]] | [[06_Resources/README|Resources]] | [[07_Archives/README|Archives]]
 - Agent docs: [[10_Agents/README]]
+- The CODE loop: [[10_Agents/skills/README]] — stage → skill → directory map, and the cadence table
 - Templates: [[09_Templates/README]]

@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Vault Maintenance
 
+**CODE stage:** System (outside the loop) — mechanical integrity.
+
 Keep the vault passing its own checks and its snapshots truthful.
 
 ## Steps

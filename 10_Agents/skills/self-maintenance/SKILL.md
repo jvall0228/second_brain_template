@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Self Maintenance
 
+**CODE stage:** System (outside the loop).
+
 Generated tooling rots as environments drift. This skill keeps the generated layer honest.
 
 ## Scope

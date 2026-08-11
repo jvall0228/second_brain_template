@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Inbox Capture
 
+**CODE stage:** Capture.
+
 Write a new note to `02_Inbox/` that passes validation on the first try.
 
 ## Steps

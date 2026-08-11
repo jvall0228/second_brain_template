@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Link Repair
 
+**CODE stage:** System (outside the loop).
+
 Drive unresolved wikilinks to zero without guessing.
 
 ## Steps

@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Express Packet
 
+**CODE stage:** Express — the outbound packet lane; shipping learnings recapture to the Inbox.
+
 The Express stage: knowledge only pays off when it leaves the vault. This skill turns vault notes into an intermediate packet the owner can ship — and never ships anything itself.
 
 ## Steps

@@ -12,6 +12,8 @@ expires: 2027-08-11
 
 # Onboard Owner
 
+**CODE stage:** Onboarding.
+
 Turn a fresh copy of this template into *someone's* second brain. This is the human counterpart to [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]: that skill wires up the software; this one welcomes the owner. Requirements history: `07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md`.
 
 ## The ruling constraint: the owner may be non-technical
