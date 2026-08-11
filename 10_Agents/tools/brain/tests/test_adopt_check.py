@@ -424,6 +424,55 @@ class AdoptCheckTest(unittest.TestCase):
         self.assertEqual(len(recoveries), 1)
         self.assertEqual(recoveries[0].read_text(encoding="utf-8"), "preserve me\n")
 
+    def test_recreated_edit_path_is_never_overwritten_and_is_preserved(self):
+        copy_repo(self.copy)
+        plan = build_plan(self.copy)
+        target = (self.copy / plan["edits"][0]["path"]).resolve()
+        original = target.read_bytes()
+        late = b"late concurrent owner edit\n"
+        real_link = os.link
+        injected = False
+
+        def recreate_before_install(src, dst, *args, **kwargs):
+            nonlocal injected
+            if not injected and Path(dst) == target:
+                target.write_bytes(late)
+                injected = True
+            return real_link(src, dst, *args, **kwargs)
+
+        with mock.patch("adopt_cleanup.os.link", side_effect=recreate_before_install):
+            with self.assertRaisesRegex(AdoptionError, "preserved late paths"):
+                apply_plan(self.copy, plan)
+        self.assertTrue(injected)
+        self.assertEqual(target.read_bytes(), original)
+        recoveries = list(self.copy.glob(".adopt-recovery-*/**/*"))
+        self.assertTrue(any(path.is_file() and path.read_bytes() == late for path in recoveries))
+
+    def test_file_to_directory_swap_fails_kind_authentication_and_restores_directory(self):
+        copy_repo(self.copy)
+        plan = build_plan(self.copy)
+        row = next(item for item in plan["delete"] if item["kind"] == "file")
+        target = (self.copy / row["path"]).resolve()
+        original = target.read_bytes()
+        real_replace = os.replace
+        injected = False
+
+        def replace_file_with_directory(src, dst, *args, **kwargs):
+            nonlocal injected
+            if not injected and Path(src) == target:
+                target.unlink()
+                target.mkdir()
+                (target / "owner-layout.md").write_bytes(original)
+                injected = True
+            return real_replace(src, dst, *args, **kwargs)
+
+        with mock.patch("adopt_cleanup.os.replace", side_effect=replace_file_with_directory):
+            with self.assertRaisesRegex(AdoptionError, "moved source failed authentication"):
+                apply_plan(self.copy, plan)
+        self.assertTrue(injected)
+        self.assertTrue(target.is_dir())
+        self.assertEqual((target / "owner-layout.md").read_bytes(), original)
+
     def test_lock_retains_interrupted_transaction_and_recover_restores_it(self):
         copy_repo(self.copy)
         plan = build_plan(self.copy)

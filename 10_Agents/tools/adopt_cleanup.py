@@ -662,10 +662,30 @@ def _target_matches(path: Path, row: dict[str, Any]) -> bool:
     if not os.path.lexists(path) or path.is_symlink():
         return False
     if row.get("kind") == "directory":
+        if not path.is_dir():
+            return False
         contents = inventory_target(path)
         return contents == row.get("contents") and sha256_bytes(canonical_json(contents)) == row.get("sha256")
+    if row.get("kind") != "file" or not path.is_file():
+        return False
     contents = inventory_target(path)
     return len(contents) == 1 and contents[0]["sha256"] == row.get("sha256")
+
+
+def _install_staged_edit(stage: Path, original: Path) -> None:
+    """Install a staged edit only while its original pathname is absent."""
+    try:
+        # The transaction and vault share a filesystem, so a hard link gives
+        # us an atomic create-if-absent primitive on POSIX and Windows. Unlike
+        # replace/rename, it never overwrites a concurrently recreated path.
+        os.link(stage, original, follow_symlinks=False)
+    except OSError as exc:
+        if os.path.lexists(original):
+            raise AdoptionError(
+                f"edit target was recreated during apply: {original.name}"
+            ) from exc
+        raise AdoptionError(f"cannot install staged edit without replacement: {original.name}") from exc
+    stage.unlink()
 
 
 def _write_journal(transaction: Path, journal: dict[str, Any]) -> None:
@@ -1012,7 +1032,7 @@ def apply_plan(repo: Path, plan: dict[str, Any]) -> None:
             _write_journal(transaction, journal)
             _verify_backup(transaction, index, operation)
             if operation["operation"] == "edit":
-                os.replace(_operation_stage(transaction, index), original)
+                _install_staged_edit(_operation_stage(transaction, index), original)
                 operation["state"] = "installed"
                 _write_journal(transaction, journal)
 
