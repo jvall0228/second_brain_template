@@ -11563,17 +11563,17 @@
     },
     {
      "level": 2,
-     "line": 64,
+     "line": 66,
      "text": "Re-run and uninstall"
     },
     {
      "level": 2,
-     "line": 69,
+     "line": 71,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 77,
+     "line": 79,
      "text": "References"
     }
    ],
@@ -11590,7 +11590,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 7473,
+   "sizeBytes": 8688,
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
@@ -13698,7 +13698,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 28,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -13709,7 +13709,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 29,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -14102,7 +14102,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6540,
+   "sizeBytes": 5897,
    "title": "Agents",
    "updated": "2026-08-11"
   },
