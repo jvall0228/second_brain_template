@@ -3,8 +3,7 @@ title: "DR: Static-Site Framework Choice"
 tags:
   - type/decision
   - audience/human
-updated: 2026-08-11
-expires: 2027-08-11
+updated: 2025-01-10
 ---
 
 # Static-Site Framework Choice

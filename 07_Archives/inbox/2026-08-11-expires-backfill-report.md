@@ -1,14 +1,27 @@
 ---
-title: "Report: expires: Backfill — Judgment Calls for Review"
+title: "Report: expires: Backfill — Judgment Calls (Resolved)"
 tags:
   - type/log
   - audience/human
   - audience/agent
-  - workflow/needs-review
+  - status/done
 updated: 2026-08-11
 ---
 
 # `expires:` Backfill — Judgment Calls for Review
+
+## Resolution (2026-08-11)
+
+Owner approved all four action items. Applied:
+
+1. **Decision records exempted by type.** `type/decision` added to brain's `EXPIRES_EXEMPT_TYPE_TAGS` (and documented in [[00_Meta/conventions#Expiration (`expires:`)]] and the spec); `expires:` dropped from the example decision record, and its `updated:` restored to the event date `2025-01-10` (event records freeze, like Journal entries). The orphan check stays path-only, so a decision record still wants inbound links.
+2. **Oversized notes:** [[06_Resources/harness-primitives-research]] was **split** — 7 per-harness notes + a standards note ([[06_Resources/harness-claude-code]], [[06_Resources/harness-codex]], [[06_Resources/harness-opencode]], [[06_Resources/harness-pi]], [[06_Resources/harness-cursor]], [[06_Resources/harness-copilot]], [[06_Resources/harness-muse-code]], [[06_Resources/harness-standards]]) with the hub keeping the overlap matrix and comparative findings. [[00_Meta/prd]] and `10_Agents/tools/brain/spec.md` **accepted** as coherent single-topic notes (product memory / one spec). `harness-copilot` (20.4 KB) also accepted — one harness is one topic. These three are reviewed-coherent; their oversized warnings are expected.
+3. **Orphan READMEs linked** from [[00_Meta/index]] (Profile, Meta, Agent docs, Harness adapters) — orphan signal now clean, no blanket README exemption.
+4. **Now-page TTL kept at 12 months** — the quarterly review refreshes it (a shorter TTL would double-signal), per the recommendation below.
+
+Original review request preserved below for the record.
+
+---
 
 The one-time backfill (ops plan Phase 4.3) added `expires:` to all 56 in-scope notes mechanically: 3-month TTL (2026-11-11) for the 8 harness wiring docs, the harnesses README, and [[06_Resources/harness-primitives-research]]; 6-month (2027-02-11) for [[06_Resources/example-resource]] (modeling the research TTL for adopters); 12-month (2027-08-11) for everything else. Every touched note's `updated:` was bumped per the duty-to-bump rule. The calls below were made mechanically but deserve an owner look:
 

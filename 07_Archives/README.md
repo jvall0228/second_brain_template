@@ -35,6 +35,7 @@ Mirror the source structure:
 ## Contents
 
 - [[07_Archives/inbox/2026-08-11-prd-review|PRD Review (2026-08-11)]] — Spec review record; findings resolved in PRD revision 2.0
+- [[07_Archives/inbox/2026-08-11-expires-backfill-report|expires: Backfill Review (2026-08-11)]] — Resolved: decision-record exemption, harness-research split, orphan-README links
 
 ## Related
 

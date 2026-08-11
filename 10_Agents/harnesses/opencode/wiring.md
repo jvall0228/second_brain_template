@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # opencode Wiring
 
-Facts verified 2026-08-11 against [opencode.ai/docs](https://opencode.ai/docs) (see [[06_Resources/harness-primitives-research#opencode|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [opencode.ai/docs](https://opencode.ai/docs) (see [[06_Resources/harness-opencode|research]]); re-verify before relying on paths.
 
 ## Entrypoint loading
 

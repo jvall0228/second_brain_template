@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Copilot Wiring
 
-Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]] (sources linked there; it absorbed the same-day deep-dive). Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
+Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [[06_Resources/harness-copilot|the harness research's Copilot section]] (sources linked there; it absorbed the same-day deep-dive). Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
 
 ## Entrypoint loading
 

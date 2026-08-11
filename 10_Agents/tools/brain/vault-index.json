@@ -10,7 +10,9 @@
  ],
  "notes": {
   "00_Meta/README.md": {
-   "backlinks": [],
+   "backlinks": [
+    "00_Meta/index.md"
+   ],
    "bodyTags": [],
    "frontmatter": {
     "expires": "2027-08-11",
@@ -144,86 +146,91 @@
     {
      "level": 2,
      "line": 15,
+     "text": "[2026-08-11] restructure | Split harness research per-harness; resolve expires backfill review"
+    },
+    {
+     "level": 2,
+     "line": 24,
      "text": "[2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)"
     },
     {
      "level": 2,
-     "line": 21,
+     "line": 30,
      "text": "2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)"
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 37,
      "text": "2026-08-11 — Express & Outbox (Ops Plan Phase 5)"
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 44,
      "text": "2026-08-11 — Curation & Signals (Ops Plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 51,
      "text": "2026-08-11 — Note Surgery (Ops Plan Phase 3)"
     },
     {
      "level": 2,
-     "line": 47,
+     "line": 56,
      "text": "2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)"
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 62,
      "text": "2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)"
     },
     {
      "level": 2,
-     "line": 62,
+     "line": 71,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 68,
+     "line": 77,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 75,
+     "line": 84,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 82,
+     "line": 91,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 88,
+     "line": 97,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 94,
+     "line": 103,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 104,
+     "line": 113,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 109,
+     "line": 118,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 115,
+     "line": 124,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 126,
+     "line": 135,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
@@ -240,25 +247,14 @@
      "warnings": []
     },
     {
-     "display": null,
+     "display": "backfill review",
      "embed": false,
      "fragment": null,
      "line": 17,
      "placeholder": false,
-     "raw": "[[10_Agents/skills/README]]",
-     "resolved": "10_Agents/skills/README.md",
-     "target": "10_Agents/skills/README",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 17,
-     "placeholder": false,
-     "raw": "[[AGENTS]]",
-     "resolved": "AGENTS.md",
-     "target": "AGENTS",
+     "raw": "[[07_Archives/inbox/2026-08-11-expires-backfill-report|           backfill review]]",
+     "resolved": "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+     "target": "07_Archives/inbox/2026-08-11-expires-backfill-report",
      "warnings": []
     },
     {
@@ -267,6 +263,105 @@
      "fragment": null,
      "line": 19,
      "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": "standards & protocols",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-standards|standards & protocols]]",
+     "resolved": "06_Resources/harness-standards.md",
+     "target": "06_Resources/harness-standards",
+     "warnings": []
+    },
+    {
+     "display": "Claude Code",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-claude-code|Claude Code]]",
+     "resolved": "06_Resources/harness-claude-code.md",
+     "target": "06_Resources/harness-claude-code",
+     "warnings": []
+    },
+    {
+     "display": "Codex",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-codex|Codex]]",
+     "resolved": "06_Resources/harness-codex.md",
+     "target": "06_Resources/harness-codex",
+     "warnings": []
+    },
+    {
+     "display": "opencode",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-opencode|opencode]]",
+     "resolved": "06_Resources/harness-opencode.md",
+     "target": "06_Resources/harness-opencode",
+     "warnings": []
+    },
+    {
+     "display": "Pi",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-pi|Pi]]",
+     "resolved": "06_Resources/harness-pi.md",
+     "target": "06_Resources/harness-pi",
+     "warnings": []
+    },
+    {
+     "display": "Cursor",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-cursor|Cursor]]",
+     "resolved": "06_Resources/harness-cursor.md",
+     "target": "06_Resources/harness-cursor",
+     "warnings": []
+    },
+    {
+     "display": "GitHub Copilot",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|GitHub Copilot]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": "Muse Code",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-muse-code|Muse Code]]",
+     "resolved": "06_Resources/harness-muse-code.md",
+     "target": "06_Resources/harness-muse-code",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 20,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -276,106 +371,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 23,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/README]]",
-     "resolved": "10_Agents/skills/README.md",
-     "target": "10_Agents/skills/README",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 23,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": "recommended-automations",
-     "embed": false,
-     "fragment": null,
-     "line": 24,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
-     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
-     "target": "10_Agents/skills/recommended-automations/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "periodic-review",
-     "embed": false,
-     "fragment": null,
-     "line": 25,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/periodic-review/SKILL|periodic-review]]",
-     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
-     "target": "10_Agents/skills/periodic-review/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 25,
-     "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
-     "warnings": []
-    },
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 26,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "express-packet",
-     "embed": false,
-     "fragment": null,
-     "line": 31,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
-     "resolved": "10_Agents/skills/express-packet/SKILL.md",
-     "target": "10_Agents/skills/express-packet/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 32,
-     "placeholder": false,
-     "raw": "[[AGENTS]]",
-     "resolved": "AGENTS.md",
-     "target": "AGENTS",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 32,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 32,
+     "line": 21,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -386,172 +382,40 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 22,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": "curate",
-     "embed": false,
-     "fragment": null,
-     "line": 40,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
-     "resolved": "10_Agents/skills/curate/SKILL.md",
-     "target": "10_Agents/skills/curate/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "merge-notes",
-     "embed": false,
-     "fragment": null,
-     "line": 44,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
-     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
-     "target": "10_Agents/skills/merge-notes/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 45,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
-     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
-     "target": "10_Agents/skills/vault-maintenance/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "distill-note",
-     "embed": false,
-     "fragment": null,
-     "line": 49,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
-     "resolved": "10_Agents/skills/distill-note/SKILL.md",
-     "target": "10_Agents/skills/distill-note/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "triage-inbox",
-     "embed": false,
-     "fragment": null,
-     "line": 50,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
-     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
-     "target": "10_Agents/skills/triage-inbox/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "research-to-resource",
-     "embed": false,
-     "fragment": null,
-     "line": 51,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
-     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
-     "target": "10_Agents/skills/research-to-resource/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-answer",
-     "embed": false,
-     "fragment": null,
-     "line": 55,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
-     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
-     "target": "10_Agents/skills/vault-answer/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "research-to-resource",
-     "embed": false,
-     "fragment": null,
-     "line": 59,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
-     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
-     "target": "10_Agents/skills/research-to-resource/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 59,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
-     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
-     "target": "10_Agents/skills/vault-maintenance/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "the harness research's Copilot section",
-     "embed": false,
-     "fragment": "GitHub Copilot (P0)",
-     "line": 60,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
-     "warnings": []
-    },
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 64,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "onboard-harness",
-     "embed": false,
-     "fragment": null,
-     "line": 64,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
-     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
-     "target": "10_Agents/skills/onboard-harness/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "agent-orientation",
-     "embed": false,
-     "fragment": null,
-     "line": 64,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
-     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
-     "target": "10_Agents/skills/agent-orientation/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "recommended-automations",
-     "embed": false,
-     "fragment": null,
-     "line": 64,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
-     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
-     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 22,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 26,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -562,7 +426,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 28,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -570,43 +434,252 @@
      "warnings": []
     },
     {
-     "display": "that section",
+     "display": null,
      "embed": false,
-     "fragment": "GitHub Copilot (P0)",
-     "line": 70,
+     "fragment": null,
+     "line": 32,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|that section]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 32,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
      "warnings": []
     },
     {
-     "display": "the wiring doc",
+     "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 72,
+     "line": 33,
      "placeholder": false,
-     "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
-     "resolved": "10_Agents/harnesses/copilot/wiring.md",
-     "target": "10_Agents/harnesses/copilot/wiring",
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 34,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 34,
+     "placeholder": false,
+     "raw": "[[01_Profile/now]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "express-packet",
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
+     "resolved": "10_Agents/skills/express-packet/SKILL.md",
+     "target": "10_Agents/skills/express-packet/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 47,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": "curate",
+     "embed": false,
+     "fragment": null,
+     "line": 49,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
+     "resolved": "10_Agents/skills/curate/SKILL.md",
+     "target": "10_Agents/skills/curate/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "merge-notes",
+     "embed": false,
+     "fragment": null,
+     "line": 53,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
+     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
+     "target": "10_Agents/skills/merge-notes/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 54,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
+     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
+     "target": "10_Agents/skills/vault-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "distill-note",
+     "embed": false,
+     "fragment": null,
+     "line": 58,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 59,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 60,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-answer",
+     "embed": false,
+     "fragment": null,
+     "line": 64,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
+     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
+     "target": "10_Agents/skills/vault-answer/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 68,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 68,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
+     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
+     "target": "10_Agents/skills/vault-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "the harness research's Copilot section",
+     "embed": false,
+     "fragment": null,
+     "line": 69,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|the harness research's Copilot section]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
      "warnings": []
     },
     {
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 72,
+     "line": 73,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -614,10 +687,21 @@
      "warnings": []
     },
     {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 72,
+     "line": 73,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -628,11 +712,33 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 73,
+     "line": 74,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 74,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": "that section",
+     "embed": false,
+     "fragment": null,
+     "line": 79,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|that section]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
      "warnings": []
     },
     {
@@ -647,10 +753,65 @@
      "warnings": []
     },
     {
+     "display": "the wiring doc",
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 84,
+     "line": 82,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 89,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 93,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -661,7 +822,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 91,
+     "line": 100,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -672,7 +833,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 92,
+     "line": 101,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -683,7 +844,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 105,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -694,7 +855,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 106,
+     "line": 115,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -705,7 +866,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 112,
+     "line": 121,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -716,7 +877,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 119,
+     "line": 128,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -727,7 +888,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 120,
+     "line": 129,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -738,7 +899,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 120,
+     "line": 129,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -749,7 +910,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 124,
+     "line": 133,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -757,7 +918,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 22922,
+   "sizeBytes": 24745,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -767,10 +928,10 @@
     "00_Meta/changelog.md",
     "00_Meta/index.md",
     "00_Meta/prd.md",
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "06_Resources/example-resource.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "09_Templates/README.md",
@@ -1063,7 +1224,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8824,
+   "sizeBytes": 8943,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -1073,12 +1234,12 @@
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
     "00_Meta/prd.md",
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
     "05_Areas/README.md",
     "06_Resources/README.md",
     "07_Archives/README.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "09_Templates/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
@@ -1111,27 +1272,27 @@
     },
     {
      "level": 2,
-     "line": 25,
+     "line": 26,
      "text": "Active Work"
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 32,
      "text": "Knowledge & Reference"
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 45,
      "text": "Maintenance"
     },
     {
      "level": 2,
-     "line": 51,
+     "line": 53,
      "text": "Templates"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 56,
      "text": "Agent Docs"
     }
    ],
@@ -1148,10 +1309,21 @@
      "warnings": []
     },
     {
-     "display": null,
+     "display": "Profile",
      "embed": false,
      "fragment": null,
      "line": 16,
+     "placeholder": false,
+     "raw": "[[01_Profile/README|Profile]]",
+     "resolved": "01_Profile/README.md",
+     "target": "01_Profile/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 17,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -1162,7 +1334,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 17,
+     "line": 18,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -1173,7 +1345,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 18,
+     "line": 19,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -1184,7 +1356,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 19,
+     "line": 20,
      "placeholder": false,
      "raw": "[[01_Profile/identity]]",
      "resolved": "01_Profile/identity.md",
@@ -1195,7 +1367,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 20,
+     "line": 21,
      "placeholder": false,
      "raw": "[[01_Profile/work]]",
      "resolved": "01_Profile/work.md",
@@ -1206,7 +1378,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 22,
      "placeholder": false,
      "raw": "[[01_Profile/tooling-stack]]",
      "resolved": "01_Profile/tooling-stack.md",
@@ -1217,7 +1389,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 23,
      "placeholder": false,
      "raw": "[[01_Profile/long-running-themes]]",
      "resolved": "01_Profile/long-running-themes.md",
@@ -1228,7 +1400,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 23,
+     "line": 24,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1239,7 +1411,7 @@
      "display": "Projects",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 27,
      "placeholder": false,
      "raw": "[[04_Projects/README|Projects]]",
      "resolved": "04_Projects/README.md",
@@ -1250,7 +1422,7 @@
      "display": "Example Project",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 28,
      "placeholder": false,
      "raw": "[[04_Projects/example-project/README|Example Project]]",
      "resolved": "04_Projects/example-project/README.md",
@@ -1261,7 +1433,7 @@
      "display": "Inbox",
      "embed": false,
      "fragment": null,
-     "line": 28,
+     "line": 29,
      "placeholder": false,
      "raw": "[[02_Inbox/README|Inbox]]",
      "resolved": "02_Inbox/README.md",
@@ -1272,7 +1444,7 @@
      "display": "Outbox",
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 30,
      "placeholder": false,
      "raw": "[[02_Outbox/README|Outbox]]",
      "resolved": "02_Outbox/README.md",
@@ -1283,7 +1455,7 @@
      "display": "Resources",
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 33,
      "placeholder": false,
      "raw": "[[06_Resources/README|Resources]]",
      "resolved": "06_Resources/README.md",
@@ -1294,7 +1466,7 @@
      "display": "Example Resource",
      "embed": false,
      "fragment": null,
-     "line": 33,
+     "line": 34,
      "placeholder": false,
      "raw": "[[06_Resources/example-resource|Example Resource]]",
      "resolved": "06_Resources/example-resource.md",
@@ -1305,7 +1477,7 @@
      "display": "Journal",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 35,
      "placeholder": false,
      "raw": "[[03_Journal/README|Journal]]",
      "resolved": "03_Journal/README.md",
@@ -1316,7 +1488,7 @@
      "display": "Periodic Notes",
      "embed": false,
      "fragment": null,
-     "line": 35,
+     "line": 36,
      "placeholder": false,
      "raw": "[[03_Journal/periodic/README|Periodic Notes]]",
      "resolved": "03_Journal/periodic/README.md",
@@ -1327,7 +1499,7 @@
      "display": "Ideas",
      "embed": false,
      "fragment": null,
-     "line": 36,
+     "line": 37,
      "placeholder": false,
      "raw": "[[03_Journal/ideas/README|Ideas]]",
      "resolved": "03_Journal/ideas/README.md",
@@ -1338,7 +1510,7 @@
      "display": "Insights",
      "embed": false,
      "fragment": null,
-     "line": 37,
+     "line": 38,
      "placeholder": false,
      "raw": "[[03_Journal/insights/README|Insights]]",
      "resolved": "03_Journal/insights/README.md",
@@ -1349,7 +1521,7 @@
      "display": "Memories",
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 39,
      "placeholder": false,
      "raw": "[[03_Journal/memories/README|Memories]]",
      "resolved": "03_Journal/memories/README.md",
@@ -1360,7 +1532,7 @@
      "display": "People",
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 40,
      "placeholder": false,
      "raw": "[[03_Journal/people/README|People]]",
      "resolved": "03_Journal/people/README.md",
@@ -1371,7 +1543,7 @@
      "display": "Plans",
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 41,
      "placeholder": false,
      "raw": "[[03_Journal/plans/README|Plans]]",
      "resolved": "03_Journal/plans/README.md",
@@ -1382,7 +1554,7 @@
      "display": "Areas",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 42,
      "placeholder": false,
      "raw": "[[05_Areas/README|Areas]]",
      "resolved": "05_Areas/README.md",
@@ -1393,7 +1565,7 @@
      "display": "Example Area",
      "embed": false,
      "fragment": null,
-     "line": 42,
+     "line": 43,
      "placeholder": false,
      "raw": "[[05_Areas/example-area/README|Example Area]]",
      "resolved": "05_Areas/example-area/README.md",
@@ -1401,10 +1573,21 @@
      "warnings": []
     },
     {
+     "display": "Meta",
+     "embed": false,
+     "fragment": null,
+     "line": 46,
+     "placeholder": false,
+     "raw": "[[00_Meta/README|Meta]]",
+     "resolved": "00_Meta/README.md",
+     "target": "00_Meta/README",
+     "warnings": []
+    },
+    {
      "display": "Archives",
      "embed": false,
      "fragment": null,
-     "line": 45,
+     "line": 47,
      "placeholder": false,
      "raw": "[[07_Archives/README|Archives]]",
      "resolved": "07_Archives/README.md",
@@ -1415,7 +1598,7 @@
      "display": "Assets",
      "embed": false,
      "fragment": null,
-     "line": 46,
+     "line": 48,
      "placeholder": false,
      "raw": "[[08_Assets/README|Assets]]",
      "resolved": "08_Assets/README.md",
@@ -1426,7 +1609,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 47,
+     "line": 49,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1437,7 +1620,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 48,
+     "line": 50,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1448,7 +1631,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 49,
+     "line": 51,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1459,7 +1642,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 52,
+     "line": 54,
      "placeholder": false,
      "raw": "[[09_Templates/README]]",
      "resolved": "09_Templates/README.md",
@@ -1470,15 +1653,48 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 57,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
      "target": "10_Agents/README",
      "warnings": []
+    },
+    {
+     "display": "Agent docs",
+     "embed": false,
+     "fragment": null,
+     "line": 58,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/README|Agent docs]]",
+     "resolved": "10_Agents/docs/README.md",
+     "target": "10_Agents/docs/README",
+     "warnings": []
+    },
+    {
+     "display": "Harness adapters",
+     "embed": false,
+     "fragment": null,
+     "line": 59,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/README|Harness adapters]]",
+     "resolved": "10_Agents/harnesses/README.md",
+     "target": "10_Agents/harnesses/README",
+     "warnings": []
+    },
+    {
+     "display": "The CODE loop",
+     "embed": false,
+     "fragment": null,
+     "line": 60,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README|The CODE loop]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2329,
+   "sizeBytes": 2692,
    "title": "Index",
    "updated": "2026-08-11"
   },
@@ -1489,9 +1705,9 @@
     "00_Meta/conventions.md",
     "00_Meta/index.md",
     "00_Meta/status.md",
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
@@ -2035,7 +2251,9 @@
    "updated": "2026-08-11"
   },
   "01_Profile/README.md": {
-   "backlinks": [],
+   "backlinks": [
+    "00_Meta/index.md"
+   ],
    "bodyTags": [],
    "frontmatter": {
     "expires": "2027-08-11",
@@ -2300,8 +2518,8 @@
     "00_Meta/conventions.md",
     "00_Meta/index.md",
     "01_Profile/README.md",
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "09_Templates/template-monthly-review.md",
     "09_Templates/template-quarterly-review.md",
@@ -2530,146 +2748,10 @@
    "title": "Work",
    "updated": "2026-08-11"
   },
-  "02_Inbox/2026-08-11-expires-backfill-report.md": {
-   "backlinks": [],
-   "bodyTags": [],
-   "frontmatter": {
-    "tags": [
-     "type/log",
-     "audience/human",
-     "audience/agent",
-     "workflow/needs-review"
-    ],
-    "title": "Report: expires: Backfill — Judgment Calls for Review",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 11,
-     "text": "`expires:` Backfill — Judgment Calls for Review"
-    },
-    {
-     "level": 2,
-     "line": 15,
-     "text": "Decisions to confirm or override"
-    },
-    {
-     "level": 2,
-     "line": 25,
-     "text": "Related"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 13,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 13,
-     "placeholder": false,
-     "raw": "[[06_Resources/example-resource]]",
-     "resolved": "06_Resources/example-resource.md",
-     "target": "06_Resources/example-resource",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": "Expiration (          )",
-     "line": 17,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions#Expiration (          )]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 19,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 20,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 22,
-     "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 23,
-     "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
-     "warnings": []
-    },
-    {
-     "display": "Implementation plan",
-     "embed": false,
-     "fragment": null,
-     "line": 27,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]]",
-     "resolved": "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
-     "target": "02_Inbox/2026-08-11-para-operations-implementation-plan",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 28,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 2729,
-   "title": "Report: expires: Backfill — Judgment Calls for Review",
-   "updated": "2026-08-11"
-  },
   "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
    "backlinks": [
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
-    "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
+    "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -4605,49 +4687,48 @@
    ],
    "bodyTags": [],
    "frontmatter": {
-    "expires": "2027-08-11",
     "tags": [
      "type/decision",
      "audience/human"
     ],
     "title": "DR: Static-Site Framework Choice",
-    "updated": "2026-08-11"
+    "updated": "2025-01-10"
    },
    "frontmatterErrors": [],
    "headings": [
     {
      "level": 1,
-     "line": 10,
+     "line": 9,
      "text": "Static-Site Framework Choice"
     },
     {
      "level": 2,
-     "line": 14,
+     "line": 13,
      "text": "Status"
     },
     {
      "level": 2,
-     "line": 18,
+     "line": 17,
      "text": "Context"
     },
     {
      "level": 2,
-     "line": 23,
+     "line": 22,
      "text": "Options Considered"
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 27,
      "text": "Decision"
     },
     {
      "level": 2,
-     "line": 33,
+     "line": 32,
      "text": "Consequences"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 37,
      "text": "Related"
     }
    ],
@@ -4656,7 +4737,7 @@
      "display": "Example Project",
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 39,
      "placeholder": false,
      "raw": "[[04_Projects/example-project/README|Example Project]]",
      "resolved": "04_Projects/example-project/README.md",
@@ -4664,9 +4745,9 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1031,
+   "sizeBytes": 1011,
    "title": "DR: Static-Site Framework Choice",
-   "updated": "2026-08-11"
+   "updated": "2025-01-10"
   },
   "04_Projects/example-project/decision-records/README.md": {
    "backlinks": [
@@ -5084,10 +5165,10 @@
   "06_Resources/example-resource.md": {
    "backlinks": [
     "00_Meta/index.md",
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
     "04_Projects/example-project/README.md",
     "05_Areas/example-area/README.md",
-    "06_Resources/README.md"
+    "06_Resources/README.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -5145,20 +5226,816 @@
    "title": "Example Resource",
    "updated": "2026-08-11"
   },
+  "06_Resources/harness-claude-code.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/claude-code/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: Claude Code",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: Claude Code"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Hooks"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Plugins"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "text": "MCP"
+    },
+    {
+     "level": 2,
+     "line": 48,
+     "text": "Config & settings"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 2,
+     "line": 57,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 65,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 13713,
+   "title": "Harness Primitives: Claude Code",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-codex.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/codex/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: Codex",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: Codex"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Hooks"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Plugins"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "MCP"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "text": "Config & settings"
+    },
+    {
+     "level": 2,
+     "line": 48,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Ignore files"
+    },
+    {
+     "level": 2,
+     "line": 57,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 64,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 13505,
+   "title": "Harness Primitives: Codex",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-copilot.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/copilot/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: GitHub Copilot",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: GitHub Copilot"
+    },
+    {
+     "level": 2,
+     "line": 20,
+     "text": "Corrections to the M6 baseline"
+    },
+    {
+     "level": 2,
+     "line": 29,
+     "text": "Instructions & entrypoints"
+    },
+    {
+     "level": 2,
+     "line": 35,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "Copilot CLI"
+    },
+    {
+     "level": 2,
+     "line": 50,
+     "text": "Cloud agent"
+    },
+    {
+     "level": 2,
+     "line": 61,
+     "text": "Hooks (cross-surface schema)"
+    },
+    {
+     "level": 2,
+     "line": 67,
+     "text": "Custom agents, plugins, MCP (VS Code)"
+    },
+    {
+     "level": 2,
+     "line": 73,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 81,
+     "text": "Still unverified (2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 96,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": "plan + review log",
+     "embed": false,
+     "fragment": null,
+     "line": 16,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-copilot-p0-plan|plan + review log]]",
+     "resolved": "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-copilot-p0-plan",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 20494,
+   "title": "Harness Primitives: GitHub Copilot",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-cursor.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/cursor/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: Cursor",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: Cursor"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Hooks"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Plugins"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "MCP"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "text": "Config & settings"
+    },
+    {
+     "level": 2,
+     "line": 48,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 62,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 12605,
+   "title": "Harness Primitives: Cursor",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-muse-code.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/muse-code/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: Muse Code",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: Muse Code"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Hooks"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Plugins"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "MCP"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "text": "Config & settings"
+    },
+    {
+     "level": 2,
+     "line": 48,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 62,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 10719,
+   "title": "Harness Primitives: Muse Code",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-opencode.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/opencode/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: opencode",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: opencode"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Hooks"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Plugins"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "MCP"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "text": "Config & settings"
+    },
+    {
+     "level": 2,
+     "line": 48,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 62,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 13257,
+   "title": "Harness Primitives: opencode",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-pi.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+    "10_Agents/harnesses/pi/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: Pi",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: Pi"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Skills"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Hooks"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Plugins"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "MCP"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "text": "Config & settings"
+    },
+    {
+     "level": 2,
+     "line": 48,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 62,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 11439,
+   "title": "Harness Primitives: Pi",
+   "updated": "2026-08-11"
+  },
   "06_Resources/harness-primitives-research.md": {
    "backlinks": [
     "00_Meta/changelog.md",
-    "02_Inbox/2026-08-11-expires-backfill-report.md",
+    "06_Resources/harness-claude-code.md",
+    "06_Resources/harness-codex.md",
+    "06_Resources/harness-copilot.md",
+    "06_Resources/harness-cursor.md",
+    "06_Resources/harness-muse-code.md",
+    "06_Resources/harness-opencode.md",
+    "06_Resources/harness-pi.md",
+    "06_Resources/harness-primitives-research.md",
+    "06_Resources/harness-standards.md",
     "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "10_Agents/harnesses/README.md",
-    "10_Agents/harnesses/claude-code/wiring.md",
-    "10_Agents/harnesses/codex/wiring.md",
-    "10_Agents/harnesses/copilot/wiring.md",
-    "10_Agents/harnesses/cursor/wiring.md",
-    "10_Agents/harnesses/muse-code/wiring.md",
-    "10_Agents/harnesses/opencode/wiring.md",
-    "10_Agents/harnesses/pi/wiring.md",
     "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
@@ -5203,556 +6080,11 @@
     {
      "level": 2,
      "line": 77,
-     "text": "Full Specs"
-    },
-    {
-     "level": 3,
-     "line": 81,
-     "text": "Universal standards + protocols (P0)"
-    },
-    {
-     "level": 4,
-     "line": 84,
-     "text": "AGENTS.md — the entrypoint/context standard"
-    },
-    {
-     "level": 4,
-     "line": 90,
-     "text": "Agent Skills (SKILL.md) — the workflow-packaging standard"
-    },
-    {
-     "level": 4,
-     "line": 97,
-     "text": "MCP (Model Context Protocol) — the tool/context protocol"
-    },
-    {
-     "level": 4,
-     "line": 103,
-     "text": "Other live cross-harness conventions"
-    },
-    {
-     "level": 4,
-     "line": 108,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 115,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 133,
-     "text": "Claude Code (P0)"
-    },
-    {
-     "level": 4,
-     "line": 136,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 142,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 145,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 148,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 151,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 154,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 157,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 160,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 163,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 166,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 169,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 172,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 175,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 183,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 199,
-     "text": "Codex (P0)"
-    },
-    {
-     "level": 4,
-     "line": 202,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 205,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 208,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 211,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 214,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 217,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 220,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 223,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 226,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 229,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 232,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 235,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 238,
-     "text": "Ignore files"
-    },
-    {
-     "level": 4,
-     "line": 241,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 248,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 274,
-     "text": "opencode (P0)"
-    },
-    {
-     "level": 4,
-     "line": 277,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 280,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 283,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 286,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 289,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 292,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 295,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 298,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 301,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 304,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 307,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 310,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 313,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 321,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 330,
-     "text": "Pi (P0)"
-    },
-    {
-     "level": 4,
-     "line": 333,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 336,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 339,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 342,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 345,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 348,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 351,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 354,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 357,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 360,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 363,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 366,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 369,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 377,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 390,
-     "text": "Cursor (P1)"
-    },
-    {
-     "level": 4,
-     "line": 393,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 396,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 399,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 402,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 405,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 408,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 411,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 414,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 417,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 420,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 423,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 426,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 429,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 437,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 454,
-     "text": "GitHub Copilot (P0)"
-    },
-    {
-     "level": 4,
-     "line": 460,
-     "text": "Corrections to the M6 baseline"
-    },
-    {
-     "level": 4,
-     "line": 469,
-     "text": "Instructions & entrypoints"
-    },
-    {
-     "level": 4,
-     "line": 475,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 482,
-     "text": "Copilot CLI"
-    },
-    {
-     "level": 4,
-     "line": 490,
-     "text": "Cloud agent"
-    },
-    {
-     "level": 4,
-     "line": 501,
-     "text": "Hooks (cross-surface schema)"
-    },
-    {
-     "level": 4,
-     "line": 507,
-     "text": "Custom agents, plugins, MCP (VS Code)"
-    },
-    {
-     "level": 4,
-     "line": 513,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 521,
-     "text": "Still unverified (2026-08-11)"
-    },
-    {
-     "level": 4,
-     "line": 536,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 540,
-     "text": "Muse Code (P1)"
-    },
-    {
-     "level": 4,
-     "line": 543,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 546,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 549,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 552,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 555,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 558,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 561,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 564,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 567,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 570,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 573,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 576,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 579,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 587,
-     "text": "Sources"
+     "text": "Per-harness specs"
     },
     {
      "level": 2,
-     "line": 601,
+     "line": 90,
      "text": "Related"
     }
    ],
@@ -5782,6 +6114,17 @@
     {
      "display": null,
      "embed": false,
+     "fragment": "Per-harness specs",
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[#Per-harness specs]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
      "fragment": null,
      "line": 22,
      "placeholder": false,
@@ -5791,21 +6134,98 @@
      "warnings": []
     },
     {
-     "display": "plan + review log",
+     "display": "Universal standards & protocols",
      "embed": false,
      "fragment": null,
-     "line": 456,
+     "line": 81,
      "placeholder": false,
-     "raw": "[[07_Archives/inbox/2026-08-11-copilot-p0-plan|plan + review log]]",
-     "resolved": "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
-     "target": "07_Archives/inbox/2026-08-11-copilot-p0-plan",
+     "raw": "[[06_Resources/harness-standards|Universal standards & protocols]]",
+     "resolved": "06_Resources/harness-standards.md",
+     "target": "06_Resources/harness-standards",
+     "warnings": []
+    },
+    {
+     "display": "Claude Code",
+     "embed": false,
+     "fragment": null,
+     "line": 82,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-claude-code|Claude Code]]",
+     "resolved": "06_Resources/harness-claude-code.md",
+     "target": "06_Resources/harness-claude-code",
+     "warnings": []
+    },
+    {
+     "display": "Codex",
+     "embed": false,
+     "fragment": null,
+     "line": 83,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-codex|Codex]]",
+     "resolved": "06_Resources/harness-codex.md",
+     "target": "06_Resources/harness-codex",
+     "warnings": []
+    },
+    {
+     "display": "opencode",
+     "embed": false,
+     "fragment": null,
+     "line": 84,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-opencode|opencode]]",
+     "resolved": "06_Resources/harness-opencode.md",
+     "target": "06_Resources/harness-opencode",
+     "warnings": []
+    },
+    {
+     "display": "Pi",
+     "embed": false,
+     "fragment": null,
+     "line": 85,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-pi|Pi]]",
+     "resolved": "06_Resources/harness-pi.md",
+     "target": "06_Resources/harness-pi",
+     "warnings": []
+    },
+    {
+     "display": "GitHub Copilot",
+     "embed": false,
+     "fragment": null,
+     "line": 86,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|GitHub Copilot]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": "Cursor",
+     "embed": false,
+     "fragment": null,
+     "line": 87,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-cursor|Cursor]]",
+     "resolved": "06_Resources/harness-cursor.md",
+     "target": "06_Resources/harness-cursor",
+     "warnings": []
+    },
+    {
+     "display": "Muse Code",
+     "embed": false,
+     "fragment": null,
+     "line": 88,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-muse-code|Muse Code]]",
+     "resolved": "06_Resources/harness-muse-code.md",
+     "target": "06_Resources/harness-muse-code",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 603,
+     "line": 92,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -5816,7 +6236,7 @@
      "display": "M5–M7 Implementation Plan",
      "embed": false,
      "fragment": null,
-     "line": 604,
+     "line": 93,
      "placeholder": false,
      "raw": "[[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]",
      "resolved": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
@@ -5827,7 +6247,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 605,
+     "line": 94,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -5835,8 +6255,81 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 114126,
+   "sizeBytes": 12072,
    "title": "Harness Primitives Research",
+   "updated": "2026-08-11"
+  },
+  "06_Resources/harness-standards.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-expires-backfill-report.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives: Universal Standards & Protocols",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Harness Primitives: Universal Standards & Protocols"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "AGENTS.md — the entrypoint/context standard"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Agent Skills (SKILL.md) — the workflow-packaging standard"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "MCP (Model Context Protocol) — the tool/context protocol"
+    },
+    {
+     "level": 2,
+     "line": 37,
+     "text": "Other live cross-harness conventions"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 2,
+     "line": 49,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "harness primitives research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|harness primitives research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 10428,
+   "title": "Harness Primitives: Universal Standards & Protocols",
    "updated": "2026-08-11"
   },
   "07_Archives/README.md": {
@@ -5881,7 +6374,7 @@
     },
     {
      "level": 2,
-     "line": 39,
+     "line": 40,
      "text": "Related"
     }
    ],
@@ -5942,10 +6435,21 @@
      "warnings": []
     },
     {
+     "display": "expires: Backfill Review (2026-08-11)",
+     "embed": false,
+     "fragment": null,
+     "line": 38,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-expires-backfill-report|expires: Backfill Review (2026-08-11)]]",
+     "resolved": "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+     "target": "07_Archives/inbox/2026-08-11-expires-backfill-report",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 42,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -5953,13 +6457,13 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1487,
+   "sizeBytes": 1669,
    "title": "Archives",
    "updated": "2026-08-11"
   },
   "07_Archives/inbox/2026-08-11-copilot-p0-plan.md": {
    "backlinks": [
-    "06_Resources/harness-primitives-research.md"
+    "06_Resources/harness-copilot.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -6063,6 +6567,282 @@
    ],
    "sizeBytes": 13177,
    "title": "Copilot P0 Promotion Plan",
+   "updated": "2026-08-11"
+  },
+  "07_Archives/inbox/2026-08-11-expires-backfill-report.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "07_Archives/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/log",
+     "audience/human",
+     "audience/agent",
+     "status/done"
+    ],
+    "title": "Report: expires: Backfill — Judgment Calls (Resolved)",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "`expires:` Backfill — Judgment Calls for Review"
+    },
+    {
+     "level": 2,
+     "line": 13,
+     "text": "Resolution (2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "Decisions to confirm or override"
+    },
+    {
+     "level": 2,
+     "line": 38,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Expiration (          )",
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Expiration (          )]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-claude-code]]",
+     "resolved": "06_Resources/harness-claude-code.md",
+     "target": "06_Resources/harness-claude-code",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-codex]]",
+     "resolved": "06_Resources/harness-codex.md",
+     "target": "06_Resources/harness-codex",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-opencode]]",
+     "resolved": "06_Resources/harness-opencode.md",
+     "target": "06_Resources/harness-opencode",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-pi]]",
+     "resolved": "06_Resources/harness-pi.md",
+     "target": "06_Resources/harness-pi",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-cursor]]",
+     "resolved": "06_Resources/harness-cursor.md",
+     "target": "06_Resources/harness-cursor",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-muse-code]]",
+     "resolved": "06_Resources/harness-muse-code.md",
+     "target": "06_Resources/harness-muse-code",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-standards]]",
+     "resolved": "06_Resources/harness-standards.md",
+     "target": "06_Resources/harness-standards",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[06_Resources/example-resource]]",
+     "resolved": "06_Resources/example-resource.md",
+     "target": "06_Resources/example-resource",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Expiration (          )",
+     "line": 30,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Expiration (          )]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 32,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 33,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 36,
+     "placeholder": false,
+     "raw": "[[01_Profile/now]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    },
+    {
+     "display": "Implementation plan",
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]]",
+     "resolved": "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
+     "target": "02_Inbox/2026-08-11-para-operations-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 4318,
+   "title": "Report: expires: Backfill — Judgment Calls (Resolved)",
    "updated": "2026-08-11"
   },
   "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md": {
@@ -8201,7 +8981,9 @@
    "updated": "2026-08-11"
   },
   "10_Agents/docs/README.md": {
-   "backlinks": [],
+   "backlinks": [
+    "00_Meta/index.md"
+   ],
    "bodyTags": [],
    "frontmatter": {
     "expires": "2027-08-11",
@@ -8563,7 +9345,9 @@
    "updated": "2026-08-11"
   },
   "10_Agents/harnesses/README.md": {
-   "backlinks": [],
+   "backlinks": [
+    "00_Meta/index.md"
+   ],
    "bodyTags": [],
    "frontmatter": {
     "expires": "2026-11-11",
@@ -8759,16 +9543,16 @@
     {
      "display": "research",
      "embed": false,
-     "fragment": "Claude Code",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#Claude Code|research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-claude-code|research]]",
+     "resolved": "06_Resources/harness-claude-code.md",
+     "target": "06_Resources/harness-claude-code",
      "warnings": []
     }
    ],
-   "sizeBytes": 2746,
+   "sizeBytes": 2726,
    "title": "Claude Code Wiring",
    "updated": "2026-08-11"
   },
@@ -8831,16 +9615,16 @@
     {
      "display": "research",
      "embed": false,
-     "fragment": "Codex",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#Codex|research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-codex|research]]",
+     "resolved": "06_Resources/harness-codex.md",
+     "target": "06_Resources/harness-codex",
      "warnings": []
     }
    ],
-   "sizeBytes": 2829,
+   "sizeBytes": 2809,
    "title": "Codex Wiring",
    "updated": "2026-08-11"
   },
@@ -8911,12 +9695,12 @@
     {
      "display": "the harness research's Copilot section",
      "embed": false,
-     "fragment": "GitHub Copilot (P0)",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-copilot|the harness research's Copilot section]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
      "warnings": []
     },
     {
@@ -8931,7 +9715,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8970,
+   "sizeBytes": 8938,
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
   },
@@ -8994,16 +9778,16 @@
     {
      "display": "research",
      "embed": false,
-     "fragment": "Cursor",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#Cursor|research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-cursor|research]]",
+     "resolved": "06_Resources/harness-cursor.md",
+     "target": "06_Resources/harness-cursor",
      "warnings": []
     }
    ],
-   "sizeBytes": 2080,
+   "sizeBytes": 2060,
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -9066,16 +9850,16 @@
     {
      "display": "research",
      "embed": false,
-     "fragment": "Muse Code",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#Muse Code|research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-muse-code|research]]",
+     "resolved": "06_Resources/harness-muse-code.md",
+     "target": "06_Resources/harness-muse-code",
      "warnings": []
     }
    ],
-   "sizeBytes": 1995,
+   "sizeBytes": 1975,
    "title": "Muse Code Wiring",
    "updated": "2026-08-11"
   },
@@ -9138,16 +9922,16 @@
     {
      "display": "research",
      "embed": false,
-     "fragment": "opencode",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#opencode|research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-opencode|research]]",
+     "resolved": "06_Resources/harness-opencode.md",
+     "target": "06_Resources/harness-opencode",
      "warnings": []
     }
    ],
-   "sizeBytes": 2221,
+   "sizeBytes": 2201,
    "title": "opencode Wiring",
    "updated": "2026-08-11"
   },
@@ -9210,16 +9994,16 @@
     {
      "display": "research",
      "embed": false,
-     "fragment": "Pi",
+     "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research#Pi|research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
+     "raw": "[[06_Resources/harness-pi|research]]",
+     "resolved": "06_Resources/harness-pi.md",
+     "target": "06_Resources/harness-pi",
      "warnings": []
     }
    ],
-   "sizeBytes": 2348,
+   "sizeBytes": 2328,
    "title": "Pi Wiring",
    "updated": "2026-08-11"
   },
@@ -9227,6 +10011,7 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
+    "00_Meta/index.md",
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
@@ -12317,7 +13102,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 29598,
+   "sizeBytes": 29787,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

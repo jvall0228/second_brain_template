@@ -363,6 +363,26 @@ class CurationTests(unittest.TestCase):
             missing = {f["path"] for f in warnings if f["rule"] == "missing-expires"}
             self.assertEqual(missing, {"needs-one.md"})
 
+    def test_type_decision_exempt_from_expires_not_orphan(self):
+        # A type/decision note needs no expires: (event record), but an unlinked
+        # one is still an orphan — the two exemptions are deliberately different.
+        files = {
+            "04_Projects/p/decision-records/2025-01-10-dr.md": (
+                "---\ntitle: DR\ntags:\n  - type/decision\n"
+                "updated: 2025-01-10\n---\n\nbody\n"
+            ),
+            "claim.md": note(),  # ordinary note: should be flagged missing-expires
+        }
+        with tempfile.TemporaryDirectory() as td:
+            root = self.vault(td, files)
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            cur = brain.compute_curation(root, index, date(2026, 8, 11))
+            self.assertNotIn("04_Projects/p/decision-records/2025-01-10-dr.md", cur["missingExpires"])
+            self.assertIn("claim.md", cur["missingExpires"])
+            # exempt from expires, but not from the orphan check
+            self.assertIn("04_Projects/p/decision-records/2025-01-10-dr.md", cur["orphans"])
+
     def test_beyond_cap_and_oversized_warnings(self):
         big = note("word\n" * 401, expires="2027-02-01")
         files = {

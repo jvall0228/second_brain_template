@@ -50,6 +50,10 @@ EXPIRES_EXEMPT_PREFIXES = (
 EXPIRES_EXEMPT_PATHS = frozenset(
     {"00_Meta/changelog.md", "00_Meta/status.md", "CLAUDE.md"}
 )
+# type/* tag values whose notes are event records (a decision made on a date),
+# not living claims — exempt from expires: wherever they live (e.g. a decision
+# record under 04_Projects/). Journal/log types already sit in exempt dirs.
+EXPIRES_EXEMPT_TYPE_TAGS = frozenset({"decision"})
 ORPHAN_EXEMPT_PATHS = frozenset({"AGENTS.md", "CLAUDE.md", "README.md"})
 OVERSIZED_EXEMPT_PATHS = frozenset({"00_Meta/changelog.md"})
 
@@ -802,8 +806,24 @@ def today() -> date:
     return date.today()
 
 
-def expires_exempt(rel: str) -> bool:
+def path_exempt_from_expires(rel: str) -> bool:
+    """Directory/path-based exemption: notes reached by convention, not by
+    inbound links (Inbox, Journal, Archives, Templates, solutions, Outbox)."""
     return rel in EXPIRES_EXEMPT_PATHS or rel.startswith(EXPIRES_EXEMPT_PREFIXES)
+
+
+def note_type_tags(fm: dict) -> set[str]:
+    tags = fm.get("tags")
+    tags = tags if isinstance(tags, list) else ([tags] if isinstance(tags, str) else [])
+    return {t.split("/", 1)[1] for t in tags if isinstance(t, str) and t.startswith("type/")}
+
+
+def expires_exempt(rel: str, fm: dict) -> bool:
+    """Whether a note is exempt from carrying an expires: date — by path, or
+    by an event-record type tag (e.g. type/decision)."""
+    return path_exempt_from_expires(rel) or bool(
+        note_type_tags(fm) & EXPIRES_EXEMPT_TYPE_TAGS
+    )
 
 
 def compute_curation(root: Path, index: dict, today_d: date) -> dict:
@@ -832,7 +852,7 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
                 beyond_cap.append(
                     {"expires": fm["expires"], "path": rel, "updated": rec["updated"]}
                 )
-        elif "expires" not in fm and fm and not expires_exempt(rel) and not is_template(rel):
+        elif "expires" not in fm and fm and not expires_exempt(rel, fm) and not is_template(rel):
             missing.append(rel)
         if not (rel in OVERSIZED_EXEMPT_PATHS or rel.startswith("07_Archives/")):
             text, _ = load_text(root, rel)
@@ -855,7 +875,7 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
                 )
         if (
             not rec["backlinks"]
-            and not expires_exempt(rel)
+            and not path_exempt_from_expires(rel)
             and rel not in ORPHAN_EXEMPT_PATHS
         ):
             orphans.append(rel)

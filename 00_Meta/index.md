@@ -13,6 +13,7 @@ expires: 2027-08-11
 
 ## Core Context (Agent Bootstrap)
 - [[AGENTS]] — Entrypoint, structure, rules
+- [[01_Profile/README|Profile]] — What the owner-context notes are for
 - [[01_Profile/now]] — Current focus
 - [[01_Profile/preferences]] — Communication style
 - [[01_Profile/defaults]] — Timezone, locale, defaults
@@ -42,6 +43,7 @@ expires: 2027-08-11
   - [[05_Areas/example-area/README|Example Area]] — Sample; delete once you've seen the pattern
 
 ## Maintenance
+- [[00_Meta/README|Meta]] — What the vault-level meta docs are
 - [[07_Archives/README|Archives]] — Completed or inactive items
 - [[08_Assets/README|Assets]] — Images, attachments, non-markdown files
 - [[00_Meta/changelog]] — Structural change log
@@ -53,3 +55,6 @@ expires: 2027-08-11
 
 ## Agent Docs
 - [[10_Agents/README]] — Agent behavior and write rules
+- [[10_Agents/docs/README|Agent docs]] — Operating rules, task patterns
+- [[10_Agents/harnesses/README|Harness adapters]] — Per-harness wiring
+- [[10_Agents/skills/README|The CODE loop]] — Skill catalog + cadence table
