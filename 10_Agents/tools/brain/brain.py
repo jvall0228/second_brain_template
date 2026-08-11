@@ -37,9 +37,11 @@ CURATE_STALE_DAYS = 180
 EXPIRES_CAP_DAYS = 366
 
 # Events, not claims — never asked for an expires: date. 02_Inbox/ is exempt
-# because capture is zero-friction; expires is assigned at triage/filing.
+# because capture is zero-friction (expires assigned at triage); 02_Outbox/
+# because packets are ephemeral — their lifecycle is the archive path.
 EXPIRES_EXEMPT_PREFIXES = (
     "02_Inbox/",
+    "02_Outbox/",
     "03_Journal/",
     "07_Archives/",
     "09_Templates/",

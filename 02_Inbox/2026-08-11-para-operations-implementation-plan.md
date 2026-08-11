@@ -41,7 +41,7 @@ Overridable before Phase 1; silence = assumption stands.
 | 2 | Triage & distill upgrade | R2, R6, R13, R19 | M | Done |
 | 3 | Note surgery | R7 | S | Done |
 | 4 | Curation & signals | R17, R17b, R20, R24, R8 | L | Done |
-| 5 | Express & Outbox | R10, R3, R12 | M | Pending |
+| 5 | Express & Outbox | R10, R3, R12 | M | Done |
 | 6 | Rhythm & reviews | R15, R18, R9, R16 | M | Pending |
 | 7 | Recategorize & polish | R1, R4, R5, R21 | S | Pending |
 | 8 | Deferred | R25 (+R23 if approved) | M | Blocked on owner go |
@@ -87,6 +87,7 @@ The only code-heavy phase and the only frontmatter-schema change. Internal order
 2. New skill `express-packet`: packet shapes (brief, outline, decision doc, comparison, draft post/email), provenance wikilinks, privacy gate (R12 — no `01_Profile/`/`03_Journal/` content without per-packet direction, personal-context sources flagged in the draft), `workflow/draft` frontmatter, recapture loop back to Inbox.
 3. Two-lane write rule lands everywhere it must: AGENTS.md § Where Agents Write, conventions § Agent Write Rules, operating-rules self-validation checklist, index.
 - Canonical edits: AGENTS.md, conventions, operating-rules, index, Archives README, skills README.
+- *Deviation (2026-08-11):* `02_Outbox/` also joined brain's expires/orphan exemption constants (one line + spec/conventions sentences + one test row) — the directory didn't exist when Phase 4 shipped, and TTL-nagging ephemeral packets would be pure noise.
 
 ### Phase 6 — Rhythm & reviews (R15, R18, R9, R16)
 

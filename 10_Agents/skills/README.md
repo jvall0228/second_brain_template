@@ -31,6 +31,7 @@ Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for 
 | [[10_Agents/skills/solution-capture/SKILL\|solution-capture]] | Vault maintenance | Record a solved problem in `10_Agents/solutions/` |
 | [[10_Agents/skills/research-to-resource/SKILL\|research-to-resource]] | Research → resource | Turn research into a `06_Resources/` note or zettel with provenance |
 | [[10_Agents/skills/vault-answer/SKILL\|vault-answer]] | Retrieval | Answer "what do I know about X?" from vault notes, with wikilink citations and capture offers for substantive answers |
+| [[10_Agents/skills/express-packet/SKILL\|express-packet]] | Express | Assemble an outbound packet (brief, outline, draft post/email) from vault notes into `02_Outbox/` with provenance; the owner ships |
 | [[10_Agents/skills/onboard-harness/SKILL\|onboard-harness]] | Onboarding | Symlink-first user-scope install into a harness + memory-file wiring + hook |
 | [[10_Agents/skills/onboard-owner/SKILL\|onboard-owner]] | Onboarding | Guided first-run for a new (possibly non-technical) vault owner: teach by doing, fill the profile, orchestrate the other onboarding skills |
 | [[10_Agents/skills/agent-orientation/SKILL\|agent-orientation]] | Environment integration | Discover reachable context sources and generate access tooling + capture skills |

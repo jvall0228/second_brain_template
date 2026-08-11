@@ -26,6 +26,7 @@ expires: 2027-08-11
 - [[04_Projects/README|Projects]] — Outcomes with deadlines
   - [[04_Projects/example-project/README|Example Project]] — Sample; delete once you've seen the pattern
 - [[02_Inbox/README|Inbox]] — Triage queue
+- [[02_Outbox/README|Outbox]] — Outbound deliverables awaiting the owner's review and shipping
 
 ## Knowledge & Reference
 - [[06_Resources/README|Resources]] — Topic notes

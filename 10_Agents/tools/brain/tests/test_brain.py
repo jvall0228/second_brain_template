@@ -348,6 +348,7 @@ class CurationTests(unittest.TestCase):
     def test_missing_expires_exemptions(self):
         files = {
             "02_Inbox/2026-08-11-capture.md": note(),
+            "02_Outbox/2026-08-11-packet.md": note(),
             "03_Journal/day.md": note(),
             "07_Archives/old.md": note(),
             "10_Agents/solutions/fix.md": note(),

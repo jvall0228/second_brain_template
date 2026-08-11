@@ -12,6 +12,13 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Express & Outbox (Ops Plan Phase 5)
+
+- **New structure `02_Outbox/`** — the vault's loading dock: outbound deliverables awaiting the owner's review and shipping. Lifecycle mirrors the Inbox (draft → owner ships → `07_Archives/outbox/` with `status/done`); trends toward empty; **agents never ship**. Shares the `02_` prefix — both are review gates, no renumbering.
+- New canonical skill [[10_Agents/skills/express-packet/SKILL|express-packet]]: assembles briefs, outlines, decision docs, comparisons, and draft posts/emails *from* vault notes with provenance wikilinks, behind a per-packet **privacy gate** — no `01_Profile/` or `03_Journal/` content without per-packet owner direction, and personal-context sources are flagged in the draft. Recapture loop returns shipping learnings to the Inbox.
+- **Two-lane write rule** landed everywhere it governs: [[AGENTS]] § Where Agents Write, [[00_Meta/conventions]] § Agent Write Rules, the operating-rules self-validation checklist, and [[00_Meta/index]]. Vault content → Inbox; world-bound deliverables → Outbox; both review-gated.
+- Wiring deviation (noted in the plan): `02_Outbox/` joined brain's expires/orphan exemption set — packets are ephemeral snapshots whose lifecycle is the archive path, not a TTL.
+
 ## 2026-08-11 — Curation & Signals (Ops Plan Phase 4)
 
 - **`brain` grew its curation engine** (spec §14; all tunables in one constants block): new `curate` command reporting expired / missing / over-cap `expires:`, oversized notes, staleness weighted by backlink count, orphans, unreferenced `08_Assets/` files, and opt-in `--check-urls` dead-link probes; new `context` command reporting bootstrap-doc sizes against byte budgets (~150% of measured size, 32 KiB total). Nine new tests; suite at 30.

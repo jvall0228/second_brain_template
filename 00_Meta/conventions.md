@@ -20,6 +20,7 @@ Top-level directories use **numeric prefixes** for deterministic sort order. Eac
 - `00_Meta/` — Vault-level meta docs (this file lives here).
 - `01_Profile/` — Owner identity and context (Now, Preferences).
 - `02_Inbox/` — Landing zone for all new and unsorted content.
+- `02_Outbox/` — Outbound deliverables awaiting owner review and shipping (shares the `02_` prefix: both are review gates, no renumbering).
 - `03_Journal/` — Personal knowledge and experience (periodic notes + ideas, insights, memories, people, plans).
 - `04_Projects/` — Active projects with defined outcomes (PARA: Projects).
 - `05_Areas/` — Ongoing responsibilities (PARA: Areas).
@@ -69,7 +70,7 @@ Default TTLs by volatility:
 | Retrieval-dated research | 6 months | resource notes built from web sources |
 | Evergreen / canonical | 12 months | conventions, zettels, project and area notes |
 
-**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`. `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
+**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`. `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
 
 ### Template Placeholder Exception
 
@@ -95,7 +96,7 @@ Notes tagged `workflow/canonical` are foundational vault docs. They require a PR
 
 ## Agent Write Rules
 
-Agents write to `02_Inbox/` by default. Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
+Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via the express-packet skill; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
 
 **Standing exceptions:**
 
