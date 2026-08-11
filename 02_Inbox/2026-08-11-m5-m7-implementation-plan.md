@@ -112,11 +112,23 @@ Proposed initial set (nine — family scope is decided; the exact list is confir
 
 **Entrypoint wiring.** The install also updates the harness's **user-level memory file** — its `CLAUDE.md` equivalent, e.g. `~/.claude/CLAUDE.md` for Claude Code — to import or point at the vault's `AGENTS.md`, inside a marker-delimited block generated with the adopter's absolute vault path. Additive and idempotent, so the adopter's own memory content is untouched, and the block is removed cleanly on uninstall. The exact memory file and import syntax per harness is settled in each adapter's wiring doc.
 
-Installs are manifest-driven, idempotent (re-running is a no-op), and reversible (`uninstall` removes exactly what was installed). Symlinks are created **at install time on the adopter's machine, never committed to the repo** — the in-repo symlink approach was retired (PRD §8.2). Each harness adapter's wiring doc carries the primitive map: which categories that harness supports and the exact user-config discovery paths (being confirmed by the harness-primitives research).
+Installs are manifest-driven, idempotent (re-running is a no-op), and reversible (`uninstall` removes exactly what was installed). Symlinks are created **at install time on the adopter's machine, never committed to the repo** — the in-repo symlink approach was retired (PRD §8.2). Each harness adapter's wiring doc carries the primitive map: which categories that harness supports and the exact user-config discovery paths.
+
+Per [[02_Inbox/2026-08-11-harness-primitives-research|the harness research]], the skills map collapses nicely: one `~/.agents/skills/` link covers the six harnesses that scan the shared standard path, plus one `~/.claude/skills/` link for Claude Code — and the memory-file update targets `~/.claude/CLAUDE.md` for Claude Code while the six AGENTS.md-native harnesses need only their user-scope instruction file (or nothing, where user memory is config-driven; per-harness detail in the wiring docs).
 
 ### Phase M6.2 — P0 harness adapters
 
-`10_Agents/harnesses/{claude-code,codex,opencode,pi}/`, each shipping a reference config and a wiring doc. Per §8.3, wiring specifics are settled at build time; each phase starts with a research task per harness. Every wiring doc must cover: entrypoint loading, the skills install path (user config), hook installation, and how the harness invokes `brain`. Adapters carry only what a standard cannot.
+`10_Agents/harnesses/{claude-code,codex,opencode,pi}/`, each shipping a reference config and a wiring doc. Per §8.3, wiring specifics are settled at build time; every wiring doc must cover: entrypoint loading, the skills install path (user config), hook installation, and how the harness invokes `brain`. Adapters carry only what a standard cannot.
+
+**Grounding:** [[02_Inbox/2026-08-11-harness-primitives-research|Harness Primitives Research (2026-08-11)]] holds the full per-harness surface specs and the overlap matrix. Research-informed adapter manifests (re-verify at build time):
+
+- **Claude Code** — `CLAUDE.md` import (does not read `AGENTS.md` natively); `~/.claude/skills/` links (it does not scan the shared `.agents/skills/`); settings permission denies; `.mcp.json`. Optional nicety: an output style.
+- **Codex** — `config.toml` incl. `[mcp_servers]`; reads `AGENTS.md` natively but expands no imports/wikilinks and caps project docs at 32 KiB — the wiring doc addresses both.
+- **opencode** — `opencode.json` with `instructions[]` (deterministic bootstrap sequence as plain paths), MCP, and the permission map.
+- **Pi** — `.pi/settings.json` + prompts; **no MCP** (TypeScript extensions instead — the preference ladder's custom-tooling rung applies).
+- **P1: Cursor** — `.cursor/rules/*.mdc`, `.cursor/mcp.json`, `.cursorignore`; **Copilot** — `.github/copilot-instructions.md` pointer + `instructions/*.instructions.md`, per-surface MCP config; **Muse Code** — thin by necessity (user-scope config only; launched 2026-08-05, treat the adapter as volatile and re-verify before hardening).
+
+Cross-cutting from the research: ship **no command files** (commands are deprecated into skills in Codex and Cursor — skills are the invocable unit everywhere); keep **one canonical MCP server manifest** in `10_Agents/` and generate per-harness configs from it; portable voice/tone lives in [[01_Profile/preferences]], not output styles (Claude Code–only).
 
 ### Phase M6.3 — P1 second wave
 
@@ -168,6 +180,7 @@ M5 → M6 → M7, strictly: M6's maintenance and onboarding skills call `brain` 
 - Review and promote `10_Agents/tools/brain/spec.md` when it lands (pre-authorized as canonical, but it will be flagged for your review before implementation proceeds).
 - Confirm the nine-skill list at M6 kickoff.
 - M7 source priorities (Teams vs email vs calendar vs transcripts first) — decided at orientation time, per environment.
+- **Privacy-exclusion policy (from the harness research):** no portable ignore mechanism exists — only Cursor honors a repo ignore file; Codex, Pi, and Muse Code have no reliable content exclusion at all. If parts of the vault should be fenced off from some harnesses, that needs a per-harness deny strategy (and stays impossible on three of seven) — or the existing §16.2 rule ("exclusion from the repo is the only reliable protection") remains the whole policy. Owner call; relates to the §21 `restricted/*` consideration.
 
 ## Related
 
@@ -175,3 +188,4 @@ M5 → M6 → M7, strictly: M6's maintenance and onboarding skills call `brain` 
 - [[00_Meta/status]] — milestone table
 - [[00_Meta/changelog]] — decision record
 - [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]] — M5.0 starting point
+- [[02_Inbox/2026-08-11-harness-primitives-research|Harness Primitives Research]] — grounded per-harness specs, overlap matrix, adapter manifests
