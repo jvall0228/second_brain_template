@@ -28,14 +28,15 @@ Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the s
    - Personal experience, log, or reflection → the right `03_Journal/` subtree
    - Done or dead → `07_Archives/inbox/`
    - Solved-problem knowledge → `10_Agents/solutions/<category>/`
-5. **Propagate.** A new source rarely touches only its own note: for each capture, find the existing notes whose claims it extends, corrects, or contradicts (`brain search` on its key terms) and propose those edits alongside the filing. Filing without propagation is how a vault drifts into self-contradiction.
-6. **Hand zettels to [[10_Agents/skills/distill-note/SKILL|distill-note]].** Anything classified `type/zettel` gets reshaped by that skill (atomic claim, summary layer, links) before filing — procedure detail lives there, not here.
-7. **Write a triage report** as a new Inbox note (use `inbox-capture`; slug `triage-report`): one table row per note — path, one-line summary, proposed destination, proposed filename (kebab-case), tag changes (e.g. drop `workflow/draft` on filing), action items found, propagation edits proposed, open questions.
-8. **Present the report** to the human. Apply moves and propagation edits only after explicit approval, updating each edited note's `updated:` date and re-checking its wikilinks (cross-directory links need full paths — see `10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md`). Propagation edits to `workflow/canonical` notes follow canonical change control even after triage approval.
-9. After any approved changes: `python3 10_Agents/tools/brain/brain.py validate` and commit.
+5. **Respect `restricted/*`.** A capture tagged `restricted/private` (or splitting out of one) keeps the tag through triage, and its content is never quoted or summarized into the triage report or any non-restricted note — the report row carries path and proposed destination only. See [[00_Meta/conventions#Tag Namespaces]] and the operating-rules containment duty.
+6. **Propagate.** A new source rarely touches only its own note: for each capture, find the existing notes whose claims it extends, corrects, or contradicts (`brain search` on its key terms) and propose those edits alongside the filing. Filing without propagation is how a vault drifts into self-contradiction.
+7. **Hand zettels to [[10_Agents/skills/distill-note/SKILL|distill-note]].** Anything classified `type/zettel` gets reshaped by that skill (atomic claim, summary layer, links) before filing — procedure detail lives there, not here.
+8. **Write a triage report** as a new Inbox note (use `inbox-capture`; slug `triage-report`): one table row per note — path, one-line summary, proposed destination, proposed filename (kebab-case), tag changes (e.g. drop `workflow/draft` on filing), action items found, propagation edits proposed, open questions.
+9. **Present the report** to the human. Apply moves and propagation edits only after explicit approval, updating each edited note's `updated:` date and re-checking its wikilinks (cross-directory links need full paths — see `10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md`). Propagation edits to `workflow/canonical` notes follow canonical change control even after triage approval.
+10. After any approved changes: `python3 10_Agents/tools/brain/brain.py validate` and commit.
 
 ## References
 
 - `02_Inbox/README.md` — the triage contract
 - `00_Meta/conventions.md` — destinations and change control
-- [[10_Agents/skills/distill-note/SKILL|distill-note]] — reshaping zettels at step 6
+- [[10_Agents/skills/distill-note/SKILL|distill-note]] — reshaping zettels at step 7

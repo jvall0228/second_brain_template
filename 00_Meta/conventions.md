@@ -58,16 +58,9 @@ updated: YYYY-MM-DD
 ---
 ```
 
-### Provenance (`author:` / `session:`)
+### Provenance
 
-Optional fields distinguishing agent-written notes from human-authored ones (`audience/agent` says who a note is *for*, not who wrote it):
-
-```yaml
-author: claude-code      # harness-level identifier
-session: SESSION_REF     # session URL, PR, or task reference when one exists
-```
-
-`author:` is the **harness identifier** (`claude-code`, `copilot`, `cursor`, …) — harness granularity is deliberate: stable, meaningful, no model-version churn (not a model id, not a person). `session:` points at the session URL, PR, or task reference; omit it when none exists. Privacy: session links can expose account/workspace identifiers — a work fork may prefer opaque ids. **Expected for agent-authored notes, absent for human notes**: absence means pre-convention or human — no migration needed. `brain validate` warns (`missing-author`, never an error) on a `02_Inbox/` note tagged both `audience/agent` and `workflow/draft` with no `author:`; templates unaffected (placeholders exempt, below).
+Optional fields marking agent-written notes (`audience/agent` says who a note is *for*, not who wrote it): `author:` — the **harness identifier** (`claude-code`, `copilot`, …; not a model id or person); `session:` — a session URL, PR, or task ref when one exists (may expose workspace identifiers; work forks can use opaque ids). **Expected for agent notes, absent for human notes**; no migration of old notes. `brain validate` warns (`missing-author`, spec §10.2) on an agent-tagged `02_Inbox/` draft with no `author:`; templates exempt.
 
 ### Expiration (`expires:`)
 
@@ -102,8 +95,13 @@ Tags use **slash-delimited namespaces**. **This table is the authoritative tag t
 | `topic/*` | Subject matter | Free-form (e.g., `software`, `physics`, `health`, `ttrpg`, `finance`, `identity`) |
 | `workflow/*` | Lifecycle stage | `canonical`, `draft`, `review`, `needs-review` |
 | `status/*` | Actionability | `active`, `someday`, `done` |
+| `restricted/*` | Privacy marking | `private` |
 
 Notes tagged `workflow/canonical` are foundational vault docs. They require a PR or explicit human approval to modify.
+
+### restricted/private
+
+`restricted/private` marks content that must not spread beyond its note. **Not access control** ([[00_Meta/prd]] §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction to path/title/tags (brain spec §8.3), the `restricted-link` validate warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
 
 ## Agent Write Rules
 
