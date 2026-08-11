@@ -20,7 +20,7 @@ Notable structural changes to the vault. For individual file history, use `git l
 
 ## 2026-08-11 — PRD v2 + Spec Alignment
 
-Resolved the findings of the spec review in `02_Inbox/2026-08-11-prd-review.md` (applied with explicit human approval):
+Resolved the findings of the spec review in `2026-08-11-prd-review.md` (then in the Inbox, since archived to `07_Archives/inbox/`; applied with explicit human approval):
 
 - Rewrote [[00_Meta/prd]] as revision 2.0: kebab-case paths throughout, milestone status recorded (M0–M4 done, M5–M6 not started), `brain` CLI marked as planned, shipped surface documented (Journal subtree, `10_Agents/solutions/`, extra profile notes and templates), template phase described, and new sections for data sensitivity, concurrency, and validation. Tagged the PRD `workflow/canonical`.
 - Declared the tag table in [[00_Meta/conventions]] the authoritative taxonomy; synced the PRD and the entrypoint (then `CONTEXT.md`, now [[AGENTS]]) to it (added `topic/*` to its summary).

@@ -279,7 +279,7 @@ This vault is a personal context layer read in full by every connected agent ser
 ## 19. Milestones (status as of 2026-08-11)
 ### M0: Bootstrap Minimum — **Done**
 Real-content files (§11.1, shipped as fill-in shells per §5), aliases, Inbox README, all numbered directories.
-Success criterion: an agent reads the must-read sequence and produces an Inbox note that matches conventions. *(Verified 2026-08-11: `02_Inbox/2026-08-11-prd-review.md`.)*
+Success criterion: an agent reads the must-read sequence and produces an Inbox note that matches conventions. *(Verified 2026-08-11: `2026-08-11-prd-review.md`, written to the Inbox and archived after triage to `07_Archives/inbox/`.)*
 
 ### M1: Repo skeleton expansion — **Done**
 Section READMEs for every top-level directory (directories themselves exist from M0).

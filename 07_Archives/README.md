@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Archives
@@ -28,11 +28,12 @@ Mirror the source structure:
 - `07_Archives/projects/` — completed or cancelled projects
 - `07_Archives/areas/` — areas you've stepped away from
 - `07_Archives/resources/` — outdated reference material
+- `07_Archives/inbox/` — Inbox items that served their purpose without migrating to PARA
 - `07_Archives/assets/` — large or obsolete assets moved from `08_Assets/`
 
 ## Contents
 
-_Empty — nothing archived yet._
+- [[07_Archives/inbox/2026-08-11-prd-review|PRD Review (2026-08-11)]] — Spec review record; findings resolved in PRD revision 2.0
 
 ## Related
 

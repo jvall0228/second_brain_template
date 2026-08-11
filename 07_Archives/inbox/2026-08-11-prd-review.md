@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/human
   - audience/agent
-  - workflow/draft
+  - status/done
 updated: 2026-08-11
 ---
 
