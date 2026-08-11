@@ -12,6 +12,11 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Note Surgery (Ops Plan Phase 3)
+
+- New canonical skill [[10_Agents/skills/merge-notes/SKILL|merge-notes]]: executes **approved** note surgery only — merge (survivor rewritten by replacement, backlinks retargeted via `brain links`, losers archived), split (one note per subject, backlinks re-pointed by citing intent), and the safe rename/move procedure (backlinks captured first, `git mv`, retarget, reindex).
+- [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]'s duplication scan now hands approved proposals to merge-notes: detection proposes there; this skill executes.
+
 ## 2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)
 
 - New canonical skill [[10_Agents/skills/distill-note/SKILL|distill-note]]: reshape an existing note into an atomic evergreen zettel — declarative-claim title, standalone summary layer, wired links, supersede-by-replacement — invoked by triage for `type/zettel` items and by the Journal→Resources graduation path.
