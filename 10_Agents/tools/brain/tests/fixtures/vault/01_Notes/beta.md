@@ -3,6 +3,7 @@ title: "Beta"
 tags:
   - type/note
 updated: 2026-08-10
+expires: 2027-01-01
 ---
 
 # Alpha Section

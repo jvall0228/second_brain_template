@@ -52,9 +52,9 @@ ORPHAN_EXEMPT_PATHS = frozenset({"AGENTS.md", "CLAUDE.md", "README.md"})
 OVERSIZED_EXEMPT_PATHS = frozenset({"00_Meta/changelog.md"})
 
 # Gate for the validate-side curation warnings (missing-expires,
-# expires-beyond-cap, oversized, bootstrap-budget). Off until the one-time
-# expires: backfill lands; `brain curate` always reports regardless.
-VALIDATE_CURATION_WARNINGS = False
+# expires-beyond-cap, oversized, bootstrap-budget). On since the one-time
+# expires: backfill (2026-08-11); `brain curate` always reports regardless.
+VALIDATE_CURATION_WARNINGS = True
 
 # R20 bootstrap context budgets (bytes): measured 2026-08-11 sizes + ~50%
 # headroom, rounded up. Total ties to the smallest harness project-doc cap.

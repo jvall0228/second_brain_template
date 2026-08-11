@@ -336,7 +336,8 @@ class CurationTests(unittest.TestCase):
         files = {"plain.md": note()}
         with tempfile.TemporaryDirectory() as td:
             root = self.vault(td, files)
-            _, warnings = brain.run_validate(root, check_index=False)
+            with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", False):
+                _, warnings = brain.run_validate(root, check_index=False)
             self.assertFalse(any(f["rule"] == "missing-expires" for f in warnings))
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
                 _, warnings = brain.run_validate(root, check_index=False)
@@ -359,9 +360,7 @@ class CurationTests(unittest.TestCase):
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
                 _, warnings = brain.run_validate(root, check_index=False)
             missing = {f["path"] for f in warnings if f["rule"] == "missing-expires"}
-            # the fixture conventions copy is a real note in scope; only the
-            # exempt prefixes/paths stay out
-            self.assertEqual(missing, {"needs-one.md", "00_Meta/conventions.md"})
+            self.assertEqual(missing, {"needs-one.md"})
 
     def test_beyond_cap_and_oversized_warnings(self):
         big = note("word\n" * 401, expires="2027-02-01")
@@ -398,7 +397,7 @@ class CurationTests(unittest.TestCase):
             self.assertIn("orphan.md", cur["orphans"])
             self.assertNotIn("fresh.md", cur["orphans"])
             self.assertEqual(cur["unreferencedAssets"], ["08_Assets/unused.png"])
-            self.assertEqual(cur["missingExpires"], ["00_Meta/conventions.md"])
+            self.assertEqual(cur["missingExpires"], [])
 
     def test_context_report_and_budget_warning(self):
         files = {"AGENTS.md": "a" * 9000}

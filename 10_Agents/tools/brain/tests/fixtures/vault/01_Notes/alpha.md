@@ -4,6 +4,7 @@ tags:
   - type/note
   - topic/anything-goes
 updated: 2026-08-11
+expires: 2027-01-01
 ---
 
 # Alpha
