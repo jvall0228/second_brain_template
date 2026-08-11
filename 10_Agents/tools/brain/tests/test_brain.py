@@ -91,14 +91,14 @@ class ExtractionTests(unittest.TestCase):
         return brain.extract_body(lines, 3)
 
     def test_exclusion_zones(self):
-        links, _, _ = self.extract(
+        links, _, _, _ = self.extract(
             "span `[[a]]` out\n```\n[[b]]\n```\n~~~\n[[c]]\n~~~\n[[real]]\n"
             "``double `[[d]]` span``\n```\n[[e]] inside an unclosed fence\n"
         )
         self.assertEqual([l["target"] for l in links], ["real"])
 
     def test_link_forms(self):
-        links, _, _ = self.extract(
+        links, _, _, _ = self.extract(
             "[[t]] [[t|D]] [[t#h]] [[t#^b|D2]] ![[pic.png]] [[t\\|E]] "
             "[[file.md]] [[{{ph}}]] \\[[escaped]] [[#self]]"
         )
@@ -115,7 +115,7 @@ class ExtractionTests(unittest.TestCase):
         self.assertEqual(by_raw["[[#self]]"]["target"], "")
 
     def test_headings(self):
-        _, headings, _ = self.extract(
+        _, headings, _, _ = self.extract(
             "# One\n## Two ##\nSetext\n======\n####### seven hashes\n`# span`\n"
         )
         self.assertEqual(
@@ -124,7 +124,7 @@ class ExtractionTests(unittest.TestCase):
         )
 
     def test_body_tags(self):
-        _, _, tags = self.extract(
+        _, _, tags, _ = self.extract(
             "#focus-mode mid #ok2 url https://x.io/a#anchor #123 #1a\n# Heading\n"
         )
         self.assertEqual(tags, ["1a", "focus-mode", "ok2"])

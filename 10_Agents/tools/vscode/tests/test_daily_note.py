@@ -1,4 +1,5 @@
-"""Tests for daily_note.py (VS Code daily-note task, PRD §6.5).
+"""Tests for daily_note.py (VS Code daily-note task, PRD §6.5), including
+the spec-§17.5 task carry-over into the new note's Backlog section.
 
 Run via the tools runner:
     python3 10_Agents/tools/run_tests.py
@@ -24,6 +25,14 @@ updated: {{date}}
 
 - Weekly review: [[{{RELATED_WEEKLY_REVIEW}}]]
 - Yesterday: [[{{PREVIOUS_DAILY_NOTE}}]]
+
+### Backlog
+
+What goals and tasks need to carry over to the next day?
+
+-
+
+### Health
 """
 
 
@@ -102,6 +111,109 @@ class EnsureNoteTests(unittest.TestCase):
             (root / "03_Journal" / "periodic" / "daily").rmdir()
             _, created = daily_note.ensure_note(root, datetime.date(2026, 8, 11))
             self.assertTrue(created)
+
+
+YESTERDAY_NOTE = """---
+title: "2026-08-10"
+tags:
+  - type/journal
+updated: 2026-08-10
+---
+
+# 2026-08-10
+
+- [ ] carry me 📅 2026-08-15
+- [x] already done
+  - [ ] nested open child
+```
+- [ ] inside a code fence — never carries
+```
+`- [ ] inside a code span — never carries`
+"""
+
+TODAY = datetime.date(2026, 8, 11)
+
+
+def write_yesterday(root: Path, day: str = "2026-08-10", content: str = YESTERDAY_NOTE):
+    (root / "03_Journal" / "periodic" / "daily" / f"{day}.md").write_text(
+        content, encoding="utf-8"
+    )
+
+
+class CarryOverTests(unittest.TestCase):
+    """Spec §17.5: yesterday's unchecked tasks land in today's Backlog."""
+
+    def test_open_tasks_carry_verbatim_done_and_code_do_not(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            write_yesterday(root)
+            target, created = daily_note.ensure_note(root, TODAY)
+            self.assertTrue(created)
+            content = target.read_text(encoding="utf-8")
+        self.assertIn("- [ ] carry me 📅 2026-08-15", content)
+        self.assertIn("  - [ ] nested open child", content)  # indentation kept
+        self.assertNotIn("already done", content)
+        self.assertNotIn("code fence", content)
+        self.assertNotIn("code span", content)
+        # Carried lines sit inside the Backlog section, before ### Health.
+        self.assertLess(
+            content.index("### Backlog"), content.index("- [ ] carry me")
+        )
+        self.assertLess(content.index("- [ ] carry me"), content.index("### Health"))
+
+    def test_no_yesterday_note_means_no_carry_over(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            target, created = daily_note.ensure_note(root, TODAY)
+            self.assertTrue(created)
+            content = target.read_text(encoding="utf-8")
+        self.assertNotIn("carry me", content)
+        self.assertIn("### Backlog", content)
+
+    def test_iso_week_year_boundary_carries_from_previous_year(self):
+        # Yesterday of 2027-01-01 is 2026-12-31 (ISO week 2026-W53).
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            write_yesterday(root, day="2026-12-31")
+            target, _ = daily_note.ensure_note(root, datetime.date(2027, 1, 1))
+            content = target.read_text(encoding="utf-8")
+        self.assertIn("- [ ] carry me 📅 2026-08-15", content)
+
+    def test_config_toggle_off_disables_carry_over(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            write_yesterday(root)
+            (root / "00_Meta").mkdir()
+            (root / "00_Meta" / "config.yaml").write_text(
+                "tasks:\n  carry_over: off\n", encoding="utf-8"
+            )
+            target, _ = daily_note.ensure_note(root, TODAY)
+            content = target.read_text(encoding="utf-8")
+        self.assertNotIn("carry me", content)
+
+    def test_template_without_backlog_heading_gains_one(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            template = root / "09_Templates" / "template-daily-log.md"
+            template.write_text(
+                template.read_text(encoding="utf-8").split("### Backlog")[0],
+                encoding="utf-8",
+            )
+            write_yesterday(root)
+            target, _ = daily_note.ensure_note(root, TODAY)
+            content = target.read_text(encoding="utf-8")
+        self.assertIn("### Backlog", content)
+        self.assertIn("- [ ] carry me 📅 2026-08-15", content)
+
+    def test_existing_note_is_untouched_by_carry_over(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            write_yesterday(root)
+            existing = root / "03_Journal" / "periodic" / "daily" / "2026-08-11.md"
+            existing.write_text("owner edits\n", encoding="utf-8")
+            _, created = daily_note.ensure_note(root, TODAY)
+            self.assertFalse(created)
+            self.assertEqual(existing.read_text(encoding="utf-8"), "owner edits\n")
 
 
 if __name__ == "__main__":

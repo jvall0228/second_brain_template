@@ -120,6 +120,7 @@
     }
    ],
    "sizeBytes": 692,
+   "tasks": [],
    "title": "Meta",
    "updated": "2026-08-11"
   },
@@ -1138,6 +1139,7 @@
     }
    ],
    "sizeBytes": 36639,
+   "tasks": [],
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -1241,31 +1243,36 @@
     {
      "level": 2,
      "line": 106,
+     "text": "Tasks"
+    },
+    {
+     "level": 2,
+     "line": 117,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 119,
+     "line": 130,
      "text": "Change Control"
     },
     {
      "level": 3,
-     "line": 129,
+     "line": 140,
      "text": "Draft → Canonical Promotion"
     },
     {
      "level": 2,
-     "line": 141,
+     "line": 152,
      "text": "Bootstrap Context Budgets"
     },
     {
      "level": 2,
-     "line": 145,
+     "line": 156,
      "text": "Operating Rhythm"
     },
     {
      "level": 2,
-     "line": 149,
+     "line": 160,
      "text": "Recency"
     }
    ],
@@ -1329,7 +1336,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 112,
+     "line": 123,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1340,7 +1347,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 113,
+     "line": 124,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -1351,7 +1358,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 117,
+     "line": 128,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -1362,7 +1369,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 136,
+     "line": 147,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1373,7 +1380,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 137,
+     "line": 148,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1384,7 +1391,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 139,
+     "line": 150,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1395,7 +1402,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 143,
+     "line": 154,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1406,7 +1413,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 143,
+     "line": 154,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -1417,7 +1424,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 143,
+     "line": 154,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -1428,7 +1435,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 143,
+     "line": 154,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -1439,7 +1446,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 143,
+     "line": 154,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1450,7 +1457,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 147,
+     "line": 158,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -1461,7 +1468,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 153,
+     "line": 164,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1469,7 +1476,8 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10237,
+   "sizeBytes": 10677,
+   "tasks": [],
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -1942,6 +1950,7 @@
     }
    ],
    "sizeBytes": 2692,
+   "tasks": [],
    "title": "Index",
    "updated": "2026-08-11"
   },
@@ -2474,6 +2483,7 @@
     }
    ],
    "sizeBytes": 36861,
+   "tasks": [],
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -2549,6 +2559,56 @@
     }
    ],
    "sizeBytes": 2067,
+   "tasks": [
+    {
+     "due": null,
+     "line": 44,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Fill in `01_Profile/now.md` (current focus)"
+    },
+    {
+     "due": null,
+     "line": 45,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Fill in `01_Profile/preferences.md` (how agents should format output)"
+    },
+    {
+     "due": null,
+     "line": 46,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Fill in `01_Profile/defaults.md` (timezone, locale, units)"
+    },
+    {
+     "due": null,
+     "line": 47,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Fill in `01_Profile/identity.md` and `01_Profile/work.md`"
+    },
+    {
+     "due": null,
+     "line": 48,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Delete the seeded example notes"
+    },
+    {
+     "due": null,
+     "line": 49,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Capture your first real notes into `02_Inbox/`"
+    }
+   ],
    "title": "Status",
    "updated": "2026-08-11"
   },
@@ -2660,6 +2720,7 @@
     }
    ],
    "sizeBytes": 764,
+   "tasks": [],
    "title": "Profile",
    "updated": "2026-08-11"
   },
@@ -2710,6 +2771,7 @@
    ],
    "links": [],
    "sizeBytes": 1132,
+   "tasks": [],
    "title": "Defaults",
    "updated": "2026-08-11"
   },
@@ -2772,6 +2834,7 @@
    ],
    "links": [],
    "sizeBytes": 891,
+   "tasks": [],
    "title": "Identity",
    "updated": "2026-08-11"
   },
@@ -2812,6 +2875,7 @@
    ],
    "links": [],
    "sizeBytes": 593,
+   "tasks": [],
    "title": "Long-Running Themes",
    "updated": "2026-08-11"
   },
@@ -2886,6 +2950,7 @@
     }
    ],
    "sizeBytes": 882,
+   "tasks": [],
    "title": "Now",
    "updated": "2026-08-11"
   },
@@ -2953,6 +3018,7 @@
    ],
    "links": [],
    "sizeBytes": 1812,
+   "tasks": [],
    "title": "Preferences",
    "updated": "2026-08-11"
   },
@@ -3003,6 +3069,7 @@
    ],
    "links": [],
    "sizeBytes": 740,
+   "tasks": [],
    "title": "Tooling Stack",
    "updated": "2026-08-11"
   },
@@ -3050,6 +3117,7 @@
    ],
    "links": [],
    "sizeBytes": 703,
+   "tasks": [],
    "title": "Work",
    "updated": "2026-08-11"
   },
@@ -3216,6 +3284,7 @@
     }
    ],
    "sizeBytes": 10021,
+   "tasks": [],
    "title": "Implementation Plan: CODE Operations & Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
@@ -3401,6 +3470,7 @@
     }
    ],
    "sizeBytes": 17953,
+   "tasks": [],
    "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
@@ -3431,6 +3501,7 @@
    ],
    "links": [],
    "sizeBytes": 920,
+   "tasks": [],
    "title": "Inbox",
    "updated": "2026-08-11"
   },
@@ -3494,6 +3565,7 @@
     }
    ],
    "sizeBytes": 1653,
+   "tasks": [],
    "title": "Outbox",
    "updated": "2026-08-11"
   },
@@ -3658,6 +3730,7 @@
     }
    ],
    "sizeBytes": 2177,
+   "tasks": [],
    "title": "Journal",
    "updated": "2026-08-11"
   },
@@ -3751,6 +3824,7 @@
     }
    ],
    "sizeBytes": 837,
+   "tasks": [],
    "title": "Ideas",
    "updated": "2026-08-11"
   },
@@ -3810,6 +3884,7 @@
     }
    ],
    "sizeBytes": 899,
+   "tasks": [],
    "title": "Example Idea",
    "updated": "2026-08-10"
   },
@@ -3871,6 +3946,7 @@
     }
    ],
    "sizeBytes": 639,
+   "tasks": [],
    "title": "Insights",
    "updated": "2026-08-10"
   },
@@ -3936,6 +4012,7 @@
     }
    ],
    "sizeBytes": 654,
+   "tasks": [],
    "title": "Memories",
    "updated": "2026-02-21"
   },
@@ -4018,6 +4095,7 @@
     }
    ],
    "sizeBytes": 777,
+   "tasks": [],
    "title": "People",
    "updated": "2026-08-10"
   },
@@ -4064,6 +4142,7 @@
    ],
    "links": [],
    "sizeBytes": 743,
+   "tasks": [],
    "title": "Example Person",
    "updated": "2026-08-10"
   },
@@ -4178,6 +4257,7 @@
     }
    ],
    "sizeBytes": 925,
+   "tasks": [],
    "title": "Periodic Notes",
    "updated": "2026-08-10"
   },
@@ -4266,6 +4346,7 @@
     }
    ],
    "sizeBytes": 1088,
+   "tasks": [],
    "title": "2025-01-15",
    "updated": "2025-01-15"
   },
@@ -4335,6 +4416,7 @@
     }
    ],
    "sizeBytes": 453,
+   "tasks": [],
    "title": "Daily Logs",
    "updated": "2026-08-10"
   },
@@ -4393,6 +4475,7 @@
     }
    ],
    "sizeBytes": 405,
+   "tasks": [],
    "title": "Monthly Reviews",
    "updated": "2026-08-10"
   },
@@ -4451,6 +4534,7 @@
     }
    ],
    "sizeBytes": 417,
+   "tasks": [],
    "title": "Quarterly Reviews",
    "updated": "2026-08-10"
   },
@@ -4561,6 +4645,24 @@
     }
    ],
    "sizeBytes": 1275,
+   "tasks": [
+    {
+     "due": null,
+     "line": 17,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "Process Inbox to zero"
+    },
+    {
+     "due": null,
+     "line": 18,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "Empty mind (brain dump below)"
+    }
+   ],
    "title": "2025-W03 Review",
    "updated": "2025-01-19"
   },
@@ -4630,6 +4732,7 @@
     }
    ],
    "sizeBytes": 462,
+   "tasks": [],
    "title": "Weekly Reviews",
    "updated": "2026-08-10"
   },
@@ -4688,6 +4791,7 @@
     }
    ],
    "sizeBytes": 396,
+   "tasks": [],
    "title": "Yearly Reviews",
    "updated": "2026-08-10"
   },
@@ -4747,6 +4851,7 @@
     }
    ],
    "sizeBytes": 604,
+   "tasks": [],
    "title": "Plans",
    "updated": "2026-08-10"
   },
@@ -4890,6 +4995,7 @@
     }
    ],
    "sizeBytes": 1385,
+   "tasks": [],
    "title": "Projects",
    "updated": "2026-08-11"
   },
@@ -4983,6 +5089,48 @@
     }
    ],
    "sizeBytes": 1208,
+   "tasks": [
+    {
+     "due": null,
+     "line": 30,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "Audit the current site and list what to keep"
+    },
+    {
+     "due": null,
+     "line": 31,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Pick a static-site framework (see decision record)"
+    },
+    {
+     "due": null,
+     "line": 32,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Build the new layout"
+    },
+    {
+     "due": null,
+     "line": 33,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Migrate content"
+    },
+    {
+     "due": null,
+     "line": 34,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Deploy and cut over DNS"
+    }
+   ],
    "title": "Example Project",
    "updated": "2026-08-11"
   },
@@ -5051,6 +5199,7 @@
     }
    ],
    "sizeBytes": 1011,
+   "tasks": [],
    "title": "DR: Static-Site Framework Choice",
    "updated": "2025-01-10"
   },
@@ -5122,6 +5271,7 @@
     }
    ],
    "sizeBytes": 542,
+   "tasks": [],
    "title": "Decision Records",
    "updated": "2026-08-11"
   },
@@ -5242,6 +5392,7 @@
     }
    ],
    "sizeBytes": 1287,
+   "tasks": [],
    "title": "Areas",
    "updated": "2026-08-11"
   },
@@ -5311,6 +5462,7 @@
     }
    ],
    "sizeBytes": 816,
+   "tasks": [],
    "title": "Example Area",
    "updated": "2026-08-11"
   },
@@ -5464,6 +5616,7 @@
     }
    ],
    "sizeBytes": 1749,
+   "tasks": [],
    "title": "Resources",
    "updated": "2026-08-11"
   },
@@ -5527,6 +5680,7 @@
     }
    ],
    "sizeBytes": 1008,
+   "tasks": [],
    "title": "Example Resource",
    "updated": "2026-08-11"
   },
@@ -5652,6 +5806,7 @@
     }
    ],
    "sizeBytes": 13801,
+   "tasks": [],
    "title": "Harness Primitives: Claude Code",
    "updated": "2026-08-11"
   },
@@ -5771,6 +5926,7 @@
     }
    ],
    "sizeBytes": 13505,
+   "tasks": [],
    "title": "Harness Primitives: Codex",
    "updated": "2026-08-11"
   },
@@ -5876,6 +6032,7 @@
     }
    ],
    "sizeBytes": 20491,
+   "tasks": [],
    "title": "Harness Primitives: GitHub Copilot",
    "updated": "2026-08-11"
   },
@@ -5990,6 +6147,7 @@
     }
    ],
    "sizeBytes": 12605,
+   "tasks": [],
    "title": "Harness Primitives: Cursor",
    "updated": "2026-08-11"
   },
@@ -6104,6 +6262,7 @@
     }
    ],
    "sizeBytes": 10719,
+   "tasks": [],
    "title": "Harness Primitives: Muse Code",
    "updated": "2026-08-11"
   },
@@ -6218,6 +6377,7 @@
     }
    ],
    "sizeBytes": 13257,
+   "tasks": [],
    "title": "Harness Primitives: opencode",
    "updated": "2026-08-11"
   },
@@ -6332,6 +6492,7 @@
     }
    ],
    "sizeBytes": 11439,
+   "tasks": [],
    "title": "Harness Primitives: Pi",
    "updated": "2026-08-11"
   },
@@ -6571,6 +6732,7 @@
     }
    ],
    "sizeBytes": 12107,
+   "tasks": [],
    "title": "Harness Primitives Research",
    "updated": "2026-08-11"
   },
@@ -6655,6 +6817,7 @@
     }
    ],
    "sizeBytes": 10498,
+   "tasks": [],
    "title": "Harness Primitives: Universal Standards & Protocols",
    "updated": "2026-08-11"
   },
@@ -6775,6 +6938,7 @@
     }
    ],
    "sizeBytes": 4517,
+   "tasks": [],
    "title": "Recommended Community Skills",
    "updated": "2026-08-11"
   },
@@ -6941,6 +7105,7 @@
     }
    ],
    "sizeBytes": 12381,
+   "tasks": [],
    "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
    "updated": "2026-08-11"
   },
@@ -7070,6 +7235,7 @@
     }
    ],
    "sizeBytes": 1669,
+   "tasks": [],
    "title": "Archives",
    "updated": "2026-08-11"
   },
@@ -7178,6 +7344,7 @@
     }
    ],
    "sizeBytes": 13177,
+   "tasks": [],
    "title": "Copilot P0 Promotion Plan",
    "updated": "2026-08-11"
   },
@@ -7432,6 +7599,7 @@
     }
    ],
    "sizeBytes": 4438,
+   "tasks": [],
    "title": "Report: expires: Backfill — Judgment Calls (Resolved)",
    "updated": "2026-08-11"
   },
@@ -7721,6 +7889,7 @@
     }
    ],
    "sizeBytes": 17214,
+   "tasks": [],
    "title": "M5–M7 Implementation Plan",
    "updated": "2026-08-11"
   },
@@ -7934,6 +8103,7 @@
     }
    ],
    "sizeBytes": 5243,
+   "tasks": [],
    "title": "Requirements: onboard-owner skill",
    "updated": "2026-08-11"
   },
@@ -8071,6 +8241,7 @@
     }
    ],
    "sizeBytes": 16324,
+   "tasks": [],
    "title": "PRD Review — Spec vs. Shipped Template",
    "updated": "2026-08-11"
   },
@@ -8129,6 +8300,7 @@
     }
    ],
    "sizeBytes": 3375,
+   "tasks": [],
    "title": "Inbox Triage Report — 2026-08-11",
    "updated": "2026-08-11"
   },
@@ -8167,6 +8339,7 @@
    ],
    "links": [],
    "sizeBytes": 733,
+   "tasks": [],
    "title": "Assets",
    "updated": "2026-08-11"
   },
@@ -8273,6 +8446,7 @@
     }
    ],
    "sizeBytes": 2446,
+   "tasks": [],
    "title": "Templates",
    "updated": "2026-08-11"
   },
@@ -8345,6 +8519,7 @@
     }
    ],
    "sizeBytes": 368,
+   "tasks": [],
    "title": "{{AREA_NAME}}",
    "updated": null
   },
@@ -8429,6 +8604,7 @@
     }
    ],
    "sizeBytes": 700,
+   "tasks": [],
    "title": "{{title}}",
    "updated": null
   },
@@ -8545,6 +8721,7 @@
     }
    ],
    "sizeBytes": 1610,
+   "tasks": [],
    "title": "{{date}}",
    "updated": null
   },
@@ -8621,6 +8798,7 @@
     }
    ],
    "sizeBytes": 513,
+   "tasks": [],
    "title": "DR: {{DECISION_TITLE}}",
    "updated": null
   },
@@ -8682,6 +8860,7 @@
     }
    ],
    "sizeBytes": 415,
+   "tasks": [],
    "title": "{{MEDIA_TITLE}}",
    "updated": null
   },
@@ -8807,6 +8986,7 @@
     }
    ],
    "sizeBytes": 2026,
+   "tasks": [],
    "title": "{{MONTH_ID}} Review",
    "updated": null
   },
@@ -8889,6 +9069,7 @@
     }
    ],
    "sizeBytes": 416,
+   "tasks": [],
    "title": "{{PROJECT_NAME}}",
    "updated": null
   },
@@ -9025,6 +9206,7 @@
     }
    ],
    "sizeBytes": 2147,
+   "tasks": [],
    "title": "{{QUARTER_ID}} Review",
    "updated": null
   },
@@ -9089,6 +9271,7 @@
     }
    ],
    "sizeBytes": 301,
+   "tasks": [],
    "title": "{{RESOURCE_TITLE}}",
    "updated": null
   },
@@ -9186,27 +9369,27 @@
     },
     {
      "level": 3,
-     "line": 80,
+     "line": 82,
      "text": "Status"
     },
     {
      "level": 3,
-     "line": 91,
+     "line": 93,
      "text": "Alignment"
     },
     {
      "level": 2,
-     "line": 97,
+     "line": 99,
      "text": "Reflection"
     },
     {
      "level": 3,
-     "line": 113,
+     "line": 115,
      "text": "Thoughts"
     },
     {
      "level": 2,
-     "line": 117,
+     "line": 119,
      "text": "Next Week Focus"
     }
    ],
@@ -9237,7 +9420,7 @@
      "display": "Now page",
      "embed": false,
      "fragment": null,
-     "line": 93,
+     "line": 95,
      "placeholder": false,
      "raw": "[[01_Profile/now|Now page]]",
      "resolved": "01_Profile/now.md",
@@ -9245,7 +9428,25 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2413,
+   "sizeBytes": 2483,
+   "tasks": [
+    {
+     "due": null,
+     "line": 19,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Process Inbox to zero"
+    },
+    {
+     "due": null,
+     "line": 20,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Empty mind (brain dump below)"
+    }
+   ],
    "title": "{{WEEK_ID}} Review",
    "updated": null
   },
@@ -9350,6 +9551,7 @@
     }
    ],
    "sizeBytes": 1650,
+   "tasks": [],
    "title": "{{YEAR}} Review",
    "updated": null
   },
@@ -9406,6 +9608,7 @@
     }
    ],
    "sizeBytes": 227,
+   "tasks": [],
    "title": "{{ZETTEL_TITLE}}",
    "updated": null
   },
@@ -9478,6 +9681,7 @@
     }
    ],
    "sizeBytes": 2426,
+   "tasks": [],
    "title": "Template Variants",
    "updated": "2026-08-11"
   },
@@ -9604,6 +9808,7 @@
     }
    ],
    "sizeBytes": 1579,
+   "tasks": [],
    "title": "{{date}}",
    "updated": null
   },
@@ -9766,6 +9971,24 @@
     }
    ],
    "sizeBytes": 2105,
+   "tasks": [
+    {
+     "due": null,
+     "line": 19,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Process Inbox to zero"
+    },
+    {
+     "due": null,
+     "line": 20,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Empty mind (brain dump below)"
+    }
+   ],
    "title": "{{WEEK_ID}} Review",
    "updated": null
   },
@@ -9985,6 +10208,7 @@
     }
    ],
    "sizeBytes": 2323,
+   "tasks": [],
    "title": "Agents",
    "updated": "2026-08-11"
   },
@@ -10056,6 +10280,7 @@
     }
    ],
    "sizeBytes": 366,
+   "tasks": [],
    "title": "Agent Docs",
    "updated": "2026-08-11"
   },
@@ -10297,6 +10522,80 @@
     }
    ],
    "sizeBytes": 5544,
+   "tasks": [
+    {
+     "due": null,
+     "line": 58,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Frontmatter includes `title`, `tags`, `updated`"
+    },
+    {
+     "due": null,
+     "line": 59,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "`updated:` is set to today's date — on every edit, not just creation"
+    },
+    {
+     "due": null,
+     "line": 60,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Tags use defined namespaces (see [[00_Meta/conventions#Tag Namespaces]])"
+    },
+    {
+     "due": null,
+     "line": 61,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note"
+    },
+    {
+     "due": null,
+     "line": 62,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/conventions]] § Provenance)"
+    },
+    {
+     "due": null,
+     "line": 63,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet (unless explicitly directed elsewhere, or a `10_Agents/solutions/` note)"
+    },
+    {
+     "due": null,
+     "line": 64,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "**Restricted containment** ([[00_Meta/conventions#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism."
+    },
+    {
+     "due": null,
+     "line": 65,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])"
+    },
+    {
+     "due": null,
+     "line": 66,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "**Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping"
+    }
+   ],
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -10387,6 +10686,7 @@
     }
    ],
    "sizeBytes": 1875,
+   "tasks": [],
    "title": "Task Patterns",
    "updated": "2026-08-11"
   },
@@ -10546,6 +10846,7 @@
     }
    ],
    "sizeBytes": 2663,
+   "tasks": [],
    "title": "Environments",
    "updated": "2026-08-11"
   },
@@ -10738,6 +11039,7 @@
     }
    ],
    "sizeBytes": 5018,
+   "tasks": [],
    "title": "Harness Adapters",
    "updated": "2026-08-11"
   },
@@ -10837,6 +11139,7 @@
     }
    ],
    "sizeBytes": 5372,
+   "tasks": [],
    "title": "Claude Code Wiring",
    "updated": "2026-08-11"
   },
@@ -10920,6 +11223,7 @@
     }
    ],
    "sizeBytes": 3754,
+   "tasks": [],
    "title": "Codex Wiring",
    "updated": "2026-08-11"
   },
@@ -11044,6 +11348,7 @@
     }
    ],
    "sizeBytes": 10994,
+   "tasks": [],
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
   },
@@ -11177,6 +11482,7 @@
     }
    ],
    "sizeBytes": 5089,
+   "tasks": [],
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -11260,6 +11566,7 @@
     }
    ],
    "sizeBytes": 3190,
+   "tasks": [],
    "title": "Muse Code Wiring",
    "updated": "2026-08-11"
   },
@@ -11343,6 +11650,7 @@
     }
    ],
    "sizeBytes": 3153,
+   "tasks": [],
    "title": "opencode Wiring",
    "updated": "2026-08-11"
   },
@@ -11426,6 +11734,7 @@
     }
    ],
    "sizeBytes": 3259,
+   "tasks": [],
    "title": "Pi Wiring",
    "updated": "2026-08-11"
   },
@@ -11962,6 +12271,7 @@
     }
    ],
    "sizeBytes": 7189,
+   "tasks": [],
    "title": "Agent Skills",
    "updated": "2026-08-11"
   },
@@ -12082,6 +12392,7 @@
     }
    ],
    "sizeBytes": 10833,
+   "tasks": [],
    "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
   },
@@ -12207,6 +12518,7 @@
     }
    ],
    "sizeBytes": 3634,
+   "tasks": [],
    "title": "Skill: Curate",
    "updated": "2026-08-11"
   },
@@ -12255,6 +12567,7 @@
    ],
    "links": [],
    "sizeBytes": 1753,
+   "tasks": [],
    "title": "Skill: Daily Log",
    "updated": "2026-08-11"
   },
@@ -12369,6 +12682,7 @@
     }
    ],
    "sizeBytes": 3414,
+   "tasks": [],
    "title": "Skill: Distill Note",
    "updated": "2026-08-11"
   },
@@ -12517,6 +12831,7 @@
     }
    ],
    "sizeBytes": 3588,
+   "tasks": [],
    "title": "Skill: Express Packet",
    "updated": "2026-08-11"
   },
@@ -12564,6 +12879,7 @@
    ],
    "links": [],
    "sizeBytes": 2405,
+   "tasks": [],
    "title": "Skill: Inbox Capture",
    "updated": "2026-08-11"
   },
@@ -12610,6 +12926,7 @@
    ],
    "links": [],
    "sizeBytes": 2198,
+   "tasks": [],
    "title": "Skill: Link Repair",
    "updated": "2026-08-11"
   },
@@ -12714,6 +13031,7 @@
     }
    ],
    "sizeBytes": 3708,
+   "tasks": [],
    "title": "Skill: Merge Notes",
    "updated": "2026-08-11"
   },
@@ -12815,6 +13133,7 @@
     }
    ],
    "sizeBytes": 14473,
+   "tasks": [],
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
@@ -13135,6 +13454,7 @@
     }
    ],
    "sizeBytes": 15169,
+   "tasks": [],
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
   },
@@ -13215,6 +13535,7 @@
     }
    ],
    "sizeBytes": 3581,
+   "tasks": [],
    "title": "Skill: Periodic Review",
    "updated": "2026-08-11"
   },
@@ -13314,6 +13635,7 @@
     }
    ],
    "sizeBytes": 5971,
+   "tasks": [],
    "title": "Skill: Recommended Automations",
    "updated": "2026-08-11"
   },
@@ -13376,6 +13698,7 @@
     }
    ],
    "sizeBytes": 4291,
+   "tasks": [],
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -13434,6 +13757,7 @@
     }
    ],
    "sizeBytes": 2891,
+   "tasks": [],
    "title": "Skill: Self Maintenance",
    "updated": "2026-08-11"
   },
@@ -13475,6 +13799,7 @@
    ],
    "links": [],
    "sizeBytes": 2204,
+   "tasks": [],
    "title": "Skill: Solution Capture",
    "updated": "2026-08-11"
   },
@@ -13553,6 +13878,7 @@
     }
    ],
    "sizeBytes": 4204,
+   "tasks": [],
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
   },
@@ -13700,6 +14026,7 @@
     }
    ],
    "sizeBytes": 3198,
+   "tasks": [],
    "title": "Skill: Vault Answer",
    "updated": "2026-08-11"
   },
@@ -13771,6 +14098,7 @@
     }
    ],
    "sizeBytes": 3011,
+   "tasks": [],
    "title": "Skill: Vault Maintenance",
    "updated": "2026-08-11"
   },
@@ -13907,6 +14235,7 @@
     }
    ],
    "sizeBytes": 1108,
+   "tasks": [],
    "title": "Solutions",
    "updated": "2026-08-11"
   },
@@ -13955,6 +14284,7 @@
     }
    ],
    "sizeBytes": 397,
+   "tasks": [],
    "title": "Git Workflow Solutions",
    "updated": "2026-08-10"
   },
@@ -14003,6 +14333,7 @@
     }
    ],
    "sizeBytes": 364,
+   "tasks": [],
    "title": "Logic Error Solutions",
    "updated": "2026-08-10"
   },
@@ -14062,6 +14393,7 @@
     }
    ],
    "sizeBytes": 314,
+   "tasks": [],
    "title": "Obsidian Issue Solutions",
    "updated": "2026-02-22"
   },
@@ -14165,6 +14497,7 @@
    ],
    "links": [],
    "sizeBytes": 3743,
+   "tasks": [],
    "title": "Obsidian Wikilink Resolution Rules",
    "updated": "2026-08-11"
   },
@@ -14213,6 +14546,7 @@
     }
    ],
    "sizeBytes": 368,
+   "tasks": [],
    "title": "Performance Solutions",
    "updated": "2026-08-10"
   },
@@ -14261,6 +14595,7 @@
     }
    ],
    "sizeBytes": 386,
+   "tasks": [],
    "title": "Platform Solutions",
    "updated": "2026-08-10"
   },
@@ -14309,6 +14644,7 @@
     }
    ],
    "sizeBytes": 427,
+   "tasks": [],
    "title": "Vault Maintenance Solutions",
    "updated": "2026-08-10"
   },
@@ -14345,6 +14681,7 @@
     }
    ],
    "sizeBytes": 376,
+   "tasks": [],
    "title": "Solutions: Vault Tooling",
    "updated": "2026-08-11"
   },
@@ -14403,6 +14740,7 @@
    ],
    "links": [],
    "sizeBytes": 2758,
+   "tasks": [],
    "title": "Index Merge Conflicts",
    "updated": "2026-08-11"
   },
@@ -14506,6 +14844,7 @@
     }
    ],
    "sizeBytes": 2380,
+   "tasks": [],
    "title": "Agent Tools",
    "updated": "2026-08-11"
   },
@@ -14547,12 +14886,12 @@
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 53,
      "text": "The committed index"
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 57,
      "text": "Tests"
     }
    ],
@@ -14572,7 +14911,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -14580,7 +14919,8 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4137,
+   "sizeBytes": 4446,
+   "tasks": [],
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
   },
@@ -14734,153 +15074,183 @@
     },
     {
      "level": 3,
-     "line": 199,
+     "line": 203,
      "text": "8.2 Deterministic serialization"
     },
     {
      "level": 3,
-     "line": 210,
+     "line": 214,
      "text": "8.3 Restricted-note reduction (issue #17)"
     },
     {
      "level": 2,
-     "line": 220,
+     "line": 224,
      "text": "9. CLI command semantics"
     },
     {
      "level": 2,
-     "line": 239,
+     "line": 244,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 241,
+     "line": 246,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 245,
+     "line": 250,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 257,
+     "line": 262,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 262,
+     "line": 267,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 268,
+     "line": 273,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 293,
+     "line": 298,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 304,
+     "line": 309,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 317,
+     "line": 322,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 324,
+     "line": 329,
      "text": "14. Curation signals (ops plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 337,
+     "line": 342,
      "text": "15. Vault config (`00_Meta/config.yaml`) — issue #2"
     },
     {
      "level": 3,
-     "line": 341,
+     "line": 346,
      "text": "15.1 Location, optionality, change control"
     },
     {
      "level": 3,
-     "line": 348,
+     "line": 353,
      "text": "15.2 Grammar bounds"
     },
     {
      "level": 3,
-     "line": 354,
+     "line": 359,
      "text": "15.3 Key registry"
     },
     {
      "level": 3,
-     "line": 372,
+     "line": 378,
      "text": "15.4 Validate semantics"
     },
     {
      "level": 3,
-     "line": 376,
+     "line": 382,
      "text": "15.5 `config` command"
     },
     {
      "level": 2,
-     "line": 380,
+     "line": 386,
      "text": "16. Health report (`brain report`) — issue #16"
     },
     {
      "level": 3,
-     "line": 384,
+     "line": 390,
      "text": "16.1 Sections"
     },
     {
      "level": 3,
-     "line": 394,
+     "line": 400,
      "text": "16.2 JSON shape"
     },
     {
      "level": 3,
-     "line": 398,
+     "line": 404,
      "text": "16.3 `--since YYYY-MM-DD`"
     },
     {
      "level": 3,
-     "line": 402,
+     "line": 408,
      "text": "16.4 Thresholds"
     },
     {
      "level": 2,
-     "line": 406,
-     "text": "17. Semantic search (QMD — issue #8)"
+     "line": 412,
+     "text": "17. Task tracking (`brain tasks`) — issue #28"
     },
     {
      "level": 3,
-     "line": 410,
-     "text": "17.1 Embeddings sidecar"
+     "line": 416,
+     "text": "17.1 Recognition"
     },
     {
      "level": 3,
-     "line": 430,
-     "text": "17.2 Staleness and store loading"
+     "line": 422,
+     "text": "17.2 Task record and emoji metadata"
     },
     {
      "level": 3,
-     "line": 435,
-     "text": "17.3 `brain embed`"
+     "line": 433,
+     "text": "17.3 `tasks` command"
     },
     {
      "level": 3,
      "line": 444,
-     "text": "17.4 `brain search --semantic <query>`"
+     "text": "17.4 Config: `tasks.carry_over`"
     },
     {
      "level": 3,
-     "line": 453,
-     "text": "17.5 Determinism and invariants"
+     "line": 448,
+     "text": "17.5 Surfacing: daily-note carry-over"
+    },
+    {
+     "level": 2,
+     "line": 454,
+     "text": "18. Semantic search (QMD — issue #8)"
+    },
+    {
+     "level": 3,
+     "line": 458,
+     "text": "18.1 Embeddings sidecar"
+    },
+    {
+     "level": 3,
+     "line": 478,
+     "text": "18.2 Staleness and store loading"
+    },
+    {
+     "level": 3,
+     "line": 483,
+     "text": "18.3 `brain embed`"
+    },
+    {
+     "level": 3,
+     "line": 492,
+     "text": "18.4 `brain search --semantic <query>`"
+    },
+    {
+     "level": 3,
+     "line": 501,
+     "text": "18.5 Determinism and invariants"
     }
    ],
    "links": [
@@ -14943,7 +15313,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 243,
+     "line": 248,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -14954,7 +15324,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 249,
+     "line": 254,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -14965,7 +15335,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 253,
+     "line": 258,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -14976,7 +15346,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 253,
+     "line": 258,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -14987,7 +15357,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 326,
+     "line": 331,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -14998,7 +15368,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 361,
+     "line": 366,
      "placeholder": false,
      "raw": "[[06_Resources/vscode-editor-support]]",
      "resolved": "06_Resources/vscode-editor-support.md",
@@ -15009,15 +15379,27 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 362,
+     "line": 367,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
      "target": "10_Agents/skills/onboard-owner/SKILL",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 414,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
     }
    ],
-   "sizeBytes": 63788,
+   "sizeBytes": 71250,
+   "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },
@@ -15104,6 +15486,7 @@
     }
    ],
    "sizeBytes": 1661,
+   "tasks": [],
    "title": "VS Code Tools",
    "updated": "2026-08-11"
   },
@@ -15644,6 +16027,7 @@
     }
    ],
    "sizeBytes": 7238,
+   "tasks": [],
    "title": "Agents",
    "updated": "2026-08-11"
   },
@@ -15655,6 +16039,7 @@
    "headings": [],
    "links": [],
    "sizeBytes": 11,
+   "tasks": [],
    "title": null,
    "updated": null
   },
@@ -15725,6 +16110,7 @@
    ],
    "links": [],
    "sizeBytes": 6877,
+   "tasks": [],
    "title": "Second Brain Template",
    "updated": "2026-08-11"
   }

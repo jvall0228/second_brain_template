@@ -7,7 +7,7 @@ references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
 Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context, config, report, embed
+          curate, context, config, report, tasks, embed
 """
 
 from __future__ import annotations
@@ -71,8 +71,11 @@ VALIDATE_CURATION_WARNINGS = True
 
 # R20 bootstrap context budgets (bytes): measured 2026-08-11 sizes + ~50%
 # headroom, rounded up. Total ties to the smallest harness project-doc cap.
+# conventions.md raised 10240 -> 11264 with the issue-#28 Tasks section: the
+# accepted design registers the emoji table there, the file sat 3 bytes under
+# budget, and other sections could not be cut — the total budget still holds.
 BOOTSTRAP_BUDGETS = {
-    "00_Meta/conventions.md": 10240,
+    "00_Meta/conventions.md": 11264,
     "00_Meta/index.md": 4096,
     "01_Profile/defaults.md": 2048,
     "01_Profile/now.md": 2048,
@@ -380,6 +383,78 @@ HEADING_RE = re.compile(r"^( {0,3})(#{1,6}) (.*)$")
 BODY_TAG_RE = re.compile(r"(?:^|(?<=\s))#([A-Za-z0-9_/-]+)")
 EXT_RE = re.compile(r"\.[A-Za-z0-9]+$")
 
+# §17 checkbox tasks (issue #28). Detection runs on the MASKED line (so
+# checkboxes inside fenced code or inline code spans never index); the task
+# text is taken from the raw line at the same offset (masking preserves
+# length), so inline code inside a real task's text survives.
+TASK_RE = re.compile(r"^\s*[-*+] \[(.)\] ")
+# Obsidian Tasks emoji grammar (accepted design, issue #28). Date-bearing
+# emoji take a YYYY-MM-DD token; only 📅 (due) is indexed as a field, but a
+# bad date after ANY of them flags `malformed` (§17.2).
+TASK_DATE_EMOJI = {
+    "\U0001f4c5": "due",  # 📅
+    "⏳": "scheduled",  # ⏳
+    "\U0001f6eb": "start",  # 🛫
+    "✅": "done",  # ✅
+    "➕": "created",  # ➕
+}
+TASK_PRIORITY_EMOJI = {
+    "⏫": "high",  # ⏫
+    "\U0001f53c": "medium",  # 🔼
+    "\U0001f53d": "low",  # 🔽
+}
+TASK_RECURRENCE_EMOJI = "\U0001f501"  # 🔁 — free-text value, stripped only
+TASK_EMOJI_RE = re.compile(
+    "("
+    + "|".join(
+        sorted(TASK_DATE_EMOJI) + sorted(TASK_PRIORITY_EMOJI) + [TASK_RECURRENCE_EMOJI]
+    )
+    + ")\ufe0f?"  # tolerate an emoji variation selector
+)
+TASK_DATE_TOKEN_RE = re.compile(r"\s*(\d{4}-\d{2}-\d{2})(?!\d)")
+
+
+def parse_task_text(text: str) -> tuple[str, str | None, str | None, list[str]]:
+    """§17.2: split a task's raw text into (clean description, due, priority,
+    malformed field names). Emoji tokens (emoji + value) are stripped from the
+    description; the last occurrence wins for a repeated field. A date-shaped
+    token that is not a real calendar date is consumed and flags the field;
+    a missing/non-date-shaped value flags the field and leaves the text."""
+    due: str | None = None
+    priority: str | None = None
+    malformed: set[str] = set()
+    pieces: list[str] = []
+    pos = 0
+    matches = list(TASK_EMOJI_RE.finditer(text))
+    for i, m in enumerate(matches):
+        if m.start() < pos:
+            continue  # inside a value a previous token consumed
+        pieces.append(text[pos : m.start()])
+        emoji = m.group(1)
+        if emoji == TASK_RECURRENCE_EMOJI:
+            # Recurrence is free text: runs to the next emoji or end of text.
+            pos = next(
+                (n.start() for n in matches[i + 1 :] if n.start() >= m.end()),
+                len(text),
+            )
+            continue
+        if emoji in TASK_PRIORITY_EMOJI:
+            priority = TASK_PRIORITY_EMOJI[emoji]
+            pos = m.end()
+            continue
+        field = TASK_DATE_EMOJI[emoji]
+        dm = TASK_DATE_TOKEN_RE.match(text, m.end())
+        if dm and iso_date(dm.group(1)) is not None:
+            if field == "due":
+                due = dm.group(1)
+            pos = dm.end()
+        else:
+            malformed.add(field)
+            pos = dm.end() if dm else m.end()
+    pieces.append(text[pos:])
+    clean = " ".join(" ".join(pieces).split())
+    return clean, due, priority, sorted(malformed)
+
 
 def parse_link(inner: str, embed: bool, raw: str, line: int) -> dict:
     i = inner.find("|")
@@ -412,12 +487,30 @@ def parse_link(inner: str, embed: bool, raw: str, line: int) -> dict:
     }
 
 
-def extract_body(lines: list[str], body_start: int) -> tuple[list[dict], list[dict], list[str]]:
-    """Returns (links, headings, bodyTags) per §5 and §7."""
+def extract_body(
+    lines: list[str], body_start: int
+) -> tuple[list[dict], list[dict], list[str], list[dict]]:
+    """Returns (links, headings, bodyTags, tasks) per §5, §7, and §17."""
     links: list[dict] = []
     headings: list[dict] = []
     body_tags: set[str] = set()
+    tasks: list[dict] = []
     for lineno, raw, masked in body_lines_masked(lines, body_start):
+        tm = TASK_RE.match(masked)
+        if tm:
+            raw_text = raw[tm.end() :].strip()
+            if raw_text:
+                text, due, priority, malformed = parse_task_text(raw_text)
+                tasks.append(
+                    {
+                        "due": due,
+                        "line": lineno,
+                        "malformed": malformed,
+                        "priority": priority,
+                        "status": "open" if tm.group(1) == " " else "done",
+                        "text": text,
+                    }
+                )
         hm = HEADING_RE.match(masked)
         if hm:
             text = raw[hm.start(3) :]
@@ -431,7 +524,7 @@ def extract_body(lines: list[str], body_start: int) -> tuple[list[dict], list[di
             tag = m.group(1)
             if any(not c.isdigit() for c in tag):
                 body_tags.add(tag)
-    return links, headings, sorted(body_tags)
+    return links, headings, sorted(body_tags), tasks
 
 
 # ---------------------------------------------------------------------------
@@ -529,6 +622,7 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
                 "headings": [],
                 "links": [],
                 "sizeBytes": size,
+                "tasks": [],
                 "title": None,
                 "updated": None,
             }
@@ -537,7 +631,7 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
         fm, errors, body_start, _has_fm = parse_frontmatter(lines)
         title, _tags, updated = typed_fields(fm, errors)
         check_expires(fm, errors)
-        links, headings, body_tags = extract_body(lines, body_start)
+        links, headings, body_tags, tasks = extract_body(lines, body_start)
         records[rel] = {
             "backlinks": [],
             "bodyTags": body_tags,
@@ -546,6 +640,7 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
             "headings": headings,
             "links": links,
             "sizeBytes": size,
+            "tasks": tasks,
             "title": title,
             "updated": updated,
         }
@@ -592,6 +687,7 @@ def reduce_restricted(index: dict) -> dict:
         if is_restricted(rec):
             rec["headings"] = []
             rec["bodyTags"] = []
+            rec["tasks"] = []  # §17: task text/metadata is body content
             for link in rec.get("links", []):
                 link["display"] = None
                 link["fragment"] = None
@@ -673,7 +769,7 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 
 CONFIG_RELPATH = "00_Meta/config.yaml"
 CONFIG_IMPLEMENTED_KEYS = frozenset(
-    {"context", "extension_trust", "report", "write_exceptions"}
+    {"context", "extension_trust", "report", "tasks", "write_exceptions"}
 )
 # Named-but-unimplemented keys reserved for the issues that claimed them
 # (#15 environments, #32 modules, #18 provenance,
@@ -690,6 +786,10 @@ CONFIG_RESERVED_KEYS = frozenset(
 )
 # §16.4: known subkeys of the `report` mapping (values: digits-only scalars).
 REPORT_CONFIG_KEYS = frozenset({"inbox_days", "stale_days"})
+# §17.4: known subkeys of the `tasks` mapping (issue #28).
+TASKS_CONFIG_KEYS = frozenset({"carry_over"})
+TASKS_CARRY_OVER_VALUES = frozenset({"off", "on"})
+DEFAULT_TASKS_CARRY_OVER = True  # carry_over: on
 # Inbox-first defaults (PRD §6.2 / AGENTS.md): always writable, config only
 # ever ADDS to this set. Session-scoped carve-outs (onboard-owner interviews,
 # agent-generated skills/tools) are policy prose, not path constants.
@@ -894,6 +994,18 @@ def report_thresholds(config: dict) -> dict:
     return thresholds
 
 
+def tasks_carry_over(config: dict) -> bool:
+    """Effective §17.4 daily-note carry-over toggle: `tasks: carry_over:`
+    (spec §15.3), default on. Malformed values fall back to the default
+    here — check_config reports them (§15.4)."""
+    section = config.get("tasks")
+    if isinstance(section, dict):
+        value = section.get("carry_over")
+        if isinstance(value, str) and value.strip() in TASKS_CARRY_OVER_VALUES:
+            return value.strip() == "on"
+    return DEFAULT_TASKS_CARRY_OVER
+
+
 def vault_context(config: dict) -> str:
     """Effective vault context (issue #12): the scalar recorded by
     onboard-owner's fork-time specialization step, or the personal default
@@ -1002,6 +1114,50 @@ def check_config(
                             "config-invalid-value",
                             f"report.{subkey} must be a non-negative integer "
                             "number of days",
+                        )
+                    )
+    if "tasks" in config:
+        raw = config["tasks"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, dict):
+            errors.append(
+                _cfg_finding(
+                    None,
+                    "config-invalid-value",
+                    "tasks must be a nested mapping of task-module settings (§17.4)",
+                )
+            )
+        else:
+            for subkey in sorted(raw):
+                value = raw[subkey]
+                if subkey not in TASKS_CONFIG_KEYS:
+                    warnings.append(
+                        _cfg_finding(
+                            None,
+                            "config-unknown-key",
+                            f"unknown key 'tasks.{subkey}' is ignored "
+                            "(forward compatibility)",
+                        )
+                    )
+                    continue
+                if value is None:
+                    continue  # explicit empty — same as absent
+                if not isinstance(value, str):
+                    errors.append(
+                        _cfg_finding(
+                            None,
+                            "config-invalid-value",
+                            f"tasks.{subkey} must be a scalar string",
+                        )
+                    )
+                elif value.strip() not in TASKS_CARRY_OVER_VALUES:
+                    warnings.append(
+                        _cfg_finding(
+                            None,
+                            "config-unknown-value",
+                            f"tasks.{subkey} {value!r} is not a documented "
+                            "value (on | off)",
                         )
                     )
     if "extension_trust" in config:
@@ -1279,6 +1435,20 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                         "agent-authored Inbox note has no author: field "
                         "(see conventions § Provenance)",
                     )
+
+        # §17.2 task-invalid-date: a date-bearing task emoji whose value is
+        # not a real YYYY-MM-DD. Warning only — tasks are informal body
+        # content (same posture as bodyTags); template placeholders exempt.
+        for task in rec["tasks"]:
+            if template and "{{" in task["text"]:
+                continue
+            for field in task["malformed"]:
+                warn(
+                    rel,
+                    "task-invalid-date",
+                    f"task {field} metadata is not a real YYYY-MM-DD date",
+                    task["line"],
+                )
 
         for link in rec["links"]:
             if link["placeholder"]:
@@ -2445,6 +2615,7 @@ def cmd_config(root: Path, args) -> int:
         "present": (root / CONFIG_RELPATH).exists(),
         "raw": config,
         "reservedKeys": sorted(CONFIG_RESERVED_KEYS),
+        "tasksCarryOver": tasks_carry_over(config),
         "warnings": cfg_warnings,
         "writeExceptions": list(write_exception_prefixes(config)),
     }
@@ -2454,6 +2625,7 @@ def cmd_config(root: Path, args) -> int:
         *(f"  {p}" for p in payload["writeExceptions"]),
         f"extension trust: {payload['extensionTrust']}",
         f"context: {payload['context']}",
+        f"tasks carry-over: {'on' if payload['tasksCarryOver'] else 'off'}",
     ]
     for f in cfg_errors:
         lines.append(f"ERROR {f['rule']}: {f['message']}")
@@ -2536,6 +2708,58 @@ def cmd_report(root: Path, args) -> int:
     return 0
 
 
+def cmd_tasks(root: Path, args) -> int:
+    """§17.3: query checkbox tasks from the in-memory index."""
+    due_limit: date | None = None
+    if args.due is not None:
+        due_limit = today() if args.due == "today" else iso_date(args.due)
+        if due_limit is None:
+            print(
+                f"error: --due must be 'today' or a real YYYY-MM-DD date, "
+                f"got {args.due!r}",
+                file=sys.stderr,
+            )
+            return 1
+    today_iso = today().isoformat()
+    notes, assets = walk_corpus(root)
+    index = build_index(root, notes, assets)
+    rows: list[dict] = []
+    for rel in sorted(index["notes"]):
+        if args.project and not rel.startswith(args.project):
+            continue
+        for t in index["notes"][rel]["tasks"]:
+            if args.open and t["status"] != "open":
+                continue
+            if due_limit is not None and (
+                t["due"] is None or t["due"] > due_limit.isoformat()
+            ):
+                continue
+            if args.overdue and not (
+                t["status"] == "open" and t["due"] is not None and t["due"] < today_iso
+            ):
+                continue
+            rows.append({**t, "path": rel})
+    rows.sort(key=lambda r: (r["due"] is None, r["due"] or "", r["path"], r["line"]))
+    lines = []
+    for r in rows:
+        box = "[ ]" if r["status"] == "open" else "[x]"
+        extras = ", ".join(
+            part
+            for part in (
+                f"due {r['due']}" if r["due"] else None,
+                r["priority"],
+                "malformed: " + ", ".join(r["malformed"]) if r["malformed"] else None,
+            )
+            if part
+        )
+        lines.append(
+            f"{r['path']}:{r['line']}  {box} {r['text']}"
+            + (f"  ({extras})" if extras else "")
+        )
+    emit(rows, args.json, lines)
+    return 0
+
+
 def cmd_validate(root: Path, args) -> int:
     errors, warnings = run_validate(root, args.check_index)
     if args.json:
@@ -2611,6 +2835,20 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--check-urls", action="store_true", help="also probe source URLs over the network (never pre-commit)")
     add("context", help="bootstrap docs' sizes against their context budgets")
     add("config", help="effective vault config (00_Meta/config.yaml merged over defaults)")
+    p = add("tasks", help="checkbox tasks across the vault (spec §17)")
+    p.add_argument("--open", action="store_true", help="open (unchecked) tasks only")
+    p.add_argument(
+        "--due",
+        default=None,
+        metavar="YYYY-MM-DD|today",
+        help="tasks with a due date on or before this date",
+    )
+    p.add_argument(
+        "--overdue", action="store_true", help="open tasks whose due date is past"
+    )
+    p.add_argument(
+        "--project", default=None, metavar="PREFIX", help="note-path prefix filter"
+    )
     p = add("report", help="vault health: stale-active, orphans, Inbox aging, tag drift, unresolved links")
     p.add_argument(
         "--since",
@@ -2648,6 +2886,7 @@ def main(argv: list[str] | None = None) -> int:
         "context": cmd_context,
         "config": cmd_config,
         "report": cmd_report,
+        "tasks": cmd_tasks,
         "embed": cmd_embed,
     }
     return handlers[args.command](root, args)
