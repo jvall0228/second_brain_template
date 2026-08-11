@@ -12,6 +12,13 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)
+
+- **One canonical cadence table** now lives in [[10_Agents/skills/README]] § The Rhythm (daily log → weekly triage/review/Outbox sweep → monthly maintenance/curation → quarterly refresh incl. self-maintenance audit); [[00_Meta/conventions]] § Operating Rhythm points there and nothing duplicates it.
+- [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] charter widened to two flow families: inbound capture flows (unchanged) plus **rhythm jobs** — headless skill runs wired from the cadence table under the **unattended contract** (self-contained outcomes only; judgment → Inbox report; the run's output is the deliverable, never a plan or a question). Guardrails: no automation ships from `02_Outbox/`; everything dry-runs first.
+- [[10_Agents/skills/periodic-review/SKILL|periodic-review]] gained the **goal-alignment check** (each active project vs [[01_Profile/now]], and vice versa), the **archive completion path** (done/dead projects and areas → proposed move to `07_Archives/` via merge-notes' safe-move, with changelog entry), and the quarterly duty to **refresh the Now page** with the owner. Weekly/monthly/quarterly review templates gained the matching Alignment section.
+- [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] now teaches the rhythm in stage 4 and pitches rhythm jobs in stage 6.
+
 ## 2026-08-11 — Express & Outbox (Ops Plan Phase 5)
 
 - **New structure `02_Outbox/`** — the vault's loading dock: outbound deliverables awaiting the owner's review and shipping. Lifecycle mirrors the Inbox (draft → owner ships → `07_Archives/outbox/` with `status/done`); trends toward empty; **agents never ship**. Shares the `02_` prefix — both are review gates, no renumbering.

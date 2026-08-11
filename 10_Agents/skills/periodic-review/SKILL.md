@@ -32,7 +32,10 @@ Produce the review note for a period in `03_Journal/periodic/<cadence>/`, ground
    - `01_Profile/now.md` — current focus to review against
 2. **Instantiate the template**: replace all `{{...}}` placeholders, set real frontmatter (`updated:` today, keep `workflow/draft`), link the period's source notes (full paths across directories; sibling reviews by bare filename).
 3. **Fill every section from evidence**, not memory: wins and misses against the stated focus, what changed in projects/areas, what to carry forward. Leave explicitly-marked open questions for the human rather than inventing answers.
-4. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit. Invocation directs the write to `03_Journal/periodic/<cadence>/`.
+4. **Goal alignment** (weekly/monthly templates carry the questions): check each active project against [[01_Profile/now]] — does it serve something on the Now page? Is anything on the Now page not moved by any project? Surface mismatches in the review, don't resolve them.
+5. **Archive completion path:** a project or area the review finds done, cancelled, or dead gets a **proposal**: move to `07_Archives/projects/` or `07_Archives/areas/` with `status/done`, via the safe-move procedure in [[10_Agents/skills/merge-notes/SKILL|merge-notes]] (backlinks retargeted, index regenerated), plus a changelog entry. Execution waits for owner approval in the review.
+6. **Quarterly only — refresh the Now page:** with the owner, rewrite [[01_Profile/now]] to match current reality (their in-review answers are the approval). A quarterly review that leaves a stale Now page isn't finished.
+7. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit. Invocation directs the write to `03_Journal/periodic/<cadence>/`.
 
 ## References
 

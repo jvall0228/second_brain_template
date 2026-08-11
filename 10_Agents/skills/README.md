@@ -38,6 +38,19 @@ Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for 
 | [[10_Agents/skills/recommended-automations/SKILL\|recommended-automations]] | Environment integration | Wire recurring email/calendar/chat ingestion via the harness's scheduler |
 | [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] | Environment integration | Audit generated tooling: validate, prune, update, propose promotions |
 
+## The Rhythm (cadence table)
+
+**This table is the single source of truth for the vault's operating cadence.** [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] wires it into the harness's scheduler; [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] teaches it as "the rhythm"; [[00_Meta/conventions]] points here.
+
+| Cadence | Skills | Trigger |
+|---------|--------|---------|
+| Daily | [[10_Agents/skills/daily-log/SKILL\|daily-log]] (+ any wired inbound capture flows) | First session of the day |
+| Weekly | [[10_Agents/skills/triage-inbox/SKILL\|triage-inbox]] → [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (weekly) → Outbox sweep (flag lingering `02_Outbox/` packets) | End of week |
+| Monthly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (monthly) + [[10_Agents/skills/vault-maintenance/SKILL\|vault-maintenance]] + [[10_Agents/skills/curate/SKILL\|curate]] | Month end |
+| Quarterly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (quarterly, updates the Now page) + [[10_Agents/skills/curate/SKILL\|curate]] + [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] audit | Quarter end |
+
+Ad hoc, not scheduled: capture and retrieval ([[10_Agents/skills/inbox-capture/SKILL|inbox-capture]], [[10_Agents/skills/vault-answer/SKILL|vault-answer]], [[10_Agents/skills/express-packet/SKILL|express-packet]]) run when needed; surgery ([[10_Agents/skills/merge-notes/SKILL|merge-notes]]) runs on approval only.
+
 ## Rules
 
 - Template-shipped skills are canonical ([[00_Meta/prd]] §9.3): changes need human approval.
