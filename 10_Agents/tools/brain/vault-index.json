@@ -624,31 +624,46 @@
     {
      "level": 3,
      "line": 59,
+     "text": "Expiration (`expires:`)"
+    },
+    {
+     "level": 3,
+     "line": 73,
      "text": "Template Placeholder Exception"
     },
     {
      "level": 3,
-     "line": 63,
+     "line": 77,
      "text": "Adapter File Exception"
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 81,
      "text": "Tag Namespaces"
     },
     {
      "level": 2,
-     "line": 81,
+     "line": 95,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 94,
+     "line": 108,
      "text": "Change Control"
     },
     {
+     "level": 3,
+     "line": 118,
+     "text": "Draft → Canonical Promotion"
+    },
+    {
      "level": 2,
-     "line": 106,
+     "line": 130,
+     "text": "Bootstrap Context Budgets"
+    },
+    {
+     "level": 2,
+     "line": 134,
      "text": "Recency"
     }
    ],
@@ -668,7 +683,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 79,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -679,7 +694,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 83,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -690,7 +705,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 83,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -701,7 +716,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 87,
+     "line": 101,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -712,7 +727,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 88,
+     "line": 102,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -723,7 +738,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 92,
+     "line": 106,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -734,7 +749,29 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 125,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 126,
+     "placeholder": false,
+     "raw": "[[00_Meta/changelog]]",
+     "resolved": "00_Meta/changelog.md",
+     "target": "00_Meta/changelog",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 128,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -745,7 +782,62 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 110,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[01_Profile/now]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[01_Profile/preferences]]",
+     "resolved": "01_Profile/preferences.md",
+     "target": "01_Profile/preferences",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[01_Profile/defaults]]",
+     "resolved": "01_Profile/defaults.md",
+     "target": "01_Profile/defaults",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 138,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -753,13 +845,14 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5378,
+   "sizeBytes": 7766,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
   "00_Meta/index.md": {
    "backlinks": [
     "00_Meta/README.md",
+    "00_Meta/conventions.md",
     "00_Meta/prd.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
@@ -1965,6 +2058,7 @@
   },
   "01_Profile/now.md": {
    "backlinks": [
+    "00_Meta/conventions.md",
     "00_Meta/index.md",
     "01_Profile/README.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
@@ -2030,6 +2124,7 @@
   },
   "01_Profile/preferences.md": {
    "backlinks": [
+    "00_Meta/conventions.md",
     "00_Meta/index.md",
     "01_Profile/README.md",
     "06_Resources/harness-primitives-research.md",
@@ -6318,6 +6413,7 @@
    ],
    "bodyTags": [],
    "frontmatter": {
+    "expires": "{{expires}}",
     "tags": [
      "type/area",
      "status/active",
@@ -6328,27 +6424,28 @@
     "updated": "{{date}}"
    },
    "frontmatterErrors": [
-    "invalid-updated"
+    "invalid-updated",
+    "invalid-expires"
    ],
    "headings": [
     {
      "level": 1,
-     "line": 11,
+     "line": 12,
      "text": "{{AREA_NAME}}"
     },
     {
      "level": 2,
-     "line": 13,
+     "line": 14,
      "text": "Standard to Maintain"
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 18,
      "text": "Current Focus"
     },
     {
      "level": 2,
-     "line": 21,
+     "line": 22,
      "text": "Related"
     }
    ],
@@ -6357,7 +6454,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 23,
+     "line": 24,
      "placeholder": true,
      "raw": "[[{{RELATED_PROJECT}}]]",
      "resolved": null,
@@ -6368,7 +6465,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 25,
      "placeholder": true,
      "raw": "[[{{RELATED_RESOURCE}}]]",
      "resolved": null,
@@ -6376,7 +6473,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 347,
+   "sizeBytes": 368,
    "title": "{{AREA_NAME}}",
    "updated": null
   },
@@ -6386,6 +6483,7 @@
    ],
    "bodyTags": [],
    "frontmatter": {
+    "expires": "{{expires}}",
     "tags": [
      "type/reference",
      "workflow/draft",
@@ -6395,52 +6493,53 @@
     "updated": "{{date}}"
    },
    "frontmatterErrors": [
-    "invalid-updated"
+    "invalid-updated",
+    "invalid-expires"
    ],
    "headings": [
     {
      "level": 1,
-     "line": 10,
+     "line": 11,
      "text": "{{title}}"
     },
     {
      "level": 2,
-     "line": 12,
+     "line": 13,
      "text": "Context"
     },
     {
      "level": 2,
-     "line": 16,
+     "line": 17,
      "text": "Requirements"
     },
     {
      "level": 3,
-     "line": 17,
+     "line": 18,
      "text": "Must-have"
     },
     {
      "level": 3,
-     "line": 20,
+     "line": 21,
      "text": "Nice-to-have"
     },
     {
      "level": 2,
-     "line": 23,
+     "line": 24,
      "text": "Options"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 27,
      "text": "Comparison Table"
     },
     {
      "level": 2,
-     "line": 32,
+     "line": 33,
      "text": "Recommendation"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 39,
      "text": "Decision Record Link"
     }
    ],
@@ -6449,7 +6548,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 41,
      "placeholder": true,
      "raw": "[[{{RELATED_DECISION_RECORD}}]]",
      "resolved": null,
@@ -6457,7 +6556,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 679,
+   "sizeBytes": 700,
    "title": "{{title}}",
    "updated": null
   },
@@ -6828,6 +6927,7 @@
    ],
    "bodyTags": [],
    "frontmatter": {
+    "expires": "{{expires}}",
     "tags": [
      "type/project",
      "status/active",
@@ -6838,37 +6938,38 @@
     "updated": "{{date}}"
    },
    "frontmatterErrors": [
-    "invalid-updated"
+    "invalid-updated",
+    "invalid-expires"
    ],
    "headings": [
     {
      "level": 1,
-     "line": 11,
+     "line": 12,
      "text": "{{PROJECT_NAME}}"
     },
     {
      "level": 2,
-     "line": 13,
+     "line": 14,
      "text": "Outcome"
     },
     {
      "level": 2,
-     "line": 17,
+     "line": 18,
      "text": "Key Dates"
     },
     {
      "level": 2,
-     "line": 22,
+     "line": 23,
      "text": "Tasks"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 27,
      "text": "Related"
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 32,
      "text": "Log"
     }
    ],
@@ -6877,7 +6978,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 28,
+     "line": 29,
      "placeholder": true,
      "raw": "[[{{RELATED_AREA}}]]",
      "resolved": null,
@@ -6888,7 +6989,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 30,
      "placeholder": true,
      "raw": "[[{{RELATED_RESOURCE}}]]",
      "resolved": null,
@@ -6896,7 +6997,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 395,
+   "sizeBytes": 416,
    "title": "{{PROJECT_NAME}}",
    "updated": null
   },
@@ -7016,6 +7117,7 @@
    ],
    "bodyTags": [],
    "frontmatter": {
+    "expires": "{{expires}}",
     "tags": [
      "type/resource",
      "workflow/draft",
@@ -7025,32 +7127,33 @@
     "updated": "{{date}}"
    },
    "frontmatterErrors": [
-    "invalid-updated"
+    "invalid-updated",
+    "invalid-expires"
    ],
    "headings": [
     {
      "level": 1,
-     "line": 10,
+     "line": 11,
      "text": "{{RESOURCE_TITLE}}"
     },
     {
      "level": 2,
-     "line": 12,
+     "line": 13,
      "text": "Summary"
     },
     {
      "level": 2,
-     "line": 16,
+     "line": 17,
      "text": "Key Points"
     },
     {
      "level": 2,
-     "line": 20,
+     "line": 21,
      "text": "Sources"
     },
     {
      "level": 2,
-     "line": 24,
+     "line": 25,
      "text": "Related"
     }
    ],
@@ -7059,7 +7162,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 27,
      "placeholder": true,
      "raw": "[[{{RELATED_NOTE}}]]",
      "resolved": null,
@@ -7067,7 +7170,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 280,
+   "sizeBytes": 301,
    "title": "{{RESOURCE_TITLE}}",
    "updated": null
   },
@@ -7325,6 +7428,7 @@
    ],
    "bodyTags": [],
    "frontmatter": {
+    "expires": "{{expires}}",
     "tags": [
      "type/zettel",
      "workflow/draft",
@@ -7334,22 +7438,23 @@
     "updated": "{{date}}"
    },
    "frontmatterErrors": [
-    "invalid-updated"
+    "invalid-updated",
+    "invalid-expires"
    ],
    "headings": [
     {
      "level": 1,
-     "line": 10,
+     "line": 11,
      "text": "{{ZETTEL_TITLE}}"
     },
     {
      "level": 2,
-     "line": 14,
+     "line": 15,
      "text": "Related"
     },
     {
      "level": 2,
-     "line": 18,
+     "line": 19,
      "text": "Source"
     }
    ],
@@ -7358,7 +7463,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 16,
+     "line": 17,
      "placeholder": true,
      "raw": "[[{{RELATED_NOTE}}]]",
      "resolved": null,
@@ -7366,7 +7471,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 206,
+   "sizeBytes": 227,
    "title": "{{ZETTEL_TITLE}}",
    "updated": null
   },

@@ -5,6 +5,7 @@ tags:
   - workflow/draft
   - audience/agent
 updated: {{date}}
+expires: {{expires}}
 ---
 
 # {{title}}

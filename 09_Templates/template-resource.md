@@ -5,6 +5,7 @@ tags:
   - workflow/draft
   - audience/human
 updated: {{date}}
+expires: {{expires}}
 ---
 
 # {{RESOURCE_TITLE}}
