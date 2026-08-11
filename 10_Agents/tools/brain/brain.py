@@ -7,7 +7,7 @@ references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
 Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context, config
+          curate, context, config, report
 """
 
 from __future__ import annotations
@@ -75,6 +75,11 @@ BOOTSTRAP_BUDGETS = {
     "AGENTS.md": 8192,
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
+
+# §16 Health-report defaults — overridable per fork via the `report` config
+# key (spec §15.3 / §16.4): report: → stale_days / inbox_days.
+REPORT_STALE_ACTIVE_DAYS = 30
+REPORT_INBOX_TRIAGE_DAYS = 14
 
 # ---------------------------------------------------------------------------
 # §2 Corpus
@@ -654,9 +659,11 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 # crash, and never a behavior change beyond ignoring the malformed part.
 
 CONFIG_RELPATH = "00_Meta/config.yaml"
-CONFIG_IMPLEMENTED_KEYS = frozenset({"context", "extension_trust", "write_exceptions"})
+CONFIG_IMPLEMENTED_KEYS = frozenset(
+    {"context", "extension_trust", "report", "write_exceptions"}
+)
 # Named-but-unimplemented keys reserved for the issues that claimed them
-# (#15 environments, #32 modules, #18 provenance, #16 report,
+# (#15 environments, #32 modules, #18 provenance,
 # #26 sync, #6 template_version). Parsed and tolerated with no finding, so
 # a forward-looking config never fails an older brain.
 CONFIG_RESERVED_KEYS = frozenset(
@@ -664,11 +671,12 @@ CONFIG_RESERVED_KEYS = frozenset(
         "environments",
         "modules",
         "provenance",
-        "report",
         "sync",
         "template_version",
     }
 )
+# §16.4: known subkeys of the `report` mapping (values: digits-only scalars).
+REPORT_CONFIG_KEYS = frozenset({"inbox_days", "stale_days"})
 # Inbox-first defaults (PRD §6.2 / AGENTS.md): always writable, config only
 # ever ADDS to this set. Session-scoped carve-outs (onboard-owner interviews,
 # agent-generated skills/tools) are policy prose, not path constants.
@@ -844,6 +852,24 @@ def extension_trust(config: dict) -> str:
     return DEFAULT_EXTENSION_TRUST
 
 
+def report_thresholds(config: dict) -> dict:
+    """Effective §16 health-report thresholds: the `report` config mapping
+    (spec §15.3) merged over the built-in defaults. Malformed values fall
+    back to the default here — check_config reports them (§15.4)."""
+    thresholds = {
+        "inboxDays": REPORT_INBOX_TRIAGE_DAYS,
+        "staleDays": REPORT_STALE_ACTIVE_DAYS,
+    }
+    section = config.get("report")
+    if isinstance(section, dict):
+        for subkey, out in (("inbox_days", "inboxDays"), ("stale_days", "staleDays")):
+            value = section.get(subkey)
+            v = value.strip() if isinstance(value, str) else ""
+            if v.isascii() and v.isdigit():
+                thresholds[out] = int(v)
+    return thresholds
+
+
 def vault_context(config: dict) -> str:
     """Effective vault context (issue #12): the scalar recorded by
     onboard-owner's fork-time specialization step, or the personal default
@@ -907,6 +933,46 @@ def check_config(
                             None,
                             "config-missing-directory",
                             f"write_exceptions entry {entry!r} names no existing directory",
+                        )
+                    )
+    if "report" in config:
+        raw = config["report"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, dict):
+            errors.append(
+                _cfg_finding(
+                    None,
+                    "config-invalid-value",
+                    "report must be a nested mapping of thresholds (§16.4)",
+                )
+            )
+        else:
+            for subkey in sorted(raw):
+                value = raw[subkey]
+                if subkey not in REPORT_CONFIG_KEYS:
+                    warnings.append(
+                        _cfg_finding(
+                            None,
+                            "config-unknown-key",
+                            f"unknown key 'report.{subkey}' is ignored "
+                            "(forward compatibility)",
+                        )
+                    )
+                    continue
+                if value is None:
+                    continue  # explicit empty — same as absent
+                if not (
+                    isinstance(value, str)
+                    and value.strip().isascii()
+                    and value.strip().isdigit()
+                ):
+                    errors.append(
+                        _cfg_finding(
+                            None,
+                            "config-invalid-value",
+                            f"report.{subkey} must be a non-negative integer "
+                            "number of days",
                         )
                     )
     if "extension_trust" in config:
@@ -1400,6 +1466,184 @@ def context_report(root: Path) -> dict:
     return {"docs": docs, "totalBudget": BOOTSTRAP_TOTAL_BUDGET, "totalBytes": total}
 
 
+# ---------------------------------------------------------------------------
+# §16 Health report
+
+INBOX_PREFIX = "02_Inbox/"
+INBOX_DATE_PREFIX_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})")
+REPORT_BUCKET_LABELS = ("0-7d", "8-30d", "31-90d", "90+d", "unknown")
+REPORT_ORPHAN_EXEMPT_BASENAMES = frozenset({"AGENTS.md", "CLAUDE.md", "README.md"})
+REPORT_ORPHAN_EXEMPT_PREFIXES = ("07_Archives/", "09_Templates/")
+
+
+def frontmatter_tags(rec: dict) -> list[str]:
+    """§16.1: a note's frontmatter tags (bare scalar coerced per §4.5),
+    template placeholders excluded. Body #tags are informal — never counted."""
+    tags = rec["frontmatter"].get("tags")
+    tags = tags if isinstance(tags, list) else ([tags] if isinstance(tags, str) else [])
+    return [t for t in tags if isinstance(t, str) and "{{" not in t]
+
+
+def is_abbreviation(short: str, long: str) -> bool:
+    """§16.1 near-duplicate heuristic: `short` (folded, ≥ 2 chars, strictly
+    shorter) shares its first character with `long` and is an in-order
+    subsequence of it — catches both prefixes (`tool`/`tools`) and
+    abbreviations (`sw`/`software`)."""
+    if len(short) < 2 or len(short) >= len(long) or short[0] != long[0]:
+        return False
+    it = iter(long)
+    return all(ch in it for ch in short)
+
+
+def age_bucket(days: int) -> str:
+    if days <= 7:
+        return "0-7d"
+    if days <= 30:
+        return "8-30d"
+    if days <= 90:
+        return "31-90d"
+    return "90+d"
+
+
+def compute_report(
+    index: dict,
+    today_d: date,
+    thresholds: dict,
+    taxonomy: dict[str, list[str] | None] | None,
+    since_d: date | None = None,
+) -> dict:
+    """§16: the five vault-health sections, synthesized from the in-memory
+    index — no new parsing, deterministic given tree + config + date."""
+    notes = index["notes"]
+
+    def in_window(rec: dict) -> bool:
+        # §16.3: --since scopes tag drift and unresolved links only.
+        if since_d is None:
+            return True
+        upd = iso_date(rec["updated"])
+        return upd is not None and upd >= since_d
+
+    # 1. Stale-active + 2. Orphans (whole vault, never --since-scoped).
+    stale_active: list[dict] = []
+    orphans: list[str] = []
+    for rel in sorted(notes):
+        rec = notes[rel]
+        upd_d = iso_date(rec["updated"])
+        if "status/active" in frontmatter_tags(rec) and upd_d is not None:
+            days = (today_d - upd_d).days
+            if days > thresholds["staleDays"]:
+                stale_active.append(
+                    {
+                        "daysOld": days,
+                        "path": rel,
+                        "title": rec["title"],
+                        "updated": rec["updated"],
+                    }
+                )
+        outgoing = any(not l["placeholder"] for l in rec["links"])
+        if (
+            not rec["backlinks"]
+            and not outgoing
+            and rel.rsplit("/", 1)[-1] not in REPORT_ORPHAN_EXEMPT_BASENAMES
+            and not rel.startswith(REPORT_ORPHAN_EXEMPT_PREFIXES)
+        ):
+            orphans.append(rel)
+    stale_active.sort(key=lambda r: (-r["daysOld"], r["path"]))
+
+    # 3. Inbox aging (whole vault, never --since-scoped).
+    buckets: dict[str, list[dict]] = {label: [] for label in REPORT_BUCKET_LABELS}
+    triage_debt: list[str] = []
+    for rel in sorted(notes):
+        if not rel.startswith(INBOX_PREFIX):
+            continue
+        name = rel.rsplit("/", 1)[-1]
+        if name == "README.md":
+            continue
+        rec = notes[rel]
+        m = INBOX_DATE_PREFIX_RE.match(name)
+        captured = iso_date(m.group(1)) if m else None
+        if captured is not None:
+            source = "filename"
+        else:
+            captured = iso_date(rec["updated"])
+            source = "updated" if captured is not None else "unknown"
+        if captured is None:
+            buckets["unknown"].append({"ageDays": None, "path": rel, "source": source})
+            continue
+        days = max(0, (today_d - captured).days)
+        buckets[age_bucket(days)].append(
+            {"ageDays": days, "path": rel, "source": source}
+        )
+        if days > thresholds["inboxDays"]:
+            triage_debt.append(rel)
+
+    # 4. Tag drift (--since-scoped) — same taxonomy machinery as validate.
+    counts: dict[str, int] = {}
+    for rel in sorted(notes):
+        rec = notes[rel]
+        if not in_window(rec):
+            continue
+        for tag in sorted(set(frontmatter_tags(rec))):
+            counts[tag] = counts.get(tag, 0) + 1
+    unknown: list[dict] = []
+    single_use: list[str] = []
+    near_duplicates: list[dict] = []
+    if taxonomy is not None:
+        open_values: dict[str, set[str]] = {}
+        for tag in sorted(counts):
+            if "/" not in tag:
+                unknown.append({"count": counts[tag], "reason": "not-namespaced", "tag": tag})
+                continue
+            namespace, value = tag.split("/", 1)
+            if namespace not in taxonomy:
+                unknown.append(
+                    {"count": counts[tag], "reason": "unknown-namespace", "tag": tag}
+                )
+            elif taxonomy[namespace] is not None and value not in taxonomy[namespace]:
+                unknown.append(
+                    {"count": counts[tag], "reason": "unknown-value", "tag": tag}
+                )
+            else:
+                if taxonomy[namespace] is None:
+                    open_values.setdefault(namespace, set()).add(value)
+                    if counts[tag] == 1:
+                        single_use.append(tag)
+        for namespace in sorted(open_values):
+            values = sorted(open_values[namespace])
+            for a in values:
+                for b in values:
+                    if a != b and is_abbreviation(fold(a), fold(b)):
+                        near_duplicates.append({"namespace": namespace, "values": [a, b]})
+
+    # 5. Unresolved links (--since-scoped) — same population validate errors on.
+    unresolved: list[dict] = []
+    for rel in sorted(notes):
+        rec = notes[rel]
+        if not in_window(rec):
+            continue
+        for link in rec["links"]:
+            if not link["placeholder"] and link["resolved"] is None:
+                unresolved.append(
+                    {"line": link["line"], "path": rel, "target": link["target"]}
+                )
+    unresolved.sort(key=lambda r: (r["path"], r["line"], r["target"]))
+
+    return {
+        "inboxAging": {"buckets": buckets, "triageDebt": triage_debt},
+        "orphans": orphans,
+        "since": since_d.isoformat() if since_d else None,
+        "staleActive": stale_active,
+        "tagDrift": {
+            "nearDuplicates": near_duplicates,
+            "singleUse": single_use,
+            "taxonomyReadable": taxonomy is not None,
+            "unknown": unknown,
+        },
+        "thresholds": dict(sorted(thresholds.items())),
+        "unresolvedLinks": {"count": len(unresolved), "links": unresolved},
+    }
+
+
 URL_RE = re.compile(r"https?://[^\s<>()\[\]\"'`]+")
 
 
@@ -1729,6 +1973,79 @@ def cmd_config(root: Path, args) -> int:
     return 0
 
 
+def cmd_report(root: Path, args) -> int:
+    """§16: the five-section vault-health report, most-actionable-first."""
+    since_d = None
+    if args.since is not None:
+        since_d = iso_date(args.since)
+        if since_d is None:
+            print(
+                f"error: --since must be a real YYYY-MM-DD date, got {args.since!r}",
+                file=sys.stderr,
+            )
+            return 1
+    notes, assets = walk_corpus(root)
+    index = build_index(root, notes, assets)
+    config, _findings = load_config(root)
+    thresholds = report_thresholds(config)
+    taxonomy = load_taxonomy(root)
+    rep = compute_report(index, today(), thresholds, taxonomy, since_d)
+
+    lines: list[str] = [
+        "vault health report "
+        f"(stale-active > {thresholds['staleDays']}d, "
+        f"inbox triage > {thresholds['inboxDays']}d)"
+    ]
+    if rep["since"]:
+        lines.append(
+            f"since {rep['since']}: tag drift and unresolved links scoped to "
+            "notes updated on/after this date"
+        )
+    lines.append(f"stale-active: {len(rep['staleActive'])}")
+    for row in rep["staleActive"]:
+        lines.append(f"  {row['path']}  (updated {row['updated']}, {row['daysOld']}d old)")
+    lines.append(f"orphans (no links in or out): {len(rep['orphans'])}")
+    for rel in rep["orphans"]:
+        lines.append(f"  {rel}")
+    inbox = rep["inboxAging"]
+    total_inbox = sum(len(rows) for rows in inbox["buckets"].values())
+    lines.append(
+        f"inbox aging: {total_inbox} notes, {len(inbox['triageDebt'])} past "
+        f"the {thresholds['inboxDays']}d triage threshold"
+    )
+    for label in REPORT_BUCKET_LABELS:
+        rows = inbox["buckets"][label]
+        if not rows:
+            continue
+        lines.append(f"  {label}: {len(rows)}")
+        for row in rows:
+            age = "?" if row["ageDays"] is None else f"{row['ageDays']}d"
+            lines.append(f"    {row['path']}  ({age}, {row['source']})")
+    drift = rep["tagDrift"]
+    if not drift["taxonomyReadable"]:
+        lines.append("tag drift: conventions taxonomy unreadable — not computed (see validate)")
+    else:
+        lines.append(
+            "tag drift: "
+            f"{len(drift['unknown'])} unknown, {len(drift['singleUse'])} single-use, "
+            f"{len(drift['nearDuplicates'])} near-duplicate pairs"
+        )
+        for row in drift["unknown"]:
+            lines.append(f"  {row['tag']}  ({row['reason']}, {row['count']} notes)")
+        for tag in drift["singleUse"]:
+            lines.append(f"  {tag}  (single-use)")
+        for row in drift["nearDuplicates"]:
+            lines.append(
+                f"  {row['namespace']}/: {row['values'][0]} ~ {row['values'][1]}"
+                "  (near-duplicate)"
+            )
+    lines.append(f"unresolved links: {rep['unresolvedLinks']['count']}")
+    for row in rep["unresolvedLinks"]["links"]:
+        lines.append(f"  {row['path']}:{row['line']}  -> [[{row['target']}]]")
+    emit(rep, args.json, lines)
+    return 0
+
+
 def cmd_validate(root: Path, args) -> int:
     errors, warnings = run_validate(root, args.check_index)
     if args.json:
@@ -1788,6 +2105,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--check-urls", action="store_true", help="also probe source URLs over the network (never pre-commit)")
     add("context", help="bootstrap docs' sizes against their context budgets")
     add("config", help="effective vault config (00_Meta/config.yaml merged over defaults)")
+    p = add("report", help="vault health: stale-active, orphans, Inbox aging, tag drift, unresolved links")
+    p.add_argument(
+        "--since",
+        default=None,
+        metavar="YYYY-MM-DD",
+        help="scope tag drift and unresolved links to notes updated on/after this date",
+    )
 
     args = parser.parse_args(argv)
     root = (args.vault or default_vault_root()).resolve()
@@ -1803,6 +2127,7 @@ def main(argv: list[str] | None = None) -> int:
         "curate": cmd_curate,
         "context": cmd_context,
         "config": cmd_config,
+        "report": cmd_report,
     }
     return handlers[args.command](root, args)
 

@@ -43,6 +43,7 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 | `curate` | Re-review signals: expired / missing / over-cap `expires:`, oversized, stale (backlink-weighted), orphans, unreferenced assets. `--check-urls` adds network URL probes (opt-in; never pre-commit) |
 | `context` | Bootstrap docs' sizes against their context budgets (spec §14; tunables live in one constants block in `brain.py`) |
 | `config` | Effective vault config: `00_Meta/config.yaml` merged over built-in defaults — agent write-exception prefixes, VS Code extension trust (spec §15). The file is optional; absence means pure defaults. `validate` reports malformed or unknown config content as per-file findings on it |
+| `report` | Vault-health synthesis (spec §16): stale-active notes, fully-disconnected orphans, Inbox aging buckets, tag drift vs the conventions taxonomy, unresolved-link count. `--since YYYY-MM-DD` scopes tag drift and unresolved links to notes updated in the review period. Thresholds come from the `report` config key (`stale_days`, `inbox_days`) |
 
 ## The committed index
 
