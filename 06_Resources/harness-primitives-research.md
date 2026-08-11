@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives Research
 
-Grounded research (2026-08-11) on the extension surface of every harness in the [[00_Meta/prd]] §8.3 support table, plus the universal standards layer they build on. Produced for M6/M7 planning (see [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]) by nine parallel research agents working from official documentation; load-bearing claims link their sources. Harness surfaces move fast — treat this as accurate as of the date above and re-verify before each adapter ships (per §8.3, wiring specifics are settled at build time). Unverifiable details are marked as gaps, not guessed. This note holds the cross-harness comparison (headline findings, overlap matrix, implications); the per-harness surface specs and their sources live in the separate notes linked under [[#Per-harness specs]] below.
+Grounded research (2026-08-11) on the extension surface of every harness in the [[00_Meta/prd]] §8.3 support table, plus the universal standards layer they build on. Produced for M6/M7 planning (see [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]) by nine parallel research agents working from official documentation; the load-bearing claims are sourced in the per-harness notes linked below. Harness surfaces move fast — treat this as accurate as of the date above and re-verify before each adapter ships (per §8.3, wiring specifics are settled at build time). Unverifiable details are marked as gaps, not guessed. This note holds the cross-harness comparison (headline findings, overlap matrix, implications); the per-harness surface specs and their sources live in the separate notes linked under [[#Per-harness specs]] below.
 
 ## Headline Findings
 

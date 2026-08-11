@@ -5334,9 +5334,20 @@
      "resolved": "06_Resources/harness-primitives-research.md",
      "target": "06_Resources/harness-primitives-research",
      "warnings": []
+    },
+    {
+     "display": "research overview",
+     "embed": false,
+     "fragment": null,
+     "line": 16,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|research overview]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
     }
    ],
-   "sizeBytes": 13713,
+   "sizeBytes": 13801,
    "title": "Harness Primitives: Claude Code",
    "updated": "2026-08-11"
   },
@@ -5560,7 +5571,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 20494,
+   "sizeBytes": 20491,
    "title": "Harness Primitives: GitHub Copilot",
    "updated": "2026-08-11"
   },
@@ -6255,7 +6266,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 12072,
+   "sizeBytes": 12107,
    "title": "Harness Primitives Research",
    "updated": "2026-08-11"
   },
@@ -6326,9 +6337,20 @@
      "resolved": "06_Resources/harness-primitives-research.md",
      "target": "06_Resources/harness-primitives-research",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 65,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
     }
    ],
-   "sizeBytes": 10449,
+   "sizeBytes": 10498,
    "title": "Harness Primitives: Universal Standards & Protocols",
    "updated": "2026-08-11"
   },
