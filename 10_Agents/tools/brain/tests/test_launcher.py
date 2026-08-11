@@ -734,6 +734,8 @@ class WindowsContractTests(unittest.TestCase):
             "SetFileInformationByHandle",
             "_win32_open_guard_chain",
             "external artifact changed before bound replacement",
+            "share_write=False",
+            "external artifact changed during bound write",
         ):
             self.assertIn(token, text)
 

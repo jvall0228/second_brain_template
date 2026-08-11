@@ -4231,13 +4231,21 @@ def _win32_api():
     return kernel32
 
 
-def _win32_open_path(path: Path, access: int, creation: int, *, directory: bool) -> int:
+def _win32_open_path(
+    path: Path,
+    access: int,
+    creation: int,
+    *,
+    directory: bool,
+    share_write: bool = True,
+) -> int:
     kernel32 = _win32_api()
     flags = 0x00200000  # FILE_FLAG_OPEN_REPARSE_POINT
     if directory:
         flags |= 0x02000000  # FILE_FLAG_BACKUP_SEMANTICS
+    share_mode = 0x1 | (0x2 if share_write else 0)
     handle = kernel32.CreateFileW(
-        str(path), access, 0x1 | 0x2, None, creation, flags, None
+        str(path), access, share_mode, None, creation, flags, None
     )
     if handle == ctypes.c_void_p(-1).value:
         raise InstallError("external path could not be opened safely")
@@ -4313,6 +4321,8 @@ def _win32_write_handle(handle: int, data: bytes) -> None:
         offset += written.value
     if not kernel32.FlushFileBuffers(handle):
         raise InstallError("external artifact could not be flushed safely")
+    if _win32_read_handle(handle, max(1024 * 1024, len(data))) != data:
+        raise InstallError("external artifact changed during bound write")
 
 
 def _win32_mark_delete(handle: int) -> None:
@@ -4763,6 +4773,7 @@ def _atomic_external_write(
                 0x80000000 | 0x40000000 | 0x00010000,
                 1 if created else 3,
                 directory=False,
+                share_write=False,
             )
             if not created:
                 prior = _win32_read_handle(handle, 1024 * 1024)
@@ -4892,6 +4903,7 @@ def _remove_external(
                     0x80000000 | 0x00010000,
                     3,
                     directory=False,
+                    share_write=False,
                 )
             except InstallError:
                 if missing_ok and _external_lstat(path, guard) is None:
