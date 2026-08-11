@@ -65,12 +65,12 @@ class ReportTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
 
     def vault(self, td, extra=None):
         return make_vault(
             Path(td),
-            {"00_Meta/conventions.md": self.CONVENTIONS, **REPORT_FILES, **(extra or {})},
+            {"00_Meta/CONVENTIONS.md": self.CONVENTIONS, **REPORT_FILES, **(extra or {})},
         )
 
     def run_cli(self, root, *argv):
@@ -208,7 +208,7 @@ class SectionTests(ReportTestCase):
 
     def test_unreadable_taxonomy_disables_drift_only(self):
         with tempfile.TemporaryDirectory() as td:
-            root = make_vault(Path(td), dict(REPORT_FILES))  # no conventions.md
+            root = make_vault(Path(td), dict(REPORT_FILES))  # no CONVENTIONS.md
             rep = self.report_json(root)
             drift = rep["tagDrift"]
             self.assertFalse(drift["taxonomyReadable"])

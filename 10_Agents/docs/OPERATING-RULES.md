@@ -10,7 +10,7 @@ expires: 2027-08-11
 
 # Operating Rules
 
-Behavior expectations for agents working in this vault. These supplement — not duplicate — the rules in [[AGENTS]] and [[00_Meta/conventions]].
+Behavior expectations for agents working in this vault. These supplement — not duplicate — the rules in [[AGENTS]] and [[00_Meta/CONVENTIONS]].
 
 ## Bootstrap Before Working
 
@@ -30,7 +30,7 @@ Before creating or modifying a note, read:
 
 When updating an existing note, **replace** the sections the new content conflicts with or obsoletes — never append a new section alongside a stale one. Append-only editing bloats notes into contradictory context dumps that mislead every future reader, human or agent. A note must always read as the current state of knowledge; git history preserves every prior version for posterity, so deleting outdated content loses nothing. Appending is right only for genuinely additive structures — logs, journals, changelog-style records — where entries are events, not claims.
 
-For [[00_Meta/prd]] specifically, edit superseded requirements in place and describe only shipped behavior, the live roadmap, and genuinely unresolved decisions. Record a structural PRD change once in [[00_Meta/changelog]]; Git holds detailed revision history. Do not add revision banners, compatibility addenda, resolved incident narratives, or duplicate consideration logs to the PRD.
+For [[00_Meta/PRD]] specifically, edit superseded requirements in place and describe only shipped behavior, the live roadmap, and genuinely unresolved decisions. Record a structural PRD change once in [[00_Meta/CHANGELOG]]; Git holds detailed revision history. Do not add revision banners, compatibility addenda, resolved incident narratives, or duplicate consideration logs to the PRD.
 
 ## Canonical Note Handling
 
@@ -61,14 +61,14 @@ Before writing any note, verify:
 
 - [ ] Frontmatter includes `title`, `tags`, `updated`
 - [ ] `updated:` is set to today's date — on every edit, not just creation
-- [ ] Tags use defined namespaces (see [[00_Meta/conventions#Tag Namespaces]])
-- [ ] Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note
-- [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/conventions]] § Provenance)
+- [ ] Tags use defined namespaces (see [[00_Meta/CONVENTIONS#Tag Namespaces]])
+- [ ] Filename follows [[00_Meta/CONVENTIONS#Filename Convention]] and does not collide with an existing note
+- [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/CONVENTIONS]] § Provenance)
 - [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, or live user-invoked `agent-orientation` inventory plus paired draft bundle)
 - [ ] A generated orientation bundle is still draft: its inventory, skill, and tool documentation say `workflow/draft`, and no non-note file is treated as canonical-by-policy before owner promotion
-- [ ] **Restricted containment** ([[00_Meta/conventions#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
+- [ ] **Restricted containment** ([[00_Meta/CONVENTIONS#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
 - [ ] Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [[10_Agents/tools/brain/README|brain]])
-- [ ] **Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
+- [ ] **Editor-surface parity** ([[00_Meta/PRD]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
 
 ## Upstream Boundary
 
@@ -110,5 +110,5 @@ Then commit and push, so the flush actually survives the session.
 ## Related
 
 - [[AGENTS]] — Vault entrypoint
-- [[00_Meta/conventions]] — Full convention reference
-- [[10_Agents/docs/task-patterns]] — Write rules and examples
+- [[00_Meta/CONVENTIONS]] — Full convention reference
+- [[10_Agents/docs/TASK-PATTERNS]] — Write rules and examples

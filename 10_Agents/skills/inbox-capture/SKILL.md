@@ -32,7 +32,7 @@ Write a new note to `02_Inbox/` that passes validation on the first try.
    session: SESSION_REF
    ---
    ```
-   Pick the `type/*` that fits (see the authoritative table in `00_Meta/conventions.md` § Tag Namespaces); add free-form `topic/*` tags as useful. Agent-created notes always carry `audience/agent` and start `workflow/draft`. Add the provenance fields (`00_Meta/conventions.md` § Provenance): `author:` is your harness identifier (`claude-code`, `copilot`, `cursor`, …); `session:` is the session URL, PR, or task reference — omit it when none exists. `brain validate` warns (`missing-author`) on an agent-tagged Inbox draft without `author:`.
+   Pick the `type/*` that fits (see the authoritative table in `00_Meta/CONVENTIONS.md` § Tag Namespaces); add free-form `topic/*` tags as useful. Agent-created notes always carry `audience/agent` and start `workflow/draft`. Add the provenance fields (`00_Meta/CONVENTIONS.md` § Provenance): `author:` is your harness identifier (`claude-code`, `copilot`, `cursor`, …); `session:` is the session URL, PR, or task reference — omit it when none exists. `brain validate` warns (`missing-author`) on an agent-tagged Inbox draft without `author:`.
 3. **Write the body.** Wikilink related notes — bare filename within the same directory, full path (`[[06_Resources/example-resource|Display]]`) across directories.
 4. **Validate:** `brain validate` — fix any error it reports before committing.
 5. **Commit** with a short descriptive message (the pre-commit hook re-validates and refreshes the index).
@@ -44,6 +44,6 @@ Write a new note to `02_Inbox/` that passes validation on the first try.
 
 ## References
 
-- `00_Meta/conventions.md` — frontmatter, tags, filenames
+- `00_Meta/CONVENTIONS.md` — frontmatter, tags, filenames
 - `02_Inbox/README.md` — Inbox rules and triage flow
-- `10_Agents/docs/task-patterns.md` — worked examples
+- `10_Agents/docs/TASK-PATTERNS.md` — worked examples

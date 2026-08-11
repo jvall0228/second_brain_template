@@ -41,11 +41,11 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
    ## Prevention   — how to avoid hitting it again
    ## Related      — links/paths to affected docs
    ```
-   The provenance fields (`00_Meta/conventions.md` § Provenance) are expected on agent-written notes: `author:` is your harness identifier (`claude-code`, `copilot`, …); `session:` is the session URL / PR / task reference — omit it when none exists.
+   The provenance fields (`00_Meta/CONVENTIONS.md` § Provenance) are expected on agent-written notes: `author:` is your harness identifier (`claude-code`, `copilot`, …); `session:` is the session URL / PR / task reference — omit it when none exists.
 4. **Keep it evergreen:** facts and commands, no session narrative. If a solution supersedes an old note, update that note (bump `updated:`) instead of writing a duplicate.
 5. **Validate and commit:** `brain validate`, then commit.
 
 ## References
 
 - `10_Agents/solutions/README.md` — category index and format
-- `00_Meta/prd.md` §9.2 — the carve-out's exact terms
+- `00_Meta/PRD.md` §9.2 — the carve-out's exact terms

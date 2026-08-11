@@ -38,11 +38,29 @@ EMBED_RELPATH = "10_Agents/tools/brain/vault-embeddings.json"
 # Any tool's test tree (fixture mini-vaults, secret-shaped test data) stays
 # out of the corpus — mirrors run_tests.py's */tests/ discovery rule.
 TOOL_TESTS_RE = re.compile(r"^10_Agents/tools/[^/]+/tests$")
-CONVENTIONS_RELPATH = "00_Meta/conventions.md"
+CORE_FRAMEWORK_PATHS = {
+    "conventions": "00_Meta/CONVENTIONS.md",
+    "index": "00_Meta/INDEX.md",
+    "changelog": "00_Meta/CHANGELOG.md",
+    "prd": "00_Meta/PRD.md",
+    "status": "00_Meta/STATUS.md",
+    "now": "01_Profile/NOW.md",
+    "preferences": "01_Profile/PREFERENCES.md",
+    "defaults": "01_Profile/DEFAULTS.md",
+    "identity": "01_Profile/IDENTITY.md",
+    "work": "01_Profile/WORK.md",
+    "tooling-stack": "01_Profile/TOOLING-STACK.md",
+    "long-running-themes": "01_Profile/LONG-RUNNING-THEMES.md",
+    "operating-rules": "10_Agents/docs/OPERATING-RULES.md",
+    "task-patterns": "10_Agents/docs/TASK-PATTERNS.md",
+}
+CORE_FRAMEWORK_PATH_SET = frozenset(CORE_FRAMEWORK_PATHS.values())
+CORE_FRAMEWORK_CASE = {path.casefold(): path for path in CORE_FRAMEWORK_PATH_SET}
+CONVENTIONS_RELPATH = CORE_FRAMEWORK_PATHS["conventions"]
 
 # ---------------------------------------------------------------------------
 # §14 Curation tunables — the single place these numbers live.
-# Policy prose: 00_Meta/conventions.md § Expiration / § Bootstrap Context.
+# Policy prose: 00_Meta/CONVENTIONS.md § Expiration / § Bootstrap Context.
 
 CURATE_MAX_LINES = 400
 CURATE_MAX_BYTES = 20_000
@@ -61,14 +79,18 @@ EXPIRES_EXEMPT_PREFIXES = (
     "10_Agents/solutions/",
 )
 EXPIRES_EXEMPT_PATHS = frozenset(
-    {"00_Meta/changelog.md", "00_Meta/status.md", "CLAUDE.md"}
+    {
+        CORE_FRAMEWORK_PATHS["changelog"],
+        CORE_FRAMEWORK_PATHS["status"],
+        "CLAUDE.md",
+    }
 )
 # type/* tag values whose notes are event records (a decision made on a date),
 # not living claims — exempt from expires: wherever they live (e.g. a decision
 # record under 04_Projects/). Journal/log types already sit in exempt dirs.
 EXPIRES_EXEMPT_TYPE_TAGS = frozenset({"decision"})
 ORPHAN_EXEMPT_PATHS = frozenset({"AGENTS.md", "CLAUDE.md", "README.md"})
-OVERSIZED_EXEMPT_PATHS = frozenset({"00_Meta/changelog.md"})
+OVERSIZED_EXEMPT_PATHS = frozenset({CORE_FRAMEWORK_PATHS["changelog"]})
 
 # Gate for the validate-side curation warnings (missing-expires,
 # expires-beyond-cap, oversized, bootstrap-budget). On since the one-time
@@ -77,15 +99,14 @@ VALIDATE_CURATION_WARNINGS = True
 
 # R20 bootstrap context budgets (bytes): measured 2026-08-11 sizes + ~50%
 # headroom, rounded up. Total ties to the smallest harness project-doc cap.
-# conventions.md raised 10240 -> 11264 with the issue-#28 Tasks section: the
-# accepted design registers the emoji table there, the file sat 3 bytes under
-# budget, and other sections could not be cut — the total budget still holds.
+# CONVENTIONS.md raised 11264 -> 12288 with issue #75's exact 14-path framework
+# manifest. The aggregate remains below the 32 KiB harness cap.
 BOOTSTRAP_BUDGETS = {
-    "00_Meta/conventions.md": 11264,
-    "00_Meta/index.md": 4096,
-    "01_Profile/defaults.md": 2048,
-    "01_Profile/now.md": 2048,
-    "01_Profile/preferences.md": 3072,
+    CORE_FRAMEWORK_PATHS["conventions"]: 12288,
+    CORE_FRAMEWORK_PATHS["index"]: 4096,
+    CORE_FRAMEWORK_PATHS["defaults"]: 2048,
+    CORE_FRAMEWORK_PATHS["now"]: 2048,
+    CORE_FRAMEWORK_PATHS["preferences"]: 3072,
     "AGENTS.md": 8192,
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
@@ -2555,6 +2576,20 @@ FM_WARNING_RULES = {"tags-not-a-list"}
 SKILLS_PREFIX = "10_Agents/skills/"
 
 
+def valid_note_filename(rel: str) -> bool:
+    """Apply exact framework exceptions without weakening ordinary kebab-case."""
+    name = rel.rsplit("/", 1)[-1]
+    expected_case = CORE_FRAMEWORK_CASE.get(rel.casefold())
+    if expected_case is not None:
+        return rel == expected_case
+    return bool(
+        NOTE_NAME_RE.match(name)
+        or name in NAME_EXCEPTIONS
+        or PERIODIC_RE.match(name)
+        or (name == "SKILL.md" and rel.startswith(SKILLS_PREFIX))
+    )
+
+
 def is_template(rel: str) -> bool:
     return rel.startswith("09_Templates/")
 
@@ -2637,12 +2672,7 @@ def run_validate(
         exempt_frontmatter = rel == "CLAUDE.md"
 
         name = rel.rsplit("/", 1)[-1]
-        if not (
-            NOTE_NAME_RE.match(name)
-            or name in NAME_EXCEPTIONS
-            or PERIODIC_RE.match(name)
-            or (name == "SKILL.md" and rel.startswith(SKILLS_PREFIX))
-        ):
+        if not valid_note_filename(rel):
             err(rel, "filename-convention", f"filename {name!r} is not kebab-case")
 
         if not exempt_frontmatter:

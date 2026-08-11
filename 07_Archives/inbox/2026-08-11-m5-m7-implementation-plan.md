@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # M5–M7 Implementation Plan
 
-Execution plan for the remaining [[00_Meta/prd]] milestones, based on requirements gathered from the owner on 2026-08-11. Every spec-affecting decision below is already recorded in the PRD (the owner's answers authorized those amendments); this note holds the build detail.
+Execution plan for the remaining [[00_Meta/PRD]] milestones, based on requirements gathered from the owner on 2026-08-11. Every spec-affecting decision below is already recorded in the PRD (the owner's answers authorized those amendments); this note holds the build detail.
 
 ## Decision Log (owner, 2026-08-11)
 
@@ -61,7 +61,7 @@ Proposed semantics (finalized in `spec.md`); every command supports `--json`, hu
 
 ### Phase M5.3 — `validate`
 
-Checks: frontmatter presence and required fields; tag namespace membership **read from the authoritative table in [[00_Meta/conventions]]** so conventions remains the single source; filename conventions including the documented exceptions; wikilink resolution (template placeholders and code spans exempt); `updated:` format; `--check-index` for index freshness. Exit codes: 0 clean, 1 errors, 2 warnings only.
+Checks: frontmatter presence and required fields; tag namespace membership **read from the authoritative table in [[00_Meta/CONVENTIONS]]** so conventions remains the single source; filename conventions including the documented exceptions; wikilink resolution (template placeholders and code spans exempt); `updated:` format; `--check-index` for index freshness. Exit codes: 0 clean, 1 errors, 2 warnings only.
 
 ### Phase M5.4 — Hook and CI
 
@@ -73,7 +73,7 @@ Checks: frontmatter presence and required fields; tag namespace membership **rea
 
 - Stdlib `unittest` suite with a fixture mini-vault under `10_Agents/tools/brain/tests/`.
 - `10_Agents/tools/brain/README.md` (usage; carries vault frontmatter).
-- Closeout updates: PRD §19 status, [[00_Meta/status]] table, [[00_Meta/changelog]], §9.4 discovery pointer, and the operating-rules checklist gains "run `brain validate`".
+- Closeout updates: PRD §19 status, [[00_Meta/STATUS]] table, [[00_Meta/CHANGELOG]], §9.4 discovery pointer, and the operating-rules checklist gains "run `brain validate`".
 
 ### M5 acceptance criteria
 
@@ -127,7 +127,7 @@ Per [[06_Resources/harness-primitives-research|the harness research]], the skill
 - **Pi** — `.pi/settings.json` + prompts; **no MCP** (TypeScript extensions instead — the preference ladder's custom-tooling rung applies).
 - **P1: Cursor** — `.cursor/rules/*.mdc`, `.cursor/mcp.json`, `.cursorignore`; **Copilot** — `.github/copilot-instructions.md` pointer + `instructions/*.instructions.md`, per-surface MCP config; **Muse Code** — thin by necessity (user-scope config only; launched 2026-08-05, treat the adapter as volatile and re-verify before hardening).
 
-Cross-cutting from the research: ship **no command files** (commands are deprecated into skills in Codex and Cursor — skills are the invocable unit everywhere); keep **one canonical MCP server manifest** in `10_Agents/` and generate per-harness configs from it; portable voice/tone lives in [[01_Profile/preferences]], not output styles (Claude Code–only).
+Cross-cutting from the research: ship **no command files** (commands are deprecated into skills in Codex and Cursor — skills are the invocable unit everywhere); keep **one canonical MCP server manifest** in `10_Agents/` and generate per-harness configs from it; portable voice/tone lives in [[01_Profile/PREFERENCES]], not output styles (Claude Code–only).
 
 ### Phase M6.3 — P1 second wave
 
@@ -183,8 +183,8 @@ M5 → M6 → M7, strictly: M6's maintenance and onboarding skills call `brain` 
 
 ## Related
 
-- [[00_Meta/prd]] — the spec, amended 2026-08-11 with the decision log above
-- [[00_Meta/status]] — milestone table
-- [[00_Meta/changelog]] — decision record
+- [[00_Meta/PRD]] — the spec, amended 2026-08-11 with the decision log above
+- [[00_Meta/STATUS]] — milestone table
+- [[00_Meta/CHANGELOG]] — decision record
 - [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]] — M5.0 starting point
 - [[06_Resources/harness-primitives-research|Harness Primitives Research]] — grounded per-harness specs, overlap matrix, adapter manifests

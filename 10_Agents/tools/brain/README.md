@@ -32,7 +32,7 @@ Universal long-form fallback: `python3 10_Agents/tools/brain/brain.py <command>
 after reviewing its exact target and external ownership manifest. It never
 edits shell startup files.
 
-Every command accepts `--json` for machine-readable output, `--vault PATH` to override vault-root autodetection, and `--env current|SLUG` for environment selection. Where a command takes a `<note>`, both bare names (`prd`) and vault paths (`00_Meta/prd.md`) work.
+Every command accepts `--json` for machine-readable output, `--vault PATH` to override vault-root autodetection, and `--env current|SLUG` for environment selection. Where a command takes a `<note>`, both bare names (`prd`) and vault paths (`00_Meta/PRD.md`) work.
 
 ## Commands
 

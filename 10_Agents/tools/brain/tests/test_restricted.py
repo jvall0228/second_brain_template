@@ -18,8 +18,8 @@ import brain  # noqa: E402
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "vault"
 
 # Fixture conventions plus the restricted row — the closed-list namespace the
-# real 00_Meta/conventions.md registers (single value: private).
-CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text(encoding="utf-8") + (
+# real 00_Meta/CONVENTIONS.md registers (single value: private).
+CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(encoding="utf-8") + (
     "| `restricted/*` | Privacy marking | `private` |\n"
 )
 
@@ -51,7 +51,7 @@ def make_vault(tmp: Path, files: dict[str, str]) -> Path:
 
 def base_files() -> dict[str, str]:
     return {
-        "00_Meta/conventions.md": CONVENTIONS,
+        "00_Meta/CONVENTIONS.md": CONVENTIONS,
         "secret.md": RESTRICTED_NOTE,
         "other-secret.md": OTHER_RESTRICTED,
         "normal.md": NORMAL_LINKER,
@@ -64,7 +64,7 @@ class RestrictedTaxonomyTests(unittest.TestCase):
 
     def test_table_registers_closed_restricted_namespace(self):
         with tempfile.TemporaryDirectory() as td:
-            root = make_vault(Path(td), {"00_Meta/conventions.md": CONVENTIONS})
+            root = make_vault(Path(td), {"00_Meta/CONVENTIONS.md": CONVENTIONS})
             tax = brain.load_taxonomy(root)
             self.assertEqual(tax["restricted"], ["private"])
 
@@ -100,7 +100,7 @@ class RestrictedTaxonomyTests(unittest.TestCase):
             )
 
     def test_real_conventions_table_registers_restricted(self):
-        # The repo's own 00_Meta/conventions.md, not the fixture copy.
+        # The repo's own 00_Meta/CONVENTIONS.md, not the fixture copy.
         tax = brain.load_taxonomy(brain.default_vault_root())
         self.assertEqual(tax["restricted"], ["private"])
 

@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 ONBOARD_OWNER = ROOT / "10_Agents/skills/onboard-owner/SKILL.md"
 AGENTS = ROOT / "AGENTS.md"
-CONVENTIONS = ROOT / "00_Meta/conventions.md"
+CONVENTIONS = ROOT / "00_Meta/CONVENTIONS.md"
 
 PEOPLE_DIR = "03_Journal/people/"
 
@@ -62,8 +62,8 @@ class OnboardOwnerStagesTests(unittest.TestCase):
 
     def test_role_destinations_referenced(self):
         text = read(ONBOARD_OWNER)
-        self.assertIn("01_Profile/work", text)
-        self.assertIn("01_Profile/identity", text)
+        self.assertIn("01_Profile/WORK", text)
+        self.assertIn("01_Profile/IDENTITY", text)
 
     def test_specialization_recorded_in_config_not_duplicated(self):
         # The intent answer still records context: in config exactly once

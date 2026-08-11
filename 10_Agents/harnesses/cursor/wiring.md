@@ -36,7 +36,7 @@ brain <command> --json
 
 ## Harness-specific notes
 
-- **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([[00_Meta/prd]] §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.
+- **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([[00_Meta/PRD]] §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.
 - **The only harness with a real repo ignore file:** `.cursorignore` gives genuine access exclusion — the one place the vault's privacy marking (`restricted/private`, issue #17 closing PRD §21's open question) can be enforced natively today — see the Restricted content section below. `overlay/cursorignore-template.txt` shows the shape.
 - **Glob-scoped rules:** `.cursor/rules/*.mdc` can scope guidance per PARA directory (`overlay/rules/inbox-conventions.mdc`); use sparingly — `AGENTS.md` remains the portable rule layer.
 - **MCP:** `.cursor/mcp.json`; the vault ships none (M7 registers external sources here).
@@ -44,7 +44,7 @@ brain <command> --json
 
 ## Restricted content → `.cursorignore`
 
-The vault's privacy marking is the `restricted/private` tag ([[00_Meta/conventions#Tag Namespaces]], issue #17) — advisory everywhere except mechanically-enforced surfaces, and Cursor is the one harness where real enforcement exists. Generate `.cursorignore` entries from the restricted-tagged paths:
+The vault's privacy marking is the `restricted/private` tag ([[00_Meta/CONVENTIONS#Tag Namespaces]], issue #17) — advisory everywhere except mechanically-enforced surfaces, and Cursor is the one harness where real enforcement exists. Generate `.cursorignore` entries from the restricted-tagged paths:
 
 ```
 brain list --tag restricted/private

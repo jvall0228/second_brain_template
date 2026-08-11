@@ -29,11 +29,11 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 - Open with the payoff, not the system: "a place where everything you tell me is remembered, organized, and usable by any AI assistant you talk to — so you never start from zero."
 - **Progressive disclosure**: teach each piece at the moment it's used (Inbox when the first capture happens, reviews when scheduling comes up). No upfront lecture, no glossary.
 - Teach by **doing together**: the guided first capture → triage cycle is the lesson on how the vault works day to day.
-- The skill links to vault docs ([[00_Meta/conventions]], [[00_Meta/index]]) for the *agent's* grounding; it never sends the *owner* to read them.
+- The skill links to vault docs ([[00_Meta/CONVENTIONS]], [[00_Meta/INDEX]]) for the *agent's* grounding; it never sends the *owner* to read them.
 
 ### 2. Interview — populate the owner's context
 
-- Conversationally fill the three profile notes — [[01_Profile/now]] (current focus, projects, key dates), [[01_Profile/preferences]] (how they like to communicate and receive output), [[01_Profile/defaults]] (timezone, locale, units) — writing valid, frontmatter-complete notes from their answers.
+- Conversationally fill the three profile notes — [[01_Profile/NOW]] (current focus, projects, key dates), [[01_Profile/PREFERENCES]] (how they like to communicate and receive output), [[01_Profile/DEFAULTS]] (timezone, locale, units) — writing valid, frontmatter-complete notes from their answers.
 - **Writes directly to `01_Profile/`** (owner decision): the live interview is the approval; no Inbox staging. This is a standing write-policy exception scoped to this skill, mirroring the `solution-capture` carve-out — record it in [[AGENTS]] / conventions when the skill ships.
 - Seed first real content where the conversation surfaces it: 1–2 projects into `04_Projects/`, responsibilities into `05_Areas/`, using the templates.
 - Offer to delete the seeded worked examples once real content exists in a section (their documented purpose is "delete once you've learned the pattern").
@@ -61,4 +61,4 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 ## Related
 
 - [[10_Agents/skills/README]] — library the skill joins (would be #13)
-- [[00_Meta/prd]] §9.3 — write policy the profile exception amends
+- [[00_Meta/PRD]] §9.3 — write policy the profile exception amends

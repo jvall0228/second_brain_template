@@ -21,7 +21,7 @@ global availability outside this repository is a separate, optional operation.
 ## Inputs
 
 - **Mode**: `project` (default), `global-preview`, `global-apply`, re-sync, or uninstall.
-- **Harness**: needed for global or harness-specific checks (see `00_Meta/prd.md` §8.3).
+- **Harness**: needed for global or harness-specific checks (see `00_Meta/PRD.md` §8.3).
 - **Vault path**: derive the clone root without writing it into tracked files.
 
 Consult `10_Agents/harnesses/<harness>/wiring.md` when it exists — it is authoritative for that harness's exact paths and import syntax. The standards defaults below cover harnesses without a wiring doc.
@@ -136,7 +136,7 @@ After the core install, optionally install **recommended components** from the r
 
 ## References
 
-- `00_Meta/prd.md` §8.3 (support tiers), §19 M6 (the install decision)
+- `00_Meta/PRD.md` §8.3 (support tiers), §19 M6 (the install decision)
 - `10_Agents/harnesses/<name>/wiring.md` — per-harness paths (shipped with the adapters)
 - `10_Agents/harnesses/README.md` §Overlays — the `overlay/manifest.json` schema and install/reverse method semantics
 - `10_Agents/harnesses/<name>/overlay/manifest.json` — per-harness overlay artifacts, where an overlay ships

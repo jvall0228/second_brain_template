@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import brain  # noqa: E402
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "vault"
-CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text(encoding="utf-8") + (
+CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(encoding="utf-8") + (
     "| `restricted/*` | Privacy marking | `private` |\n"
 )
 
@@ -148,7 +148,7 @@ class TaskValidateTests(unittest.TestCase):
 
     def test_malformed_date_warns_never_errors(self):
         files = {
-            "00_Meta/conventions.md": CONVENTIONS,
+            "00_Meta/CONVENTIONS.md": CONVENTIONS,
             "n.md": note("- [ ] bad 📅 2026-13-40\n"),
         }
         with tempfile.TemporaryDirectory() as td:
@@ -163,7 +163,7 @@ class TaskValidateTests(unittest.TestCase):
 
     def test_template_placeholder_task_is_exempt(self):
         files = {
-            "00_Meta/conventions.md": CONVENTIONS,
+            "00_Meta/CONVENTIONS.md": CONVENTIONS,
             "09_Templates/template-x.md": (
                 "---\ntitle: \"{{title}}\"\ntags:\n  - type/note\n"
                 "updated: {{date}}\n---\n\n- [ ] follow up 📅 {{date}}\n"
@@ -181,7 +181,7 @@ class TaskRestrictedReductionTests(unittest.TestCase):
     """§8.3: the committed index empties tasks for restricted notes."""
 
     FILES = {
-        "00_Meta/conventions.md": CONVENTIONS,
+        "00_Meta/CONVENTIONS.md": CONVENTIONS,
         "secret.md": note(
             "- [ ] secret errand 📅 2026-08-15\n",
             title="Secret",
@@ -220,7 +220,7 @@ class TasksCommandTests(unittest.TestCase):
     TODAY = date(2026, 8, 11)
 
     FILES = {
-        "00_Meta/conventions.md": CONVENTIONS,
+        "00_Meta/CONVENTIONS.md": CONVENTIONS,
         "04_Projects/alpha/README.md": note(
             "- [ ] overdue task 📅 2026-08-10\n"
             "- [ ] due today 📅 2026-08-11\n"
@@ -321,7 +321,7 @@ class TasksHardeningTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": CONVENTIONS,
+                    "00_Meta/CONVENTIONS.md": CONVENTIONS,
                     "04_Projects/alpha/a.md": note("- [ ] in alpha\n"),
                 },
             )
@@ -340,7 +340,7 @@ class TasksHardeningTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(
                 Path(td),
-                {"00_Meta/conventions.md": CONVENTIONS, "x.md": note(line)},
+                {"00_Meta/CONVENTIONS.md": CONVENTIONS, "x.md": note(line)},
             )
             notes, assets = brain.walk_corpus(root)
             index = brain.build_index(root, notes, assets)

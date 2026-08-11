@@ -67,7 +67,7 @@ updated: {today}
 # First Capture After Adoption
 
 A first capture written right after adopting the template, per the
-[[00_Meta/conventions]] frontmatter and tagging rules. Triage me into the
+[[00_Meta/CONVENTIONS]] frontmatter and tagging rules. Triage me into the
 right PARA directory (see [[02_Inbox/README]]).
 """
 

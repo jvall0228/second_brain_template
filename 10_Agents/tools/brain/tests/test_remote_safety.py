@@ -614,7 +614,7 @@ class DocumentationContractTests(unittest.TestCase):
         self.assertIn("never\noverrideable", text)
 
     def test_operating_rules_make_unknown_session_only(self):
-        text = self.read("10_Agents/docs/operating-rules.md")
+        text = self.read("10_Agents/docs/OPERATING-RULES.md")
         self.assertIn("## Personal-data remote safety", text)
         self.assertIn("`--acknowledge-unknown`", text)
         self.assertIn("current invocation only", text)

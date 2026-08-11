@@ -37,5 +37,5 @@ Each area gets its own subfolder or standalone note:
 
 ## Related
 
-- [[00_Meta/index]] — Full vault map
+- [[00_Meta/INDEX]] — Full vault map
 - [[09_Templates/template-area]] — Template for new areas

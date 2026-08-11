@@ -39,6 +39,6 @@ Organized by topic — flat or with subfolders as volume grows:
 
 ## Related
 
-- [[00_Meta/index]] — Full vault map
+- [[00_Meta/INDEX]] — Full vault map
 - [[09_Templates/template-resource]] — Template for reference notes
 - [[09_Templates/template-zettel]] — Template for atomic evergreen notes

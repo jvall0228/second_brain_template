@@ -84,7 +84,7 @@ Vault-canonical skills live above. A separate, curated **links-only** catalog of
 
 ## The Rhythm (cadence table)
 
-**This table is the single source of truth for the vault's operating cadence.** [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] wires it into the harness's scheduler; [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] teaches it as "the rhythm"; [[00_Meta/conventions]] points here.
+**This table is the single source of truth for the vault's operating cadence.** [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] wires it into the harness's scheduler; [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] teaches it as "the rhythm"; [[00_Meta/CONVENTIONS]] points here.
 
 | Cadence | Skills | Trigger |
 |---------|--------|---------|
@@ -98,6 +98,6 @@ Ad hoc, not scheduled: capture and retrieval ([[10_Agents/skills/inbox-capture/S
 
 ## Rules
 
-- Template-shipped skills are canonical ([[00_Meta/prd]] §9.3): changes need human approval.
+- Template-shipped skills are canonical ([[00_Meta/PRD]] §9.3): changes need human approval.
 - Agent-generated skills may be added here directly, tagged `workflow/draft` until the human promotes them; they must pass `brain validate` (which checks `name` = folder name and a non-empty `description`).
 - Skills reference vault files by path and invoke `brain …`. A clean checkout uses `./brain` (POSIX) or `brain.cmd` (Windows); the universal fallback is `python3 10_Agents/tools/brain/brain.py …`. Managed installation is optional and preview-first (`brain install`).

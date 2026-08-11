@@ -27,7 +27,7 @@ updated: 2026-08-11
 
 ## Milestone Status
 
-Per the roadmap in [[00_Meta/prd]] §19:
+Per the roadmap in [[00_Meta/PRD]] §19:
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
@@ -43,19 +43,19 @@ Per the roadmap in [[00_Meta/prd]] §19:
 
 ## Active Ready Roadmap
 
-The approved execution plan is [[02_Inbox/2026-08-11-ready-backlog-implementation-plan]]. Its #71/#72/#73 PRD package is implemented in the current contract; the remaining packages stay roadmap work until each passes tests, validation, generated-file freshness, adversarial review, and integration on `main`. Current state and unresolved owner gates are summarized in [[00_Meta/prd]] §§19–21.
+The approved execution plan is [[02_Inbox/2026-08-11-ready-backlog-implementation-plan]]. Its #71/#72/#73 PRD package is implemented in the current contract; the remaining packages stay roadmap work until each passes tests, validation, generated-file freshness, adversarial review, and integration on `main`. Current state and unresolved owner gates are summarized in [[00_Meta/PRD]] §§19–21.
 
 ## Getting-Started Checklist
 
-- [ ] Fill in `01_Profile/now.md` (current focus)
-- [ ] Fill in `01_Profile/preferences.md` (how agents should format output)
-- [ ] Fill in `01_Profile/defaults.md` (timezone, locale, units)
-- [ ] Fill in `01_Profile/identity.md` and `01_Profile/work.md`
+- [ ] Fill in `01_Profile/NOW.md` (current focus)
+- [ ] Fill in `01_Profile/PREFERENCES.md` (how agents should format output)
+- [ ] Fill in `01_Profile/DEFAULTS.md` (timezone, locale, units)
+- [ ] Fill in `01_Profile/IDENTITY.md` and `01_Profile/WORK.md`
 - [ ] Delete the seeded example notes
 - [ ] Capture your first real notes into `02_Inbox/`
 
 ## How to Track Recency
 
 - Check `updated:` fields in frontmatter (primary signal)
-- Read [[00_Meta/changelog]] for structural changes
+- Read [[00_Meta/CHANGELOG]] for structural changes
 - Use `git log` for file-level history

@@ -71,7 +71,7 @@ class AdoptCheckTest(unittest.TestCase):
         # Acceptance criterion (issue #20): a kept doc linking AT a seeded
         # example (without the cleanup marker) must turn the check red.
         copy_repo(self.copy)
-        index = self.copy / "00_Meta" / "index.md"
+        index = self.copy / "00_Meta" / "INDEX.md"
         index.write_text(
             index.read_text(encoding="utf-8")
             + "\n- [[06_Resources/example-resource]] pinned reference\n",
@@ -89,7 +89,7 @@ class AdoptCheckTest(unittest.TestCase):
         edited = {row["path"] for row in plan["edits"]}
         # Reported #84 fallout: two surviving sources are edited, while the
         # other two sources disappear with the same atomic bundle.
-        self.assertIn("00_Meta/index.md", edited)
+        self.assertIn("00_Meta/INDEX.md", edited)
         self.assertIn("04_Projects/README.md", edited)
         self.assertIn("05_Areas/example-area", deleted)
         self.assertIn("03_Journal/periodic/weekly/2025-W03-review.md", deleted)

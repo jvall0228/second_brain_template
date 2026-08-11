@@ -10,7 +10,7 @@ expires: 2027-08-11
 
 # Task Patterns
 
-Rules for agent-created output in this vault. For general conventions, see [[00_Meta/conventions]].
+Rules for agent-created output in this vault. For general conventions, see [[00_Meta/CONVENTIONS]].
 
 ## Default Write Location
 
@@ -73,6 +73,6 @@ updated: 2026-02-21
 
 ## Filename Convention
 
-Use kebab-case by default: `research-rust-async-patterns.md`. Follow documented exceptions in [[00_Meta/conventions#Filename Convention]].
+Use kebab-case by default: `research-rust-async-patterns.md`. Follow documented exceptions in [[00_Meta/CONVENTIONS#Filename Convention]].
 
 For Inbox notes, prefix with the date: `YYYY-MM-DD-descriptive-slug.md`. Check whether the file already exists before writing; on collision, append a numeric suffix (`-2`) rather than overwriting.

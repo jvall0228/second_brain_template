@@ -14,14 +14,14 @@ expires: 2027-08-11
 ## Core Context (Agent Bootstrap)
 - [[AGENTS]] — Entrypoint, structure, rules
 - [[01_Profile/README|Profile]] — What the owner-context notes are for
-- [[01_Profile/now]] — Current focus
-- [[01_Profile/preferences]] — Communication style
-- [[01_Profile/defaults]] — Timezone, locale, defaults
-- [[01_Profile/identity]] — Who you are (cognitive style, values)
-- [[01_Profile/work]] — Role and professional context
-- [[01_Profile/tooling-stack]] — Tools and devices
-- [[01_Profile/long-running-themes]] — Persistent interests and themes
-- [[00_Meta/conventions]] — Writing rules
+- [[01_Profile/NOW]] — Current focus
+- [[01_Profile/PREFERENCES]] — Communication style
+- [[01_Profile/DEFAULTS]] — Timezone, locale, defaults
+- [[01_Profile/IDENTITY]] — Who you are (cognitive style, values)
+- [[01_Profile/WORK]] — Role and professional context
+- [[01_Profile/TOOLING-STACK]] — Tools and devices
+- [[01_Profile/LONG-RUNNING-THEMES]] — Persistent interests and themes
+- [[00_Meta/CONVENTIONS]] — Writing rules
 
 ## Active Work
 - [[04_Projects/README|Projects]] — Outcomes with deadlines
@@ -46,9 +46,9 @@ expires: 2027-08-11
 - [[00_Meta/README|Meta]] — What the vault-level meta docs are
 - [[07_Archives/README|Archives]] — Completed or inactive items
 - [[08_Assets/README|Assets]] — Images, attachments, non-markdown files
-- [[00_Meta/changelog]] — Structural change log
-- [[00_Meta/prd]] — Design rationale (product requirements)
-- [[00_Meta/status]] — Vault status snapshot
+- [[00_Meta/CHANGELOG]] — Structural change log
+- [[00_Meta/PRD]] — Design rationale (product requirements)
+- [[00_Meta/STATUS]] — Vault status snapshot
 
 ## Templates
 - [[09_Templates/README]] — Template selection guide

@@ -17,16 +17,16 @@ A personal knowledge management vault designed for both human and AI agent use. 
 **Minimum bootstrap** (required for all agents):
 
 1. **[[AGENTS]]** — You are here. Repo purpose, structure, and rules.
-2. **[[01_Profile/now]]** — Current focus, active projects, key dates.
-3. **[[01_Profile/preferences]]** — Communication style, output format, and constraints.
-4. **[[00_Meta/conventions]]** — Naming, tagging, directory layout, and change-control rules.
+2. **[[01_Profile/NOW]]** — Current focus, active projects, key dates.
+3. **[[01_Profile/PREFERENCES]]** — Communication style, output format, and constraints.
+4. **[[00_Meta/CONVENTIONS]]** — Naming, tagging, directory layout, and change-control rules.
 
 After reading all four, the agent has enough context to begin work.
 
 **Complete bootstrap** (required when creating structured notes or navigating beyond Inbox):
 
-5. **[[00_Meta/index]]** — Global map of content.
-6. **[[01_Profile/defaults]]** — Timezone, locale, units, default tags.
+5. **[[00_Meta/INDEX]]** — Global map of content.
+6. **[[01_Profile/DEFAULTS]]** — Timezone, locale, units, default tags.
 
 ## Where Agents Write
 
@@ -59,7 +59,7 @@ Tags live in YAML frontmatter under `tags:` as a list. Use **slash-delimited nam
 | `workflow/*` | Lifecycle stage | `workflow/canonical`, `workflow/draft` |
 | `status/*` | Actionability | `status/active`, `status/someday` |
 
-The authoritative taxonomy (full value lists) is [[00_Meta/conventions#Tag Namespaces]].
+The authoritative taxonomy (full value lists) is [[00_Meta/CONVENTIONS#Tag Namespaces]].
 
 Every note **must** have frontmatter with at least `title`, `tags`, and `updated`. When you edit an existing note, bump `updated:` to the current date.
 
@@ -102,17 +102,17 @@ See [[09_Templates/README]] for the full selection guide.
 
 ## Editor Surfaces
 
-The vault supports two editors, and both are part of its contract: **Obsidian** (primary; config in `.obsidian/`) and **VS Code** (config in `.vscode/`; see [[00_Meta/prd]] §6.5). If your change touches vault structure, navigation, templates, or link semantics, it must account for **both** surfaces — see the editor-surface parity item in the [[10_Agents/docs/operating-rules]] checklist. VS Code snippets are generated from `09_Templates/` by the pre-commit hook; never edit `.vscode/second-brain.code-snippets` by hand.
+The vault supports two editors, and both are part of its contract: **Obsidian** (primary; config in `.obsidian/`) and **VS Code** (config in `.vscode/`; see [[00_Meta/PRD]] §6.5). If your change touches vault structure, navigation, templates, or link semantics, it must account for **both** surfaces — see the editor-surface parity item in the [[10_Agents/docs/OPERATING-RULES]] checklist. VS Code snippets are generated from `09_Templates/` by the pre-commit hook; never edit `.vscode/second-brain.code-snippets` by hand.
 
 ## Recency
 
-To detect recent changes: check `updated:` fields, read [[00_Meta/changelog]], or use `git log`.
+To detect recent changes: check `updated:` fields, read [[00_Meta/CHANGELOG]], or use `git log`.
 
 ## Key Links
 
-- Navigation: [[00_Meta/index]] — Full vault map
-- Profile: [[01_Profile/now]] | [[01_Profile/preferences]] | [[01_Profile/defaults]]
-- Conventions: [[00_Meta/conventions]]
+- Navigation: [[00_Meta/INDEX]] — Full vault map
+- Profile: [[01_Profile/NOW]] | [[01_Profile/PREFERENCES]] | [[01_Profile/DEFAULTS]]
+- Conventions: [[00_Meta/CONVENTIONS]]
 - Inbox: [[02_Inbox/README]]
 - PARA roots: [[04_Projects/README|Projects]] | [[05_Areas/README|Areas]] | [[06_Resources/README|Resources]] | [[07_Archives/README|Archives]]
 - Agent docs: [[10_Agents/README]]

@@ -115,11 +115,11 @@ class NeverBootstrapLinkedTests(unittest.TestCase):
 
     BOOTSTRAP_DOCS = [
         ROOT / "AGENTS.md",
-        ROOT / "00_Meta" / "index.md",
-        ROOT / "00_Meta" / "conventions.md",
-        ROOT / "01_Profile" / "now.md",
-        ROOT / "01_Profile" / "preferences.md",
-        ROOT / "01_Profile" / "defaults.md",
+        ROOT / "00_Meta" / "INDEX.md",
+        ROOT / "00_Meta" / "CONVENTIONS.md",
+        ROOT / "01_Profile" / "NOW.md",
+        ROOT / "01_Profile" / "PREFERENCES.md",
+        ROOT / "01_Profile" / "DEFAULTS.md",
     ]
 
     def test_no_bootstrap_wikilinks_into_environments(self):

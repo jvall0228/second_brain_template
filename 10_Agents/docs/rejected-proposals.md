@@ -21,4 +21,4 @@ Consult this table **first**, before proposing anything. `—` in the "why rejec
 ## Related
 
 - [[10_Agents/skills/self-improve/SKILL|self-improve]] — the loop that reads and appends here
-- [[10_Agents/docs/operating-rules]] — canonical note handling and change control
+- [[10_Agents/docs/OPERATING-RULES]] — canonical note handling and change control

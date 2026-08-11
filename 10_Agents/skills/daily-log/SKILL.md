@@ -14,7 +14,7 @@ expires: 2027-08-11
 
 **CODE stage:** Capture.
 
-Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone — check `01_Profile/defaults.md`).
+Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone — check `01_Profile/DEFAULTS.md`).
 
 ## Steps
 
@@ -32,4 +32,4 @@ Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone �
 
 - `09_Templates/template-daily-log.md` — the template
 - `03_Journal/README.md` — periodic note naming
-- `01_Profile/defaults.md` — timezone and date format
+- `01_Profile/DEFAULTS.md` — timezone and date format

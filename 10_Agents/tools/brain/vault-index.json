@@ -26,122 +26,16 @@
   "brain.cmd"
  ],
  "notes": {
-  "00_Meta/README.md": {
+  "00_Meta/CHANGELOG.md": {
    "backlinks": [
-    "00_Meta/index.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "expires": "2027-08-11",
-    "tags": [
-     "type/meta",
-     "audience/human",
-     "audience/agent"
-    ],
-    "title": "Meta",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 11,
-     "text": "Meta"
-    },
-    {
-     "level": 2,
-     "line": 15,
-     "text": "Contents"
-    },
-    {
-     "level": 2,
-     "line": 23,
-     "text": "Related"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 17,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 18,
-     "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 19,
-     "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 20,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 21,
-     "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 25,
-     "placeholder": false,
-     "raw": "[[AGENTS]]",
-     "resolved": "AGENTS.md",
-     "target": "AGENTS",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 692,
-   "tasks": [],
-   "title": "Meta",
-   "updated": "2026-08-11"
-  },
-  "00_Meta/changelog.md": {
-   "backlinks": [
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
+    "00_Meta/PRD.md",
     "00_Meta/README.md",
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
-    "00_Meta/prd.md",
-    "00_Meta/status.md",
+    "00_Meta/STATUS.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "AGENTS.md"
    ],
    "bodyTags": [
@@ -347,9 +241,9 @@
      "fragment": "Recency",
      "line": 13,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Recency|conventions § Recency]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Recency|conventions § Recency]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -358,9 +252,9 @@
      "fragment": null,
      "line": 31,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -369,9 +263,9 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
      "warnings": []
     },
     {
@@ -380,9 +274,9 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -512,9 +406,9 @@
      "fragment": null,
      "line": 72,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -534,9 +428,9 @@
      "fragment": null,
      "line": 87,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -556,9 +450,9 @@
      "fragment": null,
      "line": 105,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -567,9 +461,9 @@
      "fragment": null,
      "line": 105,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -578,9 +472,9 @@
      "fragment": null,
      "line": 109,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -600,9 +494,9 @@
      "fragment": null,
      "line": 113,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -611,9 +505,9 @@
      "fragment": null,
      "line": 117,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -622,9 +516,9 @@
      "fragment": null,
      "line": 118,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -655,9 +549,9 @@
      "fragment": null,
      "line": 119,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -666,9 +560,9 @@
      "fragment": null,
      "line": 126,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -677,9 +571,9 @@
      "fragment": null,
      "line": 126,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -798,9 +692,9 @@
      "fragment": null,
      "line": 134,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -809,9 +703,9 @@
      "fragment": null,
      "line": 135,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -820,9 +714,9 @@
      "fragment": null,
      "line": 136,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -864,9 +758,9 @@
      "fragment": null,
      "line": 142,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -886,9 +780,9 @@
      "fragment": null,
      "line": 146,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -919,9 +813,9 @@
      "fragment": null,
      "line": 148,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -963,9 +857,9 @@
      "fragment": null,
      "line": 155,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -974,9 +868,9 @@
      "fragment": null,
      "line": 155,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -985,9 +879,9 @@
      "fragment": null,
      "line": 161,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -1161,9 +1055,9 @@
      "fragment": null,
      "line": 190,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -1183,9 +1077,9 @@
      "fragment": null,
      "line": 196,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1227,9 +1121,9 @@
      "fragment": null,
      "line": 198,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1238,9 +1132,9 @@
      "fragment": null,
      "line": 205,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1249,9 +1143,9 @@
      "fragment": null,
      "line": 209,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -1260,9 +1154,9 @@
      "fragment": null,
      "line": 216,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1271,9 +1165,9 @@
      "fragment": "Tag Namespaces",
      "line": 217,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -1282,9 +1176,9 @@
      "fragment": null,
      "line": 221,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1293,9 +1187,9 @@
      "fragment": null,
      "line": 231,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1304,9 +1198,9 @@
      "fragment": null,
      "line": 237,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -1315,9 +1209,9 @@
      "fragment": null,
      "line": 244,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -1326,9 +1220,9 @@
      "fragment": null,
      "line": 245,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -1348,9 +1242,9 @@
      "fragment": null,
      "line": 249,
      "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
      "warnings": []
     }
    ],
@@ -1359,12 +1253,12 @@
    "title": "Changelog",
    "updated": "2026-08-11"
   },
-  "00_Meta/conventions.md": {
+  "00_Meta/CONVENTIONS.md": {
    "backlinks": [
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/INDEX.md",
+    "00_Meta/PRD.md",
     "00_Meta/README.md",
-    "00_Meta/changelog.md",
-    "00_Meta/index.md",
-    "00_Meta/prd.md",
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "06_Resources/example-resource.md",
@@ -1374,8 +1268,8 @@
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "09_Templates/README.md",
     "10_Agents/README.md",
-    "10_Agents/docs/operating-rules.md",
-    "10_Agents/docs/task-patterns.md",
+    "10_Agents/docs/OPERATING-RULES.md",
+    "10_Agents/docs/TASK-PATTERNS.md",
     "10_Agents/environments/README.md",
     "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
@@ -1419,77 +1313,77 @@
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 45,
      "text": "Locale & Output Defaults"
     },
     {
      "level": 2,
-     "line": 48,
+     "line": 49,
      "text": "Frontmatter Requirements"
     },
     {
      "level": 3,
-     "line": 61,
+     "line": 62,
      "text": "Provenance"
     },
     {
      "level": 3,
-     "line": 65,
+     "line": 66,
      "text": "Expiration (`expires:`)"
     },
     {
      "level": 3,
-     "line": 79,
+     "line": 80,
      "text": "Template Placeholder Exception"
     },
     {
      "level": 3,
-     "line": 83,
+     "line": 84,
      "text": "Adapter File Exception"
     },
     {
      "level": 2,
-     "line": 87,
+     "line": 88,
      "text": "Tag Namespaces"
     },
     {
      "level": 3,
-     "line": 102,
+     "line": 103,
      "text": "restricted/private"
     },
     {
      "level": 2,
-     "line": 106,
+     "line": 107,
      "text": "Tasks"
     },
     {
      "level": 2,
-     "line": 117,
+     "line": 118,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 131,
+     "line": 132,
      "text": "Change Control"
     },
     {
      "level": 3,
-     "line": 142,
+     "line": 143,
      "text": "Draft → Canonical Promotion"
     },
     {
      "level": 2,
-     "line": 156,
+     "line": 157,
      "text": "Bootstrap Context Budgets"
     },
     {
      "level": 2,
-     "line": 160,
+     "line": 161,
      "text": "Operating Rhythm"
     },
     {
      "level": 2,
-     "line": 164,
+     "line": 165,
      "text": "Recency"
     }
    ],
@@ -1498,40 +1392,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 46,
+     "line": 47,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[AGENTS]]",
-     "resolved": "AGENTS.md",
-     "target": "AGENTS",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 89,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 89,
+     "line": 86,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1542,18 +1414,40 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 90,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 123,
+     "line": 90,
+     "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 105,
+     "placeholder": false,
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 124,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1564,7 +1458,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 124,
+     "line": 125,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -1575,7 +1469,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 125,
+     "line": 126,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -1586,7 +1480,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 129,
+     "line": 130,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -1597,29 +1491,29 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 149,
-     "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
      "line": 150,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 154,
+     "line": 151,
+     "placeholder": false,
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 155,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1630,7 +1524,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 158,
+     "line": 159,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1641,51 +1535,51 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 158,
+     "line": 159,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 158,
+     "line": 159,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 158,
+     "line": 159,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 158,
+     "line": 159,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 162,
+     "line": 163,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -1696,24 +1590,24 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 168,
+     "line": 169,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     }
    ],
-   "sizeBytes": 11226,
+   "sizeBytes": 11557,
    "tasks": [],
    "title": "Conventions",
    "updated": "2026-08-11"
   },
-  "00_Meta/index.md": {
+  "00_Meta/INDEX.md": {
    "backlinks": [
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
     "00_Meta/README.md",
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
     "05_Areas/README.md",
@@ -1807,9 +1701,9 @@
      "fragment": null,
      "line": 17,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -1818,9 +1712,9 @@
      "fragment": null,
      "line": 18,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -1829,9 +1723,9 @@
      "fragment": null,
      "line": 19,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
@@ -1840,9 +1734,9 @@
      "fragment": null,
      "line": 20,
      "placeholder": false,
-     "raw": "[[01_Profile/identity]]",
-     "resolved": "01_Profile/identity.md",
-     "target": "01_Profile/identity",
+     "raw": "[[01_Profile/IDENTITY]]",
+     "resolved": "01_Profile/IDENTITY.md",
+     "target": "01_Profile/IDENTITY",
      "warnings": []
     },
     {
@@ -1851,9 +1745,9 @@
      "fragment": null,
      "line": 21,
      "placeholder": false,
-     "raw": "[[01_Profile/work]]",
-     "resolved": "01_Profile/work.md",
-     "target": "01_Profile/work",
+     "raw": "[[01_Profile/WORK]]",
+     "resolved": "01_Profile/WORK.md",
+     "target": "01_Profile/WORK",
      "warnings": []
     },
     {
@@ -1862,9 +1756,9 @@
      "fragment": null,
      "line": 22,
      "placeholder": false,
-     "raw": "[[01_Profile/tooling-stack]]",
-     "resolved": "01_Profile/tooling-stack.md",
-     "target": "01_Profile/tooling-stack",
+     "raw": "[[01_Profile/TOOLING-STACK]]",
+     "resolved": "01_Profile/TOOLING-STACK.md",
+     "target": "01_Profile/TOOLING-STACK",
      "warnings": []
     },
     {
@@ -1873,9 +1767,9 @@
      "fragment": null,
      "line": 23,
      "placeholder": false,
-     "raw": "[[01_Profile/long-running-themes]]",
-     "resolved": "01_Profile/long-running-themes.md",
-     "target": "01_Profile/long-running-themes",
+     "raw": "[[01_Profile/LONG-RUNNING-THEMES]]",
+     "resolved": "01_Profile/LONG-RUNNING-THEMES.md",
+     "target": "01_Profile/LONG-RUNNING-THEMES",
      "warnings": []
     },
     {
@@ -1884,9 +1778,9 @@
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -2093,9 +1987,9 @@
      "fragment": null,
      "line": 49,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -2104,9 +1998,9 @@
      "fragment": null,
      "line": 50,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -2115,9 +2009,9 @@
      "fragment": null,
      "line": 51,
      "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
      "warnings": []
     },
     {
@@ -2181,13 +2075,13 @@
    "title": "Index",
    "updated": "2026-08-11"
   },
-  "00_Meta/prd.md": {
+  "00_Meta/PRD.md": {
    "backlinks": [
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "00_Meta/README.md",
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
-    "00_Meta/status.md",
+    "00_Meta/STATUS.md",
     "06_Resources/harness-primitives-research.md",
     "06_Resources/recommended-skills.md",
     "06_Resources/vscode-editor-support.md",
@@ -2196,7 +2090,7 @@
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/harnesses/README.md",
     "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
@@ -2476,9 +2370,9 @@
      "fragment": "Tag Namespaces",
      "line": 172,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -2487,9 +2381,9 @@
      "fragment": null,
      "line": 264,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -2520,11 +2414,117 @@
    "title": "PRD",
    "updated": "2026-08-11"
   },
-  "00_Meta/status.md": {
+  "00_Meta/README.md": {
    "backlinks": [
+    "00_Meta/INDEX.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-08-11",
+    "tags": [
+     "type/meta",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Meta",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Meta"
+    },
+    {
+     "level": 2,
+     "line": 15,
+     "text": "Contents"
+    },
+    {
+     "level": 2,
+     "line": 23,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 25,
+     "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 692,
+   "tasks": [],
+   "title": "Meta",
+   "updated": "2026-08-11"
+  },
+  "00_Meta/STATUS.md": {
+   "backlinks": [
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/INDEX.md",
     "00_Meta/README.md",
-    "00_Meta/changelog.md",
-    "00_Meta/index.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md"
    ],
@@ -2580,9 +2580,9 @@
      "fragment": null,
      "line": 30,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -2602,9 +2602,9 @@
      "fragment": null,
      "line": 46,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -2613,9 +2613,9 @@
      "fragment": null,
      "line": 60,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     }
    ],
@@ -2627,7 +2627,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Fill in `01_Profile/now.md` (current focus)"
+     "text": "Fill in `01_Profile/NOW.md` (current focus)"
     },
     {
      "due": null,
@@ -2635,7 +2635,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Fill in `01_Profile/preferences.md` (how agents should format output)"
+     "text": "Fill in `01_Profile/PREFERENCES.md` (how agents should format output)"
     },
     {
      "due": null,
@@ -2643,7 +2643,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Fill in `01_Profile/defaults.md` (timezone, locale, units)"
+     "text": "Fill in `01_Profile/DEFAULTS.md` (timezone, locale, units)"
     },
     {
      "due": null,
@@ -2651,7 +2651,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Fill in `01_Profile/identity.md` and `01_Profile/work.md`"
+     "text": "Fill in `01_Profile/IDENTITY.md` and `01_Profile/WORK.md`"
     },
     {
      "due": null,
@@ -2673,122 +2673,10 @@
    "title": "Status",
    "updated": "2026-08-11"
   },
-  "01_Profile/README.md": {
+  "01_Profile/DEFAULTS.md": {
    "backlinks": [
-    "00_Meta/index.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "expires": "2027-08-11",
-    "tags": [
-     "type/meta",
-     "audience/human",
-     "audience/agent"
-    ],
-    "title": "Profile",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 11,
-     "text": "Profile"
-    },
-    {
-     "level": 2,
-     "line": 15,
-     "text": "Contents"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 17,
-     "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 18,
-     "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 19,
-     "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 20,
-     "placeholder": false,
-     "raw": "[[01_Profile/identity]]",
-     "resolved": "01_Profile/identity.md",
-     "target": "01_Profile/identity",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 21,
-     "placeholder": false,
-     "raw": "[[01_Profile/work]]",
-     "resolved": "01_Profile/work.md",
-     "target": "01_Profile/work",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 22,
-     "placeholder": false,
-     "raw": "[[01_Profile/tooling-stack]]",
-     "resolved": "01_Profile/tooling-stack.md",
-     "target": "01_Profile/tooling-stack",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 23,
-     "placeholder": false,
-     "raw": "[[01_Profile/long-running-themes]]",
-     "resolved": "01_Profile/long-running-themes.md",
-     "target": "01_Profile/long-running-themes",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 764,
-   "tasks": [],
-   "title": "Profile",
-   "updated": "2026-08-11"
-  },
-  "01_Profile/defaults.md": {
-   "backlinks": [
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "01_Profile/README.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
@@ -2836,9 +2724,9 @@
    "title": "Defaults",
    "updated": "2026-08-11"
   },
-  "01_Profile/identity.md": {
+  "01_Profile/IDENTITY.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "01_Profile/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md"
    ],
@@ -2899,9 +2787,9 @@
    "title": "Identity",
    "updated": "2026-08-11"
   },
-  "01_Profile/long-running-themes.md": {
+  "01_Profile/LONG-RUNNING-THEMES.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "01_Profile/README.md"
    ],
    "bodyTags": [],
@@ -2940,11 +2828,11 @@
    "title": "Long-Running Themes",
    "updated": "2026-08-11"
   },
-  "01_Profile/now.md": {
+  "01_Profile/NOW.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "01_Profile/README.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
@@ -3015,10 +2903,10 @@
    "title": "Now",
    "updated": "2026-08-11"
   },
-  "01_Profile/preferences.md": {
+  "01_Profile/PREFERENCES.md": {
    "backlinks": [
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "01_Profile/README.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
@@ -3083,9 +2971,121 @@
    "title": "Preferences",
    "updated": "2026-08-11"
   },
-  "01_Profile/tooling-stack.md": {
+  "01_Profile/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-08-11",
+    "tags": [
+     "type/meta",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Profile",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Profile"
+    },
+    {
+     "level": 2,
+     "line": 15,
+     "text": "Contents"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[01_Profile/IDENTITY]]",
+     "resolved": "01_Profile/IDENTITY.md",
+     "target": "01_Profile/IDENTITY",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[01_Profile/WORK]]",
+     "resolved": "01_Profile/WORK.md",
+     "target": "01_Profile/WORK",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 22,
+     "placeholder": false,
+     "raw": "[[01_Profile/TOOLING-STACK]]",
+     "resolved": "01_Profile/TOOLING-STACK.md",
+     "target": "01_Profile/TOOLING-STACK",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[01_Profile/LONG-RUNNING-THEMES]]",
+     "resolved": "01_Profile/LONG-RUNNING-THEMES.md",
+     "target": "01_Profile/LONG-RUNNING-THEMES",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 764,
+   "tasks": [],
+   "title": "Profile",
+   "updated": "2026-08-11"
+  },
+  "01_Profile/TOOLING-STACK.md": {
+   "backlinks": [
+    "00_Meta/INDEX.md",
     "01_Profile/README.md"
    ],
    "bodyTags": [],
@@ -3134,9 +3134,9 @@
    "title": "Tooling Stack",
    "updated": "2026-08-11"
   },
-  "01_Profile/work.md": {
+  "01_Profile/WORK.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "01_Profile/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md"
    ],
@@ -3769,9 +3769,9 @@
      "fragment": null,
      "line": 132,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -3780,9 +3780,9 @@
      "fragment": null,
      "line": 133,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     }
    ],
@@ -3900,9 +3900,9 @@
      "fragment": null,
      "line": 59,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -3944,9 +3944,9 @@
      "fragment": null,
      "line": 111,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -3955,9 +3955,9 @@
      "fragment": null,
      "line": 112,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -3979,8 +3979,8 @@
   },
   "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md": {
    "backlinks": [
-    "00_Meta/prd.md",
-    "00_Meta/status.md",
+    "00_Meta/PRD.md",
+    "00_Meta/STATUS.md",
     "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md"
    ],
    "bodyTags": [
@@ -4962,7 +4962,7 @@
   },
   "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md": {
    "backlinks": [
-    "00_Meta/prd.md",
+    "00_Meta/PRD.md",
     "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md"
    ],
    "bodyTags": [
@@ -5139,8 +5139,8 @@
   },
   "02_Inbox/README.md": {
    "backlinks": [
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "02_Outbox/README.md",
     "AGENTS.md"
    ],
@@ -5170,7 +5170,7 @@
   },
   "02_Outbox/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "07_Archives/README.md",
     "10_Agents/skills/express-packet/SKILL.md",
     "AGENTS.md"
@@ -5234,7 +5234,7 @@
   },
   "03_Journal/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/ideas/README.md",
     "03_Journal/insights/README.md",
     "03_Journal/memories/README.md",
@@ -5320,9 +5320,9 @@
      "fragment": null,
      "line": 44,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -5399,7 +5399,7 @@
   },
   "03_Journal/ideas/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "06_Resources/README.md"
    ],
    "bodyTags": [],
@@ -5553,7 +5553,7 @@
   },
   "03_Journal/insights/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/memories/README.md",
     "03_Journal/people/README.md"
    ],
@@ -5615,7 +5615,7 @@
   },
   "03_Journal/memories/README.md": {
    "backlinks": [
-    "00_Meta/index.md"
+    "00_Meta/INDEX.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -5681,7 +5681,7 @@
   },
   "03_Journal/people/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
@@ -5811,7 +5811,7 @@
   },
   "03_Journal/periodic/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/README.md",
     "03_Journal/periodic/daily/README.md",
     "03_Journal/periodic/monthly/README.md",
@@ -6460,7 +6460,7 @@
   },
   "03_Journal/plans/README.md": {
    "backlinks": [
-    "00_Meta/index.md"
+    "00_Meta/INDEX.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -6520,7 +6520,7 @@
   },
   "04_Projects/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/README.md",
     "03_Journal/ideas/example-idea.md",
     "05_Areas/README.md",
@@ -6629,9 +6629,9 @@
      "fragment": null,
      "line": 38,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -6664,8 +6664,8 @@
   },
   "04_Projects/example-project/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
-    "01_Profile/now.md",
+    "00_Meta/INDEX.md",
+    "01_Profile/NOW.md",
     "03_Journal/periodic/weekly/2025-W03-review.md",
     "04_Projects/README.md",
     "04_Projects/example-project/decision-records/2025-01-10-example-decision.md",
@@ -6940,7 +6940,7 @@
   },
   "05_Areas/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
     "06_Resources/README.md",
@@ -7037,9 +7037,9 @@
      "fragment": null,
      "line": 40,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -7061,7 +7061,7 @@
   },
   "05_Areas/example-area/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/periodic/weekly/2025-W03-review.md",
     "04_Projects/example-project/README.md",
     "05_Areas/README.md"
@@ -7131,7 +7131,7 @@
   },
   "06_Resources/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
     "05_Areas/README.md",
@@ -7250,9 +7250,9 @@
      "fragment": null,
      "line": 42,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -7285,7 +7285,7 @@
   },
   "06_Resources/example-resource.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "04_Projects/example-project/README.md",
     "05_Areas/example-area/README.md",
     "06_Resources/README.md"
@@ -7336,9 +7336,9 @@
      "fragment": null,
      "line": 36,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     }
    ],
@@ -7349,7 +7349,7 @@
   },
   "06_Resources/harness-claude-code.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/claude-code/wiring.md"
@@ -7475,7 +7475,7 @@
   },
   "06_Resources/harness-codex.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/codex/wiring.md"
@@ -7595,7 +7595,7 @@
   },
   "06_Resources/harness-copilot.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/copilot/wiring.md"
@@ -7701,7 +7701,7 @@
   },
   "06_Resources/harness-cursor.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/cursor/wiring.md"
@@ -7816,7 +7816,7 @@
   },
   "06_Resources/harness-muse-code.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/muse-code/wiring.md"
@@ -7931,7 +7931,7 @@
   },
   "06_Resources/harness-opencode.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/opencode/wiring.md"
@@ -8046,7 +8046,7 @@
   },
   "06_Resources/harness-pi.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "10_Agents/harnesses/pi/wiring.md"
@@ -8161,7 +8161,7 @@
   },
   "06_Resources/harness-primitives-research.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-claude-code.md",
     "06_Resources/harness-codex.md",
     "06_Resources/harness-copilot.md",
@@ -8234,9 +8234,9 @@
      "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -8267,9 +8267,9 @@
      "fragment": null,
      "line": 22,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -8366,9 +8366,9 @@
      "fragment": null,
      "line": 92,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -8388,9 +8388,9 @@
      "fragment": null,
      "line": 94,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     }
    ],
@@ -8401,7 +8401,7 @@
   },
   "06_Resources/harness-standards.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md"
    ],
@@ -8486,7 +8486,7 @@
   },
   "06_Resources/recommended-skills.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/recommended-skills.md",
     "10_Agents/README.md",
     "10_Agents/components/README.md",
@@ -8568,9 +8568,9 @@
      "fragment": null,
      "line": 21,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -8689,9 +8689,9 @@
      "fragment": null,
      "line": 84,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -8713,8 +8713,8 @@
   },
   "06_Resources/vscode-editor-support.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
-    "00_Meta/prd.md",
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/PRD.md",
     "10_Agents/tools/brain/spec.md"
    ],
    "bodyTags": [],
@@ -8779,9 +8779,9 @@
      "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -8790,9 +8790,9 @@
      "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -8845,9 +8845,9 @@
      "fragment": null,
      "line": 103,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -8856,9 +8856,9 @@
      "fragment": null,
      "line": 106,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -8867,9 +8867,9 @@
      "fragment": null,
      "line": 106,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     }
    ],
@@ -8880,7 +8880,7 @@
   },
   "07_Archives/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "04_Projects/README.md",
     "05_Areas/README.md",
     "06_Resources/README.md",
@@ -8997,9 +8997,9 @@
      "fragment": null,
      "line": 42,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     }
    ],
@@ -9095,9 +9095,9 @@
      "fragment": null,
      "line": 22,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -9119,7 +9119,7 @@
   },
   "07_Archives/inbox/2026-08-11-expires-backfill-report.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "07_Archives/README.md"
    ],
    "bodyTags": [],
@@ -9163,9 +9163,9 @@
      "fragment": "Expiration (          )",
      "line": 17,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Expiration (          )]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Expiration (          )]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -9273,9 +9273,9 @@
      "fragment": null,
      "line": 18,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -9284,9 +9284,9 @@
      "fragment": null,
      "line": 19,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -9306,9 +9306,9 @@
      "fragment": "Expiration (          )",
      "line": 30,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Expiration (          )]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Expiration (          )]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -9328,9 +9328,9 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -9339,9 +9339,9 @@
      "fragment": null,
      "line": 35,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -9350,9 +9350,9 @@
      "fragment": null,
      "line": 36,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -9361,9 +9361,9 @@
      "fragment": null,
      "line": 41,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     }
    ],
@@ -9519,9 +9519,9 @@
      "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -9541,9 +9541,9 @@
      "fragment": null,
      "line": 64,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -9552,9 +9552,9 @@
      "fragment": null,
      "line": 76,
      "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
      "warnings": []
     },
     {
@@ -9563,9 +9563,9 @@
      "fragment": null,
      "line": 76,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -9596,9 +9596,9 @@
      "fragment": null,
      "line": 130,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -9607,9 +9607,9 @@
      "fragment": null,
      "line": 186,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -9618,9 +9618,9 @@
      "fragment": null,
      "line": 187,
      "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
      "warnings": []
     },
     {
@@ -9629,9 +9629,9 @@
      "fragment": null,
      "line": 188,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -9664,7 +9664,7 @@
   },
   "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md"
    ],
@@ -9813,7 +9813,7 @@
   },
   "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md"
    ],
@@ -10047,9 +10047,9 @@
      "fragment": null,
      "line": 32,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -10058,9 +10058,9 @@
      "fragment": null,
      "line": 32,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -10069,9 +10069,9 @@
      "fragment": null,
      "line": 36,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -10080,9 +10080,9 @@
      "fragment": null,
      "line": 36,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -10091,9 +10091,9 @@
      "fragment": null,
      "line": 36,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
@@ -10168,9 +10168,9 @@
      "fragment": null,
      "line": 64,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     }
    ],
@@ -10181,7 +10181,7 @@
   },
   "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md"
    ],
@@ -10345,7 +10345,7 @@
     {
      "level": 3,
      "line": 64,
-     "text": "M-A. Tag taxonomy drift — the PRD and conventions.md describe different vocabularies"
+     "text": "M-A. Tag taxonomy drift — the PRD and CONVENTIONS.md describe different vocabularies"
     },
     {
      "level": 3,
@@ -10390,9 +10390,9 @@
      "fragment": null,
      "line": 13,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -10401,9 +10401,9 @@
      "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -10412,9 +10412,9 @@
      "fragment": null,
      "line": 27,
      "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
+     "raw": "[[00_Meta/STATUS]]",
+     "resolved": "00_Meta/STATUS.md",
+     "target": "00_Meta/STATUS",
      "warnings": []
     }
    ],
@@ -10484,7 +10484,7 @@
   },
   "08_Assets/README.md": {
    "backlinks": [
-    "00_Meta/index.md"
+    "00_Meta/INDEX.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -10523,7 +10523,7 @@
   },
   "09_Templates/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "09_Templates/variants/README.md",
     "AGENTS.md"
    ],
@@ -10572,9 +10572,9 @@
      "fragment": "Tag Namespaces",
      "line": 31,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -10605,9 +10605,9 @@
      "fragment": null,
      "line": 44,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -10616,9 +10616,9 @@
      "fragment": null,
      "line": 45,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     }
    ],
@@ -11145,9 +11145,9 @@
      "fragment": null,
      "line": 72,
      "placeholder": false,
-     "raw": "[[01_Profile/now|Now page]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW|Now page]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -11354,9 +11354,9 @@
      "fragment": null,
      "line": 71,
      "placeholder": false,
-     "raw": "[[01_Profile/now|Now page]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW|Now page]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -11365,9 +11365,9 @@
      "fragment": null,
      "line": 74,
      "placeholder": false,
-     "raw": "[[01_Profile/now|Now page]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW|Now page]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -11599,9 +11599,9 @@
      "fragment": null,
      "line": 95,
      "placeholder": false,
-     "raw": "[[01_Profile/now|Now page]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW|Now page]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     }
    ],
@@ -12141,9 +12141,9 @@
      "fragment": null,
      "line": 88,
      "placeholder": false,
-     "raw": "[[01_Profile/now|Now page]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW|Now page]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     }
    ],
@@ -12171,10 +12171,10 @@
   },
   "10_Agents/README.md": {
    "backlinks": [
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "10_Agents/docs/README.md",
-    "10_Agents/docs/task-patterns.md",
+    "10_Agents/docs/TASK-PATTERNS.md",
     "10_Agents/environments/README.md",
     "10_Agents/solutions/README.md",
     "AGENTS.md"
@@ -12251,9 +12251,9 @@
      "fragment": null,
      "line": 17,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/task-patterns|Task Patterns]]",
-     "resolved": "10_Agents/docs/task-patterns.md",
-     "target": "10_Agents/docs/task-patterns",
+     "raw": "[[10_Agents/docs/TASK-PATTERNS|Task Patterns]]",
+     "resolved": "10_Agents/docs/TASK-PATTERNS.md",
+     "target": "10_Agents/docs/TASK-PATTERNS",
      "warnings": []
     },
     {
@@ -12262,9 +12262,9 @@
      "fragment": null,
      "line": 18,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules|Operating Rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES|Operating Rules]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -12394,9 +12394,9 @@
      "fragment": null,
      "line": 47,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12405,9 +12405,9 @@
      "fragment": null,
      "line": 48,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -12416,9 +12416,9 @@
      "fragment": null,
      "line": 49,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     }
    ],
@@ -12429,7 +12429,7 @@
   },
   "10_Agents/components/README.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/recommended-skills.md",
     "10_Agents/README.md",
     "10_Agents/skills/README.md",
@@ -12567,103 +12567,9 @@
    "title": "Recommended Components",
    "updated": "2026-08-11"
   },
-  "10_Agents/docs/README.md": {
+  "10_Agents/docs/OPERATING-RULES.md": {
    "backlinks": [
-    "00_Meta/index.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "expires": "2027-08-11",
-    "tags": [
-     "type/meta",
-     "audience/agent"
-    ],
-    "title": "Agent Docs",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 10,
-     "text": "Agent Docs"
-    },
-    {
-     "level": 2,
-     "line": 14,
-     "text": "Contents"
-    },
-    {
-     "level": 2,
-     "line": 20,
-     "text": "Related"
-    }
-   ],
-   "links": [
-    {
-     "display": "Operating Rules",
-     "embed": false,
-     "fragment": null,
-     "line": 16,
-     "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules|Operating Rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
-     "warnings": []
-    },
-    {
-     "display": "Task Patterns",
-     "embed": false,
-     "fragment": null,
-     "line": 17,
-     "placeholder": false,
-     "raw": "[[10_Agents/docs/task-patterns|Task Patterns]]",
-     "resolved": "10_Agents/docs/task-patterns.md",
-     "target": "10_Agents/docs/task-patterns",
-     "warnings": []
-    },
-    {
-     "display": "Rejected Proposals",
-     "embed": false,
-     "fragment": null,
-     "line": 18,
-     "placeholder": false,
-     "raw": "[[10_Agents/docs/rejected-proposals|Rejected Proposals]]",
-     "resolved": "10_Agents/docs/rejected-proposals.md",
-     "target": "10_Agents/docs/rejected-proposals",
-     "warnings": []
-    },
-    {
-     "display": "self-improve",
-     "embed": false,
-     "fragment": null,
-     "line": 18,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/self-improve/SKILL|self-improve]]",
-     "resolved": "10_Agents/skills/self-improve/SKILL.md",
-     "target": "10_Agents/skills/self-improve/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "Agents",
-     "embed": false,
-     "fragment": null,
-     "line": 22,
-     "placeholder": false,
-     "raw": "[[10_Agents/README|Agents]]",
-     "resolved": "10_Agents/README.md",
-     "target": "10_Agents/README",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 522,
-   "tasks": [],
-   "title": "Agent Docs",
-   "updated": "2026-08-11"
-  },
-  "10_Agents/docs/operating-rules.md": {
-   "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "06_Resources/vscode-editor-support.md",
@@ -12771,9 +12677,9 @@
      "fragment": null,
      "line": 13,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12793,9 +12699,9 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -12804,9 +12710,9 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -12815,9 +12721,9 @@
      "fragment": "Tag Namespaces",
      "line": 64,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12826,9 +12732,9 @@
      "fragment": "Filename Convention",
      "line": 65,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Filename Convention]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Filename Convention]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12837,9 +12743,9 @@
      "fragment": null,
      "line": 66,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12848,9 +12754,9 @@
      "fragment": "Tag Namespaces",
      "line": 69,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces|restricted/private]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces|restricted/private]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12870,9 +12776,9 @@
      "fragment": null,
      "line": 71,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -12936,9 +12842,9 @@
      "fragment": null,
      "line": 113,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -12947,9 +12853,9 @@
      "fragment": null,
      "line": 114,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/task-patterns]]",
-     "resolved": "10_Agents/docs/task-patterns.md",
-     "target": "10_Agents/docs/task-patterns",
+     "raw": "[[10_Agents/docs/TASK-PATTERNS]]",
+     "resolved": "10_Agents/docs/TASK-PATTERNS.md",
+     "target": "10_Agents/docs/TASK-PATTERNS",
      "warnings": []
     }
    ],
@@ -12977,7 +12883,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Tags use defined namespaces (see [[00_Meta/conventions#Tag Namespaces]])"
+     "text": "Tags use defined namespaces (see [[00_Meta/CONVENTIONS#Tag Namespaces]])"
     },
     {
      "due": null,
@@ -12985,7 +12891,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note"
+     "text": "Filename follows [[00_Meta/CONVENTIONS#Filename Convention]] and does not collide with an existing note"
     },
     {
      "due": null,
@@ -12993,7 +12899,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/conventions]] § Provenance)"
+     "text": "Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/CONVENTIONS]] § Provenance)"
     },
     {
      "due": null,
@@ -13017,7 +12923,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "**Restricted containment** ([[00_Meta/conventions#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism."
+     "text": "**Restricted containment** ([[00_Meta/CONVENTIONS#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism."
     },
     {
      "due": null,
@@ -13033,15 +12939,199 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "**Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping"
+     "text": "**Editor-surface parity** ([[00_Meta/PRD]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping"
     }
    ],
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
+  "10_Agents/docs/README.md": {
+   "backlinks": [
+    "00_Meta/INDEX.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-08-11",
+    "tags": [
+     "type/meta",
+     "audience/agent"
+    ],
+    "title": "Agent Docs",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "Agent Docs"
+    },
+    {
+     "level": 2,
+     "line": 14,
+     "text": "Contents"
+    },
+    {
+     "level": 2,
+     "line": 20,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "Operating Rules",
+     "embed": false,
+     "fragment": null,
+     "line": 16,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/OPERATING-RULES|Operating Rules]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
+     "warnings": []
+    },
+    {
+     "display": "Task Patterns",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/TASK-PATTERNS|Task Patterns]]",
+     "resolved": "10_Agents/docs/TASK-PATTERNS.md",
+     "target": "10_Agents/docs/TASK-PATTERNS",
+     "warnings": []
+    },
+    {
+     "display": "Rejected Proposals",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals|Rejected Proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": "self-improve",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-improve/SKILL|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "Agents",
+     "embed": false,
+     "fragment": null,
+     "line": 22,
+     "placeholder": false,
+     "raw": "[[10_Agents/README|Agents]]",
+     "resolved": "10_Agents/README.md",
+     "target": "10_Agents/README",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 522,
+   "tasks": [],
+   "title": "Agent Docs",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/docs/TASK-PATTERNS.md": {
+   "backlinks": [
+    "10_Agents/README.md",
+    "10_Agents/docs/OPERATING-RULES.md",
+    "10_Agents/docs/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-08-11",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Task Patterns",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Task Patterns"
+    },
+    {
+     "level": 2,
+     "line": 15,
+     "text": "Default Write Location"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Destination Policy"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "Required Frontmatter"
+    },
+    {
+     "level": 2,
+     "line": 50,
+     "text": "Example Agent-Created Note"
+    },
+    {
+     "level": 2,
+     "line": 74,
+     "text": "Filename Convention"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 13,
+     "placeholder": false,
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/README]]",
+     "resolved": "10_Agents/README.md",
+     "target": "10_Agents/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Filename Convention",
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[00_Meta/CONVENTIONS#Filename Convention]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2786,
+   "tasks": [],
+   "title": "Task Patterns",
+   "updated": "2026-08-11"
+  },
   "10_Agents/docs/rejected-proposals.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/docs/README.md",
     "10_Agents/skills/self-improve/SKILL.md"
    ],
@@ -13099,105 +13189,15 @@
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     }
    ],
    "sizeBytes": 1147,
    "tasks": [],
    "title": "Rejected Proposals",
-   "updated": "2026-08-11"
-  },
-  "10_Agents/docs/task-patterns.md": {
-   "backlinks": [
-    "10_Agents/README.md",
-    "10_Agents/docs/README.md",
-    "10_Agents/docs/operating-rules.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "expires": "2027-08-11",
-    "tags": [
-     "type/reference",
-     "audience/agent",
-     "workflow/canonical"
-    ],
-    "title": "Task Patterns",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 11,
-     "text": "Task Patterns"
-    },
-    {
-     "level": 2,
-     "line": 15,
-     "text": "Default Write Location"
-    },
-    {
-     "level": 2,
-     "line": 19,
-     "text": "Destination Policy"
-    },
-    {
-     "level": 2,
-     "line": 31,
-     "text": "Required Frontmatter"
-    },
-    {
-     "level": 2,
-     "line": 50,
-     "text": "Example Agent-Created Note"
-    },
-    {
-     "level": 2,
-     "line": 74,
-     "text": "Filename Convention"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 13,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 23,
-     "placeholder": false,
-     "raw": "[[10_Agents/README]]",
-     "resolved": "10_Agents/README.md",
-     "target": "10_Agents/README",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": "Filename Convention",
-     "line": 76,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions#Filename Convention]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 2786,
-   "tasks": [],
-   "title": "Task Patterns",
    "updated": "2026-08-11"
   },
   "10_Agents/environments/README.md": {
@@ -13270,9 +13270,9 @@
      "fragment": null,
      "line": 23,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -13314,9 +13314,9 @@
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -13360,7 +13360,7 @@
   },
   "10_Agents/harnesses/README.md": {
    "backlinks": [
-    "00_Meta/index.md",
+    "00_Meta/INDEX.md",
     "06_Resources/recommended-skills.md",
     "10_Agents/components/README.md",
     "10_Agents/environments/README.md",
@@ -13404,9 +13404,9 @@
      "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -13503,9 +13503,9 @@
      "fragment": null,
      "line": 51,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -13744,7 +13744,7 @@
   },
   "10_Agents/harnesses/copilot/wiring.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/recommended-skills.md",
     "10_Agents/harnesses/README.md",
     "10_Agents/skills/onboard-harness/SKILL.md"
@@ -13958,9 +13958,9 @@
      "fragment": null,
      "line": 39,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -13969,9 +13969,9 @@
      "fragment": "Tag Namespaces",
      "line": 47,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -14256,9 +14256,9 @@
   },
   "10_Agents/skills/README.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "06_Resources/recommended-skills.md",
@@ -14649,9 +14649,9 @@
      "fragment": null,
      "line": 87,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -14836,9 +14836,9 @@
      "fragment": null,
      "line": 101,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     }
    ],
@@ -14849,8 +14849,8 @@
   },
   "10_Agents/skills/agent-orientation/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
     "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
@@ -14980,7 +14980,7 @@
   },
   "10_Agents/skills/curate/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/vault-maintenance/SKILL.md"
    ],
@@ -15038,9 +15038,9 @@
      "fragment": null,
      "line": 23,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -15071,9 +15071,9 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -15082,9 +15082,9 @@
      "fragment": null,
      "line": 47,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -15107,7 +15107,7 @@
   "10_Agents/skills/daily-log/SKILL.md": {
    "backlinks": [
     "06_Resources/vscode-editor-support.md",
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/skills/README.md",
     "10_Agents/tools/vscode/README.md"
    ],
@@ -15155,7 +15155,7 @@
   },
   "10_Agents/skills/distill-note/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/triage-inbox/SKILL.md"
    ],
@@ -15257,9 +15257,9 @@
      "fragment": null,
      "line": 45,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     }
    ],
@@ -15270,7 +15270,7 @@
   },
   "10_Agents/skills/express-packet/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "02_Outbox/README.md",
     "10_Agents/skills/README.md",
     "AGENTS.md"
@@ -15340,9 +15340,9 @@
      "fragment": null,
      "line": 26,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -15406,9 +15406,9 @@
      "fragment": null,
      "line": 44,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     }
    ],
@@ -15514,7 +15514,7 @@
   },
   "10_Agents/skills/merge-notes/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/curate/SKILL.md",
     "10_Agents/skills/periodic-review/SKILL.md",
@@ -15606,9 +15606,9 @@
      "fragment": null,
      "line": 55,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     }
    ],
@@ -15619,7 +15619,7 @@
   },
   "10_Agents/skills/onboard-harness/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "06_Resources/recommended-skills.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
@@ -15768,8 +15768,8 @@
   },
   "10_Agents/skills/onboard-owner/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
     "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
@@ -15872,9 +15872,9 @@
      "fragment": null,
      "line": 27,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -15883,9 +15883,9 @@
      "fragment": null,
      "line": 27,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -15916,9 +15916,9 @@
      "fragment": null,
      "line": 80,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -15927,9 +15927,9 @@
      "fragment": null,
      "line": 80,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -15938,9 +15938,9 @@
      "fragment": null,
      "line": 80,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
@@ -15960,9 +15960,9 @@
      "fragment": null,
      "line": 85,
      "placeholder": false,
-     "raw": "[[01_Profile/work]]",
-     "resolved": "01_Profile/work.md",
-     "target": "01_Profile/work",
+     "raw": "[[01_Profile/WORK]]",
+     "resolved": "01_Profile/WORK.md",
+     "target": "01_Profile/WORK",
      "warnings": []
     },
     {
@@ -15971,9 +15971,9 @@
      "fragment": null,
      "line": 85,
      "placeholder": false,
-     "raw": "[[01_Profile/identity]]",
-     "resolved": "01_Profile/identity.md",
-     "target": "01_Profile/identity",
+     "raw": "[[01_Profile/IDENTITY]]",
+     "resolved": "01_Profile/IDENTITY.md",
+     "target": "01_Profile/IDENTITY",
      "warnings": []
     },
     {
@@ -16125,9 +16125,9 @@
      "fragment": null,
      "line": 152,
      "placeholder": false,
-     "raw": "[[01_Profile/work]]",
-     "resolved": "01_Profile/work.md",
-     "target": "01_Profile/work",
+     "raw": "[[01_Profile/WORK]]",
+     "resolved": "01_Profile/WORK.md",
+     "target": "01_Profile/WORK",
      "warnings": []
     }
    ],
@@ -16138,7 +16138,7 @@
   },
   "10_Agents/skills/periodic-review/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],
@@ -16184,9 +16184,9 @@
      "fragment": null,
      "line": 38,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -16206,9 +16206,9 @@
      "fragment": null,
      "line": 40,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     }
    ],
@@ -16219,7 +16219,7 @@
   },
   "10_Agents/skills/recommended-automations/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/environments/README.md",
     "10_Agents/harnesses/copilot/wiring.md",
@@ -16309,7 +16309,7 @@
   },
   "10_Agents/skills/research-to-resource/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/curate/SKILL.md",
     "10_Agents/skills/distill-note/SKILL.md",
@@ -16359,9 +16359,9 @@
      "fragment": "Tag Namespaces",
      "line": 36,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     }
    ],
@@ -16372,8 +16372,8 @@
   },
   "10_Agents/skills/self-improve/SKILL.md": {
    "backlinks": [
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/docs/README.md",
-    "10_Agents/docs/operating-rules.md",
     "10_Agents/docs/rejected-proposals.md",
     "10_Agents/skills/README.md"
    ],
@@ -16450,9 +16450,9 @@
      "fragment": null,
      "line": 21,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -16472,9 +16472,9 @@
      "fragment": null,
      "line": 21,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -16494,9 +16494,9 @@
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -16527,9 +16527,9 @@
      "fragment": null,
      "line": 52,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -16615,9 +16615,9 @@
      "fragment": null,
      "line": 131,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -16637,9 +16637,9 @@
      "fragment": null,
      "line": 133,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -16719,7 +16719,7 @@
   },
   "10_Agents/skills/solution-capture/SKILL.md": {
    "backlinks": [
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],
@@ -16761,9 +16761,9 @@
   },
   "10_Agents/skills/sync-upstream/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "06_Resources/recommended-skills.md",
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/self-improve/SKILL.md",
     "10_Agents/skills/sync-upstream/SKILL.md",
@@ -16879,9 +16879,9 @@
      "fragment": null,
      "line": 150,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     }
    ],
@@ -16892,7 +16892,7 @@
   },
   "10_Agents/skills/triage-inbox/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "07_Archives/inbox/2026-08-11-triage-report.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/distill-note/SKILL.md",
@@ -16936,9 +16936,9 @@
      "fragment": "Tag Namespaces",
      "line": 31,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -16971,7 +16971,7 @@
   },
   "10_Agents/skills/vault-answer/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/express-packet/SKILL.md"
    ],
@@ -17018,9 +17018,9 @@
      "fragment": null,
      "line": 23,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -17062,9 +17062,9 @@
      "fragment": null,
      "line": 34,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -17073,9 +17073,9 @@
      "fragment": null,
      "line": 40,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -17106,9 +17106,9 @@
      "fragment": null,
      "line": 43,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     }
    ],
@@ -17119,7 +17119,7 @@
   },
   "10_Agents/skills/vault-maintenance/SKILL.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/curate/SKILL.md",
     "10_Agents/skills/merge-notes/SKILL.md"
@@ -17832,7 +17832,7 @@
   },
   "10_Agents/tools/README.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/README.md",
     "10_Agents/tools/brain/README.md",
     "10_Agents/tools/vscode/README.md"
@@ -17912,9 +17912,9 @@
      "fragment": null,
      "line": 19,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -17934,9 +17934,9 @@
      "fragment": null,
      "line": 39,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     }
    ],
@@ -17948,7 +17948,7 @@
   "10_Agents/tools/brain/README.md": {
    "backlinks": [
     "10_Agents/README.md",
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/tools/README.md"
    ],
    "bodyTags": [],
@@ -18023,7 +18023,7 @@
   },
   "10_Agents/tools/brain/spec.md": {
    "backlinks": [
-    "00_Meta/prd.md",
+    "00_Meta/PRD.md",
     "06_Resources/vscode-editor-support.md",
     "10_Agents/harnesses/claude-code/wiring.md",
     "10_Agents/harnesses/codex/wiring.md",
@@ -18423,9 +18423,9 @@
      "fragment": null,
      "line": 17,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -18445,9 +18445,9 @@
      "fragment": null,
      "line": 21,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -18456,9 +18456,9 @@
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -18467,9 +18467,9 @@
      "fragment": null,
      "line": 47,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -18478,9 +18478,9 @@
      "fragment": "Tag Namespaces",
      "line": 248,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -18489,9 +18489,9 @@
      "fragment": null,
      "line": 254,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -18500,9 +18500,9 @@
      "fragment": null,
      "line": 258,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -18511,9 +18511,9 @@
      "fragment": null,
      "line": 258,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -18522,9 +18522,9 @@
      "fragment": null,
      "line": 331,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -18566,13 +18566,13 @@
      "fragment": null,
      "line": 414,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     }
    ],
-   "sizeBytes": 87553,
+   "sizeBytes": 87811,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
@@ -18622,7 +18622,7 @@
   },
   "10_Agents/tools/vscode/README.md": {
    "backlinks": [
-    "00_Meta/changelog.md",
+    "00_Meta/CHANGELOG.md",
     "10_Agents/tools/README.md"
    ],
    "bodyTags": [],
@@ -18663,9 +18663,9 @@
      "fragment": null,
      "line": 15,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -18696,9 +18696,9 @@
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     }
    ],
@@ -18709,13 +18709,13 @@
   },
   "AGENTS.md": {
    "backlinks": [
+    "00_Meta/CHANGELOG.md",
+    "00_Meta/CONVENTIONS.md",
+    "00_Meta/INDEX.md",
     "00_Meta/README.md",
-    "00_Meta/changelog.md",
-    "00_Meta/conventions.md",
-    "00_Meta/index.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
-    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/environments/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/skills/self-improve/SKILL.md",
@@ -18798,9 +18798,9 @@
      "fragment": null,
      "line": 20,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -18809,9 +18809,9 @@
      "fragment": null,
      "line": 21,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -18820,9 +18820,9 @@
      "fragment": null,
      "line": 22,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -18831,9 +18831,9 @@
      "fragment": null,
      "line": 28,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -18842,9 +18842,9 @@
      "fragment": null,
      "line": 29,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
@@ -18930,9 +18930,9 @@
      "fragment": "Tag Namespaces",
      "line": 62,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS#Tag Namespaces]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {
@@ -19084,9 +19084,9 @@
      "fragment": null,
      "line": 105,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/PRD]]",
+     "resolved": "00_Meta/PRD.md",
+     "target": "00_Meta/PRD",
      "warnings": []
     },
     {
@@ -19095,9 +19095,9 @@
      "fragment": null,
      "line": 105,
      "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
+     "raw": "[[10_Agents/docs/OPERATING-RULES]]",
+     "resolved": "10_Agents/docs/OPERATING-RULES.md",
+     "target": "10_Agents/docs/OPERATING-RULES",
      "warnings": []
     },
     {
@@ -19106,9 +19106,9 @@
      "fragment": null,
      "line": 109,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[00_Meta/CHANGELOG]]",
+     "resolved": "00_Meta/CHANGELOG.md",
+     "target": "00_Meta/CHANGELOG",
      "warnings": []
     },
     {
@@ -19117,9 +19117,9 @@
      "fragment": null,
      "line": 113,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[00_Meta/INDEX]]",
+     "resolved": "00_Meta/INDEX.md",
+     "target": "00_Meta/INDEX",
      "warnings": []
     },
     {
@@ -19128,9 +19128,9 @@
      "fragment": null,
      "line": 114,
      "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
+     "raw": "[[01_Profile/NOW]]",
+     "resolved": "01_Profile/NOW.md",
+     "target": "01_Profile/NOW",
      "warnings": []
     },
     {
@@ -19139,9 +19139,9 @@
      "fragment": null,
      "line": 114,
      "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
+     "raw": "[[01_Profile/PREFERENCES]]",
+     "resolved": "01_Profile/PREFERENCES.md",
+     "target": "01_Profile/PREFERENCES",
      "warnings": []
     },
     {
@@ -19150,9 +19150,9 @@
      "fragment": null,
      "line": 114,
      "placeholder": false,
-     "raw": "[[01_Profile/defaults]]",
-     "resolved": "01_Profile/defaults.md",
-     "target": "01_Profile/defaults",
+     "raw": "[[01_Profile/DEFAULTS]]",
+     "resolved": "01_Profile/DEFAULTS.md",
+     "target": "01_Profile/DEFAULTS",
      "warnings": []
     },
     {
@@ -19161,9 +19161,9 @@
      "fragment": null,
      "line": 115,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
+     "raw": "[[00_Meta/CONVENTIONS]]",
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS",
      "warnings": []
     },
     {

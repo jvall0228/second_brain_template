@@ -175,7 +175,7 @@ Goal: the #13 inventory contract (second decision hub) and the onboarding surfac
 - **Tests:** mechanical contract checks only (required section headings present in SKILL.md template block — avoid prose-locks per the PR #33 lesson).
 
 ### M10.2 — #14 onboard-owner: people map + role/intent (M) — depends M10.1
-- **SKILL.md additions:** (1) people map — infer candidates from observable sources per the #13 inventory, confirm with owner, write `03_Journal/people/` under the live-session exception; sensitivity rules verbatim (§16.2); (2) vault intent (work/personal → triggers M9.4 specialization; recorded in config `context`) and role/team/responsibilities → `01_Profile/work.md` / `identity.md`.
+- **SKILL.md additions:** (1) people map — infer candidates from observable sources per the #13 inventory, confirm with owner, write `03_Journal/people/` under the live-session exception; sensitivity rules verbatim (§16.2); (2) vault intent (work/personal → triggers M9.4 specialization; recorded in config `context`) and role/team/responsibilities → `01_Profile/WORK.md` / `IDENTITY.md`.
 - **Escalation posture:** infer first, confirm everything before landing in Profile/people.
 - **Accept:** dry-run interview transcript exercise produces conforming notes.
 
@@ -207,7 +207,7 @@ Independent of each other; both need M9 (config for defaults, conventions regist
 
 ### M11.2 — #28 Task module (L) — DECISION GATE
 - **Decide (recommendation posted):** Obsidian Tasks emoji grammar as canonical inline metadata.
-- **Conventions:** checkbox base syntax + emoji table + location rule (tasks live where context lives) registered in `00_Meta/conventions.md`.
+- **Conventions:** checkbox base syntax + emoji table + location rule (tasks live where context lives) registered in `00_Meta/CONVENTIONS.md`.
 - **Spec + code:** index checkbox tasks per note (status, due, priority, source line — spec §8 extension); `brain tasks --open|--due|--overdue|--project|--json`.
 - **Surfacing (in-scope slice only):** `daily_note.py` pulls yesterday's unchecked tasks into Backlog (config toggle, default on); weekly-review template embeds open/overdue counts via #16's report. VS Code/web-UI views and notification digests are deferred edges (#27/#21).
 - **Tests:** parse fixtures (all metadata forms, malformed), query filters, carry-over behavior incl. ISO-week boundary.
@@ -227,7 +227,7 @@ M12.1 before M12.2 (the loop proposes through sync's classify rules).
 
 ### M12.2 — #22 Self-improving loop (L) — depends #16, #6
 - **SKILL.md:** observe (report trends, git history, triage outcomes) → propose (single-topic PRs/Inbox proposals with evidence + rollback, provenance fields per M9.2) → owner review → record rejections (`10_Agents/docs/rejected-proposals.md` log so the loop never re-proposes) → recur (monthly spec-retrospective cadence via recommended-automations).
-- **Guardrails in skill text:** proposal rate limit (max N open), canonical-docs-by-PR-only (change control is the safety mechanism), owner content out of bounds except as evidence, **never push upstream** (also lands in operating-rules.md).
+- **Guardrails in skill text:** proposal rate limit (max N open), canonical-docs-by-PR-only (change control is the safety mechanism), owner content out of bounds except as evidence, **never push upstream** (also lands in OPERATING-RULES.md).
 - **Accept:** one full dry-run cycle produces a well-formed proposal from seeded friction fixtures.
 
 **M12 exit:** the fork tracks upstream and improves itself under change control — the template's full loop is closed.

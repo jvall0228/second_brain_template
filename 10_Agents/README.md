@@ -14,8 +14,8 @@ Agent-facing documentation for working within this vault. Start with the bootstr
 
 ## Docs
 
-- [[10_Agents/docs/task-patterns|Task Patterns]] — Write rules, allowed destinations, example output
-- [[10_Agents/docs/operating-rules|Operating Rules]] — Behavior expectations and self-modification protocol
+- [[10_Agents/docs/TASK-PATTERNS|Task Patterns]] — Write rules, allowed destinations, example output
+- [[10_Agents/docs/OPERATING-RULES|Operating Rules]] — Behavior expectations and self-modification protocol
 
 ## Skills
 
@@ -44,6 +44,6 @@ One example is included to show the format:
 ## Related
 
 - [[AGENTS]] — Vault entrypoint and bootstrap sequence
-- [[00_Meta/conventions]] — Naming, tagging, and change control
-- [[01_Profile/preferences]] — Communication style and constraints
-- [[01_Profile/defaults]] — Timezone, locale, output defaults
+- [[00_Meta/CONVENTIONS]] — Naming, tagging, and change control
+- [[01_Profile/PREFERENCES]] — Communication style and constraints
+- [[01_Profile/DEFAULTS]] — Timezone, locale, output defaults

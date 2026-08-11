@@ -35,6 +35,6 @@ Each project gets its own subfolder or standalone note:
 
 ## Related
 
-- [[00_Meta/index]] — Full vault map
+- [[00_Meta/INDEX]] — Full vault map
 - [[09_Templates/template-project]] — Template for new projects
 - [[09_Templates/template-decision-record]] — Template for project decisions

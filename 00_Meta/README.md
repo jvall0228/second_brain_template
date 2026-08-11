@@ -14,11 +14,11 @@ Vault-level conventions, navigation, and structural documentation. Files here go
 
 ## Contents
 
-- [[00_Meta/conventions]] — Naming, tagging, directory layout, change-control rules
-- [[00_Meta/index]] — Global map of content (Map of Content)
-- [[00_Meta/changelog]] — Structural change log
-- [[00_Meta/prd]] — Product requirements document
-- [[00_Meta/status]] — Vault status snapshot
+- [[00_Meta/CONVENTIONS]] — Naming, tagging, directory layout, change-control rules
+- [[00_Meta/INDEX]] — Global map of content (Map of Content)
+- [[00_Meta/CHANGELOG]] — Structural change log
+- [[00_Meta/PRD]] — Product requirements document
+- [[00_Meta/STATUS]] — Vault status snapshot
 
 ## Related
 

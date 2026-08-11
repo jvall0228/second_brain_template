@@ -190,4 +190,4 @@ session: <session-or-pr-ref>
 
 - [[10_Agents/environments/README]] — the environment-scoped landing convention (minimal slice of #15)
 - `10_Agents/harnesses/<name>/wiring.md` — what this harness can reach and how (static; verify live)
-- `00_Meta/prd.md` §8.4, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers
+- `00_Meta/PRD.md` §8.4, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers

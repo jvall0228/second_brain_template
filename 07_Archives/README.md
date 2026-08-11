@@ -39,4 +39,4 @@ Mirror the source structure:
 
 ## Related
 
-- [[00_Meta/index]] — Full vault map
+- [[00_Meta/INDEX]] — Full vault map

@@ -5,9 +5,9 @@
       "Bash(python3 -m unittest *)"
     ],
     "deny": [
-      "Edit(00_Meta/prd.md)",
-      "Edit(00_Meta/conventions.md)",
-      "Edit(00_Meta/index.md)",
+      "Edit(00_Meta/PRD.md)",
+      "Edit(00_Meta/CONVENTIONS.md)",
+      "Edit(00_Meta/INDEX.md)",
       "Edit(AGENTS.md)",
       "Edit(CLAUDE.md)"
     ]

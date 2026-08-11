@@ -51,9 +51,9 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 > **Prefer a guided setup?** Point an AI assistant (Claude Code, Codex, etc.) at your fork and ask it to *onboard me* — the [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) skill walks you through everything below conversationally, does the mechanical steps for you, and assumes no technical background.
 
 1. **Fork or clone** this repo (see *Personal vs work* below — you'll likely want one fork per context).
-2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/prd.md` §6.5), or just edit the Markdown.
+2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/PRD.md` §6.5), or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
-4. Skim [`00_Meta/conventions.md`](00_Meta/conventions.md) to learn the naming and tagging rules.
+4. Skim [`00_Meta/CONVENTIONS.md`](00_Meta/CONVENTIONS.md) to learn the naming and tagging rules.
 5. **Install the pre-commit hook** so every commit keeps the vault index, VS Code snippets, and repository skill adapters fresh and the conventions enforced, and **the merge driver** so committed generated files never need hand-merging:
    ```
    git config core.hooksPath .githooks
@@ -139,6 +139,6 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 - All agent output goes to `02_Inbox/` unless explicitly directed elsewhere.
 - Every note must have YAML frontmatter with `title`, `tags`, and `updated`.
 - Tags use slash-delimited namespaces (e.g. `type/meta`, `audience/agent`).
-- Files marked `workflow/canonical` require a PR or explicit human approval to change — agents propose edits via an Inbox note (see [operating rules](10_Agents/docs/operating-rules.md)).
+- Files marked `workflow/canonical` require a PR or explicit human approval to change — agents propose edits via an Inbox note (see [operating rules](10_Agents/docs/OPERATING-RULES.md)).
 
-See [Conventions](00_Meta/conventions.md) for full details.
+See [Conventions](00_Meta/CONVENTIONS.md) for full details.

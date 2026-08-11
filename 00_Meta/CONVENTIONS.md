@@ -36,6 +36,7 @@ Use **kebab-case** by default for filenames: `my-note-title.md`.
 
 Allowed exceptions:
 - Entrypoints: `AGENTS.md`, `CLAUDE.md`, `README.md` (uppercase by convention). These may appear at the vault root or at any directory level (e.g., `04_Projects/example-project/README.md`).
+- Framework core: `00_Meta/{CONVENTIONS,INDEX,CHANGELOG,PRD,STATUS}.md`, `01_Profile/{NOW,PREFERENCES,DEFAULTS,IDENTITY,WORK,TOOLING-STACK,LONG-RUNNING-THEMES}.md`, and `10_Agents/docs/{OPERATING-RULES,TASK-PATTERNS}.md`. These 14 paths require this exact case; the exception does not extend to other notes with the same basename.
 - Skill manifests: `SKILL.md` inside `10_Agents/skills/<skill-name>/` (the Agent Skills format requires this exact name).
 - Periodic review filenames may use ISO week/quarter tokens:
   - `YYYY-W##-review.md` (weekly)
@@ -43,7 +44,7 @@ Allowed exceptions:
 
 ## Locale & Output Defaults
 
-For timezone, date format, units, and other machine-readable defaults, see [[01_Profile/defaults]].
+For timezone, date format, units, and other machine-readable defaults, see [[01_Profile/DEFAULTS]].
 
 ## Frontmatter Requirements
 
@@ -74,7 +75,7 @@ Default TTLs by volatility:
 | Retrieval-dated research | 6 months | resource notes built from web sources |
 | Evergreen / canonical | 12 months | conventions, zettels, project and area notes |
 
-**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`, and any note tagged `type/decision` (a decision record is an event dated at the point it was made, wherever it lives). `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. (`09_Templates/` and the root `CLAUDE.md` are exempt too, via their own frontmatter exception sections above.) Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
+**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/STATUS.md`, and any note tagged `type/decision` (a decision record is an event dated at the point it was made, wherever it lives). `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. (`09_Templates/` and the root `CLAUDE.md` are exempt too, via their own frontmatter exception sections above.) Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
 
 ### Template Placeholder Exception
 
@@ -86,7 +87,7 @@ Files in `09_Templates/` may use placeholder tokens such as `{{date}}`, `{{title
 
 ## Tag Namespaces
 
-Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/prd]] and [[AGENTS]]) summarize it. Current namespaces:
+Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/PRD]] and [[AGENTS]]) summarize it. Current namespaces:
 
 | Namespace | Purpose | Values |
 |-----------|---------|--------|
@@ -101,7 +102,7 @@ Notes tagged `workflow/canonical` require a PR or explicit human approval to mod
 
 ### restricted/private
 
-`restricted/private` marks content that must not spread beyond its note. **Not access control** ([[00_Meta/prd]] §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published), the `restricted-link` warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
+`restricted/private` marks content that must not spread beyond its note. **Not access control** ([[00_Meta/PRD]] §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published), the `restricted-link` warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
 
 ## Tasks
 
@@ -146,8 +147,8 @@ Promoting a `workflow/draft` note to `workflow/canonical` is an owner decision, 
 1. The owner has explicitly approved the promotion (in-session direction counts).
 2. The note passes `brain validate` clean and its content is current (bump `updated:`, refresh `expires:` to the evergreen TTL).
 3. Swap `workflow/draft` → `workflow/canonical`.
-4. The note is reachable: linked from [[00_Meta/index]] and/or its directory README.
-5. Structural promotions (new skills, new policies) get a [[00_Meta/changelog]] entry.
+4. The note is reachable: linked from [[00_Meta/INDEX]] and/or its directory README.
+5. Structural promotions (new skills, new policies) get a [[00_Meta/CHANGELOG]] entry.
 
 Promoting an access-tool/capture-skill bundle is one owner decision: promote its Markdown, after which non-note files become canonical-by-policy.
 
@@ -155,7 +156,7 @@ For expanded agent guidance, see [[10_Agents/README]].
 
 ## Bootstrap Context Budgets
 
-The bootstrap docs ([[AGENTS]], [[01_Profile/now]], [[01_Profile/preferences]], [[01_Profile/defaults]], this file, [[00_Meta/index]]) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `brain context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
+The bootstrap docs ([[AGENTS]], [[01_Profile/NOW]], [[01_Profile/PREFERENCES]], [[01_Profile/DEFAULTS]], this file, [[00_Meta/INDEX]]) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `brain context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
 
 ## Operating Rhythm
 
@@ -165,7 +166,7 @@ The canonical cadence table — which skills run daily, weekly, monthly, and qua
 
 Agents detecting what changed:
 1. Check `updated:` field in frontmatter (primary signal)
-2. Read [[00_Meta/changelog]] for structural changes
+2. Read [[00_Meta/CHANGELOG]] for structural changes
 3. Use `git log -n 10` for detailed file-level history
 
 **Changelog entry format** — new entries use `## [YYYY-MM-DD] <operation> | <summary>`, grep-parseable via `grep '^## \['`. Forward-only: entries before the 2026-08-11 `recategorize` entry keep their original `## YYYY-MM-DD — Title` headers, so the grep matches new-format entries, not the full history. `<operation>` is a short kebab-case verb phrase (`add-skill`, `restructure`, `backfill`); the bullets below the header carry the detail.

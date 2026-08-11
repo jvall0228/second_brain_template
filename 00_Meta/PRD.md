@@ -72,11 +72,11 @@ Tracked paths are vault-relative and case-sensitive. Markdown/Git are durable; `
 The contractual minimum order is:
 
 1. `AGENTS.md`
-2. `01_Profile/now.md`
-3. `01_Profile/preferences.md`
-4. `00_Meta/conventions.md`
+2. `01_Profile/NOW.md`
+3. `01_Profile/PREFERENCES.md`
+4. `00_Meta/CONVENTIONS.md`
 
-Structured writes or navigation beyond Inbox also require `00_Meta/index.md` and `01_Profile/defaults.md`. READMEs and the committed index provide deeper discovery.
+Structured writes or navigation beyond Inbox also require `00_Meta/INDEX.md` and `01_Profile/DEFAULTS.md`. READMEs and the committed index provide deeper discovery.
 
 ### 6.2 Agent write pattern
 
@@ -169,7 +169,7 @@ Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may u
 
 ### 10.2 Tags
 
-[[00_Meta/conventions#Tag Namespaces]] is the single authoritative taxonomy. The current namespaces cover audience, type, topic, workflow, status, and `restricted/private`; other documents summarize rather than redefine that table.
+[[00_Meta/CONVENTIONS#Tag Namespaces]] is the single authoritative taxonomy. The current namespaces cover audience, type, topic, workflow, status, and `restricted/private`; other documents summarize rather than redefine that table.
 
 ### 10.3 Restriction semantics
 
@@ -261,7 +261,7 @@ Agents check overlaps, use collision-safe Inbox names, preserve unrelated edits,
 | M11 | Markdown task tracking and optional semantic search |
 | M12 | Pull-only template sync and the propose/review/record self-improvement loop |
 
-Release detail belongs in [[00_Meta/changelog]], not in this current-state specification.
+Release detail belongs in [[00_Meta/CHANGELOG]], not in this current-state specification.
 
 `brain` remains the vault's programmatic interface; a vault MCP server is out of scope.
 

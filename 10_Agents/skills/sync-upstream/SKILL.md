@@ -91,8 +91,8 @@ Lanes:
 | Path | Lane | Why |
 |------|------|-----|
 | `00_Meta/config.yaml` | owner-content | Per-fork policy record (spec §15.1) — upstream grammar/comment changes are proposals at most |
-| `00_Meta/changelog.md` | owner-content | The fork's own history, not the template's |
-| `00_Meta/status.md` | owner-content | The fork's own state |
+| `00_Meta/CHANGELOG.md` | owner-content | The fork's own history, not the template's |
+| `00_Meta/STATUS.md` | owner-content | The fork's own state |
 | `09_Templates/` templates onboard-owner actually rewrote from `variants/` | owner-content | Issue #12: a work-context fork owns the periodic templates the specialization stage rewrote in place (currently `template-daily-log.md` and `template-weekly-review.md`; detectable as diverged from upstream) — backfilling upstream updates over them would reintroduce the personal sections, so upstream changes to them become proposals. Periodic templates that were **never rewritten** stay machinery; the cross-cutting divergence rule governs them like any other file |
 | `10_Agents/solutions/` | owner-content | The fork's learned solution notes |
 | `10_Agents/environments/` | owner-content | Issue #15: per-environment inventories belong to the fork |
@@ -147,7 +147,7 @@ The detect step only works if upstream releases are tagged. Whoever operates the
 
 ## References
 
-- [[00_Meta/prd]] §6.3 — change control the apply lanes implement
+- [[00_Meta/PRD]] §6.3 — change control the apply lanes implement
 - `10_Agents/tools/brain/spec.md` §15.3 — the `template_version` config key
 - `10_Agents/skills/inbox-capture/SKILL.md` — the report note's write rules
 - `10_Agents/skills/recommended-automations/SKILL.md` — the dry-run-first pattern

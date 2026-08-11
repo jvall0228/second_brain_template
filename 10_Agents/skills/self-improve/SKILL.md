@@ -18,10 +18,10 @@ Make the fork **self-improving** (issue #22): agents observe how the owner actua
 
 ## Ground rules (guardrails)
 
-- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([[00_Meta/prd]] §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [[AGENTS]] / [[00_Meta/conventions]] § Agent Write Rules and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
+- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([[00_Meta/PRD]] §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [[AGENTS]] / [[00_Meta/CONVENTIONS]] § Agent Write Rules and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
 - **Rate limit: max 3 proposals open at once** (open PRs + untriaged Inbox proposal notes from this loop, counted together). Issue #22 requires a rate limit ("max N open at once") without fixing N; this skill sets N = 3 so the owner is never spammed into rubber-stamping. At the limit, hold further proposals for the next cycle — rank and keep the best three.
 - **Owner content is out of bounds** except as read-only evidence. The loop maintains the fork's *spec* (conventions, skills, templates, agent docs, tooling); journal/profile/PARA notes are never proposal targets — they are only observed.
-- **Never push upstream.** The fork pulls from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] is pull-only); this loop personalizes the fork in the opposite direction and inherits the same hard rule: agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. A fork improvement worth generalizing is flagged to the owner as "worth upstreaming?" — the owner carries it upstream by hand if they choose. (Also stated in [[10_Agents/docs/operating-rules]].)
+- **Never push upstream.** The fork pulls from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] is pull-only); this loop personalizes the fork in the opposite direction and inherits the same hard rule: agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. A fork improvement worth generalizing is flagged to the owner as "worth upstreaming?" — the owner carries it upstream by hand if they choose. (Also stated in [[10_Agents/docs/OPERATING-RULES]].)
 - **Consult the rejection log first.** Before proposing anything, read [[10_Agents/docs/rejected-proposals]] — a rejected idea is never re-proposed. Re-raising requires **materially new evidence**, and the proposal must state explicitly what changed since the rejection.
 - **Single-topic proposals.** One observed friction → one proposal (the atomic-notes rule applies to spec changes too). A cycle that finds five frictions produces up to the rate limit of separate proposals, not one omnibus.
 
@@ -49,7 +49,7 @@ Every proposal — PR description or Inbox note — must state:
 2. **The change:** exactly what would be edited, single-topic.
 3. **Expected effect:** what improves, and how the next cycle would verify it.
 4. **Rollback plan:** how to undo (usually `git revert <merge>`; for conventions, the note also names what downstream content would need re-checking).
-5. **Provenance:** `author:` (harness identifier) + `session:` (session URL / PR / task ref) per [[00_Meta/conventions]] § Provenance — on the Inbox note's frontmatter, and in the PR description for PR-lane proposals.
+5. **Provenance:** `author:` (harness identifier) + `session:` (session URL / PR / task ref) per [[00_Meta/CONVENTIONS]] § Provenance — on the Inbox note's frontmatter, and in the PR description for PR-lane proposals.
 
 ## Owner review
 
@@ -128,9 +128,9 @@ The example proposal conforms: frontmatter carries `title`, `tags`, `updated`; e
 ## References
 
 - Issue #22 — the loop's design: observe/propose/review/recur, rate limit, upstream boundary
-- [[00_Meta/prd]] §6.3 — change control the propose lanes implement
+- [[00_Meta/PRD]] §6.3 — change control the propose lanes implement
 - [[10_Agents/docs/rejected-proposals]] — the loop's rejection memory
-- [[10_Agents/docs/operating-rules]] — never-push-upstream rule, canonical note handling
+- [[10_Agents/docs/OPERATING-RULES]] — never-push-upstream rule, canonical note handling
 - [[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] — the pull direction this loop coexists with (issue #6)
 - `10_Agents/tools/brain/spec.md` §16 — `brain report`, the Observe step's primary instrument (issue #16)
 - `10_Agents/skills/inbox-capture/SKILL.md` — write rules for proposal notes and the retrospective report

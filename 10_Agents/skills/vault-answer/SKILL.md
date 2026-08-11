@@ -20,7 +20,7 @@ Retrieval discipline for questions the vault should answer. The vault is the sou
 
 1. **Search the vault, in order** — stop as soon as you have enough to answer:
    1. `brain search "<term>"` — title and full-text hits (try synonyms and abbreviations too).
-   2. [[00_Meta/index]] and the relevant directory READMEs — where a topic *should* live, even if search missed it.
+   2. [[00_Meta/INDEX]] and the relevant directory READMEs — where a topic *should* live, even if search missed it.
    3. `grep` across the vault — phrasings the index search didn't catch.
 2. **Read the notes you found.** Answer from note content, never from search snippets or filenames alone.
 3. **Cite every vault claim with a wikilink** to the note it came from, e.g. "the harness research ([[06_Resources/harness-primitives-research]]) says…". An answer without citations is an answer the human can't verify or follow.
@@ -31,13 +31,13 @@ Retrieval discipline for questions the vault should answer. The vault is the sou
 ## Rules
 
 - Never present model knowledge as vault knowledge — the separation in step 4 is mandatory, not stylistic.
-- If two vault notes conflict, don't silently pick one: present both with the conflict flagged, and follow the Stuck/Escalation Protocol in [[10_Agents/docs/operating-rules]] so the conflict gets resolved in the notes, not just in chat.
+- If two vault notes conflict, don't silently pick one: present both with the conflict flagged, and follow the Stuck/Escalation Protocol in [[10_Agents/docs/OPERATING-RULES]] so the conflict gets resolved in the notes, not just in chat.
 - Captured answers follow the Inbox-first rule and normal triage — this skill never files directly to PARA directories.
 
 ## References
 
 - `10_Agents/tools/brain/README.md` — the search/index CLI
-- [[00_Meta/index]] — the vault map, for step 1
+- [[00_Meta/INDEX]] — the vault map, for step 1
 - [[10_Agents/skills/inbox-capture/SKILL|inbox-capture]] — capturing offered answers
 - [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] — filling gaps
-- [[10_Agents/docs/operating-rules]] — escalation on conflicting sources
+- [[10_Agents/docs/OPERATING-RULES]] — escalation on conflicting sources

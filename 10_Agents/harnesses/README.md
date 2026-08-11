@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Adapters
 
-Per-harness adapters for the support tiers in [[00_Meta/prd]] §8.3. **Standards-first:** the entrypoint (`AGENTS.md`), canonical skills in `10_Agents/skills/`, generated repository discovery adapters, and the `brain` CLI carry portable behavior. Each directory here carries **only what a cross-harness standard cannot**: exact config paths, import syntax, caps, and trust gates.
+Per-harness adapters for the support tiers in [[00_Meta/PRD]] §8.3. **Standards-first:** the entrypoint (`AGENTS.md`), canonical skills in `10_Agents/skills/`, generated repository discovery adapters, and the `brain` CLI carry portable behavior. Each directory here carries **only what a cross-harness standard cannot**: exact config paths, import syntax, caps, and trust gates.
 
 Every adapter ships a `wiring.md` (entrypoint loading, skill discovery paths, hook installation, how the harness invokes `brain`, harness-specific caveats) and reference config files to copy or merge. The [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] skill verifies repository scope by default and gates optional user-global changes behind an exact preview and explicit apply approval.
 
@@ -48,7 +48,7 @@ input and proves it discovers the checked-in `.agents/skills/` adapters.
 
 ## Overlays
 
-An adapter may additionally ship an **overlay**: installable harness-native primitives under `10_Agents/harnesses/<name>/overlay/` — e.g. Cursor glob-scoped `.mdc` rules and its `.cursorignore` template, or Copilot's instructions shim and cloud-agent hook. Overlays are governed by the **standards-first rule** ([[00_Meta/prd]] §8.3, design principles §9.3): an overlay carries **only what a cross-harness standard cannot express**. If `AGENTS.md`, the Agent Skills format, or the `brain` CLI can do the job, the overlay must not duplicate it — most adapters correctly ship **no** `overlay/` directory, and that absence is the expected default, not a gap.
+An adapter may additionally ship an **overlay**: installable harness-native primitives under `10_Agents/harnesses/<name>/overlay/` — e.g. Cursor glob-scoped `.mdc` rules and its `.cursorignore` template, or Copilot's instructions shim and cloud-agent hook. Overlays are governed by the **standards-first rule** ([[00_Meta/PRD]] §8.3, design principles §9.3): an overlay carries **only what a cross-harness standard cannot express**. If `AGENTS.md`, the Agent Skills format, or the `brain` CLI can do the job, the overlay must not duplicate it — most adapters correctly ship **no** `overlay/` directory, and that absence is the expected default, not a gap.
 
 Every overlay contains a `manifest.json` describing what it installs, where, and how to reverse it:
 

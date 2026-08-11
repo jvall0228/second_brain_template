@@ -96,7 +96,7 @@ expires: 2027-01-01
 def make_vault(tmp: Path, note_body: str) -> Path:
     """Minimal vault; validity is controlled by note_body."""
     vault = tmp / "vault"
-    write_note(vault, "00_Meta/conventions.md", CONVENTIONS)
+    write_note(vault, "00_Meta/CONVENTIONS.md", CONVENTIONS)
     write_note(vault, "06_Resources/note.md", note_body)
     return vault
 

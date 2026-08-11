@@ -75,12 +75,12 @@
     },
     {
       "label": "Homepage: Open Vault Index",
-      "detail": "Opens 00_Meta/index.md on folder open (VS Code asks once to allow automatic tasks)",
+      "detail": "Opens 00_Meta/INDEX.md on folder open (VS Code asks once to allow automatic tasks)",
       "type": "shell",
       // Best-effort: needs the `code` CLI on PATH; silently no-ops otherwise.
       // (sh syntax; the windows variant avoids `||`, which old PowerShell rejects)
-      "command": "code -r 00_Meta/index.md || true",
-      "windows": { "command": "cmd /c \"code -r 00_Meta/index.md & exit 0\"" },
+      "command": "code -r 00_Meta/INDEX.md || true",
+      "windows": { "command": "cmd /c \"code -r 00_Meta/INDEX.md & exit 0\"" },
       "runOptions": { "runOn": "folderOpen" },
       "presentation": {
         "reveal": "never",

@@ -12,7 +12,7 @@ expires: 2027-08-11
 
 # VS Code Tools
 
-Scripts backing the VS Code alternative-editor surface ([[00_Meta/prd]] §6.5). Stdlib-only Python 3.10+, per the tools rules in [[10_Agents/tools/README]]. Both are invoked from `.vscode/tasks.json` and the pre-commit hook — no editor extension involved (strict first-party trust policy).
+Scripts backing the VS Code alternative-editor surface ([[00_Meta/PRD]] §6.5). Stdlib-only Python 3.10+, per the tools rules in [[10_Agents/tools/README]]. Both are invoked from `.vscode/tasks.json` and the pre-commit hook — no editor extension involved (strict first-party trust policy).
 
 ## Contents
 
@@ -21,4 +21,4 @@ Scripts backing the VS Code alternative-editor surface ([[00_Meta/prd]] §6.5). 
 
 ## Sync contract
 
-Template changes flow to the snippet surface automatically at the next commit (hook) — agents and humans never update `second-brain.code-snippets` directly. Everything else under `.vscode/` (settings, extensions, tasks) is hand-maintained under the parity duty in [[10_Agents/docs/operating-rules]].
+Template changes flow to the snippet surface automatically at the next commit (hook) — agents and humans never update `second-brain.code-snippets` directly. Everything else under `.vscode/` (settings, extensions, tasks) is hand-maintained under the parity duty in [[10_Agents/docs/OPERATING-RULES]].

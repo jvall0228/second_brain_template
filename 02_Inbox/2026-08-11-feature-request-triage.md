@@ -73,7 +73,7 @@ Module assignments follow #31's owner-authored mapping. Readiness tiers:
 | #19 | Mobile capture (email-to-Inbox v1) | integrations | #13 (email interface), #15 (env scoping), #18 (provenance). v1 shape itself is well defined. |
 | #21 | Brain notification channel | integrations | #13/#15 (platform + channel-id home). v1 push scope defined; v2 bidirectional explicitly later. |
 | #23 | Artifact & visualization skill | integrations | #13 (hosting discovery) for shared render; local-render path (mermaid + self-contained HTML to `08_Assets/`) could start earlier. #16 is its main data source. |
-| #26 | Cross-vault interop | agent-library | v0 (rules in operating-rules.md) is actually **T1 — cheap, ship first** as the body says. v1 gated on #2 (channel declarations) + #18 (provenance). |
+| #26 | Cross-vault interop | agent-library | v0 (rules in OPERATING-RULES.md) is actually **T1 — cheap, ship first** as the body says. v1 gated on #2 (channel declarations) + #18 (provenance). |
 | #29 | n8n/Zapier execution layer | integrations | #13 (new automation-platforms category), #15, #18. Shippable piece (example n8n JSON) gated on the email-to-Inbox flow (#19) existing. |
 | #22 | Self-improving loop | agent-library | #16 (evidence), #6 (pull boundary + conflict handling). Guardrails well specified; needs the rejected-proposals log convention decided. |
 | #32 | Selective module installation | core | #31 (manifest as source of truth), #2 (recorded module set), #6 (sync semantics), #20 (test matrix). Hardest named sub-problem: wikilink integrity across pruned modules. |
@@ -115,7 +115,7 @@ Six milestones continuing the PRD's M-numbering (M0–M7 shipped). Owner scope d
 Notes on the deferral's edges:
 - **#13 orientation writes environment-scoped results, whose home is #15 (deferred).** A minimal landing convention (even just "one inventory note per environment under `10_Agents/environments/`, never bootstrap-linked") should ship with #13 so its output isn't homeless; full #15 scoping machinery stays deferred.
 - **#4 deferred** means all docs keep the `python3 .../brain.py` long form — the M11 web UI and `brain search --semantic` docs should not assume a PATH install.
-- **#26's v0** (session-scoping rules in operating-rules.md, no machinery) is cheap and can still land out-of-band with #22's operating-rules edits; the deferred milestone holds v1 sync channels.
+- **#26's v0** (session-scoping rules in OPERATING-RULES.md, no machinery) is cheap and can still land out-of-band with #22's operating-rules edits; the deferred milestone holds v1 sync channels.
 - **#28's VS Code/web-UI task views and #21 notification digests** are the deferred edges of planned issues — #28 in M11 ships conventions + `brain tasks` + daily-log carry-over only.
 - #31's label mechanic already shipped; the rest of modularization is deferred with it. GitHub milestone shells must be created by the owner (no API path from agent sessions); issue assignment is then agent-doable.
 

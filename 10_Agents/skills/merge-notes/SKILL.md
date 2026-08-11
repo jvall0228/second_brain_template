@@ -52,4 +52,4 @@ Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-ma
 - [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] — where merge proposals come from
 - [[10_Agents/skills/link-repair/SKILL|link-repair]] — fixing links outside a surgery context
 - `10_Agents/tools/brain/README.md` — the `links` command
-- [[10_Agents/docs/operating-rules]] — update by replacement; canonical handling
+- [[10_Agents/docs/OPERATING-RULES]] — update by replacement; canonical handling

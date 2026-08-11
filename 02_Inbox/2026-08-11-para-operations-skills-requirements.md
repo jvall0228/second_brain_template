@@ -56,7 +56,7 @@ Plus two agent-native layers CODE doesn't name, both partially built: system hea
 - **R13 — Action-item extraction at triage.** Triage step: actionable commitment found in a capture → add to the relevant project's tasks (or propose a project); the note still files normally.
 - **R14 — Stuck/escalation protocol.** operating-rules section: when blocked, or when two vault sources conflict, write a `workflow/needs-review` Inbox note stating the conflict and stop — never guess-and-commit or silently resolve rule conflicts.
 - **R15 — One canonical cadence table.** Single table (conventions or skills README): cadence → skills → trigger (daily: log; weekly: triage + review + Outbox sweep; monthly: review + maintenance/curation; quarterly: review + curation + self-maintenance audit). recommended-automations wires *this table*; onboard-owner teaches it as "the rhythm".
-- **R16 — Goal alignment in reviews.** Weekly/monthly review templates ask: does each active project serve something in [[01_Profile/now]]? Anything on the Now page with no project moving it? Quarterly review updates now.md.
+- **R16 — Goal alignment in reviews.** Weekly/monthly review templates ask: does each active project serve something in [[01_Profile/NOW]]? Anything on the Now page with no project moving it? Quarterly review updates NOW.md.
 - **R20 — Bootstrap context budget.** The bootstrap docs (AGENTS.md, now, preferences, defaults, conventions) are loaded into every session — they need explicit size budgets, documented in conventions, and a new `brain context` report showing each bootstrap doc's actual size against its budget (validate warns on breach, never blocks). Modeled on OpenClaw's per-file/total bootstrap caps and `/context list` observability; Karpathy's context-window-as-RAM. Initial budget values set at build time.
 - **R21 — Grep-parseable changelog entries.** Standardize changelog entry headers to `## [YYYY-MM-DD] <operation> | <summary>` so recency queries are one grep for humans, agents, and brain alike (Karpathy's log.md convention). Canonical edit; suggest forward-only (no rewrite of historical entries).
 - **R22 — Session-end flush.** operating-rules gains a pre-exit rule: before ending a working session (or when the harness compacts context), write durable session learnings to the daily log or an Inbox capture — the vault only knows what reaches disk. Mirrors OpenClaw's pre-compaction memory flush; complements solution-capture (which covers solved problems only, not general session learnings).
@@ -108,6 +108,6 @@ From the same research, considered and rejected for this vault (so review doesn'
 
 - [[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]] — phased execution of these requirements
 - [[10_Agents/skills/README]] — current skill catalog
-- [[00_Meta/conventions]] — change control, tag taxonomy
-- [[10_Agents/docs/operating-rules]] — write rules this plan amends
+- [[00_Meta/CONVENTIONS]] — change control, tag taxonomy
+- [[10_Agents/docs/OPERATING-RULES]] — write rules this plan amends
 - [[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|onboard-owner requirements]] — precedent for this note's lifecycle

@@ -198,7 +198,7 @@ class UnreadableNoteTests(unittest.TestCase):
         root = make_vault(
             td,
             {
-                "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                 "ok.md": note(),
                 "02_Inbox/README.md": note(),
             },
@@ -231,7 +231,7 @@ class UnreadableNoteTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "02_Inbox/binary.md": b"\xff\xfe garbage \x80\x81",
                 },
             )
@@ -248,7 +248,7 @@ class UnreadableNoteTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "10_Agents/tools/vscode/tests/test_x.py": f'token = "{fake_secret}"\n',
                     "10_Agents/tools/vscode/gen.py": "print('kept')\n",
                 },
@@ -284,7 +284,7 @@ class UnreadableNoteTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "locked.md": note(),
                 },
             )
@@ -315,7 +315,7 @@ class EmptyTagsTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     **files,
                 },
             )
@@ -377,7 +377,7 @@ class TaxonomyTests(unittest.TestCase):
 
     def test_unreadable(self):
         with tempfile.TemporaryDirectory() as td:
-            root = make_vault(Path(td), {"00_Meta/conventions.md": "# No table here\n"})
+            root = make_vault(Path(td), {"00_Meta/CONVENTIONS.md": "# No table here\n"})
             self.assertIsNone(brain.load_taxonomy(root))
 
 
@@ -413,7 +413,7 @@ class ValidateTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "CLAUDE.md": "@AGENTS.md\n",
                     "A-note.md": "---\ntitle: x\ntags:\n  - type/note\nupdated: 2026-01-01\n---\n",
                     "a-note.md": "---\ntitle: x\ntags:\n  - type/note\nupdated: 2026-01-01\n---\n",
@@ -422,7 +422,14 @@ class ValidateTests(unittest.TestCase):
             )
             errors, _ = brain.run_validate(root, check_index=False)
             rules = {f["rule"] for f in errors}
-            self.assertIn("path-collision", rules)
+            materialized = {path.name for path in root.iterdir()}
+            if {"A-note.md", "a-note.md"} <= materialized:
+                self.assertIn("path-collision", rules)
+            else:
+                # Case-insensitive filesystems cannot materialize both fixture
+                # names. Keep the collision key contract covered there while
+                # Linux CI exercises the end-to-end finding above.
+                self.assertEqual(brain.fold("A-note.md"), brain.fold("a-note.md"))
             self.assertIn("missing-frontmatter", rules)
             # CLAUDE.md is exempt from frontmatter checks; A-note fails kebab-case.
             self.assertFalse(any(f["path"] == "CLAUDE.md" for f in errors))
@@ -431,7 +438,7 @@ class ValidateTests(unittest.TestCase):
             )
 
     def test_skills_contract(self):
-        conventions = (FIXTURE / "00_Meta/conventions.md").read_text()
+        conventions = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
         good = (
             "---\nname: good-skill\ndescription: Does a thing well.\n"
             'title: "Skill: Good"\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n\n# Good\n'
@@ -440,7 +447,7 @@ class ValidateTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": conventions,
+                    "00_Meta/CONVENTIONS.md": conventions,
                     "10_Agents/skills/good-skill/SKILL.md": good,
                     "10_Agents/skills/bad-name/SKILL.md": good,
                     "10_Agents/skills/no-desc/SKILL.md": (
@@ -488,7 +495,7 @@ class ProvenanceTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     **files,
                 },
             )
@@ -563,10 +570,10 @@ class CurationTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
 
     def vault(self, td, files):
-        return make_vault(Path(td), {"00_Meta/conventions.md": self.CONVENTIONS, **files})
+        return make_vault(Path(td), {"00_Meta/CONVENTIONS.md": self.CONVENTIONS, **files})
 
     def test_invalid_expires(self):
         with tempfile.TemporaryDirectory() as td:
@@ -603,8 +610,8 @@ class CurationTests(unittest.TestCase):
             "03_Journal/day.md": note(),
             "07_Archives/old.md": note(),
             "10_Agents/solutions/fix.md": note(),
-            "00_Meta/changelog.md": note(),
-            "00_Meta/status.md": note(),
+            "00_Meta/CHANGELOG.md": note(),
+            "00_Meta/STATUS.md": note(),
             "needs-one.md": note(),
         }
         with tempfile.TemporaryDirectory() as td:
@@ -678,7 +685,7 @@ class CurationTests(unittest.TestCase):
             ctx = brain.context_report(root)
             by_path = {r["path"]: r for r in ctx["docs"]}
             self.assertEqual(by_path["AGENTS.md"]["sizeBytes"], 9000)
-            self.assertIsNone(by_path["01_Profile/now.md"]["sizeBytes"])
+            self.assertIsNone(by_path["01_Profile/NOW.md"]["sizeBytes"])
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
                 _, warnings = brain.run_validate(root, check_index=False)
             self.assertTrue(
@@ -762,7 +769,7 @@ class CurationTests(unittest.TestCase):
         # table intact so validate can still read the taxonomy).
         big_conventions = self.CONVENTIONS + "\n" + ("padding line\n" * 4000)
         with tempfile.TemporaryDirectory() as td:
-            root = self.vault(td, {"00_Meta/conventions.md": big_conventions})
+            root = self.vault(td, {"00_Meta/CONVENTIONS.md": big_conventions})
             ctx = brain.context_report(root)
             self.assertGreater(ctx["totalBytes"], brain.BOOTSTRAP_TOTAL_BUDGET)
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
@@ -835,12 +842,12 @@ class SecretScanTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
 
     def scan(self, files: dict):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(
-                Path(td), {"00_Meta/conventions.md": self.CONVENTIONS, **files}
+                Path(td), {"00_Meta/CONVENTIONS.md": self.CONVENTIONS, **files}
             )
             errors, _ = brain.run_validate(root, check_index=False)
         return [f for f in errors if f["rule"].startswith("secret-")]
@@ -879,7 +886,7 @@ class SecretScanTests(unittest.TestCase):
             make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": self.CONVENTIONS,
+                    "00_Meta/CONVENTIONS.md": self.CONVENTIONS,
                     "leak.md": note(self.FAKE_AWS),
                 },
             )

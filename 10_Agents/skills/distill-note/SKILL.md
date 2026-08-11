@@ -42,4 +42,4 @@ Distillation here is structural, not decorative: a captured note becomes an atom
 - [[09_Templates/template-zettel]] — the target shape
 - [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]] — the main caller
 - [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] — distills at research time; this skill distills after capture
-- [[10_Agents/docs/operating-rules]] — update by replacement
+- [[10_Agents/docs/OPERATING-RULES]] — update by replacement

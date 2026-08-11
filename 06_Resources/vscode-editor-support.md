@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # VS Code as Alternative Editor: Requirements, Trust Policy, and Config
 
-Owner-directed (2026-08-11): the vault spec supports **VS Code as an alternative editor** for when Obsidian is not available. This note records the requirements brainstorm, the extension **trust policy the owner set**, the online research behind the candidates, and the mapping from the shipped `.obsidian/` config to the shipped `.vscode/` config. The working config lives at `.vscode/settings.json` + `.vscode/extensions.json` (root-scope dot-path, outside the note corpus — the `.github/` / `CLAUDE.md` precedent from [[00_Meta/prd]] §9.3). Spec change: [[00_Meta/prd]] §6.5.
+Owner-directed (2026-08-11): the vault spec supports **VS Code as an alternative editor** for when Obsidian is not available. This note records the requirements brainstorm, the extension **trust policy the owner set**, the online research behind the candidates, and the mapping from the shipped `.obsidian/` config to the shipped `.vscode/` config. The working config lives at `.vscode/settings.json` + `.vscode/extensions.json` (root-scope dot-path, outside the note corpus — the `.github/` / `CLAUDE.md` precedent from [[00_Meta/PRD]] §9.3). Spec change: [[00_Meta/PRD]] §6.5.
 
 ## Trust policy (owner decision, 2026-08-11)
 
@@ -100,10 +100,10 @@ Sources:
 4. **Snippets over raw templates as the user-facing surface:** shipped `.vscode/second-brain.code-snippets`, **generated** from `09_Templates/` by `10_Agents/tools/vscode/gen_snippets.py` and kept in sync automatically by the pre-commit hook (`--check` mode available). `{{date}}` maps to VS Code's auto-filling date variables; other tokens become tabstops. Plus an `sb-frontmatter` snippet for bare capture.
 5. **Cursor synergy:** noted in [[10_Agents/harnesses/cursor/wiring]] — the whole `.vscode/` surface works in Cursor unchanged.
 6. **Acceptance criteria:** written into PRD §6.5. Config is script-verified in this environment (snippet generation deterministic + valid JSON, daily-note output passes `brain validate`, tasks reference real commands); the open-in-real-VS-Code acceptance pass was waived by the owner at merge (2026-08-11).
-7. **Homepage on open:** shipped as a `folderOpen` automatic task opening [[00_Meta/index]] (VS Code prompts once to allow automatic tasks; needs the `code` CLI on PATH, silently no-ops without it). Obsidian core has no auto-open equivalent — a community "Homepage" plugin exists but fails the trust posture; gap noted in the mapping.
+7. **Homepage on open:** shipped as a `folderOpen` automatic task opening [[00_Meta/INDEX]] (VS Code prompts once to allow automatic tasks; needs the `code` CLI on PATH, silently no-ops without it). Obsidian core has no auto-open equivalent — a community "Homepage" plugin exists but fails the trust posture; gap noted in the mapping.
 8. **Old duplicate branch:** ignore/delete note stands (below).
 
-**Spec-parity mechanism (owner follow-up):** two layers. (a) *Automated:* the snippet surface regenerates from templates on every commit — template changes cannot leave VS Code behind. (b) *Procedural:* a new **editor-surface parity** checklist item in [[10_Agents/docs/operating-rules]] requires any structural/navigation/template change (e.g. a future "homepage" note) to update `.obsidian/`, `.vscode/`, and the §6.5 mapping in the same change. Obsidian-side note for the homepage example: core Obsidian cannot auto-open a note, so a homepage would be a convention there (pinned/first link in [[00_Meta/index]]) but an actual auto-open in VS Code.
+**Spec-parity mechanism (owner follow-up):** two layers. (a) *Automated:* the snippet surface regenerates from templates on every commit — template changes cannot leave VS Code behind. (b) *Procedural:* a new **editor-surface parity** checklist item in [[10_Agents/docs/OPERATING-RULES]] requires any structural/navigation/template change (e.g. a future "homepage" note) to update `.obsidian/`, `.vscode/`, and the §6.5 mapping in the same change. Obsidian-side note for the homepage example: core Obsidian cannot auto-open a note, so a homepage would be a convention there (pinned/first link in [[00_Meta/INDEX]]) but an actual auto-open in VS Code.
 
 ## Verification and adversarial review (2026-08-11)
 

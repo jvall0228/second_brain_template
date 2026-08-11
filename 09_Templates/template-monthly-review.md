@@ -69,7 +69,7 @@ How was your sleep this month? Anything out of the ordinary? What contributed to
 
 ### Alignment
 
-- Does each active project serve something on the [[01_Profile/now|Now page]]?
+- Does each active project serve something on the [[01_Profile/NOW|Now page]]?
 - Is anything on the Now page not being moved by any project?
 - Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).
 

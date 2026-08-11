@@ -14,10 +14,10 @@ Owner identity and context. Agents read these files during bootstrap to understa
 
 ## Contents
 
-- [[01_Profile/now]] — Current focus, active projects, key dates
-- [[01_Profile/preferences]] — Communication style, output format, constraints
-- [[01_Profile/defaults]] — Timezone, locale, units, default tags
-- [[01_Profile/identity]] — Cognitive style, values, execution patterns
-- [[01_Profile/work]] — Current role and tech stack
-- [[01_Profile/tooling-stack]] — Preferred tools by category
-- [[01_Profile/long-running-themes]] — Persistent interests and themes
+- [[01_Profile/NOW]] — Current focus, active projects, key dates
+- [[01_Profile/PREFERENCES]] — Communication style, output format, constraints
+- [[01_Profile/DEFAULTS]] — Timezone, locale, units, default tags
+- [[01_Profile/IDENTITY]] — Cognitive style, values, execution patterns
+- [[01_Profile/WORK]] — Current role and tech stack
+- [[01_Profile/TOOLING-STACK]] — Preferred tools by category
+- [[01_Profile/LONG-RUNNING-THEMES]] — Persistent interests and themes

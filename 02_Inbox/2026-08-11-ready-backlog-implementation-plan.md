@@ -120,7 +120,7 @@ Phase gate: WP1–WP3 requirements pass on merged `main`; no live connector/user
 
 ### WP4 — PRD rewrite (#71/#72/#73)
 
-Files: `00_Meta/prd.md`, status, changelog, operating rules; index only if navigation changes.
+Files: `00_Meta/PRD.md`, status, changelog, operating rules; index only if navigation changes.
 
 Target outline: definition/audience; goals/non-goals; cross-editor experience; architecture/write lanes; canonical/config/data contracts; agent model; privacy/restriction/sync; tooling/generated files; user journeys; current acceptance; shipped M0–M12; Ready roadmap; unresolved decisions.
 

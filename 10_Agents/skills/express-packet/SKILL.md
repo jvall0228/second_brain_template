@@ -23,7 +23,7 @@ The Express stage: knowledge only pays off when it leaves the vault. This skill 
    - **Outline** — structured skeleton for something the owner will write
    - **Decision doc** — options, criteria, recommendation (build on [[09_Templates/template-decision-record]] / [[09_Templates/template-comparison]])
    - **Comparison** — side-by-side evaluation
-   - **Draft post / email** — ready-to-edit prose in the owner's voice (see [[01_Profile/preferences]])
+   - **Draft post / email** — ready-to-edit prose in the owner's voice (see [[01_Profile/PREFERENCES]])
 2. **Gather sources vault-first** ([[10_Agents/skills/vault-answer/SKILL|vault-answer]] discipline): brain search → index → grep, read the actual notes, note gaps. Missing knowledge → offer [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] first, or flag the gap in the packet.
 3. **Privacy gate — before writing a word:** packets never include `01_Profile/` or `03_Journal/` content unless the owner directed it *for this packet*. When personal-context notes do feed a packet (with per-packet direction), open the draft with a flag line: `> Personal-context sources: [[…]] — review before shipping.` Blanket permissions don't exist; the gate resets every packet.
 4. **Write to `02_Outbox/`** (`YYYY-MM-DD-slug.md`, suffix on collision): frontmatter with `title`, `tags` (`audience/human`, `workflow/draft`, `type/*` fitting the shape), `updated:`; a one-line header stating audience and purpose; then the deliverable itself — polished enough to ship after one owner pass, not a dump of source notes.
@@ -41,4 +41,4 @@ The Express stage: knowledge only pays off when it leaves the vault. This skill 
 
 - [[02_Outbox/README]] — the lane this writes to, and its lifecycle
 - [[10_Agents/skills/vault-answer/SKILL|vault-answer]] — the retrieval discipline for step 2
-- [[00_Meta/conventions]] § Agent Write Rules — the two-lane write rule
+- [[00_Meta/CONVENTIONS]] § Agent Write Rules — the two-lane write rule

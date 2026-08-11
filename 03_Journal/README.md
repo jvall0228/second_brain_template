@@ -41,7 +41,7 @@ Ask: **"Is this my perspective, understanding, or experience?"**
 
 ## Related
 
-- [[00_Meta/index]] — Full vault map
+- [[00_Meta/INDEX]] — Full vault map
 - [[03_Journal/periodic/README|Periodic Notes]] — Time-based journal hub
 - [[09_Templates/template-daily-log]] — Template for daily entries
 - [[09_Templates/template-weekly-review]] — Template for weekly reviews

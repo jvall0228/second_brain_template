@@ -28,7 +28,7 @@ Reusable note templates for creating structured content. Use these when creating
 | Decision record | `template-decision-record.md` | `type/decision` | `04_Projects/` or `06_Resources/` |
 | Comparison | `template-comparison.md` | `type/reference` | `06_Resources/` |
 
-All templates also carry `workflow/draft` in their suggested tags — an instantiated note keeps it until triage (see [[00_Meta/conventions#Tag Namespaces]]).
+All templates also carry `workflow/draft` in their suggested tags — an instantiated note keeps it until triage (see [[00_Meta/CONVENTIONS#Tag Namespaces]]).
 
 ## Variants (`variants/`)
 
@@ -41,5 +41,5 @@ All templates also carry `workflow/draft` in their suggested tags — an instant
 
 ## Related
 
-- [[00_Meta/index]] — Full vault map
-- [[00_Meta/conventions]] — Frontmatter and tagging rules
+- [[00_Meta/INDEX]] — Full vault map
+- [[00_Meta/CONVENTIONS]] — Frontmatter and tagging rules

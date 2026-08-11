@@ -51,7 +51,7 @@ Overridable before Phase 1; silence = assumption stands.
 ### Phase 1 — Rules & retrieval (R11, R14, R22)
 
 - New skill `vault-answer`: search order (brain search → index → grep), wikilink citations in every answer, vault-vs-model knowledge separation, answers-are-assets capture offer, unanswerable → offer research-to-resource.
-- `10_Agents/docs/operating-rules.md` gains two sections: **Stuck/Escalation Protocol** (R14) and **Session-End Flush** (R22).
+- `10_Agents/docs/OPERATING-RULES.md` gains two sections: **Stuck/Escalation Protocol** (R14) and **Session-End Flush** (R22).
 - Canonical edits: operating-rules, skills README (+1 row).
 - Exit: operating-rules still reads as one coherent document; new skill passes validate.
 
@@ -93,7 +93,7 @@ The only code-heavy phase and the only frontmatter-schema change. Internal order
 
 1. Cadence table (R15) lives in the skills README (beside the catalog it schedules); conventions points to it.
 2. recommended-automations rewrite: two flow families (inbound + rhythm jobs), unattended contract, guardrails (no shipping from Outbox, dry-run-first); source of truth = the R15 table.
-3. periodic-review gains the archive completion path (R9) and goal-alignment questions (R16); weekly/monthly/quarterly review templates updated to match; quarterly updates now.md.
+3. periodic-review gains the archive completion path (R9) and goal-alignment questions (R16); weekly/monthly/quarterly review templates updated to match; quarterly updates NOW.md.
 4. onboard-owner riders: teaches the rhythm, pitches rhythm jobs.
 - Canonical edits: recommended-automations, periodic-review, review templates, onboard-owner, skills README.
 
@@ -129,5 +129,5 @@ This note is the plan of record. On each phase completion: flip its Status to Do
 
 - [[02_Inbox/2026-08-11-para-operations-skills-requirements|Requirements (R1–R25)]] — what this plan executes
 - [[10_Agents/skills/README]] — the catalog being extended
-- [[00_Meta/conventions]] — change control governing the canonical edits
-- [[10_Agents/docs/operating-rules]] — write rules amended in Phases 1 and 5
+- [[00_Meta/CONVENTIONS]] — change control governing the canonical edits
+- [[10_Agents/docs/OPERATING-RULES]] — write rules amended in Phases 1 and 5
