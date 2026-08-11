@@ -496,6 +496,26 @@ class ProviderAndCliTests(unittest.TestCase):
         self.assertEqual(env["GIT_CONFIG_SYSTEM"], os.devnull)
         self.assertEqual(env["GIT_CONFIG_NOSYSTEM"], "1")
 
+    def test_ambient_git_environment_drops_windows_stdio_redirects(self):
+        hostile = {
+            "GIT_REDIRECT_STDIN": "\\\\.\\pipe\\secret-input",
+            "GIT_REDIRECT_STDOUT": "C:\\private\\stdout.txt",
+            "GIT_REDIRECT_STDERR": "C:\\private\\stderr.txt",
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "remote.origin.pushurl",
+            "GIT_CONFIG_VALUE_0": "https://github.com/acme/public.git",
+        }
+        with mock.patch.dict(brain.os.environ, hostile, clear=False):
+            env = brain._ambient_git_subprocess_env()
+        for key in (
+            "GIT_REDIRECT_STDIN",
+            "GIT_REDIRECT_STDOUT",
+            "GIT_REDIRECT_STDERR",
+        ):
+            self.assertNotIn(key, env)
+        # Target-affecting configuration remains present for the ambient union.
+        self.assertEqual(env["GIT_CONFIG_COUNT"], "1")
+
     def test_default_provider_maps_failures_without_forwarding_details(self):
         failures = [
             (FileNotFoundError("/private/path"), "provider-unavailable"),

@@ -261,8 +261,17 @@ def _ambient_git_subprocess_env() -> dict[str, str]:
     # HOME, and repository-selection variables because a later Git invocation
     # in this same environment will honor them; the local-only discovery pass
     # is unioned with this one so neither view can hide the other.
+    unsafe_stdio = {
+        "GIT_REDIRECT_STDIN",
+        "GIT_REDIRECT_STDOUT",
+        "GIT_REDIRECT_STDERR",
+    }
     for key in list(env):
-        if key.startswith("GIT_TRACE") or key == "GIT_CURL_VERBOSE":
+        if (
+            key.startswith("GIT_TRACE")
+            or key == "GIT_CURL_VERBOSE"
+            or key in unsafe_stdio
+        ):
             env.pop(key, None)
     return env
 
