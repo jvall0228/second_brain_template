@@ -234,18 +234,21 @@ def _safe_subprocess_env() -> dict[str, str]:
     # but removing debug toggles also avoids side-channel writes by child tools.
     env["GH_PROMPT_DISABLED"] = "1"
     env["GH_HOST"] = "github.com"
-    env["GIT_TERMINAL_PROMPT"] = "0"
+    # Remote discovery must reflect repository-local config, not ambient
+    # process or user/system config. In particular, Git's GIT_CONFIG_COUNT /
+    # GIT_CONFIG_KEY_* / GIT_CONFIG_VALUE_* family can inject a replacement
+    # push URL and hide the configured public destination. Clear every Git
+    # control variable, then opt back into only the non-interactive flag and
+    # explicit empty global/system config files. Local .git/config still loads.
     env.pop("GH_DEBUG", None)
     env.pop("GH_FORCE_TTY", None)
-    env.pop("GIT_CURL_VERBOSE", None)
     for key in list(env):
-        if key.startswith("GIT_TRACE") or key in {
-            "GIT_COMMON_DIR",
-            "GIT_DIR",
-            "GIT_INDEX_FILE",
-            "GIT_WORK_TREE",
-        }:
+        if key.startswith("GIT_"):
             env.pop(key, None)
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    env["GIT_CONFIG_NOSYSTEM"] = "1"
+    env["GIT_CONFIG_GLOBAL"] = os.devnull
+    env["GIT_CONFIG_SYSTEM"] = os.devnull
     return env
 
 
@@ -3235,6 +3238,15 @@ def cmd_remote_safety(root: Path, args) -> int:
         metadata_provider=GitHubMetadataProvider(),
         acknowledge_unknown=args.acknowledge_unknown,
     )
+    persistence_requested = bool(args.persist)
+    operation_allowed = result["personalDataAllowed"] and (
+        not persistence_requested or result["persistenceAllowed"]
+    )
+    result = {
+        **result,
+        "operationAllowed": operation_allowed,
+        "persistenceRequested": persistence_requested,
+    }
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=1, sort_keys=True))
     else:
@@ -3250,7 +3262,11 @@ def cmd_remote_safety(root: Path, args) -> int:
             "connector-result persistence: "
             + ("allowed" if result["persistenceAllowed"] else "blocked")
         )
-    return 0 if result["personalDataAllowed"] else 1
+        print(
+            "requested operation: "
+            + ("allowed" if result["operationAllowed"] else "blocked")
+        )
+    return 0 if operation_allowed else 1
 
 
 def cmd_validate(root: Path, args) -> int:
@@ -3371,6 +3387,11 @@ def main(argv: list[str] | None = None) -> int:
         "--acknowledge-unknown",
         action="store_true",
         help="allow unknown state for this invocation only (never overrides public/template)",
+    )
+    p.add_argument(
+        "--persist",
+        action="store_true",
+        help="require connector-result persistence to be safe for this invocation",
     )
 
     args = parser.parse_args(argv)

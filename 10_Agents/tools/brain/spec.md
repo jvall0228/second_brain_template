@@ -532,7 +532,8 @@ allows it.
 The default injectable provider runs `gh repo view OWNER/REPO --json
 visibility,isPrivate,isTemplate,templateRepository` with prompting disabled and a
 bounded timeout. It pins `GH_HOST=github.com` and removes debug/trace sinks and Git
-repository-override variables from child environments. Missing `gh`, auth/access
+control/config-injection variables from child environments. Git discovery ignores
+ambient user/system config and reads repository-local config only. Missing `gh`, auth/access
 failures, timeouts, malformed JSON, and missing or inconsistent fields are stable
 `unknown` reason codes; subprocess text is never forwarded.
 
@@ -555,10 +556,14 @@ written anywhere in the vault.
 Human and `--json` output carry the same stable facts: `schemaVersion`, effective
 `state` (`pass|block|unknown`), `verifiedState`, sorted reason codes, target summaries,
 `localOnly`, `personalDataAllowed`, `persistenceAllowed`, and
-`unknownAcknowledged`. Exit is `0` only when personal-data access is allowed and
-`1` for block/unknown.
+`unknownAcknowledged`. The command adds `persistenceRequested` and
+`operationAllowed`. Without `--persist`, operation permission follows the guarded
+read; with `--persist`, local-only mode makes `operationAllowed` false. Exit is `0`
+only when the requested operation is allowed and `1` otherwise.
 
 All personal-data adapters must call `require_remote_safety(...)` immediately
-before the connector and before opening an output file. The helper raises
+before the connector and before opening an output file, passing `persist=True`
+for capture/write flows. Process-boundary adapters use `remote-safety --persist
+--json` and require both zero exit and `operationAllowed: true`. The helper raises
 `RemoteSafetyError` on blocked/unknown access and on persistence in local-only
 mode; `guarded_personal_data_call(...)` is the reference sequencing wrapper.

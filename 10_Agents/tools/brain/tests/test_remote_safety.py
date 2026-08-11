@@ -7,6 +7,7 @@ request or reads a real personal-data connector.
 import contextlib
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -247,6 +248,37 @@ class EvaluationTests(unittest.TestCase):
         self.assertFalse(result["localOnly"])
         self.assertIn("not-git-repository", result["reasonCodes"])
 
+    def test_inherited_git_config_cannot_replace_public_push_target(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = init_repo(Path(td))
+            git(root, "remote", "add", "origin", "https://github.com/acme/public.git")
+            provider = FakeProvider(
+                {
+                    ("acme", "public"): PUBLIC,
+                    ("acme", "private"): PRIVATE,
+                }
+            )
+            hostile = {
+                "GIT_CONFIG_COUNT": "1",
+                "GIT_CONFIG_KEY_0": "remote.origin.pushurl",
+                "GIT_CONFIG_VALUE_0": "https://github.com/acme/private.git",
+                "GIT_CONFIG_PARAMETERS": "'remote.origin.pushurl=https://github.com/acme/private.git'",
+            }
+            connector = mock.Mock()
+            with mock.patch.dict(os.environ, hostile, clear=False):
+                result = self.evaluate(root, provider)
+                with self.assertRaises(brain.RemoteSafetyError):
+                    brain.guarded_personal_data_call(
+                        root,
+                        connector,
+                        metadata_provider=provider,
+                        persist=True,
+                    )
+        self.assertEqual(result["state"], "block")
+        self.assertIn(("acme", "public"), provider.calls)
+        self.assertNotIn(("acme", "private"), provider.calls)
+        connector.assert_not_called()
+
 
 class GuardTests(unittest.TestCase):
     def repo(self, td: str, url: str | None) -> Path:
@@ -347,11 +379,22 @@ class ProviderAndCliTests(unittest.TestCase):
             "GIT_CURL_VERBOSE": "1",
             "GH_DEBUG": "api",
             "GH_FORCE_TTY": "1",
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "remote.origin.pushurl",
+            "GIT_CONFIG_VALUE_0": "https://github.com/acme/private.git",
+            "GIT_CONFIG_PARAMETERS": "'remote.origin.pushurl=x'",
+            "GIT_CONFIG_GLOBAL": "/private/global-config",
+            "GIT_CONFIG_SYSTEM": "/private/system-config",
         }
         with mock.patch.dict(brain.os.environ, hostile, clear=False):
             env = brain._safe_subprocess_env()
         for key in hostile:
+            if key.startswith("GIT_CONFIG"):
+                continue
             self.assertNotIn(key, env)
+        self.assertEqual(env["GIT_CONFIG_GLOBAL"], os.devnull)
+        self.assertEqual(env["GIT_CONFIG_SYSTEM"], os.devnull)
+        self.assertEqual(env["GIT_CONFIG_NOSYSTEM"], "1")
 
     def test_default_provider_maps_failures_without_forwarding_details(self):
         failures = [
@@ -407,6 +450,30 @@ class ProviderAndCliTests(unittest.TestCase):
                     str(root),
                 ):
                     self.assertNotIn(secret, visible)
+
+    def test_cli_persist_blocks_local_only_before_connector_or_output(self):
+        with tempfile.TemporaryDirectory() as td, contextlib.redirect_stdout(
+            io.StringIO()
+        ) as output:
+            root = init_repo(Path(td))
+            self.assertEqual(
+                brain.main(
+                    ["remote-safety", "--vault", str(root), "--persist", "--json"]
+                ),
+                1,
+            )
+        payload = json.loads(output.getvalue())
+        self.assertTrue(payload["personalDataAllowed"])
+        self.assertFalse(payload["persistenceAllowed"])
+        self.assertTrue(payload["persistenceRequested"])
+        self.assertFalse(payload["operationAllowed"])
+        connector = mock.Mock()
+        output_open = mock.Mock()
+        if payload["operationAllowed"]:
+            connector()
+            output_open()
+        connector.assert_not_called()
+        output_open.assert_not_called()
 
 
 class DocumentationContractTests(unittest.TestCase):

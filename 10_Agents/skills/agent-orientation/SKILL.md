@@ -36,8 +36,8 @@ When a source needs access tooling, prefer in this order (PRD §8.4, decision #9
 Keep capability inventory separate from data access. Detecting that a CLI or
 connector exists, inspecting its documented scopes, and recording the interface
 rung is safe. Immediately before the first email, calendar, contacts, chat, drive,
-task, transcript, or similar personal-data read, run `brain remote-safety --json`
-(long-form fallback: `python3 10_Agents/tools/brain/brain.py remote-safety --json`).
+task, transcript, or similar personal-data read, run `brain remote-safety --persist --json`
+(long-form fallback: `python3 10_Agents/tools/brain/brain.py remote-safety --persist --json`).
 
 - `block` or `unknown` means stop before calling the connector and before opening
   any output file. An owner may use `--acknowledge-unknown` for the current
@@ -45,9 +45,11 @@ task, transcript, or similar personal-data read, run `brain remote-safety --json
 - A no-push vault is local-only. Personal-data results may be inspected in memory,
   but must not be written to the inventory, generated tooling, notes, or artifacts.
 - Every generated personal-data adapter uses the shared `require_remote_safety`
-  guard immediately before its request (or invokes the JSON command and proceeds
-  only when `personalDataAllowed` is true). Its tests use a connector spy and prove
-  zero calls for blocked/unknown and local-only persistence paths.
+  guard immediately before its request, with `persist=True` for capture or other
+  write flows. A process-boundary adapter invokes the JSON command with `--persist`
+  and proceeds only when its exit status is zero and `operationAllowed` is true.
+  Its tests use connector and output-open spies and prove zero calls for
+  blocked/unknown and local-only persistence paths.
 
 ## Required output contract
 

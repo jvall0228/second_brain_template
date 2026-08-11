@@ -46,7 +46,7 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 | `report` | Vault-health synthesis (spec §16): stale-active notes, fully-disconnected orphans, Inbox aging buckets, tag drift vs the conventions taxonomy, unresolved-link count. `--since YYYY-MM-DD` scopes tag drift and unresolved links to notes updated in the review period. Thresholds come from the `report` config key (`stale_days`, `inbox_days`) |
 | `tasks` | Checkbox tasks across the vault (spec §17; Obsidian Tasks emoji metadata — 📅 due, ⏫/🔼/🔽 priority). Filters: `--open`, `--due <YYYY-MM-DD\|today>`, `--overdue`, `--project PREFIX`. Ordered due-date first (undated last), then path, then line |
 | `embed` | Maintain the gitignored semantic-search embeddings sidecar (`vault-embeddings.json`, spec §18): `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional `sentence-transformers` model, `--status` reports coverage. Restricted/private notes never enter the sidecar |
-| `remote-safety` | Redacted, fail-closed preflight before personal-data connector reads (spec §19). Verifies every push target is private and non-template; `--acknowledge-unknown` is invocation-only and never bypasses public/template. No-push repositories are local-only and cannot persist connector results |
+| `remote-safety` | Redacted, fail-closed preflight before personal-data connector reads (spec §19). Verifies every push target is private and non-template; `--acknowledge-unknown` is invocation-only and never bypasses public/template. Add `--persist` for capture/write flows: no-push repositories are local-only, so that requested operation is blocked before the connector |
 
 ## The committed index
 

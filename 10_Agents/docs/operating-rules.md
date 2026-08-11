@@ -80,7 +80,9 @@ Capability inventory is safe: agents may identify installed CLIs/connectors and
 their declared scopes without reading account data. Immediately before any email,
 calendar, contacts, chat, drive, task, transcript, or similar personal-data read,
 run `python3 10_Agents/tools/brain/brain.py remote-safety --json` and use the shared
-guard in generated tooling (brain spec §19).
+guard in generated tooling (brain spec §19). Add `--persist` for any capture or
+other flow that will write connector-derived data; require both a zero exit status
+and `operationAllowed: true` at a process boundary.
 
 - `block` and `unknown` stop before the connector and before opening an output file.
 - The owner may acknowledge `unknown` for the current invocation only with

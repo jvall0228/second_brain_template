@@ -12712,17 +12712,17 @@
     },
     {
      "level": 2,
-     "line": 94,
+     "line": 96,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 98,
+     "line": 100,
      "text": "Session-End Flush"
     },
     {
      "level": 2,
-     "line": 108,
+     "line": 110,
      "text": "Related"
     }
    ],
@@ -12874,7 +12874,7 @@
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 102,
+     "line": 104,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -12885,7 +12885,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 105,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -12896,7 +12896,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 110,
+     "line": 112,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -12907,7 +12907,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 111,
+     "line": 113,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -12918,7 +12918,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 112,
+     "line": 114,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -12926,7 +12926,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8273,
+   "sizeBytes": 8443,
    "tasks": [
     {
      "due": null,
@@ -14864,47 +14864,47 @@
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 54,
      "text": "Required output contract"
     },
     {
      "level": 3,
-     "line": 56,
+     "line": 58,
      "text": "1. Solution inventory"
     },
     {
      "level": 3,
-     "line": 74,
+     "line": 76,
      "text": "2. Harness introspection"
     },
     {
      "level": 3,
-     "line": 80,
+     "line": 82,
      "text": "3. Ecosystem identification"
     },
     {
      "level": 3,
-     "line": 86,
+     "line": 88,
      "text": "4. Environment capabilities & policy"
     },
     {
      "level": 2,
-     "line": 94,
+     "line": 96,
      "text": "Where the inventory lands"
     },
     {
      "level": 2,
-     "line": 98,
+     "line": 100,
      "text": "Inventory note template"
     },
     {
      "level": 2,
-     "line": 157,
+     "line": 159,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 171,
+     "line": 173,
      "text": "References"
     }
    ],
@@ -14924,7 +14924,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 98,
      "placeholder": false,
      "raw": "[[10_Agents/environments/README]]",
      "resolved": "10_Agents/environments/README.md",
@@ -14935,7 +14935,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 173,
+     "line": 175,
      "placeholder": false,
      "raw": "[[10_Agents/environments/README]]",
      "resolved": "10_Agents/environments/README.md",
@@ -14943,7 +14943,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 12661,
+   "sizeBytes": 12820,
    "tasks": [],
    "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
@@ -16090,7 +16090,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 19298,
+   "sizeBytes": 19318,
    "tasks": [],
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
@@ -17987,7 +17987,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4717,
+   "sizeBytes": 4782,
    "tasks": [],
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
@@ -18338,7 +18338,7 @@
     },
     {
      "level": 3,
-     "line": 553,
+     "line": 554,
      "text": "19.3 Output, exit status, and shared guard"
     }
    ],
@@ -18498,7 +18498,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 76208,
+   "sizeBytes": 76663,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

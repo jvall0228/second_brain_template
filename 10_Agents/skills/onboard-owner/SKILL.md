@@ -52,8 +52,8 @@ Everything written **during the live onboarding conversation** goes directly to 
 
 Repository, OS, and capability signals are safe to inspect without account-data
 access. Before any onboarding step reads email, calendar, contacts, chat, drive,
-tasks, transcripts, or equivalent personal data, run `brain remote-safety --json`
-(long-form fallback: `python3 10_Agents/tools/brain/brain.py remote-safety --json`).
+tasks, transcripts, or equivalent personal data, run `brain remote-safety --persist --json`
+(long-form fallback: `python3 10_Agents/tools/brain/brain.py remote-safety --persist --json`).
 Run the shared guard with `persist=True` before the connector because onboarding
 turns findings into notes.
 
