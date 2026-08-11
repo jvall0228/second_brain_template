@@ -12,7 +12,7 @@ expires: 2027-08-11
 
 A personal knowledge management vault designed for both human and AI agent use. It serves as a single source of truth for context, preferences, projects, and reference material — structured so that any agent can bootstrap itself and produce useful output without prior conversation history.
 
-## Bootstrap Sequence (Must-Read Order)
+## Bootstrap Sequence (Context Routing)
 
 **Start with this file only.** It is the context router, not an instruction to preload the whole vault. Load the smallest additional context set that materially helps with the current task:
 
