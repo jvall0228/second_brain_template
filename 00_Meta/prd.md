@@ -2,15 +2,18 @@
 title: "PRD"
 tags:
   - type/meta
+  - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # PRD: Second Brain Knowledge Management System (Markdown + Git + Obsidian + Agents)
 
+> **Revision 2.0 — 2026-08-11.** Aligned the spec with the shipped template: normalized all paths to kebab-case, recorded milestone status (M0–M4 done, M5–M6 not started), made [[00_Meta/conventions]] the authoritative tag taxonomy, documented the shipped surface (Journal subtree, solutions library, extra profile notes and templates), and added sections for the template phase, data sensitivity, concurrency, and validation. Revision 1.x (2026-02 through 2026-08) evolved in place without a revision log.
+
 ## 1. Summary
-A Git-synced, Markdown-first repository that acts as the canonical “personal context layer” shared across multiple AI agents (via GitHub connector / MCP) and a human user (via Obsidian). It reduces per-agent context silos by defining a single source of truth for identity, preferences, current state, and structured knowledge.
+A Git-synced, Markdown-first repository that acts as the canonical "personal context layer" shared across multiple AI agents (via GitHub connector / MCP) and a human user (via Obsidian). It reduces per-agent context silos by defining a single source of truth for identity, preferences, current state, and structured knowledge. The repository is distributed as a fork-and-fill **template** (see §5).
 
 ## 2. Goals
 - **Single shared context source of truth** for all agents and tools.
@@ -26,73 +29,84 @@ A Git-synced, Markdown-first repository that acts as the canonical “personal c
 - Building a custom application UI (Obsidian is the UI).
 - Implementing an agent runtime/orchestrator in this phase.
 - Enforcing strict schemas beyond lightweight frontmatter conventions.
-- Solving cross-platform filesystem limitations beyond portable conventions (e.g., prefer stub alias files over symlinks).
+- Solving cross-platform filesystem limitations beyond portable conventions.
 
 ## 4. Users / Personas
 - **Human (Owner):** browses and edits in Obsidian; reviews agent changes via Git/PRs.
 - **Agents (Multiple models/tools):** bootstrap from `CONTEXT.md`, perform tasks, and write outputs following repo conventions.
 - **Future contributor (optional):** another human consuming the same repo conventions.
 
-## 5. Key workflows
-### 5.1 Universal agent bootstrap (must-read sequence)
-This order is **contractual** and must be listed verbatim in `CONTEXT.md`:
+## 5. Template phase
+This repository ships as a reusable, context-neutral template. The shipped state intentionally contains:
+- **Blank fill-in shells** for the profile notes (`01_Profile/now.md`, `preferences.md`, `defaults.md`, `identity.md`, `work.md`) with inline guidance.
+- **One seeded example per section** (project, area, resource, person, idea, daily log, weekly review) — deleted by the adopter after seeing the pattern.
+
+The §10 "real content" requirements and the M0 success criterion (§19) apply to the **adopter's fork after completing the getting-started checklist** in [[00_Meta/status]], not to the shipped template itself.
+
+## 6. Key workflows
+### 6.1 Universal agent bootstrap (must-read sequence)
+This order is **contractual** and is listed first in `CONTEXT.md`:
 
 1. `CONTEXT.md` (entrypoint / scope / how to use this repo)
-2. `01_Profile/now.md` (what’s happening right now)
+2. `01_Profile/now.md` (what's happening right now)
 3. `01_Profile/preferences.md` (how to behave / format outputs)
 4. `00_Meta/conventions.md` (how to write and where to write)
 
-> **Tip:** Agents with CLI access can also use the `brain` tool (see §16, M5) to query the vault index and discover relevant notes beyond the must-read sequence.
+`CONTEXT.md` additionally defines a **complete bootstrap** tier — `00_Meta/index.md` and `01_Profile/defaults.md` — required before creating structured notes or navigating beyond the Inbox. The four-item sequence above is the contractual minimum; the second tier extends it and does not replace it.
 
-### 5.2 Agent write pattern (default rules)
-**M0–M1 default: agents write only to Inbox.**
-- New agent-generated notes go to `02_Inbox/`.
-- Agents should not directly modify canonical profile files unless explicitly instructed.
+> **Planned (M5 — not yet built):** a `brain` CLI for querying a vault index. Until it ships, agents navigate via [[00_Meta/index]] and directory READMEs.
 
-**Expanded write permissions (later milestones):**
-- Agents may write directly to `06_Resources/` for research summaries *only if* they conform to required frontmatter and include provenance.
-- Agents may write to `04_Projects/` only when a project explicitly opts in (e.g., `workflow/agent-writable` tag on that project’s status note).
+### 6.2 Agent write pattern (active policy)
+- Agents write new notes to `02_Inbox/` by default (the **Inbox-first rule**).
+- Non-Inbox destinations are allowed only when the human explicitly names the destination in the current request.
+- **Standing exception:** agents may append solution notes to `10_Agents/solutions/` (see §9.2).
+- Agents should not modify canonical profile files unless explicitly instructed.
 
-### 5.3 Change control
-- Prefer PRs for changes to **canonical** notes and conventions.
-- Direct commits allowed for:
-  - adding new notes into `02_Inbox/`
-  - adding new resource notes when permitted
-- Canonical notes are marked with `workflow/canonical` and treated as **read-only for agents** unless explicitly allowed.
+**Roadmap — not adopted:** a milestone-gated expansion (direct agent writes to `06_Resources/` for research summaries with provenance; `04_Projects/` opt-in via a `workflow/agent-writable` tag on the project's status note). If adopted, the tag must first be registered in [[00_Meta/conventions]] and this section plus [[10_Agents/docs/task-patterns]] updated. Until then the active policy above governs; roadmap language does not override it.
 
-### 5.4 Human usage
+### 6.3 Change control
+- Notes tagged `workflow/canonical` require a **PR or explicit human approval** to modify (see §11 for what canonical means). Agents propose changes via the Inbox protocol in [[10_Agents/docs/operating-rules]].
+- Direct commits are allowed for `02_Inbox/` content, `10_Agents/solutions/` notes (per §9.2), and other non-canonical notes.
+
+### 6.4 Human usage
 - Open repo as Obsidian vault.
 - Capture into Inbox/Journal.
-- Review and migrate notes into PARA or Zettelkasten.
+- Review and migrate notes into PARA directories; evergreen atomic notes go to `06_Resources/` tagged `type/zettel` (see §7).
 - Review agent PRs/commits and merge.
 
-## 6. Information architecture (top-level, number-prefixed)
+## 7. Information architecture (top-level, number-prefixed)
 Top-level directories (must exist; number prefixes required for ordering):
 
-- `00_Meta/` — global conventions, indices/MoCs, schemas, operating rules
-- `01_Profile/` — canonical personal context (identity/preferences/current state/defaults)
+- `00_Meta/` — conventions, index (MoC), changelog, status snapshot, this PRD
+- `01_Profile/` — canonical personal context: `now`, `preferences`, `defaults`, plus `identity`, `work`, `tooling-stack`, `long-running-themes`
 - `02_Inbox/` — raw capture / triage queue
-- `03_Journal/` — daily/weekly/monthly logs + reviews (Bullet Journal)
+- `03_Journal/` — **subjective** knowledge and experience: `periodic/{daily,weekly,monthly,quarterly,yearly}/` reviews (Bullet Journal) plus `ideas/`, `insights/`, `memories/`, `people/`, `plans/`
 - `04_Projects/` — PARA Projects
 - `05_Areas/` — PARA Areas
-- `06_Resources/` — PARA Resources
+- `06_Resources/` — PARA Resources (**objective** reference material; also the home of Zettelkasten notes)
 - `07_Archives/` — PARA Archives
 - `08_Assets/` — non-Markdown assets (images, PDFs, exports)
-- `09_Templates/` — note templates (introduced when consistency pressure appears)
-- `10_Agents/` — agent plugin library: universal skills, tools, harness adapters, and operating docs
+- `09_Templates/` — note templates (stable-path contracts)
+- `10_Agents/` — agent operating docs and solutions knowledge base; grows into a plugin library at M6 (see §9)
 
-**Filename convention:** kebab-case (Git-friendly, agent-predictable).
+**Placement rule:** Journal is subjective (your perspective and experience); Resources are objective (shareable without personal context). **Zettelkasten home:** evergreen atomic notes live in `06_Resources/` with `type/zettel`; subjective sparks start in `03_Journal/ideas/` and graduate to Resources when refined.
 
-## 7. Universal agent entrypoint and aliases
-### 7.1 Required root file
+**Filename convention:** kebab-case (Git-friendly, agent-predictable), with two exceptions defined in [[00_Meta/conventions]]:
+- Uppercase entrypoints (`CONTEXT.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`) at any directory level.
+- ISO periodic tokens for reviews (`YYYY-W##-review.md`, `YYYY-Q#-review.md`).
+
+Paths are case-sensitive; this document uses the literal shipped paths throughout.
+
+## 8. Universal agent entrypoint and aliases
+### 8.1 Required root file
 - `CONTEXT.md` at repository root.
 
 Required content sections:
 - What this repo is and why it exists
-- The must-read order (see §5.1)
-- Where agents write output (Inbox-first at M0/M1)
+- The must-read order (see §6.1)
+- Where agents write output (Inbox-first)
 - Minimal tagging rules
-- Links to canonical Profile notes and `10_Agents/` (when it exists)
+- Links to canonical Profile notes and `10_Agents/`
 - Links to navigation (PARA roots, Inbox, Templates)
 - Conventions summary (frontmatter + tag syntax, numbered dirs)
 
@@ -104,62 +118,48 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-02-12
+updated: 2026-08-11
 ---
 ```
 
-### 7.2 Required alias files (portable primary approach)
-At repo root, create **stub alias files** (portable across platforms and Git tooling):
-- `AGENTS.md` — one line linking to `CONTEXT.md`
-- `CLAUDE.md` — one line linking to `CONTEXT.md`
+### 8.2 Required alias files
+At repo root, `AGENTS.md` and `CLAUDE.md` must resolve to `CONTEXT.md` — either as one-line stub files (the portable default) or as symlinks (an accepted optimization where the platform supports them).
 
-**Optional optimization:** use symlinks instead of stubs only if your environment supports them reliably.
+**Decision (2026-08-10):** the shipped template uses **symlinks**. Adopters on platforms where symlinks are unreliable (e.g. some Windows/Git configurations) should replace them with one-line stub files.
 
-## 8. Agent plugin library directory
-### 8.1 Directory
-- `10_Agents/`
-
-Purpose: a unified library of reusable agent primitives (skills, tools) and harness-specific adapters, plus operating docs. Supersedes the earlier `00_Meta/Agents/` plan.
-
-### 8.2 Structure
+## 9. Agent library directory (`10_Agents/`)
+### 9.1 Shipped structure
 ```
 10_Agents/
   README.md              # directory index + "start here"
+  docs/                  # operating-rules.md, task-patterns.md
+  solutions/             # knowledge base of solved problems, by category
+```
+
+### 9.2 Solutions knowledge base
+`10_Agents/solutions/` is a standing knowledge base of solutions to recurring problems, organized by category. Agents **may append** solution notes here whenever they solve something worth not re-deriving later — this is a deliberate, bounded carve-out from the Inbox-first rule. Solution notes must carry required frontmatter (including `audience/agent` and `type/solution`), use kebab-case filenames, and follow the category README. Agents add notes; restructuring or deleting within `solutions/` still requires human direction.
+
+### 9.3 M6 target structure (not built)
+At M6 the directory grows into a plugin library:
+```
+10_Agents/
   skills/                # universal skill definitions (prompt templates)
   tools/                 # executable tools (e.g., brain CLI)
-  harnesses/
-    claude/              # Claude Code hooks, CLAUDE.md overrides
-    cursor/              # .cursorrules, etc.
-    ...                  # other harness adapters as needed
-  docs/                  # operating rules, task patterns, model-specific guidance
+  harnesses/<name>/      # harness-specific adapters (hooks, rules)
 ```
+Design principles: universal primitives (skills, tools) work across any agent harness; harness-specific adapters are isolated under `harnesses/<name>/`; adapters ship both reference configs and wiring docs.
 
-### 8.3 Design principles
-- **Two layers:** universal primitives (skills, tools) that work across any agent harness, and harness-specific adapters that wire them into a particular runtime.
-- **Skills** are prompt templates — reusable, model-agnostic instruction sets for common tasks.
-- **Tools** are executable code (CLIs, scripts) agents invoke directly.
-- **Harness adapters** ship both reference config files (ready to symlink/copy) and documentation explaining the wiring. Frameworks like MCP and skills are universal; hooks and rules are harness-specific.
-- Agents discover available skills and tools via the `brain` index (M5) or by reading `10_Agents/README.md`.
+### 9.4 Discovery
+Today, agents discover available docs and solutions by reading `10_Agents/README.md`. Once M5 ships, the `brain` index becomes the primary discovery mechanism.
 
-## 9. Frontmatter and tags
-### 9.1 Requirement: YAML frontmatter
-Markdown notes support YAML frontmatter.
-
-### 9.2 Requirement: tags with subtags
-Tags are slash-delimited strings in a YAML list:
-
-```yaml
----
-tags:
-  - audience/agent
-  - audience/human
----
-```
-
-### 9.3 Minimal required fields (baseline)
+## 10. Frontmatter and tags
+### 10.1 Requirement: YAML frontmatter (all notes)
+**Every markdown note in the vault must include YAML frontmatter** with at minimum:
 - `title` (string)
-- `tags` (list of strings)
+- `tags` (list of slash-delimited strings)
 - `updated` (ISO `YYYY-MM-DD`)
+
+**Exception:** files in `09_Templates/` may use placeholder tokens (`{{date}}`, `{{title}}`, `{{...}}`); any note instantiated from a template must replace them and set `updated` to a real ISO date.
 
 Example:
 ```yaml
@@ -170,147 +170,147 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-02-12
+updated: 2026-08-11
 ---
 ```
 
-### 9.4 Tag intent default
-Agents should assume **all notes are readable** unless explicitly restricted. Use tags to signal intent and handling rather than access control.
+### 10.2 Authoritative taxonomy
+**[[00_Meta/conventions#Tag Namespaces]] owns the evolving tag vocabulary.** Other documents (including this one) summarize it. As of this revision:
 
-Recommended namespaces:
-- `audience/*` — intended primary audience (`audience/agent`, `audience/human`)
-- `type/*` — note type (`type/project`, `type/resource`, `type/zettel`, `type/journal`, `type/meta`)
-- `workflow/*` — handling (`workflow/canonical`, `workflow/draft`, `workflow/needs-review`, `workflow/inbox`)
-- `status/*` — lifecycle (`status/active`, `status/on-hold`, `status/done`, `status/archived`)
+- `audience/*` — intended primary audience: `agent`, `human`
+- `type/*` — note type: `meta`, `reference`, `log`, `note`, `idea`, `plan`, `project`, `area`, `resource`, `zettel`, `journal`, `decision`, `solution`
+- `topic/*` — subject matter, free-form (e.g. `software`, `health`, `finance`)
+- `workflow/*` — handling: `canonical`, `draft`, `review`, `needs-review`
+- `status/*` — actionability: `active`, `someday`, `done`
 
-## 10. Canonical notes (phased: content vs stub)
-The repo becomes usable with a small set of real-content files (M0). Everything else can start as stubs and evolve.
+### 10.3 Tag intent default
+Tags signal **intent and handling, not access control**. Agents should assume all notes are readable. No restriction mechanism exists today; a `restricted/*` namespace remains an open consideration (§21), and sensitive content is handled per §16.2 in the interim.
 
-### 10.1 M0 “real content” files (must exist and be meaningful)
+## 11. Canonical notes
+**Definition:** a note is canonical when other notes and agent behavior depend on it — it defines vault structure, conventions, navigation, or agent rules. **Only the human assigns or removes the `workflow/canonical` tag.** Promotion path: a note starts as `workflow/draft`, may pass through `workflow/review`, and becomes canonical when the human adds the tag.
+
+Canonical notes are read-only for agents except via the change-control process in §6.3.
+
+**Current canonical set:** `CONTEXT.md` (and its aliases), `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`.
+
+**Deliberately not canonical:** `00_Meta/status.md` is a living snapshot that agents may update directly (e.g. milestone status); this is recorded in the note itself.
+
+### 11.1 Real-content files (must exist and be meaningful in an adopter's fork — see §5)
 - `CONTEXT.md`
-- `01_Profile/Now.md`
-- `01_Profile/Preferences.md`
-- `00_Meta/Conventions.md`
+- `01_Profile/now.md`
+- `01_Profile/preferences.md`
+- `00_Meta/conventions.md`
 
-### 10.2 M0 structural stubs (must exist; minimal content acceptable)
-- `AGENTS.md` (stub link to `CONTEXT.md`)
-- `CLAUDE.md` (stub link to `CONTEXT.md`)
-- `02_Inbox/README.md` (one-paragraph triage instructions)
-- Remaining numbered directories exist (empty or `.gitkeep`)
+### 11.2 Structural requirements
+- `AGENTS.md`, `CLAUDE.md` (aliases per §8.2)
+- `02_Inbox/README.md` (triage instructions)
+- Section READMEs for every top-level directory
 
-### 10.3 Post-M0 canonical notes (can start as stubs, then filled)
-- `00_Meta/Index.md` — global MoC
-- `00_Meta/Agent-Operating-Rules.md` — expanded rules once multiple agents are in play
-- `01_Profile/Defaults.md` — timezone/units/naming defaults
-- Section READMEs:
-  - `03_Journal/README.md`, `04_Projects/README.md`, `05_Areas/README.md`, `06_Resources/README.md`, `07_Archives/README.md`
+> **Historical note:** an early plan placed agent operating rules under `00_Meta/`; that plan was superseded at M3. The operative file is `10_Agents/docs/operating-rules.md`.
 
-## 11. Templates (introduced when needed)
-Templates are valuable once note volume increases. Treat template paths as **stable contracts** to reduce rename churn.
+## 12. Templates
+Template paths in `09_Templates/` are **stable contracts**. The shipped set (12):
 
-When introduced in `09_Templates/`, required templates:
-- `template-project.md`
-- `template-area.md`
-- `template-resource.md`
-- `template-zettel.md`
-- `template-daily-log.md`
-- `template-weekly-review.md`
-- `template-decision-record.md`
+**Core seven:** `template-project.md`, `template-area.md`, `template-resource.md`, `template-zettel.md`, `template-daily-log.md`, `template-weekly-review.md`, `template-decision-record.md`
 
-Template requirements:
-- Must include YAML frontmatter (title, tags, updated)
-- Must include placeholders for links to related notes
-- Must include suggested tag sets (including `type/*` and relevant `workflow/*`)
+**Additional:** `template-monthly-review.md`, `template-quarterly-review.md`, `template-yearly-review.md`, `template-media.md`, `template-comparison.md`
 
-## 12. Functional requirements
+Template requirements (all shipped templates comply):
+- YAML frontmatter with `title`, `tags`, `updated` (placeholders allowed per §10.1)
+- Placeholders for links to related notes
+- Suggested tag sets including `type/*` and `workflow/draft` (instantiated notes keep `workflow/draft` until triaged)
+
+See [[09_Templates/README]] for the selection guide.
+
+## 13. Functional requirements
 - Scaffold the full directory structure with number prefixes.
-- Create M0 real-content files (see §10.1).
-- Create root alias stub files (`AGENTS.md`, `CLAUDE.md`) pointing to `CONTEXT.md`.
-- Create `02_Inbox/README.md` with minimal triage guidance.
+- Create the real-content files (§11.1) — shipped as fill-in shells per §5.
+- Provide root aliases (`AGENTS.md`, `CLAUDE.md`) resolving to `CONTEXT.md`.
+- Create `02_Inbox/README.md` with triage guidance.
 - Ensure the repo is usable as an Obsidian vault from day one.
-- Define minimum contents for `10_Agents/docs/Task-Patterns.md` when introduced:
-  - “Write to Inbox” default
+- `10_Agents/docs/task-patterns.md` defines:
+  - The Inbox-first default
   - Required frontmatter for agent-created notes
-  - Allowed destinations by milestone (Inbox-only → Resources → Projects opt-in)
+  - The destination policy: explicit human direction for non-Inbox writes, plus the `solutions/` carve-out (§9.2)
 
-## 13. Non-functional requirements
+## 14. Non-functional requirements
 - **Portability:** plain text-first; no proprietary formats required.
 - **Diffability:** content structured to minimize noisy diffs.
 - **Predictability:** stable file paths and naming conventions for agent automation.
 - **Safety for edits:** canonical notes clearly marked; agents guided to propose changes carefully.
 - **Low overhead:** conventions lightweight enough to preserve capture speed.
 
-## 14. “What changed?” / recency convention
-Agents should have a minimal way to detect recency without rereading everything:
-- Canonical notes include `updated:` and should be inspected first.
-- Optional (post-M0): add `00_Meta/Changelog.md` with short dated entries, or instruct agents to check recent commits via `git log -n <N>` when tool access supports it.
+## 15. Recency ("what changed?")
+- `updated:` in frontmatter is the **primary recency signal**. **Any edit to a note must bump `updated:` to the current date** — the recency contract fails without this duty.
+- `updated:` has day granularity; for same-day or finer history, `git log` is authoritative.
+- [[00_Meta/changelog]] records structural changes; [[00_Meta/status]] snapshots overall vault state.
+- Agents may skip re-reading notes whose `updated:` hasn't changed since last read, accepting the day-granularity caveat.
 
-## 15. Asset lifecycle guidance
+## 16. Assets and data sensitivity
+### 16.1 Asset lifecycle
 - `08_Assets/` is append-only by default.
-- Large or obsolete assets should be moved to `07_Archives/Assets/` (or removed if reproducible).
-- Resource notes should link to assets using relative paths.
+- Reference assets from notes using Obsidian embed syntax (`![[file.png]]`) or relative markdown links — embeds are the vault-internal default; relative links are the portable option.
+- Large or obsolete assets move to `07_Archives/assets/` (or are removed if reproducible).
 
-## 16. Milestones
-### M0: Bootstrap Minimum (prove the loop)
-Goal: the smallest set that lets one agent bootstrap, understand context, and write useful output predictably.
+### 16.2 Data sensitivity
+This vault is a personal context layer read in full by every connected agent service. Therefore:
+- **Never commit** credentials, API keys, tokens, or other secrets.
+- `03_Journal/people/` notes concern **third parties** — keep them factual and respectful, and write nothing you would not stand behind if read back.
+- For health, financial, or otherwise sensitive content, remember that anything committed is visible to every agent and service with repo access; keep out material that must not reach them.
+- Use **separate forks per context** (personal vs work — see the root README) to prevent cross-contamination.
+- Until a `restricted/*` mechanism exists (§21), exclusion from the repo is the only reliable protection.
 
-**Files with real content (4):**
-- `CONTEXT.md`
-- `01_Profile/Now.md`
-- `01_Profile/Preferences.md`
-- `00_Meta/Conventions.md`
+## 17. Multi-agent concurrency
+- **Inbox filenames:** date-prefix plus descriptive slug (`YYYY-MM-DD-slug.md`). Before writing, check for an existing file with the same name; on collision, append a numeric suffix (`-2`). Never overwrite another agent's note.
+- Pull/sync before writing when the environment allows; keep commits small and frequent.
+- Merge conflicts are resolved by the human. Agents must never force-push.
 
-**Structural stubs:**
-- `AGENTS.md` (stub link)
-- `CLAUDE.md` (stub link)
-- `02_Inbox/README.md`
-- Other numbered directories (empty or `.gitkeep`)
+## 18. Validation and enforcement
+- **Current:** honor-system — the self-validation checklist in [[10_Agents/docs/operating-rules]] (frontmatter fields, tag namespaces, filename convention, destination, `updated:` bump).
+- **Planned (M5):** a `brain validate` subcommand checking frontmatter fields, tag namespaces against conventions, filename conventions, and wikilink resolution.
+- Automated enforcement (pre-commit hook / CI) remains an open consideration (§21).
 
-Success criterion:
-- An agent reads the must-read sequence and produces an Inbox note that matches conventions.
+## 19. Milestones (status as of 2026-08-11)
+### M0: Bootstrap Minimum — **Done**
+Real-content files (§11.1, shipped as fill-in shells per §5), aliases, Inbox README, all numbered directories.
+Success criterion: an agent reads the must-read sequence and produces an Inbox note that matches conventions. *(Verified 2026-08-11: `02_Inbox/2026-08-11-prd-review.md`.)*
 
-### M1: Repo skeleton expansion
-- Ensure all top-level directories exist.
-- Add basic section READMEs (Projects/Areas/Resources/Archives/Journal) as stubs.
+### M1: Repo skeleton expansion — **Done**
+Section READMEs for every top-level directory (directories themselves exist from M0).
 
-### M2: Canonical navigation
-- Create `00_Meta/Index.md` and link the core sections.
-- Add `01_Profile/Defaults.md`.
+### M2: Canonical navigation — **Done**
+`00_Meta/index.md` and `01_Profile/defaults.md`.
 
-### M3: Templates + agent docs bootstrap
-- Add `09_Templates/` and reference stable paths.
-- Create `10_Agents/` directory with `README.md` and `docs/` (operating rules, task patterns).
-- Supersedes earlier plan for `00_Meta/Agents/`; all agent-targeted docs live under `10_Agents/docs/`.
+### M3: Templates + agent docs — **Done**
+`09_Templates/` (twelve templates, §12) and `10_Agents/` with README, `docs/` (operating rules, task patterns), and — beyond the original scope — the `solutions/` knowledge base (§9.2).
 
-### M4: Navigation integrity + scaling
-- Reduce broken links; stabilize conventions.
-- Add changelog/recency conventions if agents/tooling benefit.
+### M4: Navigation integrity — **Done**
+Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 
-### M5: Vault Index CLI (`brain`)
-- Python CLI at `.tools/brain/` that indexes all `.md` files in the vault.
-- Extracts frontmatter, wikilinks, headings, inline tags, backlinks, and file stats.
-- Stores index as JSON (`.tools/brain/vault-index.json`).
-- Query commands: `list`, `search` (by tag/title/folder), `links`, `tags`, `show`, `recent`.
-- All commands support `--json` for agent-consumable output.
-- Modeled after Obsidian's MetadataCache: same metadata types, similar resolution logic.
-- Enables progressive disclosure — agents query the index instead of reading every file.
+### M5: Vault Index CLI (`brain`) — **Not started**
+- Python CLI at `.tools/brain/` that indexes all `.md` files (frontmatter, wikilinks, headings, inline tags, backlinks, file stats).
+- Index stored as JSON (`.tools/brain/vault-index.json`; moves to `10_Agents/tools/brain/vault-index.json` after the M6 migration).
+- Query commands: `list`, `search`, `links`, `tags`, `show`, `recent`; all support `--json`.
+- Also: `validate` (§18).
+- Obsidian's MetadataCache is the design inspiration; concrete parsing and link-resolution rules must be specified before implementation (start from [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]).
 
-### M6: Agent Plugin Library
-- Populate `10_Agents/skills/` with universal skill definitions (prompt templates for common tasks).
-- Populate `10_Agents/tools/` with executable tools (migrate `brain` CLI here from `.tools/`).
+### M6: Agent Plugin Library — **Not started**
+- Populate `10_Agents/skills/` (universal skill definitions) and `10_Agents/tools/` (migrate `brain` here).
 - Add `10_Agents/harnesses/` with reference configs and wiring docs for at least one harness (Claude Code).
-- Ship both real config files (ready to symlink/copy) and companion documentation.
-- Universal primitives (skills, MCP tools) work across any agent harness; harness-specific adapters (hooks, rules) are isolated under `harnesses/<name>/`.
 
-## 17. Acceptance criteria
-- Number-prefixed directories exist.
-- `CONTEXT.md` exists at root, includes must-read order, and defines default write location.
-- `AGENTS.md` and `CLAUDE.md` exist as portable stubs linking to `CONTEXT.md` (or symlinks as an optional optimization).
-- M0 canonical profile files exist with YAML frontmatter and slash-delimited subtags.
-- Agents can reliably write a valid note into `02_Inbox/` with required frontmatter.
-- Obsidian opens the repo cleanly with a clear entrypoint (`CONTEXT.md`).
+## 20. Acceptance criteria (M0, objective)
+- All eleven number-prefixed directories exist.
+- `CONTEXT.md` exists at root, lists the §6.1 four-item order first, and names `02_Inbox/` as the default write location.
+- `AGENTS.md` and `CLAUDE.md` resolve to `CONTEXT.md` content (stub or symlink).
+- Every markdown note passes the §10.1 frontmatter check (`title`, `tags`, `updated`; slash-delimited tags) — scriptable, template placeholders exempt.
+- An agent-authored note with required frontmatter exists in `02_Inbox/` (the M0 success criterion).
+- Zero unresolved wikilinks from `CONTEXT.md`, `00_Meta/index.md`, and section READMEs (template placeholders exempt).
+- Canonical notes carry `workflow/canonical`, and the change-control table in [[00_Meta/conventions]] covers them (Git-native collaboration goal).
+- Each framework has a concrete home: PARA (`04_`–`07_`), Bullet Journal (`03_Journal/periodic/` + review templates), Zettelkasten (`06_Resources/` + `template-zettel`).
 
-## 18. Open considerations (document-only, not blockers)
-- Whether to adopt a strict “agents never edit, only propose PRs” posture for canonical files.
-- Whether to adopt an explicit “restricted/*” tag namespace in the future.
-- When to formalize a weekly review cadence to keep `Now.md` fresh.
+## 21. Open considerations (document-only, not blockers)
+- Whether to adopt a `restricted/*` tag namespace (interim handling: §16.2).
+- Whether/when to activate the expanded write ladder (§6.2 roadmap) and register `workflow/agent-writable`.
+- Whether to add automated enforcement (pre-commit/CI) beyond the planned `brain validate`.
+
+**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (five periodic review templates); alias approach → symlinks shipped (§8.2); Zettelkasten home → `06_Resources/` (§7).

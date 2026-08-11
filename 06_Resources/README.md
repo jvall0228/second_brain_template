@@ -4,12 +4,14 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Resources
 
 Reference material and topic notes — things you find interesting or useful, not tied to a current project or area of responsibility. Resources are shareable knowledge.
+
+This directory is also the **home of Zettelkasten notes**: evergreen atomic notes live here, tagged `type/zettel` and created from [[09_Templates/template-zettel]]. Subjective sparks start in [[03_Journal/ideas/README|Journal/ideas]] and graduate here once refined into shareable, atomic form.
 
 ## When to Put Something Here
 

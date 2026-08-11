@@ -2,6 +2,7 @@
 title: "{{QUARTER_ID}} Review"
 tags:
   - type/journal
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---
@@ -87,4 +88,4 @@ How was your sleep this quarter? Anything out of the ordinary? What contributed 
 
 ## Links to Monthly Notes
 
--
+- [[{{RELATED_MONTHLY_REVIEW}}]]

@@ -2,11 +2,17 @@
 title: "{{date}}"
 tags:
   - type/journal
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---
 
 # {{date}}
+
+## Related
+
+- Weekly review: [[{{RELATED_WEEKLY_REVIEW}}]]
+- Yesterday: [[{{PREVIOUS_DAILY_NOTE}}]]
 
 ## Preview
 

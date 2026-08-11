@@ -2,6 +2,7 @@
 title: "{{MONTH_ID}} Review"
 tags:
   - type/journal
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---
@@ -88,4 +89,4 @@ How was your sleep this month? Anything out of the ordinary? What contributed to
 
 ## Links to Weekly Notes
 
--
+- [[{{RELATED_WEEKLY_REVIEW}}]]

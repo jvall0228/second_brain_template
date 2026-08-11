@@ -4,7 +4,7 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Second Brain
@@ -41,10 +41,13 @@ Tags live in YAML frontmatter under `tags:` as a list. Use **slash-delimited nam
 |-----------|---------|----------|
 | `audience/*` | Who the note is for | `audience/agent`, `audience/human` |
 | `type/*` | What kind of note | `type/meta`, `type/reference`, `type/log` |
+| `topic/*` | Subject matter (free-form) | `topic/software`, `topic/health` |
 | `workflow/*` | Lifecycle stage | `workflow/canonical`, `workflow/draft` |
 | `status/*` | Actionability | `status/active`, `status/someday` |
 
-Every note **must** have frontmatter with at least `title`, `tags`, and `updated`.
+The authoritative taxonomy (full value lists) is [[00_Meta/conventions#Tag Namespaces]].
+
+Every note **must** have frontmatter with at least `title`, `tags`, and `updated`. When you edit an existing note, bump `updated:` to the current date.
 
 ## Vault Structure
 
@@ -78,6 +81,7 @@ When creating structured notes, use templates from `09_Templates/`:
 - [[09_Templates/template-yearly-review]] — Yearly reviews
 - [[09_Templates/template-media]] — Media tracking
 - [[09_Templates/template-decision-record]] — Decision logs
+- [[09_Templates/template-comparison]] — Option comparisons
 
 See [[09_Templates/README]] for the full selection guide.
 
@@ -91,5 +95,6 @@ To detect recent changes: check `updated:` fields, read [[00_Meta/changelog]], o
 - Profile: [[01_Profile/now]] | [[01_Profile/preferences]] | [[01_Profile/defaults]]
 - Conventions: [[00_Meta/conventions]]
 - Inbox: [[02_Inbox/README]]
+- PARA roots: [[04_Projects/README|Projects]] | [[05_Areas/README|Areas]] | [[06_Resources/README|Resources]] | [[07_Archives/README|Archives]]
 - Agent docs: [[10_Agents/README]]
 - Templates: [[09_Templates/README]]

@@ -3,6 +3,7 @@ title: "{{AREA_NAME}}"
 tags:
   - type/area
   - status/active
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---

@@ -2,11 +2,17 @@
 title: "{{WEEK_ID}} Review"
 tags:
   - type/journal
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---
 
 # {{WEEK_ID}} Review
+
+## Related
+
+- Monthly review: [[{{RELATED_MONTHLY_REVIEW}}]]
+- Daily notes: [[{{RELATED_DAILY_NOTE}}]]
 
 ## Get Clear
 

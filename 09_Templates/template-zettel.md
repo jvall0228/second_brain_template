@@ -2,6 +2,7 @@
 title: "{{ZETTEL_TITLE}}"
 tags:
   - type/zettel
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---

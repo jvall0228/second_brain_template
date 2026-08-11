@@ -3,7 +3,7 @@ title: "Second Brain Template"
 tags:
   - type/meta
   - audience/human
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Second Brain
@@ -81,6 +81,6 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 - All agent output goes to `02_Inbox/` unless explicitly directed elsewhere.
 - Every note must have YAML frontmatter with `title`, `tags`, and `updated`.
 - Tags use slash-delimited namespaces (e.g. `type/meta`, `audience/agent`).
-- Files marked `workflow/canonical` are read-only for agents.
+- Files marked `workflow/canonical` require a PR or explicit human approval to change — agents propose edits via an Inbox note (see [operating rules](10_Agents/docs/operating-rules.md)).
 
 See [Conventions](00_Meta/conventions.md) for full details.

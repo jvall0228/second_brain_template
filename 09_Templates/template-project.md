@@ -3,6 +3,7 @@ title: "{{PROJECT_NAME}}"
 tags:
   - type/project
   - status/active
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---

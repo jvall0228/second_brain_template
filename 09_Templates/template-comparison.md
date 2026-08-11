@@ -1,9 +1,10 @@
 ---
-title: "Template - Comparison"
+title: "{{title}}"
 tags:
-  - type/meta
+  - type/reference
+  - workflow/draft
   - audience/agent
-updated: 2026-02-21
+updated: {{date}}
 ---
 
 # {{title}}

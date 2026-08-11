@@ -10,6 +10,8 @@ updated: 2026-08-11
 
 # PRD Review — Spec vs. Shipped Template
 
+> **Resolution (2026-08-11):** all findings below were resolved the same day — the PRD was rewritten as revision 2.0 and the companion docs/templates were aligned. See [[00_Meta/changelog]] for the change list. This note is retained as the review record.
+
 A structured review of [[00_Meta/prd]] against the vault as shipped. Five review passes ran over distinct dimensions (spec-vs-implementation conformance, internal consistency, cross-document consistency, spec quality, and a scripted frontmatter/link/tag audit); every finding was independently re-verified against the files before inclusion, and claims that failed verification were dropped. Raw findings were then deduplicated into the themes below.
 
 ## Verdict

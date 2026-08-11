@@ -4,12 +4,12 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Ideas
 
-Ideas, brainstorms, and speculative concepts. These are seeds — some may grow into projects, some stay as notes.
+Ideas, brainstorms, and speculative concepts. These are seeds — some may grow into projects, some stay as notes. When an idea matures into a refined, shareable atomic note, promote it to `06_Resources/` as a zettel (`type/zettel`, via [[09_Templates/template-zettel]]).
 
 ## What belongs here
 

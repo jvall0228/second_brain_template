@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-02-21
+updated: 2026-08-11
 ---
 
 # Operating Rules
@@ -40,9 +40,14 @@ The human reviews and applies (or rejects) the change.
 Before writing any note, verify:
 
 - [ ] Frontmatter includes `title`, `tags`, `updated`
+- [ ] `updated:` is set to today's date — on every edit, not just creation
 - [ ] Tags use defined namespaces (see [[00_Meta/conventions#Tag Namespaces]])
-- [ ] Filename follows [[00_Meta/conventions#Filename Convention]]
-- [ ] Destination is `02_Inbox/` (unless explicitly directed elsewhere)
+- [ ] Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note
+- [ ] Destination is `02_Inbox/` (unless explicitly directed elsewhere, or a `10_Agents/solutions/` note)
+
+## Concurrency
+
+Multiple agents may work in this vault. Sync (pull) before writing when the environment allows, keep commits small, and never force-push. Merge conflicts are resolved by the human.
 
 ## Related
 

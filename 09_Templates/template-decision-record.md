@@ -2,6 +2,7 @@
 title: "DR: {{DECISION_TITLE}}"
 tags:
   - type/decision
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---

@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-02-21
+updated: 2026-08-11
 ---
 
 # Templates
@@ -18,7 +18,7 @@ Reusable note templates for creating structured content. Use these when creating
 | New project | `template-project.md` | `type/project`, `status/active` | `04_Projects/` |
 | Area of responsibility | `template-area.md` | `type/area` | `05_Areas/` |
 | Reference note | `template-resource.md` | `type/resource` | `06_Resources/` |
-| Atomic evergreen note | `template-zettel.md` | `type/zettel` | Any |
+| Atomic evergreen note | `template-zettel.md` | `type/zettel` | `06_Resources/` |
 | Daily log | `template-daily-log.md` | `type/journal` | `03_Journal/periodic/daily/` |
 | Weekly review | `template-weekly-review.md` | `type/journal` | `03_Journal/periodic/weekly/` |
 | Monthly review | `template-monthly-review.md` | `type/journal` | `03_Journal/periodic/monthly/` |
@@ -27,6 +27,8 @@ Reusable note templates for creating structured content. Use these when creating
 | Media tracking | `template-media.md` | `type/resource` | `06_Resources/` |
 | Decision record | `template-decision-record.md` | `type/decision` | `04_Projects/` or `06_Resources/` |
 | Comparison | `template-comparison.md` | `type/reference` | `06_Resources/` |
+
+All templates also carry `workflow/draft` in their suggested tags — an instantiated note keeps it until triage (see [[00_Meta/conventions#Tag Namespaces]]).
 
 ## Placeholder Syntax
 

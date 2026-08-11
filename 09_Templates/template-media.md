@@ -2,6 +2,7 @@
 title: "{{MEDIA_TITLE}}"
 tags:
   - type/resource
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---

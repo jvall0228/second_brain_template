@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Conventions
@@ -61,7 +61,7 @@ Files in `09_Templates/` may use placeholder tokens such as `{{date}}`, `{{title
 
 ## Tag Namespaces
 
-Tags use **slash-delimited namespaces**. Current namespaces:
+Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/prd]] and [[CONTEXT]]) summarize it. Current namespaces:
 
 | Namespace | Purpose | Values |
 |-----------|---------|--------|
@@ -76,6 +76,10 @@ Notes tagged `workflow/canonical` are foundational vault docs. They require a PR
 ## Agent Write Rules
 
 Agents write to `02_Inbox/` by default. Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
+
+**Standing exception:** agents may append solution notes to `10_Agents/solutions/` (see [[10_Agents/README]]) with required frontmatter including `type/solution`.
+
+**Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`. Before writing, check whether the file already exists; on collision, append a numeric suffix (`-2`). Never overwrite another agent's note.
 
 See [[02_Inbox/README]] for Inbox-specific guidance.
 
@@ -98,4 +102,6 @@ Agents detecting what changed:
 2. Read [[00_Meta/changelog]] for structural changes
 3. Use `git log -n 10` for detailed file-level history
 
-Agents should **not** re-read files whose `updated:` date hasn't changed since last read.
+**Duty to bump:** any edit to a note — creation or modification — must set `updated:` to the current date. The recency signal decays without this.
+
+Agents should **not** re-read files whose `updated:` date hasn't changed since last read. `updated:` has day granularity: for same-day changes, `git log` is authoritative.

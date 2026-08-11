@@ -2,6 +2,7 @@
 title: "{{YEAR}} Review"
 tags:
   - type/journal
+  - workflow/draft
   - audience/human
 updated: {{date}}
 ---
@@ -82,4 +83,4 @@ How was your sleep this year? Anything out of the ordinary? What contributed to 
 
 ## Links to Quarterly Notes
 
--
+- [[{{RELATED_QUARTERLY_REVIEW}}]]

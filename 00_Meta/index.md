@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Vault Index (Map of Content)
@@ -41,6 +41,7 @@ updated: 2026-08-10
 
 ## Maintenance
 - [[07_Archives/README|Archives]] — Completed or inactive items
+- [[08_Assets/README|Assets]] — Images, attachments, non-markdown files
 - [[00_Meta/changelog]] — Structural change log
 - [[00_Meta/prd]] — Design rationale (product requirements)
 - [[00_Meta/status]] — Vault status snapshot

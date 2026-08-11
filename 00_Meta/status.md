@@ -4,13 +4,15 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Second Brain — Status
 
-**Date:** 2026-08-10
+**Date:** 2026-08-11
 **State:** Fresh template — awaiting your content
+
+> This note is deliberately **not** tagged `workflow/canonical`: it is a living snapshot that agents may update directly (e.g. milestone status, checklist progress) with a direct commit.
 
 ---
 
@@ -21,6 +23,20 @@ updated: 2026-08-10
 - All note templates and agent operating docs are wired in.
 - Profile notes are blank templates — fill them in before pointing agents at the vault.
 - One example note is seeded per section; delete them once you've seen the pattern.
+
+## Milestone Status
+
+Per the roadmap in [[00_Meta/prd]] §19:
+
+| Milestone | Scope | Status |
+|-----------|-------|--------|
+| M0 | Bootstrap minimum | Done |
+| M1 | Skeleton + section READMEs | Done |
+| M2 | Index + defaults | Done |
+| M3 | Templates + agent docs (incl. solutions library) | Done |
+| M4 | Navigation integrity | Done |
+| M5 | `brain` vault-index CLI | Not started |
+| M6 | Agent plugin library (skills/tools/harnesses) | Not started |
 
 ## Getting-Started Checklist
 
