@@ -37,7 +37,7 @@ Overridable before Phase 1; silence = assumption stands.
 
 | # | Phase | Requirements | Size | Status |
 |---|-------|--------------|------|--------|
-| 1 | Rules & retrieval | R11, R14, R22 | S | Pending |
+| 1 | Rules & retrieval | R11, R14, R22 | S | Done |
 | 2 | Triage & distill upgrade | R2, R6, R13, R19 | M | Pending |
 | 3 | Note surgery | R7 | S | Pending |
 | 4 | Curation & signals | R17, R17b, R20, R24, R8 | L | Pending |

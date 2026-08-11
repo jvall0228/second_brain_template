@@ -143,65 +143,76 @@
     {
      "level": 2,
      "line": 15,
-     "text": "2026-08-11 — Copilot Research Deduped"
+     "text": "2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)"
     },
     {
      "level": 2,
-     "line": 20,
+     "line": 24,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 30,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 33,
+     "line": 37,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 44,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 46,
+     "line": 50,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 56,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 62,
+     "line": 66,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 71,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 73,
+     "line": 77,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 84,
+     "line": 88,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
    "links": [
     {
-     "display": "research-to-resource",
+     "display": "vault-answer",
      "embed": false,
      "fragment": null,
      "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
+     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
+     "target": "10_Agents/skills/vault-answer/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 21,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -212,7 +223,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 17,
+     "line": 21,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -223,7 +234,7 @@
      "display": "the harness research's Copilot section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 18,
+     "line": 22,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -234,7 +245,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -245,7 +256,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -256,7 +267,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -267,7 +278,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -278,7 +289,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 23,
+     "line": 27,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -289,7 +300,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 23,
+     "line": 27,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -300,7 +311,7 @@
      "display": "that section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 28,
+     "line": 32,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|that section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -311,7 +322,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 33,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -322,7 +333,7 @@
      "display": "the wiring doc",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -333,7 +344,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -344,7 +355,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -355,18 +366,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 31,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 38,
+     "line": 35,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -379,6 +379,17 @@
      "fragment": null,
      "line": 42,
      "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 46,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -388,7 +399,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 49,
+     "line": 53,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -399,7 +410,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 50,
+     "line": 54,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -410,7 +421,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 54,
+     "line": 58,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -421,7 +432,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 68,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -432,7 +443,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 70,
+     "line": 74,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -443,7 +454,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 77,
+     "line": 81,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -454,7 +465,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 78,
+     "line": 82,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -465,7 +476,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 78,
+     "line": 82,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -476,7 +487,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 86,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -484,7 +495,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 14823,
+   "sizeBytes": 15805,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -693,6 +704,7 @@
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "09_Templates/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
+    "10_Agents/skills/vault-answer/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -2271,7 +2283,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9783,
+   "sizeBytes": 9780,
    "title": "Implementation Plan: CODE Operations & Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
@@ -4526,7 +4538,8 @@
     "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/harnesses/muse-code/wiring.md",
     "10_Agents/harnesses/opencode/wiring.md",
-    "10_Agents/harnesses/pi/wiring.md"
+    "10_Agents/harnesses/pi/wiring.md",
+    "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -7555,7 +7568,8 @@
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "10_Agents/README.md",
-    "10_Agents/docs/README.md"
+    "10_Agents/docs/README.md",
+    "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -7597,16 +7611,26 @@
     {
      "level": 2,
      "line": 42,
+     "text": "Stuck/Escalation Protocol"
+    },
+    {
+     "level": 2,
+     "line": 51,
      "text": "Self-Validation"
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 62,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 57,
+     "line": 66,
+     "text": "Session-End Flush"
+    },
+    {
+     "level": 2,
+     "line": 76,
      "text": "Related"
     }
    ],
@@ -7648,7 +7672,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 48,
+     "line": 57,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -7659,7 +7683,7 @@
      "display": null,
      "embed": false,
      "fragment": "Filename Convention",
-     "line": 49,
+     "line": 58,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Filename Convention]]",
      "resolved": "00_Meta/conventions.md",
@@ -7670,7 +7694,7 @@
      "display": "brain",
      "embed": false,
      "fragment": null,
-     "line": 51,
+     "line": 60,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -7678,10 +7702,32 @@
      "warnings": []
     },
     {
+     "display": "solution-capture",
+     "embed": false,
+     "fragment": null,
+     "line": 70,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/solution-capture/SKILL|solution-capture]]",
+     "resolved": "10_Agents/skills/solution-capture/SKILL.md",
+     "target": "10_Agents/skills/solution-capture/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 71,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 78,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -7692,7 +7738,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 60,
+     "line": 79,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -7703,7 +7749,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 80,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -7711,7 +7757,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2692,
+   "sizeBytes": 4138,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -8489,7 +8535,7 @@
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 36,
      "text": "Rules"
     }
    ],
@@ -8594,10 +8640,21 @@
      "warnings": []
     },
     {
-     "display": "onboard-harness",
+     "display": "vault-answer",
      "embed": false,
      "fragment": null,
      "line": 29,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-answer/SKILL\\|vault-answer]]",
+     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
+     "target": "10_Agents/skills/vault-answer/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 30,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -8608,7 +8665,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 31,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL\\|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -8619,7 +8676,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -8630,7 +8687,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 33,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL\\|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -8641,7 +8698,7 @@
      "display": "self-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 33,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
      "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
@@ -8652,7 +8709,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 37,
+     "line": 38,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -8660,7 +8717,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3324,
+   "sizeBytes": 3514,
    "title": "Agent Skills",
    "updated": "2026-08-11"
   },
@@ -8713,6 +8770,7 @@
   },
   "10_Agents/skills/daily-log/SKILL.md": {
    "backlinks": [
+    "10_Agents/docs/operating-rules.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],
@@ -8758,7 +8816,8 @@
   "10_Agents/skills/inbox-capture/SKILL.md": {
    "backlinks": [
     "10_Agents/skills/README.md",
-    "10_Agents/skills/onboard-owner/SKILL.md"
+    "10_Agents/skills/onboard-owner/SKILL.md",
+    "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -9241,7 +9300,8 @@
   "10_Agents/skills/research-to-resource/SKILL.md": {
    "backlinks": [
     "00_Meta/changelog.md",
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -9329,6 +9389,7 @@
   },
   "10_Agents/skills/solution-capture/SKILL.md": {
    "backlinks": [
+    "10_Agents/docs/operating-rules.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],
@@ -9405,6 +9466,151 @@
    "links": [],
    "sizeBytes": 1842,
    "title": "Skill: Triage Inbox",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/vault-answer/SKILL.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Answer \"what do I know about X?\" from the vault, with wikilink citations and a clear line between vault knowledge and model knowledge. Use when the user asks what the vault says or knows about a topic, project, person, or decision.",
+    "name": "vault-answer",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Vault Answer",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Vault Answer"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 34,
+     "text": "References"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": "inbox-capture",
+     "embed": false,
+     "fragment": null,
+     "line": 25,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
+     "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
+     "target": "10_Agents/skills/inbox-capture/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 31,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 37,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": "inbox-capture",
+     "embed": false,
+     "fragment": null,
+     "line": 38,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
+     "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
+     "target": "10_Agents/skills/inbox-capture/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 39,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 3053,
+   "title": "Skill: Vault Answer",
    "updated": "2026-08-11"
   },
   "10_Agents/skills/vault-maintenance/SKILL.md": {

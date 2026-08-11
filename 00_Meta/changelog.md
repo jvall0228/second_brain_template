@@ -12,7 +12,11 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
-## 2026-08-11 — Copilot Research Deduped
+## 2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)
+
+- Fourteenth library skill, [[10_Agents/skills/vault-answer/SKILL|vault-answer]] (canonical, owner-authorized via the ops implementation plan): retrieval discipline for "what do I know about X?" — brain search → index → grep, wikilink citations on every vault claim, explicit separation of vault knowledge from model knowledge, capture offers for substantive synthesized answers, and research-to-resource offers when the vault comes up empty.
+- `10_Agents/docs/operating-rules.md` gained two sections: **Stuck/Escalation Protocol** (blocked or conflicting sources → `workflow/needs-review` Inbox note and stop; never guess-and-commit) and **Session-End Flush** (before session end or context compaction, write durable learnings to the daily log, an Inbox capture, or solution-capture — the vault only knows what reaches disk).
+- Plan of record: `02_Inbox/2026-08-11-para-operations-implementation-plan.md` (executes the R1–R25 requirements note beside it).
 
 - Owner-directed policy, folded into two canonical skills: notes are **atomic — one topic, one note**. [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] now requires corrective research to merge into the existing note (git keeps history; no parallel "supersedes X" notes left under banners), and [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] gained a duplication-scan step that proposes merges to the human. Companion rule in the same pass: **update by replacement, not accumulation** — merges and updates rewrite or delete conflicting sections instead of appending beside them (git history is the archive; appending is for logs/journals only). General form in `10_Agents/docs/operating-rules.md`, reinforced in both skills.
 - Merged `06_Resources/copilot-harness-deep-dive.md` into [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]], which it had superseded — one note now holds all seven harnesses again. The stale M6 Copilot pass was replaced wholesale by the deep-dive's verified content (corrections, per-surface facts, wiring implications, unverified list, sources); the section header moves to P0 and the overlap matrix's Copilot hooks cell drops its "Preview/VS Code-only" qualifier. Inbound links retargeted (harnesses README, Copilot wiring doc, changelog, archived P0 plan).
