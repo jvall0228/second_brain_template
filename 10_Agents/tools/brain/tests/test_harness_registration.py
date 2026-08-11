@@ -49,6 +49,15 @@ class SharedRegistrationContractTests(unittest.TestCase):
         self.assertIn("onboarding another vault does **not** add another harness-level block", text)
         self.assertIn("Never delete another vault's entry", text)
 
+    def test_global_skills_have_shared_provider_consumer_ownership(self):
+        text = read(ONBOARD)
+        self.assertIn("shared-managed, not foreign", text)
+        self.assertIn("provider/consumer ownership", text)
+        self.assertIn("managed version drift", text)
+        self.assertIn("Shared harness adapters and global skills are reference-counted", text)
+        self.assertIn("only when its recorded content hash matches", text)
+        self.assertIn("Never leave a broken symlink", text)
+
     def test_every_supported_harness_accounts_for_shared_registration(self):
         for name, path in HARNESS_WIRING.items():
             with self.subTest(harness=name):
