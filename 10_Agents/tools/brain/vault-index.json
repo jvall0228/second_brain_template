@@ -1,6 +1,8 @@
 {
  "assets": [
   "00_Meta/config.yaml",
+  "10_Agents/components/manifest.json",
+  "10_Agents/components/presets/work-fork.yaml",
   "10_Agents/harnesses/claude-code/settings-example.json",
   "10_Agents/harnesses/claude-code/validate-hook.sh",
   "10_Agents/harnesses/codex/config-example.toml",
@@ -7202,6 +7204,8 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "06_Resources/recommended-skills.md",
+    "10_Agents/README.md",
+    "10_Agents/components/README.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/onboard-harness/SKILL.md"
    ],
@@ -7228,41 +7232,57 @@
     },
     {
      "level": 2,
-     "line": 22,
+     "line": 24,
      "text": "Item format"
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 39,
      "text": "Catalog"
     },
     {
      "level": 3,
-     "line": 39,
+     "line": 41,
      "text": "i-have-adhd"
     },
     {
      "level": 3,
-     "line": 49,
+     "line": 51,
      "text": "karpathy"
     },
     {
      "level": 2,
-     "line": 59,
+     "line": 61,
      "text": "Recommended user-scope memory-file content"
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 69,
+     "text": "Other recommended components"
+    },
+    {
+     "level": 2,
+     "line": 78,
      "text": "Rules"
     }
    ],
    "links": [
     {
+     "display": "components registry",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/components/README|components registry]]",
+     "resolved": "10_Agents/components/README.md",
+     "target": "10_Agents/components/README",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 19,
+     "line": 21,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -7273,7 +7293,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 20,
+     "line": 22,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -7284,7 +7304,7 @@
      "display": null,
      "embed": false,
      "fragment": "Catalog",
-     "line": 24,
+     "line": 26,
      "placeholder": false,
      "raw": "[[#Catalog]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -7295,7 +7315,7 @@
      "display": null,
      "embed": false,
      "fragment": "karpathy",
-     "line": 63,
+     "line": 65,
      "placeholder": false,
      "raw": "[[#karpathy]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -7306,7 +7326,7 @@
      "display": null,
      "embed": false,
      "fragment": "karpathy",
-     "line": 63,
+     "line": 65,
      "placeholder": false,
      "raw": "[[#karpathy]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -7314,10 +7334,65 @@
      "warnings": []
     },
     {
+     "display": "Cursor",
+     "embed": false,
+     "fragment": null,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/cursor/wiring|Cursor]]",
+     "resolved": "10_Agents/harnesses/cursor/wiring.md",
+     "target": "10_Agents/harnesses/cursor/wiring",
+     "warnings": []
+    },
+    {
+     "display": "Copilot",
+     "embed": false,
+     "fragment": null,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/copilot/wiring|Copilot]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/README]]",
+     "resolved": "10_Agents/harnesses/README.md",
+     "target": "10_Agents/harnesses/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[10_Agents/components/README]]",
+     "resolved": "10_Agents/components/README.md",
+     "target": "10_Agents/components/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 80,
+     "placeholder": false,
+     "raw": "[[10_Agents/components/README]]",
+     "resolved": "10_Agents/components/README.md",
+     "target": "10_Agents/components/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 80,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -7328,15 +7403,26 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 72,
+     "line": 84,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
      "warnings": []
+    },
+    {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 84,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
     }
    ],
-   "sizeBytes": 6326,
+   "sizeBytes": 8956,
    "tasks": [],
    "title": "Recommended Community Skills",
    "updated": "2026-08-11"
@@ -10432,21 +10518,26 @@
     {
      "level": 2,
      "line": 24,
-     "text": "Tools"
+     "text": "Components"
     },
     {
      "level": 2,
      "line": 28,
-     "text": "Environments"
+     "text": "Tools"
     },
     {
      "level": 2,
      "line": 32,
+     "text": "Environments"
+    },
+    {
+     "level": 2,
+     "line": 36,
      "text": "Solutions"
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 44,
      "text": "Related"
     }
    ],
@@ -10496,10 +10587,43 @@
      "warnings": []
     },
     {
-     "display": "brain",
+     "display": "onboard-harness",
      "embed": false,
      "fragment": null,
      "line": 26,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "Components",
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[10_Agents/components/README|Components]]",
+     "resolved": "10_Agents/components/README.md",
+     "target": "10_Agents/components/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[06_Resources/recommended-skills]]",
+     "resolved": "06_Resources/recommended-skills.md",
+     "target": "06_Resources/recommended-skills",
+     "warnings": []
+    },
+    {
+     "display": "brain",
+     "embed": false,
+     "fragment": null,
+     "line": 30,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -10510,7 +10634,7 @@
      "display": "Tools",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 30,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README|Tools]]",
      "resolved": "10_Agents/tools/README.md",
@@ -10521,7 +10645,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -10532,7 +10656,7 @@
      "display": "Environments",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/environments/README|Environments]]",
      "resolved": "10_Agents/environments/README.md",
@@ -10543,7 +10667,7 @@
      "display": "Solutions",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 38,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/README|Solutions]]",
      "resolved": "10_Agents/solutions/README.md",
@@ -10554,7 +10678,7 @@
      "display": "Wikilink Resolution Rules",
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 42,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules|Wikilink Resolution Rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -10565,7 +10689,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 42,
+     "line": 46,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -10576,7 +10700,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 43,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -10587,7 +10711,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 44,
+     "line": 48,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -10598,7 +10722,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 45,
+     "line": 49,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -10606,9 +10730,147 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2323,
+   "sizeBytes": 2984,
    "tasks": [],
    "title": "Agents",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/components/README.md": {
+   "backlinks": [
+    "06_Resources/recommended-skills.md",
+    "10_Agents/README.md",
+    "10_Agents/skills/onboard-harness/SKILL.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "claude-code",
+    "expires": "2027-08-11",
+    "session": "https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73",
+    "tags": [
+     "type/meta",
+     "audience/agent",
+     "audience/human",
+     "workflow/draft"
+    ],
+    "title": "Recommended Components",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 14,
+     "text": "Recommended Components"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "text": "What a recommended component is"
+    },
+    {
+     "level": 2,
+     "line": 43,
+     "text": "The agent library includes third-party components — without vendoring them"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Installer, sign-off, reversibility"
+    },
+    {
+     "level": 2,
+     "line": 73,
+     "text": "Tracking latest (not pinning)"
+    },
+    {
+     "level": 2,
+     "line": 85,
+     "text": "Files"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[06_Resources/recommended-skills]]",
+     "resolved": "06_Resources/recommended-skills.md",
+     "target": "06_Resources/recommended-skills",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 39,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/README]]",
+     "resolved": "10_Agents/harnesses/README.md",
+     "target": "10_Agents/harnesses/README",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 56,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 59,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 81,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 89,
+     "placeholder": false,
+     "raw": "[[06_Resources/recommended-skills]]",
+     "resolved": "06_Resources/recommended-skills.md",
+     "target": "06_Resources/recommended-skills",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 4998,
+   "tasks": [],
+   "title": "Recommended Components",
    "updated": "2026-08-11"
   },
   "10_Agents/docs/README.md": {
@@ -11374,6 +11636,8 @@
   "10_Agents/harnesses/README.md": {
    "backlinks": [
     "00_Meta/index.md",
+    "06_Resources/recommended-skills.md",
+    "10_Agents/components/README.md",
     "10_Agents/environments/README.md",
     "10_Agents/harnesses/copilot/wiring.md",
     "10_Agents/harnesses/cursor/wiring.md"
@@ -11752,6 +12016,7 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/prd.md",
+    "06_Resources/recommended-skills.md",
     "10_Agents/harnesses/README.md",
     "10_Agents/skills/onboard-harness/SKILL.md"
    ],
@@ -11875,6 +12140,7 @@
   },
   "10_Agents/harnesses/cursor/wiring.md": {
    "backlinks": [
+    "06_Resources/recommended-skills.md",
     "06_Resources/vscode-editor-support.md",
     "10_Agents/harnesses/README.md"
    ],
@@ -13606,6 +13872,8 @@
     "00_Meta/changelog.md",
     "06_Resources/recommended-skills.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
+    "10_Agents/README.md",
+    "10_Agents/components/README.md",
     "10_Agents/harnesses/README.md",
     "10_Agents/harnesses/copilot/wiring.md",
     "10_Agents/harnesses/cursor/wiring.md",
@@ -13645,21 +13913,21 @@
     {
      "level": 2,
      "line": 67,
-     "text": "Optional: recommended community content"
+     "text": "Optional: recommended components"
     },
     {
      "level": 2,
-     "line": 77,
+     "line": 79,
      "text": "Re-run and uninstall"
     },
     {
      "level": 2,
-     "line": 82,
+     "line": 84,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 92,
      "text": "References"
     }
    ],
@@ -13673,6 +13941,17 @@
      "raw": "[[10_Agents/harnesses/copilot/wiring]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
      "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 69,
+     "placeholder": false,
+     "raw": "[[10_Agents/components/README]]",
+     "resolved": "10_Agents/components/README.md",
+     "target": "10_Agents/components/README",
      "warnings": []
     },
     {
@@ -13698,10 +13977,21 @@
      "warnings": []
     },
     {
-     "display": null,
+     "display": "onboard-owner",
      "embed": false,
      "fragment": null,
      "line": 75,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 77,
      "placeholder": false,
      "raw": "[[06_Resources/recommended-skills]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -13709,7 +13999,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 15015,
+   "sizeBytes": 16987,
    "tasks": [],
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
@@ -13720,7 +14010,9 @@
     "00_Meta/conventions.md",
     "09_Templates/README.md",
     "09_Templates/variants/README.md",
+    "10_Agents/components/README.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-harness/SKILL.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
@@ -13772,17 +14064,17 @@
     },
     {
      "level": 2,
-     "line": 77,
+     "line": 78,
      "text": "People map: worked example"
     },
     {
      "level": 2,
-     "line": 121,
+     "line": 122,
      "text": "Orchestration rules"
     },
     {
      "level": 2,
-     "line": 125,
+     "line": 126,
      "text": "Exit criteria (\"onboarded\")"
     }
    ],
@@ -13997,10 +14289,32 @@
      "warnings": []
     },
     {
-     "display": "agent-orientation",
+     "display": "onboard-harness",
      "embed": false,
      "fragment": null,
      "line": 71,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 71,
+     "placeholder": false,
+     "raw": "[[10_Agents/components/README]]",
+     "resolved": "10_Agents/components/README.md",
+     "target": "10_Agents/components/README",
+     "warnings": []
+    },
+    {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 72,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -14011,7 +14325,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 72,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -14022,7 +14336,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 128,
+     "line": 129,
      "placeholder": false,
      "raw": "[[01_Profile/work]]",
      "resolved": "01_Profile/work.md",
@@ -14030,7 +14344,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 15169,
+   "sizeBytes": 16269,
    "tasks": [],
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
@@ -14683,6 +14997,7 @@
   },
   "10_Agents/skills/sync-upstream/SKILL.md": {
    "backlinks": [
+    "06_Resources/recommended-skills.md",
     "10_Agents/docs/operating-rules.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/self-improve/SKILL.md",
@@ -14731,42 +15046,42 @@
     },
     {
      "level": 3,
-     "line": 80,
+     "line": 82,
      "text": "Overrides"
     },
     {
      "level": 3,
-     "line": 93,
+     "line": 96,
      "text": "Cross-cutting rules (apply after path lanes)"
     },
     {
      "level": 2,
-     "line": 99,
+     "line": 102,
      "text": "Apply"
     },
     {
      "level": 2,
-     "line": 108,
+     "line": 111,
      "text": "Backfill"
     },
     {
      "level": 2,
-     "line": 117,
+     "line": 120,
      "text": "Report"
     },
     {
      "level": 2,
-     "line": 125,
+     "line": 128,
      "text": "Upstream release duty"
     },
     {
      "level": 2,
-     "line": 129,
+     "line": 132,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 138,
+     "line": 141,
      "text": "References"
     }
    ],
@@ -14797,7 +15112,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 140,
+     "line": 143,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -14805,7 +15120,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 12206,
+   "sizeBytes": 12711,
    "tasks": [],
    "title": "Skill: Sync Upstream",
    "updated": "2026-08-11"

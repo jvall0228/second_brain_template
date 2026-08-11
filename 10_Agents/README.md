@@ -21,6 +21,10 @@ Agent-facing documentation for working within this vault. Start with the bootstr
 
 Twelve harness-agnostic skills in the Agent Skills format (folder-per-skill `SKILL.md`), covering capture & triage, periodic reviews, vault maintenance, research → resource, harness onboarding, and environment integration (orientation, ingestion automations, self-maintenance). See [[10_Agents/skills/README|Skills]] for the full table and the format contract.
 
+## Components
+
+The recommended-component registry — the agent library's home for installable **components** an onboarder can add: third-party skills, user-scope memory blocks, harness overlays, and vault-config presets. `10_Agents/components/manifest.json` is the machine-readable source of truth; third-party content is never vendored here (community items track their upstream branch and materialize only into the harness user scope at install time). [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] is the installer. See [[10_Agents/components/README|Components]], with the human-facing community catalog at [[06_Resources/recommended-skills]].
+
 ## Tools
 
 - [[10_Agents/tools/brain/README|brain]] — the vault index CLI: structured queries (`list`, `search`, `links`, `tags`, `show`, `recent`) plus `validate`; the committed `vault-index.json` it maintains is readable without running anything. See [[10_Agents/tools/README|Tools]] for the directory rules.
