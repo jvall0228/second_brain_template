@@ -1,0 +1,68 @@
+{
+  // Second-brain tooling surfaced in VS Code via built-in tasks (no extension,
+  // strict first-party trust policy — PRD §6.5). Run via Terminal → Run Task.
+  // Requires python3 on PATH (same requirement as the pre-commit hook).
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Brain: Validate Vault",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py validate",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Rebuild Index",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py index",
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Links for Current Note",
+      "detail": "Outgoing links, backlinks, and unresolved targets — the backlinks-panel substitute",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py links \"${relativeFile}\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Search Vault",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py search \"${input:brainQuery}\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Recent Notes",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py recent",
+      "problemMatcher": []
+    },
+    {
+      "label": "Daily Note: Open Today",
+      "detail": "Create today's note from 09_Templates/template-daily-log.md if missing, then open it",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/vscode/daily_note.py",
+      "problemMatcher": []
+    },
+    {
+      "label": "Homepage: Open Vault Index",
+      "detail": "Opens 00_Meta/index.md on folder open (VS Code asks once to allow automatic tasks)",
+      "type": "shell",
+      // Best-effort: needs the `code` CLI on PATH; silently no-ops otherwise.
+      "command": "code -r 00_Meta/index.md || true",
+      "runOptions": { "runOn": "folderOpen" },
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "close": true
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "brainQuery",
+      "type": "promptString",
+      "description": "Search titles, headings, and body text across the vault"
+    }
+  ]
+}

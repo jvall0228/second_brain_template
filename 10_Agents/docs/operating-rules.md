@@ -49,6 +49,7 @@ Before writing any note, verify:
 - [ ] Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note
 - [ ] Destination is `02_Inbox/` (unless explicitly directed elsewhere, or a `10_Agents/solutions/` note)
 - [ ] Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])
+- [ ] **Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
 
 ## Concurrency
 

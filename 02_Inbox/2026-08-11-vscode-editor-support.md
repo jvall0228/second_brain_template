@@ -92,6 +92,19 @@ Sources:
 | Wikilinks, `backlink`, `outgoing-link`, `graph`, `tag-pane`, `page-preview`, `daily-notes`, `templates`, `note-composer` | not shipped — see gap table above | 2 (declined) |
 | `canvas`, `bases`, `appearance.json` font | not shipped | — |
 
+## Round-two decisions (owner, 2026-08-11) and what shipped
+
+1. **Trust policy scope:** strict first-party is the *template default*, overridable per fork; a structured vault-config file (yaml/json) for such overrides is noted as a future consideration, out of scope now (PRD §21 pointer in §6.5).
+2. **AI harness extensions:** kept (Claude Code, Copilot) — the vault is agent-oriented and both are P0 harnesses.
+3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute), all built-in task machinery, `python3` the only requirement.
+4. **Snippets over raw templates as the user-facing surface:** shipped `.vscode/second-brain.code-snippets`, **generated** from `09_Templates/` by `10_Agents/tools/vscode/gen_snippets.py` and kept in sync automatically by the pre-commit hook (`--check` mode available). `{{date}}` maps to VS Code's auto-filling date variables; other tokens become tabstops. Plus an `sb-frontmatter` snippet for bare capture.
+5. **Cursor synergy:** noted in [[10_Agents/harnesses/cursor/wiring]] — the whole `.vscode/` surface works in Cursor unchanged.
+6. **Acceptance criteria:** written into PRD §6.5. Config is script-verified in this environment (snippet generation deterministic + valid JSON, daily-note output passes `brain validate`, tasks reference real commands); the open-in-real-VS-Code pass remains for the owner before merge.
+7. **Homepage on open:** shipped as a `folderOpen` automatic task opening [[00_Meta/index]] (VS Code prompts once to allow automatic tasks; needs the `code` CLI on PATH, silently no-ops without it). Obsidian core has no auto-open equivalent — a community "Homepage" plugin exists but fails the trust posture; gap noted in the mapping.
+8. **Old duplicate branch:** ignore/delete note stands (below).
+
+**Spec-parity mechanism (owner follow-up):** two layers. (a) *Automated:* the snippet surface regenerates from templates on every commit — template changes cannot leave VS Code behind. (b) *Procedural:* a new **editor-surface parity** checklist item in [[10_Agents/docs/operating-rules]] requires any structural/navigation/template change (e.g. a future "homepage" note) to update `.obsidian/`, `.vscode/`, and the §6.5 mapping in the same change. Obsidian-side note for the homepage example: core Obsidian cannot auto-open a note, so a homepage would be a convention there (pinned/first link in [[00_Meta/index]]) but an actual auto-open in VS Code.
+
 ## Process notes
 
 - Requirements were brainstormed first and the trust policy set by the owner before this configuration was finalized; an earlier draft of this branch shipped the Tier 2 community set (Foam et al.) and was reworked to strict first-party on owner direction.

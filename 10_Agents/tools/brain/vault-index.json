@@ -6,7 +6,9 @@
   "10_Agents/harnesses/cursor/rule-example.mdc",
   "10_Agents/harnesses/opencode/opencode-example.json",
   "10_Agents/harnesses/pi/settings-example.json",
-  "10_Agents/tools/brain/brain.py"
+  "10_Agents/tools/brain/brain.py",
+  "10_Agents/tools/vscode/daily_note.py",
+  "10_Agents/tools/vscode/gen_snippets.py"
  ],
  "notes": {
   "00_Meta/README.md": {
@@ -147,57 +149,57 @@
     },
     {
      "level": 2,
-     "line": 20,
+     "line": 21,
      "text": "2026-08-11 — Copilot Research Deduped"
     },
     {
      "level": 2,
-     "line": 25,
+     "line": 26,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 32,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 39,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 46,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 51,
+     "line": 52,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 57,
+     "line": 58,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 68,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 72,
+     "line": 73,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 78,
+     "line": 79,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 89,
+     "line": 90,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
@@ -225,10 +227,32 @@
      "warnings": []
     },
     {
+     "display": "vscode tools",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/vscode/README|vscode tools]]",
+     "resolved": "10_Agents/tools/vscode/README.md",
+     "target": "10_Agents/tools/vscode/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 23,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -239,7 +263,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 23,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -250,7 +274,7 @@
      "display": "the harness research's Copilot section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 23,
+     "line": 24,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -261,7 +285,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -272,7 +296,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -283,7 +307,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -294,7 +318,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -305,7 +329,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 28,
+     "line": 29,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -316,7 +340,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 28,
+     "line": 29,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -327,7 +351,7 @@
      "display": "that section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 33,
+     "line": 34,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|that section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -338,7 +362,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 35,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -349,7 +373,7 @@
      "display": "the wiring doc",
      "embed": false,
      "fragment": null,
-     "line": 35,
+     "line": 36,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -360,7 +384,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 35,
+     "line": 36,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -371,7 +395,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 35,
+     "line": 36,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -382,7 +406,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 36,
+     "line": 37,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -393,7 +417,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 43,
+     "line": 44,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -404,7 +428,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 47,
+     "line": 48,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -415,7 +439,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 54,
+     "line": 55,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -426,7 +450,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 55,
+     "line": 56,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -437,7 +461,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 60,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -448,7 +472,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 70,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -459,29 +483,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 75,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 82,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 83,
+     "line": 76,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -493,6 +495,28 @@
      "embed": false,
      "fragment": null,
      "line": 83,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 84,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 84,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -503,7 +527,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 87,
+     "line": 88,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -511,7 +535,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 16159,
+   "sizeBytes": 17033,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -710,6 +734,7 @@
    "backlinks": [
     "00_Meta/README.md",
     "00_Meta/prd.md",
+    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
     "05_Areas/README.md",
@@ -1118,10 +1143,13 @@
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
+    "10_Agents/docs/operating-rules.md",
     "10_Agents/harnesses/README.md",
+    "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
     "10_Agents/tools/README.md",
-    "10_Agents/tools/brain/spec.md"
+    "10_Agents/tools/brain/spec.md",
+    "10_Agents/tools/vscode/README.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -1198,187 +1226,187 @@
     },
     {
      "level": 2,
-     "line": 89,
+     "line": 92,
      "text": "7. Information architecture (top-level, number-prefixed)"
     },
     {
      "level": 2,
-     "line": 112,
+     "line": 115,
      "text": "8. Universal agent entrypoint"
     },
     {
      "level": 3,
-     "line": 113,
+     "line": 116,
      "text": "8.1 Required root file"
     },
     {
      "level": 3,
-     "line": 137,
+     "line": 140,
      "text": "8.2 Claude Code adapter file"
     },
     {
      "level": 3,
-     "line": 148,
+     "line": 151,
      "text": "8.3 Supported harnesses (decision 2026-08-11)"
     },
     {
      "level": 2,
-     "line": 166,
+     "line": 169,
      "text": "9. Agent library directory (`10_Agents/`)"
     },
     {
      "level": 3,
-     "line": 167,
+     "line": 170,
      "text": "9.1 Shipped structure"
     },
     {
      "level": 3,
-     "line": 176,
+     "line": 179,
      "text": "9.2 Solutions knowledge base"
     },
     {
      "level": 3,
-     "line": 179,
+     "line": 182,
      "text": "9.3 Plugin library structure (shipped: `tools/brain/` at M5; `skills/` and `harnesses/` at M6)"
     },
     {
      "level": 3,
-     "line": 191,
+     "line": 194,
      "text": "9.4 Discovery"
     },
     {
      "level": 2,
-     "line": 194,
+     "line": 197,
      "text": "10. Frontmatter and tags"
     },
     {
      "level": 3,
-     "line": 195,
+     "line": 198,
      "text": "10.1 Requirement: YAML frontmatter (all notes)"
     },
     {
      "level": 3,
-     "line": 216,
+     "line": 219,
      "text": "10.2 Authoritative taxonomy"
     },
     {
      "level": 3,
-     "line": 225,
+     "line": 228,
      "text": "10.3 Tag intent default"
     },
     {
      "level": 2,
-     "line": 228,
+     "line": 231,
      "text": "11. Canonical notes"
     },
     {
      "level": 3,
-     "line": 239,
+     "line": 242,
      "text": "11.1 Real-content files (must exist and be meaningful in an adopter's fork — see §5)"
     },
     {
      "level": 3,
-     "line": 245,
+     "line": 248,
      "text": "11.2 Structural requirements"
     },
     {
      "level": 2,
-     "line": 252,
+     "line": 255,
      "text": "12. Templates"
     },
     {
      "level": 2,
-     "line": 266,
+     "line": 269,
      "text": "13. Functional requirements"
     },
     {
      "level": 2,
-     "line": 277,
+     "line": 280,
      "text": "14. Non-functional requirements"
     },
     {
      "level": 2,
-     "line": 284,
+     "line": 287,
      "text": "15. Recency (\"what changed?\")"
     },
     {
      "level": 2,
-     "line": 290,
+     "line": 293,
      "text": "16. Assets and data sensitivity"
     },
     {
      "level": 3,
-     "line": 291,
+     "line": 294,
      "text": "16.1 Asset lifecycle"
     },
     {
      "level": 3,
-     "line": 296,
+     "line": 299,
      "text": "16.2 Data sensitivity"
     },
     {
      "level": 2,
-     "line": 304,
+     "line": 307,
      "text": "17. Multi-agent concurrency"
     },
     {
      "level": 2,
-     "line": 309,
+     "line": 312,
      "text": "18. Validation and enforcement"
     },
     {
      "level": 2,
-     "line": 315,
+     "line": 318,
      "text": "19. Milestones (status as of 2026-08-11)"
     },
     {
      "level": 3,
-     "line": 316,
+     "line": 319,
      "text": "M0: Bootstrap Minimum — **Done**"
     },
     {
      "level": 3,
-     "line": 320,
+     "line": 323,
      "text": "M1: Repo skeleton expansion — **Done**"
     },
     {
      "level": 3,
-     "line": 323,
+     "line": 326,
      "text": "M2: Canonical navigation — **Done**"
     },
     {
      "level": 3,
-     "line": 326,
+     "line": 329,
      "text": "M3: Templates + agent docs — **Done**"
     },
     {
      "level": 3,
-     "line": 329,
+     "line": 332,
      "text": "M4: Navigation integrity — **Done**"
     },
     {
      "level": 3,
-     "line": 332,
+     "line": 335,
      "text": "M5: Vault Index CLI (`brain`) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 341,
+     "line": 344,
      "text": "M6: Agent Plugin Library (core) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 347,
+     "line": 350,
      "text": "M7: Environment Integration — **Done (2026-08-11, template scope)**"
     },
     {
      "level": 2,
-     "line": 355,
+     "line": 358,
      "text": "20. Acceptance criteria (M0, objective)"
     },
     {
      "level": 2,
-     "line": 365,
+     "line": 368,
      "text": "21. Open considerations (document-only, not blockers)"
     }
    ],
@@ -1453,7 +1481,29 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 106,
+     "line": 85,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 86,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 109,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1464,7 +1514,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 217,
+     "line": 220,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -1475,7 +1525,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 264,
+     "line": 267,
      "placeholder": false,
      "raw": "[[09_Templates/README]]",
      "resolved": "09_Templates/README.md",
@@ -1486,7 +1536,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 287,
+     "line": 290,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1497,7 +1547,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 287,
+     "line": 290,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1508,7 +1558,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 310,
+     "line": 313,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1519,7 +1569,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 312,
+     "line": 315,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -1530,7 +1580,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 313,
+     "line": 316,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1541,7 +1591,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 333,
+     "line": 336,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1552,7 +1602,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 339,
+     "line": 342,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -1563,7 +1613,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 362,
+     "line": 365,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1574,7 +1624,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 369,
+     "line": 372,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1582,7 +1632,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 33351,
+   "sizeBytes": 35247,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -2183,6 +2233,11 @@
     {
      "level": 2,
      "line": 95,
+     "text": "Round-two decisions (owner, 2026-08-11) and what shipped"
+    },
+    {
+     "level": 2,
+     "line": 108,
      "text": "Process notes"
     }
    ],
@@ -2230,9 +2285,53 @@
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
      "target": "10_Agents/skills/daily-log/SKILL",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 101,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/cursor/wiring]]",
+     "resolved": "10_Agents/harnesses/cursor/wiring.md",
+     "target": "10_Agents/harnesses/cursor/wiring",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 103,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 106,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 106,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
     }
    ],
-   "sizeBytes": 7833,
+   "sizeBytes": 10355,
    "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
    "updated": "2026-08-11"
   },
@@ -7325,9 +7424,12 @@
   },
   "10_Agents/docs/operating-rules.md": {
    "backlinks": [
+    "00_Meta/changelog.md",
     "00_Meta/prd.md",
+    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "10_Agents/README.md",
-    "10_Agents/docs/README.md"
+    "10_Agents/docs/README.md",
+    "10_Agents/tools/vscode/README.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -7373,12 +7475,12 @@
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 54,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 57,
+     "line": 58,
      "text": "Related"
     }
    ],
@@ -7453,7 +7555,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 52,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 60,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -7464,7 +7577,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 60,
+     "line": 61,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -7475,7 +7588,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 62,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -7483,7 +7596,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2692,
+   "sizeBytes": 2991,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -7947,6 +8060,7 @@
   },
   "10_Agents/harnesses/cursor/wiring.md": {
    "backlinks": [
+    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "10_Agents/harnesses/README.md"
    ],
    "bodyTags": [],
@@ -7995,7 +8109,7 @@
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 42,
      "text": "Reference configs"
     }
    ],
@@ -8010,9 +8124,20 @@
      "resolved": "06_Resources/harness-primitives-research.md",
      "target": "06_Resources/harness-primitives-research",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 36,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2060,
+   "sizeBytes": 2372,
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -8484,7 +8609,8 @@
   "10_Agents/skills/daily-log/SKILL.md": {
    "backlinks": [
     "02_Inbox/2026-08-11-vscode-editor-support.md",
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/tools/vscode/README.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -9851,7 +9977,8 @@
   },
   "10_Agents/tools/README.md": {
    "backlinks": [
-    "10_Agents/README.md"
+    "10_Agents/README.md",
+    "10_Agents/tools/vscode/README.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -9878,7 +10005,7 @@
     },
     {
      "level": 2,
-     "line": 19,
+     "line": 20,
      "text": "Rules"
     }
    ],
@@ -9906,10 +10033,32 @@
      "warnings": []
     },
     {
+     "display": "vscode",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/vscode/README|vscode]]",
+     "resolved": "10_Agents/tools/vscode/README.md",
+     "target": "10_Agents/tools/vscode/README",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 22,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -9917,7 +10066,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 887,
+   "sizeBytes": 1113,
    "title": "Agent Tools",
    "updated": "2026-08-11"
   },
@@ -10233,6 +10382,91 @@
    ],
    "sizeBytes": 26357,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/tools/vscode/README.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "10_Agents/tools/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/meta",
+     "audience/agent",
+     "audience/human",
+     "topic/software",
+     "workflow/draft"
+    ],
+    "title": "VS Code Tools",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "VS Code Tools"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Contents"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Sync contract"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/README]]",
+     "resolved": "10_Agents/tools/README.md",
+     "target": "10_Agents/tools/README",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 1641,
+   "title": "VS Code Tools",
    "updated": "2026-08-11"
   },
   "AGENTS.md": {
@@ -10778,7 +11012,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 5460,
+   "sizeBytes": 5634,
    "title": "Second Brain Template",
    "updated": "2026-08-11"
   }
