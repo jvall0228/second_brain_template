@@ -12,6 +12,10 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] rework | CI validate workflow is now self-healing
+
+- `.github/workflows/validate.yml` reworked (owner-directed, after eight consecutive stale-index failures from a hook-less external agent session): instead of failing on a stale committed index, CI regenerates the generated files (`vault-index.json`, `.vscode/second-brain.code-snippets`), runs the full `brain validate` suite (content errors still fail), and on push events auto-commits the regenerated files back to the branch as `github-actions[bot]`. Loop-safe and race-safe; PR runs from forks validate without pushing (their head branch heals via its own push events). [[00_Meta/prd]] §18 records the decision. Freshness remains locally enforced by the pre-commit hook; CI now repairs instead of rejecting.
+
 ## 2026-08-11 — VS Code Alternative-Editor Support (strict first-party)
 
 - Owner-directed: the vault is now usable in VS Code when Obsidian is unavailable, under an owner-set **strict first-party extension trust policy** (org publishers only — Microsoft, Anthropic, GitHub; built-ins preferred over extensions). Shipped root-scope `.vscode/` workspace config (the `.obsidian/` counterpart, dot-path outside the note corpus per [[00_Meta/prd]] §9.3): `extensions.json` recommends only Live Preview (HTML rendering, Microsoft) plus the P0-harness companions Claude Code (Anthropic) and Copilot (GitHub), with Prettier explicitly unwanted; `settings.json` covers the rest via built-ins — image paste into `08_Assets/`, markdown link validation and path completion, no write-on-save behavior, `vault-index.json` excluded from search.

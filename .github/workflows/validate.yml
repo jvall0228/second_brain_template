@@ -1,26 +1,55 @@
-# CI backstop for clones without the pre-commit hook installed (PRD §18):
-# rebuild the vault index, fail if it differs from the committed copy, and
-# run the full validation suite. Validation warnings (exit 2) pass; only
-# errors (exit 1) fail the run — same contract as the hook.
+# CI backstop for clones without the pre-commit hook installed (PRD §18).
+# Self-healing: regenerate the committed generated files (vault index, VS Code
+# snippets), run the full validation suite, then auto-commit the regenerated
+# files back to the branch on push events — so a hook-less environment (web
+# UI edits, agents without the hook) converges to a fresh index instead of
+# failing forever. Validation warnings (exit 2) pass; only errors (exit 1)
+# fail the run — same contract as the hook.
+#
+# Loop safety: the auto-commit push triggers one follow-up run, which finds
+# nothing to regenerate and commits nothing. If a concurrent push wins the
+# race, this run's push is skipped — the loser's own workflow run heals the
+# tip instead.
 name: validate
 
 on:
   push:
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: snippet parity (PRD §6.5)
-        run: python3 10_Agents/tools/vscode/gen_snippets.py --check
-      - name: brain validate --check-index
+      - name: regenerate index + snippets (PRD §18, §6.5)
+        run: |
+          python3 10_Agents/tools/brain/brain.py index
+          python3 10_Agents/tools/vscode/gen_snippets.py
+      - name: brain validate
         run: |
           set +e
-          python3 10_Agents/tools/brain/brain.py validate --check-index
+          python3 10_Agents/tools/brain/brain.py validate
           ec=$?
           case "$ec" in
             0|2) exit 0 ;;
             *) exit "$ec" ;;
           esac
+      - name: auto-commit regenerated files
+        # Push events on this repo only — PR runs from forks have a read-only
+        # token, and a PR's head branch gets healed by its own push events.
+        if: github.event_name == 'push'
+        run: |
+          git add 10_Agents/tools/brain/vault-index.json .vscode/second-brain.code-snippets
+          if git diff --cached --quiet; then
+            echo "generated files already fresh — nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "ci: regenerate vault index and snippets (auto-heal, PRD §18)"
+          # A concurrent push makes this push fail; that push's own run heals
+          # the new tip, so skipping here is safe and avoids a red run.
+          git push || echo "tip moved during run — newer push's workflow will heal it"
