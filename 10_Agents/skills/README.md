@@ -68,6 +68,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | [[10_Agents/skills/recommended-automations/SKILL\|recommended-automations]] | Wire inbound capture flows and rhythm jobs via the harness's scheduler |
 | [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] | Audit generated tooling: validate, prune, update, propose promotions |
 | [[10_Agents/skills/sync-upstream/SKILL\|sync-upstream]] | Pull upstream template releases into the fork: detect via `template_version` + release tags, classify (machinery / owner content / canonical docs), apply per lane, backfill, report — pull-only, dry-run first |
+| [[10_Agents/skills/self-improve/SKILL\|self-improve]] | The self-improving loop: observe friction (`brain report` trends, git history, triage outcomes, solution notes), propose single-topic spec changes (canonical docs by PR, else Inbox notes), record rejections, recur monthly — propose-only, never push upstream |
 
 ### Onboarding & environment
 
@@ -89,7 +90,7 @@ Vault-canonical skills live above. A separate, curated **links-only** catalog of
 |---------|--------|---------|
 | Daily | [[10_Agents/skills/daily-log/SKILL\|daily-log]] (+ any wired inbound capture flows) | First session of the day |
 | Weekly | [[10_Agents/skills/triage-inbox/SKILL\|triage-inbox]] → [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (weekly) → Outbox sweep (flag lingering `02_Outbox/` packets) | End of week |
-| Monthly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (monthly) + [[10_Agents/skills/vault-maintenance/SKILL\|vault-maintenance]] + [[10_Agents/skills/curate/SKILL\|curate]] | Month end |
+| Monthly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (monthly) + [[10_Agents/skills/vault-maintenance/SKILL\|vault-maintenance]] + [[10_Agents/skills/curate/SKILL\|curate]] + [[10_Agents/skills/self-improve/SKILL\|self-improve]] (spec retrospective) | Month end |
 | Quarterly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (quarterly, updates the Now page) + [[10_Agents/skills/curate/SKILL\|curate]] + [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] audit | Quarter end |
 | Yearly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (yearly) | Year end |
 

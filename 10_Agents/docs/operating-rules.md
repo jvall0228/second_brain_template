@@ -65,6 +65,10 @@ Before writing any note, verify:
 - [ ] Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])
 - [ ] **Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
 
+## Upstream Boundary
+
+**Never push upstream.** The fork pulls updates from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]], pull-only); agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. Generalizable improvements discovered in this fork are *suggested to the owner* as "worth upstreaming?" (in sync reports or [[10_Agents/skills/self-improve/SKILL|self-improve]] retrospectives) — the owner carries them upstream by hand if they choose.
+
 ## Concurrency
 
 Multiple agents may work in this vault. Sync (pull) before writing when the environment allows, keep commits small, and never force-push. Merge conflicts are resolved by the human.
