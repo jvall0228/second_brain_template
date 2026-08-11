@@ -12,6 +12,14 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] config | Claude Code sessions auto-install the pre-commit hook
+
+- Shipped repo-scoped `.claude/settings.json` (root dot-path per [[00_Meta/prd]] §9.3) with a `SessionStart` hook running `git config core.hooksPath .githooks` — every Claude Code session (local, web, cloud container) arms the pre-commit hook automatically, closing the hook-less-session stale-index failure mode at the source for the Claude fleet. Other harnesses get a new explicit bootstrap step in [[10_Agents/docs/operating-rules]] (arm the hook before first commit); the reworked self-healing CI (entry below) remains the universal backstop. Claude Code wiring doc updated.
+
+## [2026-08-11] rework | CI validate workflow is now self-healing
+
+- `.github/workflows/validate.yml` reworked (owner-directed, after eight consecutive stale-index failures from a hook-less external agent session): instead of failing on a stale committed index, CI regenerates the generated files (`vault-index.json`, `.vscode/second-brain.code-snippets`), runs the full `brain validate` suite (content errors still fail), and on push events auto-commits the regenerated files back to the branch as `github-actions[bot]`. Loop-safe and race-safe; PR runs from forks validate without pushing (their head branch heals via its own push events). [[00_Meta/prd]] §18 records the decision. Freshness remains locally enforced by the pre-commit hook; CI now repairs instead of rejecting.
+
 ## [2026-08-11] triage | VS Code support note filed to Resources
 
 - Triaged `02_Inbox/2026-08-11-vscode-editor-support.md` → [[06_Resources/vscode-editor-support]] (VS Code alternative-editor requirements, trust policy, candidate research, and the `.obsidian` → `.vscode` mapping). Dropped `workflow/draft` and added `expires: 2026-11-11` (software-surface research TTL, matching the sibling harness notes); retargeted the inbound references in [[00_Meta/prd]] §6.5, this changelog, and the two `.vscode/` config comments. Recorded the §6.5 acceptance-pass waiver and the note's now-merged status.
