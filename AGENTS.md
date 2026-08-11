@@ -31,7 +31,10 @@ After reading all four, the agent has enough context to begin work.
 
 All agent-generated output goes to **`02_Inbox/`** unless explicitly directed elsewhere. This is the **Inbox-first rule** — a human reviews and triages Inbox contents into the appropriate PARA directory.
 
-Standing exception: agents may append solution notes to `10_Agents/solutions/` — see [[10_Agents/README]].
+Standing exceptions:
+
+- Agents may append solution notes to `10_Agents/solutions/` — see [[10_Agents/README]].
+- During a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session, agents write interview results directly to `01_Profile/`, `04_Projects/`, and `05_Areas/` — the owner's in-the-moment approval is the review. Outside that session, Inbox-first applies as usual.
 
 See [[02_Inbox/README]] for triage instructions.
 

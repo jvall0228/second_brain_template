@@ -27,6 +27,7 @@ Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for 
 | [[10_Agents/skills/solution-capture/SKILL\|solution-capture]] | Vault maintenance | Record a solved problem in `10_Agents/solutions/` |
 | [[10_Agents/skills/research-to-resource/SKILL\|research-to-resource]] | Research → resource | Turn research into a `06_Resources/` note or zettel with provenance |
 | [[10_Agents/skills/onboard-harness/SKILL\|onboard-harness]] | Onboarding | Symlink-first user-scope install into a harness + memory-file wiring + hook |
+| [[10_Agents/skills/onboard-owner/SKILL\|onboard-owner]] | Onboarding | Guided first-run for a new (possibly non-technical) vault owner: teach by doing, fill the profile, orchestrate the other onboarding skills |
 | [[10_Agents/skills/agent-orientation/SKILL\|agent-orientation]] | Environment integration | Discover reachable context sources and generate access tooling + capture skills |
 | [[10_Agents/skills/recommended-automations/SKILL\|recommended-automations]] | Environment integration | Wire recurring email/calendar/chat ingestion via the harness's scheduler |
 | [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] | Environment integration | Audit generated tooling: validate, prune, update, propose promotions |

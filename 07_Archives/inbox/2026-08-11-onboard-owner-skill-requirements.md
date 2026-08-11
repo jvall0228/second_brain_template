@@ -5,8 +5,7 @@ tags:
   - audience/human
   - audience/agent
   - topic/software
-  - workflow/draft
-  - status/active
+  - status/done
 updated: 2026-08-11
 ---
 

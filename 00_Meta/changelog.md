@@ -12,6 +12,12 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — onboard-owner Skill Shipped
+
+- Thirteenth library skill, [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] (canonical, owner-promoted): a guided first-run for a new vault owner — plain-language teaching by doing (non-technical adopters are the ruling design constraint), a conversational interview that fills `01_Profile/`, and orchestration of [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] / [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]] / [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] via their own contracts. Resumable via an onboarding checklist note that archives on completion.
+- New standing write-policy exception recorded in [[AGENTS]] and [[00_Meta/conventions]]: during a live onboard-owner session, interview results write directly to `01_Profile/`, `04_Projects/`, and `05_Areas/` — in-the-moment owner approval is the review. Root README now points first-run adopters at the skill as the guided path.
+- Requirements note archived to `07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md`; the 2026-08-11 triage report archived alongside it.
+
 ## 2026-08-11 — Copilot Promoted to P0
 
 - Owner-directed ("add copilot support"): re-verified the whole Copilot surface against live docs — [[06_Resources/copilot-harness-deep-dive|deep-dive research]], superseding the M6 note's Copilot section. Key corrections: agent hooks run on the Copilot CLI **and** cloud agent (not just VS Code); symlinked skills fail in the CLI, so the `~/.agents/skills/` install path doesn't reach Copilot; `.github/copilot-instructions.md` is the only repo instruction channel for github.com Chat/Eclipse/Visual Studio; cloud-agent PRs run no CI until a human clicks "Approve and run workflows" (default).

@@ -82,7 +82,10 @@ Notes tagged `workflow/canonical` are foundational vault docs. They require a PR
 
 Agents write to `02_Inbox/` by default. Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
 
-**Standing exception:** agents may append solution notes to `10_Agents/solutions/` (see [[10_Agents/README]]) with required frontmatter including `type/solution`.
+**Standing exceptions:**
+
+- Agents may append solution notes to `10_Agents/solutions/` (see [[10_Agents/README]]) with required frontmatter including `type/solution`.
+- During a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session, agents write interview results directly to `01_Profile/`, `04_Projects/`, and `05_Areas/` — the owner approving each answer in the moment is the human review the Inbox-first rule exists to provide. The exception is scoped to that skill's live session only.
 
 **Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`. Before writing, check whether the file already exists; on collision, append a numeric suffix (`-2`). Never overwrite another agent's note.
 

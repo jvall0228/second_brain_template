@@ -4,8 +4,7 @@ tags:
   - type/log
   - audience/human
   - audience/agent
-  - workflow/draft
-  - status/active
+  - status/done
 updated: 2026-08-11
 ---
 

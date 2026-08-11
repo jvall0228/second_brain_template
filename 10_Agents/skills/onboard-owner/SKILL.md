@@ -5,13 +5,13 @@ title: "Skill: Onboard Owner"
 tags:
   - type/reference
   - audience/agent
-  - workflow/draft
+  - workflow/canonical
 updated: 2026-08-11
 ---
 
 # Onboard Owner
 
-Turn a fresh copy of this template into *someone's* second brain. This is the human counterpart to [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]: that skill wires up the software; this one welcomes the owner. Requirements history: `02_Inbox/2026-08-11-onboard-owner-skill-requirements.md`.
+Turn a fresh copy of this template into *someone's* second brain. This is the human counterpart to [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]: that skill wires up the software; this one welcomes the owner. Requirements history: `07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md`.
 
 ## The ruling constraint: the owner may be non-technical
 
