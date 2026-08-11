@@ -37,8 +37,17 @@ class SharedRegistrationContractTests(unittest.TestCase):
         self.assertIn(SHARED, text)
         self.assertIn("Template portability invariant", text)
         self.assertIn("<resolved-vault-path>", text)
-        self.assertIn("collapse them to one canonical block", text)
         self.assertIn("A fully-installed state is a no-op", text)
+        self.assertIn("registration_id", text)
+
+    def test_registry_is_explicitly_multi_vault_safe(self):
+        text = read(ONBOARD)
+        self.assertIn("multiple adopted vaults", text)
+        self.assertIn("preserve all other registered vault entries", text)
+        self.assertIn("do not derive the ID from the filesystem path", text)
+        self.assertIn("replaces only the entry matching `registration_id`", text)
+        self.assertIn("onboarding another vault does **not** add another harness-level block", text)
+        self.assertIn("Never delete another vault's entry", text)
 
     def test_every_supported_harness_accounts_for_shared_registration(self):
         for name, path in HARNESS_WIRING.items():
