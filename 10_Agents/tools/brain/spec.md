@@ -602,8 +602,9 @@ the new target removed). Uninstall likewise refuses drift and restores a removed
 target if manifest cleanup fails. Target and state parent chains are
 identity-bound before reads or writes; POSIX mutations use a held directory
 descriptor, while the portable fallback rechecks every component and rejects
-symlink/reparse-point swaps. A `KeyboardInterrupt` during the manifest phase
-rolls the preceding target mutation back before propagating. Preview, doctor,
+symlink/reparse-point swaps. A `KeyboardInterrupt` during target mutation or
+before the ownership-manifest commit rolls the mutation back before propagating;
+an already committed target/manifest pair remains consistent. Preview, doctor,
 and refused operations make zero writes. Tests use fake PATH/state/home
 directories exclusively.
 

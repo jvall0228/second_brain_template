@@ -4663,7 +4663,6 @@ def cmd_install(root: Path, args) -> int:
                 if current is None:
                     raise InstallError("installed launcher changed after preview; retry")
                 prior = current
-                _remove_external(target, target_guard)
             remaining = [
                 row for row in manifest["artifacts"] if row["platform"] != platform_name
             ]
@@ -4672,6 +4671,8 @@ def cmd_install(root: Path, args) -> int:
                 "schemaVersion": INSTALL_MANIFEST_SCHEMA_VERSION,
             }
             try:
+                if prior is not None:
+                    _remove_external(target, target_guard)
                 if not _manifest_is_unchanged(
                     state_file, manifest_present, manifest_snapshot, state_guard
                 ):
@@ -4683,10 +4684,35 @@ def cmd_install(root: Path, args) -> int:
                 else:
                     _remove_external(state_file, state_guard)
             except (OSError, InstallError, KeyboardInterrupt) as exc:
+                manifest_committed = False
+                try:
+                    if remaining:
+                        stored = _read_external_regular(
+                            state_file, state_guard, max_bytes=64 * 1024
+                        )
+                        manifest_committed = (
+                            stored is not None
+                            and stored[0] == _manifest_bytes(updated)
+                        )
+                    else:
+                        manifest_committed = (
+                            _external_lstat(state_file, state_guard) is None
+                        )
+                except (OSError, InstallError):
+                    pass
                 if prior is not None:
-                    _restore_external(
-                        target, prior, target_guard, _EXTERNAL_ABSENT
-                    )
+                    if not manifest_committed:
+                        current = _read_external_regular(
+                            target, target_guard, max_bytes=1024 * 1024
+                        )
+                        if current is None:
+                            _restore_external(
+                                target, prior, target_guard, _EXTERNAL_ABSENT
+                            )
+                        elif current[0] != prior[0]:
+                            raise InstallError(
+                                "uninstall rollback refused because target changed"
+                            ) from None
                 if isinstance(exc, KeyboardInterrupt):
                     raise
                 raise InstallError(
@@ -4729,7 +4755,6 @@ def cmd_install(root: Path, args) -> int:
                 )
                 if prior is None:
                     raise InstallError("target changed after preview; retry")
-            _atomic_external_write(target, source_bytes, source_mode, target_guard)
         updated_artifact = {
             "installedDigest": source_digest,
             "platform": platform_name,
@@ -4744,6 +4769,10 @@ def cmd_install(root: Path, args) -> int:
             "schemaVersion": INSTALL_MANIFEST_SCHEMA_VERSION,
         }
         try:
+            if changed_target:
+                _atomic_external_write(
+                    target, source_bytes, source_mode, target_guard
+                )
             if not _manifest_is_unchanged(
                 state_file, manifest_present, manifest_snapshot, state_guard
             ):
@@ -4752,10 +4781,32 @@ def cmd_install(root: Path, args) -> int:
                 state_file, _manifest_bytes(updated), 0o600, state_guard
             )
         except (OSError, InstallError, KeyboardInterrupt) as exc:
-            if changed_target:
-                _restore_external(
-                    target, prior, target_guard, source_digest
+            manifest_committed = False
+            try:
+                stored = _read_external_regular(
+                    state_file, state_guard, max_bytes=64 * 1024
                 )
+                manifest_committed = (
+                    stored is not None and stored[0] == _manifest_bytes(updated)
+                )
+            except (OSError, InstallError):
+                pass
+            if changed_target and not manifest_committed:
+                current = _read_external_regular(
+                    target, target_guard, max_bytes=1024 * 1024
+                )
+                if current is not None and hashlib.sha256(current[0]).hexdigest() == source_digest:
+                    _restore_external(
+                        target, prior, target_guard, source_digest
+                    )
+                elif prior is None and current is None:
+                    pass
+                elif prior is not None and current is not None and current[0] == prior[0]:
+                    pass
+                else:
+                    raise InstallError(
+                        "install rollback refused because target changed"
+                    ) from None
             if isinstance(exc, KeyboardInterrupt):
                 raise
             raise InstallError(

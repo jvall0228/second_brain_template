@@ -355,6 +355,27 @@ class InstallerTests(unittest.TestCase):
             self.assertFalse((bin_dir / "brain").exists())
             self.assertFalse(state_file.exists())
 
+    def test_keyboard_interrupt_after_target_replace_rolls_back_unrecorded_install(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state/brain-install.json"
+            original_write = brain._atomic_external_write
+
+            def interrupt_after_target(path, data, mode, guard):
+                result = original_write(path, data, mode, guard)
+                if path.name == "brain":
+                    raise KeyboardInterrupt
+                return result
+
+            with mock.patch.object(
+                brain, "_atomic_external_write", side_effect=interrupt_after_target
+            ), self.assertRaises(KeyboardInterrupt):
+                self.run_install(bin_dir, state_file, "--apply")
+            self.assertFalse((bin_dir / "brain").exists())
+            self.assertFalse(state_file.exists())
+
     def test_keyboard_interrupt_during_uninstall_manifest_removal_restores_target(self):
         with tempfile.TemporaryDirectory() as td:
             base = Path(td)
@@ -373,6 +394,30 @@ class InstallerTests(unittest.TestCase):
 
             with mock.patch.object(
                 brain, "_remove_external", side_effect=interrupt_manifest_removal
+            ), self.assertRaises(KeyboardInterrupt):
+                self.run_install(bin_dir, state_file, "--uninstall", "--apply")
+            self.assertEqual(target.read_bytes(), LAUNCHER.read_bytes())
+            self.assertTrue(state_file.exists())
+
+    def test_keyboard_interrupt_after_target_unlink_restores_recorded_install(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state/brain-install.json"
+            code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+            self.assertEqual(code, 0)
+            target = bin_dir / "brain"
+            original_remove = brain._remove_external
+
+            def interrupt_after_target(path, guard, *, missing_ok=False):
+                result = original_remove(path, guard, missing_ok=missing_ok)
+                if path.name == "brain":
+                    raise KeyboardInterrupt
+                return result
+
+            with mock.patch.object(
+                brain, "_remove_external", side_effect=interrupt_after_target
             ), self.assertRaises(KeyboardInterrupt):
                 self.run_install(bin_dir, state_file, "--uninstall", "--apply")
             self.assertEqual(target.read_bytes(), LAUNCHER.read_bytes())
