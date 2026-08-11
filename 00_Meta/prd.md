@@ -144,12 +144,12 @@ Support is **standards-first** and tiered by priority. The foundation is the P0 
 | P0 | Codex (CLI, web, and desktop app) | Reads `AGENTS.md` natively |
 | P0 | Opencode | Reads `AGENTS.md` natively |
 | P0 | Pi | Reads `AGENTS.md` natively |
+| P0 | Copilot | Reads `AGENTS.md` natively on agent surfaces; shipped `.github/copilot-instructions.md` shim for the rest |
 | P1 | Cursor | To specify at M6 |
-| P1 | Copilot | To specify at M6 |
 | P1 | Muse Code | To specify at M6 |
 
 Tier meanings:
-- **P0 — must support:** the standards track plus the first wave of M6 adapters (Claude Code, Codex, Opencode, Pi). The standards track is not a harness and comes first: anything achievable through a cross-harness standard is solved there, not in a harness-specific adapter — adapters carry only what a standard cannot. The vault is not harness-complete without all five rows.
+- **P0 — must support:** the standards track plus the M6 adapters (first wave: Claude Code, Codex, Opencode, Pi; **Copilot promoted from P1 on 2026-08-11** after the owner directed full Copilot support — hardened wiring, shipped `.github/` config, cloud-agent enforcement hook; the tier placement itself is this promotion's interpretation of that directive and awaits owner confirmation). The standards track is not a harness and comes first: anything achievable through a cross-harness standard is solved there, not in a harness-specific adapter — adapters carry only what a standard cannot. The vault is not harness-complete without all six rows.
 - **P1 — should support:** second wave of adapters, after P0 ships.
 
 ## 9. Agent library directory (`10_Agents/`)
@@ -173,7 +173,7 @@ The directory is a plugin library:
   tools/brain/           # executable tools; brain shipped here at M5 (§19)
   harnesses/<name>/      # harness-specific adapters (hooks, rules)
 ```
-Design principles: universal primitives (skills, tools) work across any agent harness; skills use the **Agent Skills format** — folder-per-skill with a `SKILL.md` carrying YAML frontmatter (decision 2026-08-11) — so harnesses that understand the standard consume them unchanged; harness-specific adapters are isolated under `harnesses/<name>/` and carry only what a cross-harness standard cannot; adapters ship both reference configs and wiring docs. Which harnesses get adapters, and in what order, is defined by the support tiers in §8.3 (standards-first).
+Design principles: universal primitives (skills, tools) work across any agent harness; skills use the **Agent Skills format** — folder-per-skill with a `SKILL.md` carrying YAML frontmatter (decision 2026-08-11) — so harnesses that understand the standard consume them unchanged; harness-specific adapters are isolated under `harnesses/<name>/` and carry only what a cross-harness standard cannot; adapters ship reference configs and wiring docs — or, where zero-setup requires it, working config committed at root scope (dot-paths like `.github/` sit outside the note corpus; `CLAUDE.md` (§8.2) is the precedent, and Copilot's instructions shim + agent hook ship this way, 2026-08-11). Which harnesses get adapters, and in what order, is defined by the support tiers in §8.3 (standards-first).
 
 **Write policy (decision 2026-08-11):** the Inbox-first carve-out extends to this library — agents may add or update **agent-generated** skills and tools directly, tagging them `workflow/draft` until the human promotes them. Template-**shipped** skills and tools are canonical (§11) and follow §6.3 change control. Restructuring or deleting still requires human direction.
 
@@ -298,6 +298,7 @@ This vault is a personal context layer read in full by every connected agent ser
 ## 18. Validation and enforcement
 - **Current (shipped at M5, 2026-08-11):** `brain validate` checks frontmatter fields, tag namespaces against the [[00_Meta/conventions]] table (read at runtime — conventions stays the single source), filename conventions, and wikilink resolution; exit codes 0 clean / 1 errors / 2 warnings.
 - **Automated enforcement (shipped at M5):** the versioned pre-commit hook `.githooks/pre-commit` (installed via `git config core.hooksPath .githooks`) regenerates the committed vault index and runs `brain validate`, blocking commits on errors; `.github/workflows/validate.yml` re-runs validation and index freshness on push as the backstop for clones without the hook. This resolved the former §21 open consideration.
+- **Copilot cloud agent (added 2026-08-11):** the agent hook `.github/hooks/vault-validate.json` blocks the Copilot cloud agent from finishing a session while `brain validate --check-index` reports errors (cloud-only, repeat-block-guarded, fail-open on timeout) — covering the one surface whose commits bypass git hooks and whose PR workflows are approval-gated by default. See [[10_Agents/harnesses/copilot/wiring]].
 - The self-validation checklist in [[10_Agents/docs/operating-rules]] remains the agent-side first line of defense and now ends with running `brain validate`.
 
 ## 19. Milestones (status as of 2026-08-11)

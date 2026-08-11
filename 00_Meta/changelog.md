@@ -12,6 +12,13 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Copilot Promoted to P0
+
+- Owner-directed ("add copilot support"): re-verified the whole Copilot surface against live docs — [[02_Inbox/2026-08-11-copilot-harness-deep-dive|deep-dive research]], superseding the M6 note's Copilot section. Key corrections: agent hooks run on the Copilot CLI **and** cloud agent (not just VS Code); symlinked skills fail in the CLI, so the `~/.agents/skills/` install path doesn't reach Copilot; `.github/copilot-instructions.md` is the only repo instruction channel for github.com Chat/Eclipse/Visual Studio; cloud-agent PRs run no CI until a human clicks "Approve and run workflows" (default).
+- Shipped **working config in-repo** (dot-paths sit outside the note corpus, so `brain` never validates or indexes them): a thin `.github/copilot-instructions.md` bootstrap shim, and an `agentStop` agent hook (`.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh`) that blocks the cloud agent from finishing while `brain validate --check-index` reports errors — cloud-only, repeat-block-guarded, `SECOND_BRAIN_HOOK_DISABLE=1` escape hatch. [[00_Meta/prd]] §18 records the new enforcement layer.
+- Rewrote [[10_Agents/harnesses/copilot/wiring|the wiring doc]] to P0 depth (per-surface entrypoints, skills, enforcement chain, permissions, MCP, secrets, automation; the example `.txt` shim was deleted — the real file ships now). Corrected two canonical skills: [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] (Copilot gets `copilot skill add`/copies, never symlinks) and [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] (Copilot schedules via gh-aw/`gh agent-task`, not cron-only).
+- [[00_Meta/prd]] §8.3 moves Copilot to P0 and §9.3 sanctions root-scope shipped adapter config (`CLAUDE.md` precedent). The tier placement awaits owner confirmation; plan + adversarial-review log in `02_Inbox/2026-08-11-copilot-p0-plan.md`.
+
 ## 2026-08-11 — M7: Environment Integration Shipped (template scope)
 
 - Three environment-integration skills joined `10_Agents/skills/` (canonical): `agent-orientation` (inventory the environment, interview the owner, generate per-source access tooling + draft capture skills), `recommended-automations` (recurring email/calendar/chat/transcript ingestion via each harness's scheduler, dry-run first), and `self-maintenance` (recurring audit of generated tooling: validate, probe sources, prune, propose draft → promotion). Each states the integration preference ladder (custom env tooling → first-party CLI → first-party MCP/connector) and the no-credentials rule (PRD §16.2) inline.

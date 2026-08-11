@@ -35,7 +35,8 @@ Use the harness's own scheduler; fall back to system cron running the harness he
 - **Claude Code** — Routines/scheduled tasks, or `claude -p "<skill prompt>"` from cron
 - **Codex** — cloud scheduled tasks (RRULE), or `codex exec` from cron
 - **Cursor** — Cloud Automations (cron)
-- **opencode / Pi / Copilot / Muse Code** — no built-in scheduler: system cron + the harness's headless mode (`opencode run`, `pi -p`, `copilot -p`, `muse exec`)
+- **Copilot** — [gh-aw](https://github.github.com/gh-aw/reference/copilot-cloud-agent/) scheduled workflows or `gh agent-task` for cloud-agent flows; system cron + `copilot -p` locally
+- **opencode / Pi / Muse Code** — no built-in scheduler: system cron + the harness's headless mode (`opencode run`, `pi -p`, `muse exec`)
 
 Document each wired flow in the harness's context (what runs, when, writing what, where auth lives) as an Inbox note for owner review; the flow itself starts disabled/dry-run until the owner approves it.
 

@@ -7,8 +7,10 @@ Run from the vault root:
 import contextlib
 import io
 import json
+import os
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -329,6 +331,10 @@ class CliTests(unittest.TestCase):
         self.assertEqual(json.loads(out)["type"]["note"], 6)
         code, out = self.run_cli("show", "01_Notes/alpha.md", "--json")
         self.assertEqual(json.loads(out)["title"], "Alpha")
+        # A fresh checkout flattens every fixture mtime, so pin the ordering
+        # `recent` is expected to report instead of inheriting clone timestamps.
+        now = time.time()
+        os.utime(FIXTURE / "01_Notes" / "alpha.md", (now + 60, now + 60))
         code, out = self.run_cli("recent", "3", "--json")
         rows = json.loads(out)
         self.assertEqual(len(rows), 3)

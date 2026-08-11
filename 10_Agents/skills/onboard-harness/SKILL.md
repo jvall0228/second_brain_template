@@ -23,8 +23,9 @@ Consult `10_Agents/harnesses/<harness>/wiring.md` when it exists — it is autho
 ## Install algorithm
 
 1. **Skills (symlink-first).** Create symlinks from the harness's user-level skills discovery path back to the canonical folders:
-   - `~/.agents/skills/<skill-name>` → `<vault>/10_Agents/skills/<skill-name>` — the shared standard path scanned by Codex, opencode, Pi, Cursor, Copilot, and Muse Code (one install covers all six).
+   - `~/.agents/skills/<skill-name>` → `<vault>/10_Agents/skills/<skill-name>` — the shared standard path scanned by Codex, opencode, Pi, Cursor, and Muse Code (one install covers all five).
    - `~/.claude/skills/<skill-name>` → same targets — Claude Code scans only its own directory.
+   - **Copilot is the exception — no symlinks:** its CLI ignores symlinked skills and does not reliably discover `~/.agents/skills/`. Register the vault's real directory instead (`copilot skill add <vault>/10_Agents/skills`; uninstall via `copilot skill remove`), or copy skill folders into `~/.copilot/skills/` with hashes recorded for drift re-sync — see [[10_Agents/harnesses/copilot/wiring]].
    Link each skill **folder** individually (never the whole `skills/` dir — the user may have their own skills there). An existing correct link is a no-op; an existing foreign file/dir is **never overwritten** — report it and skip.
 2. **Copy fallback.** Where symlinks are unavailable (e.g. Windows without Developer Mode), copy instead and record the copy + a content hash in the manifest so later runs detect drift and offer re-sync.
 3. **Memory-file import block.** Append a marker-delimited block to the harness's **user-level** memory file (its `CLAUDE.md` equivalent — e.g. `~/.claude/CLAUDE.md` for Claude Code), creating the file if absent, using the adopter's absolute vault path:
@@ -36,7 +37,7 @@ Consult `10_Agents/harnesses/<harness>/wiring.md` when it exists — it is autho
    The import line inside the block is harness-specific (Claude Code uses `@path` imports; AGENTS.md-native harnesses may instead need an instruction line or a config entry — per wiring doc). Everything outside the markers is the user's own content: never touch it. Re-running replaces only the block; uninstall removes only the block.
 4. **Shared config files: merge, never link.** Where a primitive lives inside a config file the user also owns (settings JSON/TOML, MCP server registrations, hook registrations), edit additively and idempotently per the wiring doc — symlinking whole files would clobber user config.
 5. **Pre-commit hook.** In the vault clone: `git config core.hooksPath .githooks`.
-6. **Manifest.** Record every action in `~/.agents/second-brain-manifest.json`: vault path, harness, and each created link / copy (with hash) / memory-file block / merged config entry. Idempotence and uninstall both read this file.
+6. **Manifest.** Record every action in `~/.agents/second-brain-manifest.json`: vault path, harness, and each created link / copy (with hash) / memory-file block / merged config entry / registered skills location. Idempotence and uninstall both read this file.
 
 ## Re-run and uninstall
 

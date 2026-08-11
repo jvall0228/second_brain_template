@@ -2,7 +2,6 @@
  "assets": [
   "10_Agents/harnesses/claude-code/settings-example.json",
   "10_Agents/harnesses/codex/config-example.toml",
-  "10_Agents/harnesses/copilot/copilot-instructions-example.txt",
   "10_Agents/harnesses/cursor/cursorignore-example.txt",
   "10_Agents/harnesses/cursor/rule-example.mdc",
   "10_Agents/harnesses/opencode/opencode-example.json",
@@ -144,45 +143,105 @@
     {
      "level": 2,
      "line": 15,
-     "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
+     "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
      "line": 22,
+     "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
+    },
+    {
+     "level": 2,
+     "line": 29,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 35,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 34,
+     "line": 41,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 51,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 56,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 55,
+     "line": 62,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 73,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
    "links": [
+    {
+     "display": "deep-dive research",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|deep-dive research]]",
+     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
+     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "the wiring doc",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
     {
      "display": null,
      "embed": false,
@@ -198,7 +257,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 27,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 31,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -209,7 +279,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 38,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -220,7 +290,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 32,
+     "line": 39,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -231,7 +301,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 36,
+     "line": 43,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -242,22 +312,11 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 46,
+     "line": 53,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 52,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
      "warnings": []
     },
     {
@@ -266,6 +325,17 @@
      "fragment": null,
      "line": 59,
      "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 66,
+     "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
@@ -275,7 +345,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 60,
+     "line": 67,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -286,7 +356,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 60,
+     "line": 67,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -297,7 +367,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 71,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -305,7 +375,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10247,
+   "sizeBytes": 12185,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -1100,57 +1170,57 @@
     },
     {
      "level": 2,
-     "line": 303,
+     "line": 304,
      "text": "19. Milestones (status as of 2026-08-11)"
     },
     {
      "level": 3,
-     "line": 304,
+     "line": 305,
      "text": "M0: Bootstrap Minimum — **Done**"
     },
     {
      "level": 3,
-     "line": 308,
+     "line": 309,
      "text": "M1: Repo skeleton expansion — **Done**"
     },
     {
      "level": 3,
-     "line": 311,
+     "line": 312,
      "text": "M2: Canonical navigation — **Done**"
     },
     {
      "level": 3,
-     "line": 314,
+     "line": 315,
      "text": "M3: Templates + agent docs — **Done**"
     },
     {
      "level": 3,
-     "line": 317,
+     "line": 318,
      "text": "M4: Navigation integrity — **Done**"
     },
     {
      "level": 3,
-     "line": 320,
+     "line": 321,
      "text": "M5: Vault Index CLI (`brain`) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 329,
+     "line": 330,
      "text": "M6: Agent Plugin Library (core) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 335,
+     "line": 336,
      "text": "M7: Environment Integration — **Done (2026-08-11, template scope)**"
     },
     {
      "level": 2,
-     "line": 343,
+     "line": 344,
      "text": "20. Acceptance criteria (M0, objective)"
     },
     {
      "level": 2,
-     "line": 353,
+     "line": 354,
      "text": "21. Open considerations (document-only, not blockers)"
     }
    ],
@@ -1293,6 +1363,17 @@
      "fragment": null,
      "line": 301,
      "placeholder": false,
+     "raw": "[[10_Agents/harnesses/copilot/wiring]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 302,
+     "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
      "target": "10_Agents/docs/operating-rules",
@@ -1302,7 +1383,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 321,
+     "line": 322,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1313,7 +1394,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 327,
+     "line": 328,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -1324,7 +1405,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 350,
+     "line": 351,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1335,7 +1416,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 357,
+     "line": 358,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1343,7 +1424,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 30261,
+   "sizeBytes": 31282,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -1896,7 +1977,11 @@
   },
   "02_Inbox/2026-08-11-copilot-harness-deep-dive.md": {
    "backlinks": [
-    "02_Inbox/2026-08-11-copilot-p0-plan.md"
+    "00_Meta/changelog.md",
+    "02_Inbox/2026-08-11-copilot-p0-plan.md",
+    "02_Inbox/2026-08-11-harness-primitives-research.md",
+    "10_Agents/harnesses/README.md",
+    "10_Agents/harnesses/copilot/wiring.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -2575,152 +2660,152 @@
     },
     {
      "level": 4,
-     "line": 457,
+     "line": 459,
      "text": "Context & memory files"
     },
     {
      "level": 4,
-     "line": 462,
+     "line": 464,
      "text": "Rules"
     },
     {
      "level": 4,
-     "line": 465,
+     "line": 467,
      "text": "Skills"
     },
     {
      "level": 4,
-     "line": 468,
+     "line": 470,
      "text": "Commands"
     },
     {
      "level": 4,
-     "line": 471,
+     "line": 473,
      "text": "Subagents / custom agents"
     },
     {
      "level": 4,
-     "line": 474,
+     "line": 476,
      "text": "Hooks"
     },
     {
      "level": 4,
-     "line": 477,
+     "line": 479,
      "text": "Plugins"
     },
     {
      "level": 4,
-     "line": 480,
+     "line": 482,
      "text": "Output styles / personas"
     },
     {
      "level": 4,
-     "line": 483,
+     "line": 485,
      "text": "MCP"
     },
     {
      "level": 4,
-     "line": 486,
+     "line": 488,
      "text": "Config & settings"
     },
     {
      "level": 4,
-     "line": 489,
+     "line": 491,
      "text": "Permissions & sandboxing"
     },
     {
      "level": 4,
-     "line": 492,
+     "line": 494,
      "text": "Automation & scheduling"
     },
     {
      "level": 4,
-     "line": 495,
+     "line": 497,
      "text": "Vault wiring implications"
     },
     {
      "level": 4,
-     "line": 503,
+     "line": 505,
      "text": "Sources"
     },
     {
      "level": 3,
-     "line": 531,
+     "line": 533,
      "text": "Muse Code (P1)"
     },
     {
      "level": 4,
-     "line": 534,
+     "line": 536,
      "text": "Context & memory files"
     },
     {
      "level": 4,
-     "line": 537,
+     "line": 539,
      "text": "Rules"
     },
     {
      "level": 4,
-     "line": 540,
+     "line": 542,
      "text": "Skills"
     },
     {
      "level": 4,
-     "line": 543,
+     "line": 545,
      "text": "Commands"
     },
     {
      "level": 4,
-     "line": 546,
+     "line": 548,
      "text": "Subagents / custom agents"
     },
     {
      "level": 4,
-     "line": 549,
+     "line": 551,
      "text": "Hooks"
     },
     {
      "level": 4,
-     "line": 552,
+     "line": 554,
      "text": "Plugins"
     },
     {
      "level": 4,
-     "line": 555,
+     "line": 557,
      "text": "Output styles / personas"
     },
     {
      "level": 4,
-     "line": 558,
+     "line": 560,
      "text": "MCP"
     },
     {
      "level": 4,
-     "line": 561,
+     "line": 563,
      "text": "Config & settings"
     },
     {
      "level": 4,
-     "line": 564,
+     "line": 566,
      "text": "Permissions & sandboxing"
     },
     {
      "level": 4,
-     "line": 567,
+     "line": 569,
      "text": "Automation & scheduling"
     },
     {
      "level": 4,
-     "line": 570,
+     "line": 572,
      "text": "Vault wiring implications"
     },
     {
      "level": 4,
-     "line": 578,
+     "line": 580,
      "text": "Sources"
     },
     {
      "level": 2,
-     "line": 592,
+     "line": 594,
      "text": "Related"
     }
    ],
@@ -2762,7 +2847,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 594,
+     "line": 456,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive]]",
+     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
+     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 596,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -2773,7 +2869,7 @@
      "display": "M5–M7 Implementation Plan",
      "embed": false,
      "fragment": null,
-     "line": 595,
+     "line": 597,
      "placeholder": false,
      "raw": "[[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]",
      "resolved": "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
@@ -2784,7 +2880,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 596,
+     "line": 598,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -2792,7 +2888,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 108305,
+   "sizeBytes": 108617,
    "title": "Harness Primitives Research",
    "updated": "2026-08-11"
   },
@@ -7151,25 +7247,25 @@
      "warnings": []
     },
     {
-     "display": "Cursor",
+     "display": "Copilot",
      "embed": false,
      "fragment": null,
      "line": 23,
      "placeholder": false,
-     "raw": "[[10_Agents/harnesses/cursor/wiring\\|Cursor]]",
-     "resolved": "10_Agents/harnesses/cursor/wiring.md",
-     "target": "10_Agents/harnesses/cursor/wiring",
+     "raw": "[[10_Agents/harnesses/copilot/wiring\\|Copilot]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
      "warnings": []
     },
     {
-     "display": "Copilot",
+     "display": "Cursor",
      "embed": false,
      "fragment": null,
      "line": 24,
      "placeholder": false,
-     "raw": "[[10_Agents/harnesses/copilot/wiring\\|Copilot]]",
-     "resolved": "10_Agents/harnesses/copilot/wiring.md",
-     "target": "10_Agents/harnesses/copilot/wiring",
+     "raw": "[[10_Agents/harnesses/cursor/wiring\\|Cursor]]",
+     "resolved": "10_Agents/harnesses/cursor/wiring.md",
+     "target": "10_Agents/harnesses/cursor/wiring",
      "warnings": []
     },
     {
@@ -7193,9 +7289,20 @@
      "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
      "target": "02_Inbox/2026-08-11-harness-primitives-research",
      "warnings": []
+    },
+    {
+     "display": "the same-day Copilot deep-dive",
+     "embed": false,
+     "fragment": null,
+     "line": 27,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|the same-day Copilot deep-dive]]",
+     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
+     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2035,
+   "sizeBytes": 2205,
    "title": "Harness Adapters",
    "updated": "2026-08-11"
   },
@@ -7343,7 +7450,10 @@
   },
   "10_Agents/harnesses/copilot/wiring.md": {
    "backlinks": [
-    "10_Agents/harnesses/README.md"
+    "00_Meta/changelog.md",
+    "00_Meta/prd.md",
+    "10_Agents/harnesses/README.md",
+    "10_Agents/skills/onboard-harness/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -7371,44 +7481,71 @@
     },
     {
      "level": 2,
-     "line": 23,
+     "line": 26,
      "text": "Skills"
     },
     {
      "level": 2,
-     "line": 27,
-     "text": "Hook installation"
+     "line": 37,
+     "text": "Enforcement chain"
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 49,
      "text": "Invoking brain"
     },
     {
      "level": 2,
-     "line": 39,
+     "line": 57,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 66,
+     "text": "User scope (onboard-harness)"
+    },
+    {
+     "level": 2,
+     "line": 71,
      "text": "Reference config"
     }
    ],
    "links": [
     {
-     "display": "research",
+     "display": "the Copilot deep-dive",
      "embed": false,
-     "fragment": "Copilot",
+     "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#Copilot|research]]",
+     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|the Copilot deep-dive]]",
+     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
+     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "warnings": []
+    },
+    {
+     "display": "the M6 research",
+     "embed": false,
+     "fragment": "GitHub Copilot (P1)",
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#GitHub Copilot (P1)|the M6 research]]",
      "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
      "target": "02_Inbox/2026-08-11-harness-primitives-research",
      "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 61,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2314,
+   "sizeBytes": 9015,
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
   },
@@ -8067,6 +8204,7 @@
   },
   "10_Agents/skills/onboard-harness/SKILL.md": {
    "backlinks": [
+    "00_Meta/changelog.md",
     "10_Agents/harnesses/README.md",
     "10_Agents/skills/README.md"
    ],
@@ -8101,22 +8239,34 @@
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 42,
      "text": "Re-run and uninstall"
     },
     {
      "level": 2,
-     "line": 46,
+     "line": 47,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 53,
      "text": "References"
     }
    ],
-   "links": [],
-   "sizeBytes": 4453,
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 28,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/copilot/wiring]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 4875,
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
@@ -8166,6 +8316,8 @@
   },
   "10_Agents/skills/recommended-automations/SKILL.md": {
    "backlinks": [
+    "00_Meta/changelog.md",
+    "10_Agents/harnesses/copilot/wiring.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],
@@ -8204,17 +8356,17 @@
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 43,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 50,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 3059,
+   "sizeBytes": 3222,
    "title": "Skill: Recommended Automations",
    "updated": "2026-08-11"
   },
