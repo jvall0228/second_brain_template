@@ -60,18 +60,29 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
    git config merge.regenerate.driver true
    ```
    The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild the index, snippets, and adapters, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
-6. **Delete the seeded examples** once you've seen the pattern:
-   - `04_Projects/example-project/`
-   - `05_Areas/example-area/`
-   - `06_Resources/example-resource.md`
-   - `03_Journal/people/example-person.md`
-   - `03_Journal/ideas/example-idea.md`
-   - `03_Journal/periodic/daily/2025-01-15.md`
-   - `03_Journal/periodic/weekly/2025-W03-review.md`
-   - `02_Inbox/2026-08-11-para-operations-implementation-plan.md` — shipped development capture, not structure
-   - `02_Inbox/2026-08-11-para-operations-skills-requirements.md` — shipped development capture, not structure
+6. **Remove the seeded examples as one bundle** once you've seen the pattern.
+   `10_Agents/tools/adopt_examples.json` is the sole bundle authority; never
+   delete an example selectively. Preview every deletion and marked reference
+   edit, save that machine-readable plan outside the vault, then apply the
+   exact approved plan:
 
-   Index and README bullets pointing at an example are marked *"Delete once you've seen the pattern"* — drop those lines along with the note they point to. This list is mirrored machine-readably in `10_Agents/tools/adopt_examples.json`; CI's adopter-flow smoke test (`10_Agents/tools/adopt_check.py`) replays this whole section — delete the examples, fill `01_Profile/`, make a first capture — and fails if the list drifts or the post-adoption vault stops validating clean.
+   ```sh
+   # macOS/Linux: keep the plan outside the vault
+   python3 10_Agents/tools/adopt_check.py plan --output "${TMPDIR:-/tmp}/second-brain-adopt-plan.json"
+   python3 10_Agents/tools/adopt_check.py apply "${TMPDIR:-/tmp}/second-brain-adopt-plan.json"
+   ```
+
+   On Windows PowerShell, use
+   `$env:TEMP\second-brain-adopt-plan.json` for the same external plan path.
+
+   Apply refuses missing examples, ignored or untracked occupants, unmarked
+   surviving links, dirty or changed inputs (including the validator), unsafe
+   paths, and stale plans. It rolls back the whole bundle if index regeneration
+   or independent post-apply verification fails. If an interruption leaves the
+   durable cleanup lock in place, run `python3 10_Agents/tools/adopt_check.py recover`
+   rather than deleting recovery state by hand. CI's no-argument adopter smoke test replays the
+   atomic cleanup, fills `01_Profile/`, makes a first capture, and requires zero
+   validation errors.
 7. Start capturing into `02_Inbox/` and triage from there.
 
 ## Validation and the vault index

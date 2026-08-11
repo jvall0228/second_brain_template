@@ -32,6 +32,12 @@ Notable structural changes to the vault. For individual file history, use `git l
 - Removed revision banners, addenda, resolved consideration logs, M0-only acceptance framing, and shipped-as-planned language. Historical release detail remains here and in Git rather than being duplicated in the PRD.
 - Updated [[00_Meta/status]] through M12, reconciled canonical-by-policy and generated-draft write lanes across the active agent rules, and added a PRD-specific edit-in-place rule to [[10_Agents/docs/operating-rules]].
 
+## [2026-08-11] improve-onboarding | Starter intent and atomic adoption (#81, #84)
+
+- Owner onboarding starts with work, personal life, exploring both, or not sure yet; free-form answers remain valid, one grounded recommendation is conditional, and the owner can change direction later.
+- `adopt_examples.json` is now the sole seeded-example authority. Deterministic plan/apply inventories every deletion occupant and marked line edit, refuses unsafe/missing/ignored/untracked/unmarked/dirty/stale state, binds the validator hash, applies under a durable recovery lock, independently checks the regenerated vault index, and rolls back on failure.
+- Contract and adversarial tests cover the reported cross-links, aliases, manifest drift, path traversal, case/symlink hazards, dirty/stale plans, late-file and late-manifest races, recreated paths, interrupted recovery, post-apply validation, and idempotent all-or-nothing behavior.
+
 ## [2026-08-11] add-skill-adapters | Clean-clone project discovery (#82)
 
 - Canonical skill `name`/`description` now generate versioned text adapters in `.agents/skills/` and `.claude/skills/`; adapters point back to the sole workflow body under `10_Agents/skills/` and never use symlinks.

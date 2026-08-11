@@ -6,20 +6,15 @@ of the working tree and requires the result to validate clean:
 
 1. Copy the working tree to a scratch directory (dot-paths and __pycache__
    excluded — same corpus brain sees).
-2. Delete the seeded examples and shipped capture notes. The delete list is
-   data-driven from ``adopt_examples.json`` (one source of truth); every
-   listed path must actually exist, and the list must agree with the bullet
-   list under "Delete the seeded examples" in the root README, so neither
-   can drift from reality or from each other.
-3. Drop the example-pointer lines in structural docs — every such line is
-   marked with the (case-insensitive) cleanup marker phrase from the data
-   file ("delete once you've seen the pattern"). A wikilink to a seeded
-   example WITHOUT that marker survives to step 5 and turns the check red.
-4. "Dumb-fill" the ``01_Profile/`` shells: strip the template-note callouts,
+2. Build and atomically apply the seeded-example cleanup plan whose sole
+   authority is ``adopt_examples.json``. The plan lists every deletion and
+   marked reference edit and refuses missing, unsafe, unmarked, or stale
+   inputs before mutation; its post-apply validation must pass.
+3. "Dumb-fill" the ``01_Profile/`` shells: strip the template-note callouts,
    replace every ``<!-- ... -->`` placeholder with minimal plausible text,
    bump ``updated:``. Deliberately sed-level — this tests the template
    contract, not agent intelligence (``onboard-owner`` is the smart path).
-5. Write one conventions-conforming capture note to ``02_Inbox/`` (the M0
+4. Write one conventions-conforming capture note to ``02_Inbox/`` (the M0
    success criterion), then run ``brain index`` and ``brain validate`` in
    the scratch copy. Validation must report zero errors (exit 0 or 2).
 
@@ -27,13 +22,15 @@ Exit 0 on success, 1 with a clear report on any failure. Stdlib only.
 
 Usage:
     python3 10_Agents/tools/adopt_check.py [--repo PATH] [--keep]
+    python3 10_Agents/tools/adopt_check.py plan [--repo PATH] [--json] [--output PATH]
+    python3 10_Agents/tools/adopt_check.py apply PLAN.json [--repo PATH]
+    python3 10_Agents/tools/adopt_check.py recover [--repo PATH]
 """
 
 from __future__ import annotations
 
 import argparse
 import datetime as _dt
-import json
 import re
 import shutil
 import subprocess
@@ -41,12 +38,18 @@ import sys
 import tempfile
 from pathlib import Path
 
+from adopt_cleanup import (
+    AdoptionError,
+    apply_plan,
+    build_plan,
+    plan_human,
+    read_plan,
+    recover_cleanup,
+    write_plan,
+)
+
 TOOLS_DIR = Path(__file__).resolve().parent
 DEFAULT_REPO = TOOLS_DIR.parents[1]
-DATA_FILE_REL = "10_Agents/tools/adopt_examples.json"
-
-README_HEADER = "**Delete the seeded examples**"
-BULLET_RE = re.compile(r"^\s*-\s+`([^`]+)`")
 COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 CALLOUT_RE = re.compile(r"^> \*\*Template note:\*\*.*$\n?", re.MULTILINE)
 UPDATED_RE = re.compile(r"^updated:\s*.*$", re.MULTILINE)
@@ -73,49 +76,9 @@ def copy_ignore(_dir: str, names: list[str]) -> list[str]:
     return [n for n in names if n.startswith(".") or n == "__pycache__"]
 
 
-def readme_delete_list(readme_text: str) -> list[str] | None:
-    """The backticked paths bulleted under the 'Delete the seeded examples'
-    step, or None if the header is missing."""
-    lines = readme_text.split("\n")
-    try:
-        start = next(i for i, l in enumerate(lines) if README_HEADER in l)
-    except StopIteration:
-        return None
-    items: list[str] = []
-    for line in lines[start + 1 :]:
-        m = BULLET_RE.match(line)
-        if not m:
-            break  # first non-bullet line (blank or prose) ends the list
-        items.append(m.group(1))
-    return items
-
-
 def run(repo: Path, keep: bool) -> list[str]:
     failures: list[str] = []
     repo = repo.resolve()
-
-    data_file = repo / DATA_FILE_REL  # read from the checked repo, so
-    try:                              # scratch-copy tests see their own list
-        data = json.loads(data_file.read_text(encoding="utf-8"))
-        delete_list: list[str] = data["delete"]
-        marker: str = data["cleanup_marker"].casefold()
-    except (OSError, KeyError, ValueError) as exc:
-        return [f"cannot read {DATA_FILE_REL}: {exc}"]
-
-    # Anti-drift: README bullet list must equal the data file's list.
-    readme = repo / "README.md"
-    if not readme.is_file():
-        return [f"no README.md at {repo}"]
-    listed = readme_delete_list(readme.read_text(encoding="utf-8"))
-    if listed is None:
-        failures.append(f'README.md has no "{README_HEADER}" step')
-    elif listed != delete_list:
-        failures.append(
-            "README delete list and adopt_examples.json disagree:\n"
-            f"  README only: {sorted(set(listed) - set(delete_list)) or '(none)'}\n"
-            f"  data file only: {sorted(set(delete_list) - set(listed)) or '(none)'}\n"
-            "  (order must match too — README.md is rendered from the data file)"
-        )
 
     scratch_root = Path(tempfile.mkdtemp(prefix="adopt-check-"))
     scratch = scratch_root / "vault"
@@ -128,32 +91,12 @@ def run(repo: Path, keep: bool) -> list[str]:
             failures.append(f"cannot copy working tree to scratch: {exc}")
             return failures
 
-        # Step: delete the seeded examples; every listed path must exist.
-        for entry in delete_list:
-            target = scratch / entry.rstrip("/")
-            if entry.endswith("/"):
-                if target.is_dir():
-                    shutil.rmtree(target)
-                else:
-                    failures.append(f"listed directory does not exist: {entry}")
-            elif target.is_file():
-                target.unlink()
-            else:
-                failures.append(f"listed file does not exist: {entry}")
-
-        # Step: drop marker-tagged example-pointer lines in structural docs.
-        removed = 0
-        for md in sorted(scratch.rglob("*.md")):
-            lines = md.read_text(encoding="utf-8").split("\n")
-            kept = [l for l in lines if marker not in l.casefold()]
-            if len(kept) != len(lines):
-                removed += len(lines) - len(kept)
-                md.write_text("\n".join(kept), encoding="utf-8")
-        if removed == 0:
-            failures.append(
-                f'no line carried the cleanup marker "{data["cleanup_marker"]}" — '
-                "structural docs no longer tag their example pointers"
-            )
+        # Step: exact, all-or-nothing seeded-example cleanup.
+        try:
+            apply_plan(scratch, build_plan(scratch))
+        except AdoptionError as exc:
+            failures.append(str(exc))
+            return failures
 
         # Step: dumb-fill the 01_Profile/ shells.
         today = _dt.date.today().isoformat()
@@ -193,7 +136,77 @@ def run(repo: Path, keep: bool) -> list[str]:
     return failures
 
 
+def _plan_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Preview the atomic seeded-example cleanup")
+    parser.add_argument("--repo", type=Path, default=DEFAULT_REPO)
+    parser.add_argument("--json", action="store_true", help="print the machine-readable plan")
+    parser.add_argument("--output", type=Path, help="write the machine-readable plan atomically")
+    args = parser.parse_args(argv)
+    try:
+        plan = build_plan(args.repo.resolve())
+        if args.output:
+            repo = args.repo.resolve()
+            output = args.output.resolve()
+            if output == repo or repo in output.parents:
+                raise AdoptionError("cleanup plan output must be outside the repository")
+            write_plan(args.output, plan)
+        if args.json:
+            import json
+
+            print(json.dumps(plan, ensure_ascii=False, indent=2, sort_keys=True))
+        else:
+            print(plan_human(plan), end="")
+            if args.output:
+                print(f"Machine-readable plan: {args.output.resolve()}")
+        return 0
+    except AdoptionError as exc:
+        print(f"ADOPT-PLAN FAIL: {exc}", file=sys.stderr)
+        return 1
+
+
+def _apply_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Apply an approved seeded-example cleanup plan")
+    parser.add_argument("plan", type=Path)
+    parser.add_argument("--repo", type=Path, default=DEFAULT_REPO)
+    args = parser.parse_args(argv)
+    try:
+        repo = args.repo.resolve()
+        plan_path = args.plan.resolve()
+        if plan_path == repo or repo in plan_path.parents:
+            raise AdoptionError("cleanup plan input must be outside the repository")
+        apply_plan(repo, read_plan(plan_path))
+        print("adopt cleanup: OK — bundle removed atomically and validation passed")
+        return 0
+    except AdoptionError as exc:
+        print(f"ADOPT-APPLY FAIL: {exc}", file=sys.stderr)
+        return 1
+
+
+def _recover_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Recover an interrupted adoption cleanup")
+    parser.add_argument("--repo", type=Path, default=DEFAULT_REPO)
+    args = parser.parse_args(argv)
+    try:
+        preserved = recover_cleanup(args.repo.resolve())
+        print("adopt cleanup recovery: OK — original bundle restored and lock removed")
+        if preserved:
+            print("Preserved concurrent paths for owner review:")
+            for path in preserved:
+                print(f"  - {path}")
+        return 0
+    except AdoptionError as exc:
+        print(f"ADOPT-RECOVER FAIL: {exc}", file=sys.stderr)
+        return 1
+
+
 def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "plan":
+        return _plan_main(argv[1:])
+    if argv and argv[0] == "apply":
+        return _apply_main(argv[1:])
+    if argv and argv[0] == "recover":
+        return _recover_main(argv[1:])
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--repo", type=Path, default=DEFAULT_REPO,
                         help="repository root to check (default: this repo)")

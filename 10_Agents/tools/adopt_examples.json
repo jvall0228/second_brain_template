@@ -1,5 +1,7 @@
 {
-  "_comment": "Adopter-deletable seeded content (issue #20). Mirrors the bullet list under 'Delete the seeded examples' in the root README.md — adopt_check.py fails if the two drift apart or if any listed path stops existing. Entries ending '/' are directories.",
+  "schema_version": 1,
+  "bundle": "seeded-examples",
+  "_comment": "Sole authority for the atomic seeded-example bundle. Entries ending '/' are directories. adopt_check.py plans exact deletions and marked reference edits from this manifest and refuses partial or stale application.",
   "delete": [
     "04_Projects/example-project/",
     "05_Areas/example-area/",

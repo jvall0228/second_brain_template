@@ -79,6 +79,30 @@ class OnboardOwnerStagesTests(unittest.TestCase):
         )
         self.assertIn("```markdown", text)
 
+    def test_starter_intent_is_open_recommendable_and_reversible(self):
+        text = read(ONBOARD_OWNER).lower()
+        for choice in ("work", "personal life", "exploring both", "not sure yet"):
+            with self.subTest(choice=choice):
+                self.assertIn(choice, text)
+        self.assertIn("free-form answer", text)
+        self.assertIn("recommend exactly one", text)
+        self.assertIn("explain why in one sentence", text)
+        self.assertIn("change direction later", text)
+        self.assertIn("otherwise present all four neutrally", text)
+
+    def test_example_cleanup_is_manifest_owned_and_atomic(self):
+        text = read(ONBOARD_OWNER)
+        self.assertIn("sole authority is `10_Agents/tools/adopt_examples.json`", text)
+        self.assertIn("never offer selective deletion", text)
+        self.assertIn("exact all-or-nothing deletion", text)
+        self.assertIn("changed/dirty inputs", text)
+        self.assertIn("keep the whole bundle", text)
+
+    def test_people_guidance_never_depends_on_deleted_example(self):
+        text = read(ONBOARD_OWNER)
+        self.assertIn("[[03_Journal/people/README|people-note guidance]]", text)
+        self.assertNotIn("example-person", text)
+
 
 class StandingExceptionTests(unittest.TestCase):
     """Both standing-exception bullets cover the people-map destination."""
