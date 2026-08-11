@@ -372,5 +372,6 @@ Shipped as specified below. The template ships the three skills (`agent-orientat
 ## 21. Open considerations (document-only, not blockers)
 - Whether to adopt a `restricted/*` tag namespace (interim handling: §16.2).
 - Whether/when to activate the expanded write ladder (§6.2 roadmap) and register `workflow/agent-writable`.
+- Whether to ship a structured vault-config file (YAML/JSON) letting adopters override the VS Code extension trust policy and similar per-fork settings (§6.5).
 
 **Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped in 1.x, retired 2026-08-11 for the `@AGENTS.md` import adapter (§8.2); Zettelkasten home → `06_Resources/` (§7); automated enforcement → adopted as pre-commit hook + CI backstop (§18, 2026-08-11); vault MCP server → out of scope, the `brain` CLI is the vault's programmatic interface (§19 M7, 2026-08-11).

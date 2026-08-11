@@ -2382,7 +2382,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 376,
+     "line": 377,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -2390,7 +2390,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 36700,
+   "sizeBytes": 36861,
    "title": "PRD",
    "updated": "2026-08-11"
   },
