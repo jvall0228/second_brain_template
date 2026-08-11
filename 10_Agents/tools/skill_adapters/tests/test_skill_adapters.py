@@ -174,7 +174,9 @@ class SkillAdapterTests(unittest.TestCase):
         for value in (
             "[]", "{}", "null", "true", "42", "-3.14", "1.", "&anchor", "*alias",
             "[] # comment", "{} # comment", "null # comment", "true # comment",
-            "42 # comment", "1. # comment",
+            "42 # comment", "1. # comment", "00", "01", "1:20",
+            "00 # comment", "1:20 # comment", "2026-08-11",
+            "2026-08-11 # comment", "2026-08-11T10:30:00Z",
         ):
             with self.subTest(value=value):
                 isolated = self.repo / value.encode().hex()
@@ -194,6 +196,13 @@ class SkillAdapterTests(unittest.TestCase):
                 isolated = self.repo / f"quoted-{number}"
                 add_skill(isolated, "alpha", description=value)
                 self.assertEqual(GEN.catalog(isolated)[0].description, expected)
+
+    def test_quoted_numeric_and_timestamp_descriptions_remain_strings(self):
+        for number, value in enumerate(("00", "01", "1:20", "2026-08-11")):
+            with self.subTest(value=value):
+                isolated = self.repo / f"quoted-scalar-{number}"
+                add_skill(isolated, "alpha", description=json.dumps(value))
+                self.assertEqual(GEN.catalog(isolated)[0].description, value)
 
     def test_refuses_foreign_expected_path_before_any_mutation(self):
         add_skill(self.repo, "alpha")

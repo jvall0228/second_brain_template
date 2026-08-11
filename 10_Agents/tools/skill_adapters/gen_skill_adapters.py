@@ -38,12 +38,18 @@ TOP_LEVEL_SCALAR_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:[ \t]+(.*))?$")
 YAML_NON_STRING_RE = re.compile(
     r"^(?:"
     r"~|null|true|false|yes|no|on|off|"
-    r"[-+]?(?:0|[1-9][0-9_]*|0[xX][0-9a-fA-F_]+|0[oO][0-7_]+|0[bB][01_]+)|"
+    r"[-+]?(?:[0-9][0-9_]*|0[xX][0-9a-fA-F_]+|0[oO][0-7_]+|0[bB][01_]+)|"
+    r"[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+(?:\.[0-9_]*)?|"
     r"[-+]?(?:[0-9][0-9_]*\.[0-9_]*|\.[0-9][0-9_]*|[0-9][0-9_]*[eE][-+]?[0-9]+)|"
     r"[-+]?\.(?:inf|nan)|"
     r"\[.*\]|\{.*\}"
     r")$",
     re.IGNORECASE,
+)
+YAML_TIMESTAMP_RE = re.compile(
+    r"^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}"
+    r"(?:[Tt]|[ \t]+[0-9])?"
+    r"(?:[0-9:.,+\-Zz \t]*)$"
 )
 
 
@@ -113,7 +119,11 @@ def _scalar(value: str, *, path: Path, key: str) -> str:
         if len(value) < 2 or not value.endswith("'"):
             raise AdapterError(f"{path}: invalid single-quoted {key}")
         return value[1:-1].replace("''", "'")
-    if YAML_NON_STRING_RE.fullmatch(value) or value.startswith(("- ", "!", "&", "*")):
+    if (
+        YAML_NON_STRING_RE.fullmatch(value)
+        or YAML_TIMESTAMP_RE.fullmatch(value)
+        or value.startswith(("- ", "!", "&", "*"))
+    ):
         raise AdapterError(
             f"{path}: unquoted {key} looks like a non-string YAML value; quote it"
         )
