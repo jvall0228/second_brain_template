@@ -6,8 +6,9 @@ Behavior is governed by spec.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
-Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context, config, report, tasks, embed, remote-safety, env
+Commands: index, list, search, links, migrate-links, tags, show, recent,
+          validate, curate, context, config, report, tasks, embed,
+          remote-safety, env
 """
 
 from __future__ import annotations
@@ -15,11 +16,14 @@ from __future__ import annotations
 import argparse
 import ctypes
 import hashlib
+import html
 import json
 import math
 import os
+import posixpath
 import re
 import secrets
+import signal
 import stat
 import subprocess
 import sys
@@ -28,9 +32,11 @@ import unicodedata
 import uuid
 from datetime import date
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import quote, unquote_to_bytes, urlsplit
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+LINK_MIGRATION_SCHEMA_VERSION = 1
+LINK_MIGRATION_JOURNAL_RELPATH = ".brain-link-migration.json"
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
 # §18.1 embeddings sidecar: gitignored, machine-local, pruned from the corpus
 # exactly like the index file (constants for the rest of §17 sit with its code).
@@ -1627,12 +1633,15 @@ def body_lines_masked(lines: list[str], body_start: int):
 
 
 # ---------------------------------------------------------------------------
-# §5 Wikilink grammar / §7 body extraction
+# §5 Link grammar / §7 body extraction
 
-LINK_RE = re.compile(r"(!?)\[\[([^\[\]\n]+?)\]\]")
+WIKILINK_RE = re.compile(r"(!?)\[\[([^\[\]\n]+?)\]\]")
 HEADING_RE = re.compile(r"^( {0,3})(#{1,6}) (.*)$")
 BODY_TAG_RE = re.compile(r"(?:^|(?<=\s))#([A-Za-z0-9_/-]+)")
 EXT_RE = re.compile(r"\.[A-Za-z0-9]+$")
+EXTERNAL_DESTINATION_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+INVALID_PERCENT_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
+ENCODED_SEPARATOR_RE = re.compile(r"%(?:2[fF]|5[cC])")
 
 # §17 checkbox tasks (issue #28). Detection runs on the MASKED line (so
 # checkboxes inside fenced code or inline code spans never index); the task
@@ -1709,45 +1718,336 @@ def parse_task_text(text: str) -> tuple[str, str | None, str | None, list[str]]:
     return clean, due, priority, sorted(malformed)
 
 
-def parse_link(inner: str, embed: bool, raw: str, line: int) -> dict:
-    i = inner.find("|")
-    if i == -1:
-        linkpath, display = inner, None
-    elif i > 0 and inner[i - 1] == "\\":
-        linkpath, display = inner[: i - 1], inner[i + 1 :]
-    else:
-        linkpath, display = inner[:i], inner[i + 1 :]
-    if "#" in linkpath:
-        target, fragment = linkpath.split("#", 1)
-        fragment = fragment.strip()
-    else:
-        target, fragment = linkpath, None
-    target = target.strip()
-    display = display.strip() if display is not None else None
-    placeholder = "{{" in target
-    if target.endswith(".md"):
-        target = target[:-3]
+def _source_range(
+    start: int, end: int, line: int, column: int, end_column: int
+) -> dict:
+    """End-exclusive UTF-8 byte range over the normalized source text."""
     return {
-        "display": display,
-        "embed": embed,
-        "fragment": fragment,
-        "line": line,
-        "placeholder": placeholder,
-        "raw": raw,
-        "resolved": None,
-        "target": target,
-        "warnings": [],
+        "end": {"column": end_column, "line": line, "offset": end},
+        "start": {"column": column, "line": line, "offset": start},
     }
 
 
+def _link_record(
+    *,
+    destination: str,
+    embed: bool,
+    format_name: str,
+    fragment: str | None,
+    label: str | None,
+    line: int,
+    raw: str,
+    source_start: int,
+    source_end: int,
+    column: int,
+    target: str | None = None,
+) -> dict:
+    logical_target = destination if target is None else target
+    placeholder = "{{" in destination or (fragment is not None and "{{" in fragment)
+    unsupported_block = bool(fragment and fragment.startswith("^"))
+    status = (
+        "placeholder"
+        if placeholder
+        else "unsupported-block-reference"
+        if unsupported_block
+        else "unresolved"
+    )
+    warnings = ["unsupported-block-reference"] if unsupported_block else []
+    resolution = {
+        "fragment": None,
+        "path": None,
+        "status": status,
+        "warnings": list(warnings),
+    }
+    return {
+        "destination": destination,
+        "display": label,  # schema-v1 compatibility alias
+        "embed": embed,
+        "format": format_name,
+        "fragment": fragment,
+        "label": label,
+        "line": line,
+        "placeholder": placeholder,
+        "range": _source_range(
+            source_start, source_end, line, column, column + len(raw)
+        ),
+        "raw": raw,
+        "resolution": resolution,
+        "resolved": None,  # schema-v1 compatibility alias
+        "target": logical_target,  # schema-v1 compatibility alias
+        "warnings": warnings,  # schema-v1 compatibility alias
+    }
+
+
+def parse_link(
+    inner: str,
+    embed: bool,
+    raw: str,
+    line: int,
+    *,
+    source_start: int = 0,
+    column: int = 0,
+) -> dict:
+    """Parse one legacy wikilink into the generic schema-v2 link record."""
+    i = inner.find("|")
+    if i == -1:
+        linkpath, label = inner, None
+    elif i > 0 and inner[i - 1] == "\\":
+        linkpath, label = inner[: i - 1], inner[i + 1 :]
+    else:
+        linkpath, label = inner[:i], inner[i + 1 :]
+    if "#" in linkpath:
+        destination, fragment = linkpath.split("#", 1)
+        fragment = fragment.strip()
+    else:
+        destination, fragment = linkpath, None
+    destination = destination.strip()
+    label = label.strip() if label is not None else None
+    target = destination
+    if target.endswith(".md"):
+        target = target[:-3]
+    return _link_record(
+        destination=destination,
+        embed=embed,
+        format_name="wikilink",
+        fragment=fragment,
+        label=label,
+        line=line,
+        raw=raw,
+        source_start=source_start,
+        source_end=source_start + len(raw.encode("utf-8")),
+        column=column,
+        target=target,
+    )
+
+
+def _is_escaped(text: str, index: int) -> bool:
+    slashes = 0
+    index -= 1
+    while index >= 0 and text[index] == "\\":
+        slashes += 1
+        index -= 1
+    return bool(slashes % 2)
+
+
+def _balanced_close(text: str, start: int, opener: str, closer: str) -> int | None:
+    depth = 0
+    for index in range(start, len(text)):
+        if _is_escaped(text, index):
+            continue
+        if text[index] == opener:
+            depth += 1
+        elif text[index] == closer:
+            depth -= 1
+            if depth == 0:
+                return index
+    return None
+
+
+def _unescape_markdown(text: str) -> str:
+    return re.sub(r"\\([!\"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~])", r"\1", text)
+
+
+def _markdown_destination(body: str) -> str | None:
+    body = body.strip()
+    if not body:
+        return ""
+    if body.startswith("<"):
+        end = next(
+            (i for i in range(1, len(body)) if body[i] == ">" and not _is_escaped(body, i)),
+            None,
+        )
+        if end is None:
+            return None
+        destination = _unescape_markdown(body[1:end])
+        remainder = body[end + 1 :].strip()
+        return destination if _valid_markdown_title(remainder) else None
+    end = len(body)
+    for index, char in enumerate(body):
+        if char.isspace() and not _is_escaped(body, index):
+            end = index
+            break
+    destination = _unescape_markdown(body[:end])
+    remainder = body[end:].strip()
+    return destination if _valid_markdown_title(remainder) else None
+
+
+def _valid_markdown_title(remainder: str) -> bool:
+    """Accept an absent or one fully-delimited inline-link title, nothing else."""
+    if not remainder:
+        return True
+    opener = remainder[0]
+    closer = {"\"": "\"", "'": "'", "(": ")"}.get(opener)
+    if closer is None or len(remainder) < 2 or remainder[-1] != closer:
+        return False
+    inner = remainder[1:-1]
+    if opener == "(":
+        depth = 0
+        for index, char in enumerate(inner):
+            if _is_escaped(inner, index):
+                continue
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                if depth == 0:
+                    return False
+                depth -= 1
+        return depth == 0
+    return not any(char == closer and not _is_escaped(inner, index) for index, char in enumerate(inner))
+
+
+def _external_destination(destination: str) -> bool:
+    return destination.startswith("//") or bool(EXTERNAL_DESTINATION_RE.match(destination))
+
+
+def _decode_link_component(value: str, *, path: bool) -> str | None:
+    if INVALID_PERCENT_RE.search(value) or (path and ENCODED_SEPARATOR_RE.search(value)):
+        return None
+    try:
+        decoded = unquote_to_bytes(value).decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    if "\0" in decoded:
+        return None
+    return nfc(decoded)
+
+
+def parse_markdown_links(
+    raw_line: str, masked_line: str, line: int, line_offset: int
+) -> list[dict]:
+    """Parse inline Markdown links/images; reference links and URLs stay out."""
+    records: list[dict] = []
+    index = 0
+    while index < len(masked_line):
+        embed = masked_line.startswith("![", index) and not _is_escaped(masked_line, index)
+        open_index = index + 1 if embed else index
+        if masked_line[open_index : open_index + 1] != "[" or _is_escaped(
+            masked_line, open_index
+        ):
+            index += 1
+            continue
+        if masked_line.startswith("[[", open_index):
+            index += 1
+            continue
+        label_end = _balanced_close(masked_line, open_index, "[", "]")
+        if label_end is None or label_end + 1 >= len(masked_line) or masked_line[label_end + 1] != "(":
+            index = label_end + 1 if label_end is not None else index + 1
+            continue
+        destination_end = _balanced_close(masked_line, label_end + 1, "(", ")")
+        if destination_end is None:
+            index = label_end + 1
+            continue
+        raw_destination = _markdown_destination(
+            raw_line[label_end + 2 : destination_end]
+        )
+        if raw_destination is None or _external_destination(raw_destination):
+            index = destination_end + 1
+            continue
+        if "#" in raw_destination:
+            encoded_destination, encoded_fragment = raw_destination.split("#", 1)
+            fragment = _decode_link_component(encoded_fragment, path=False)
+        else:
+            encoded_destination, fragment = raw_destination, None
+        destination = _decode_link_component(encoded_destination, path=True)
+        if destination is not None and _external_destination(destination):
+            # Percent-encoding cannot disguise a URI scheme as a vault path.
+            index = destination_end + 1
+            continue
+        invalid_encoding = (
+            destination is None
+            or ("#" in raw_destination and fragment is None)
+            or "?" in encoded_destination
+        )
+        if destination is None:
+            destination = encoded_destination
+        source_start = line_offset + len(raw_line[:index].encode("utf-8"))
+        raw = raw_line[index : destination_end + 1]
+        label = _unescape_markdown(raw_line[open_index + 1 : label_end])
+        record = _link_record(
+                destination=destination,
+                embed=embed,
+                format_name="markdown",
+                fragment=fragment,
+                label=label,
+                line=line,
+                raw=raw,
+                source_start=source_start,
+                source_end=source_start + len(raw.encode("utf-8")),
+                column=index,
+            )
+        if invalid_encoding:
+            record["warnings"] = ["invalid-url-encoding"]
+            record["resolution"] = {
+                "fragment": None,
+                "path": None,
+                "status": "unsupported-destination",
+                "warnings": ["invalid-url-encoding"],
+            }
+        records.append(record)
+        index = destination_end + 1
+    return records
+
+
+def _render_heading_inline(text: str) -> str:
+    """Bounded inline rendering needed for GitHub-compatible anchor text."""
+    text = re.sub(r"<[^>]*>", "", text)
+    rendered = []
+    index = 0
+    while index < len(text):
+        embed = text.startswith("![", index) and not _is_escaped(text, index)
+        open_index = index + 1 if embed else index
+        if text[open_index : open_index + 1] == "[" and not _is_escaped(
+            text, open_index
+        ):
+            label_end = _balanced_close(text, open_index, "[", "]")
+            if (
+                label_end is not None
+                and label_end + 1 < len(text)
+                and text[label_end + 1] == "("
+            ):
+                destination_end = _balanced_close(
+                    text, label_end + 1, "(", ")"
+                )
+                if destination_end is not None:
+                    rendered.append(
+                        _unescape_markdown(text[open_index + 1 : label_end])
+                    )
+                    index = destination_end + 1
+                    continue
+        rendered.append(text[index])
+        index += 1
+    return html.unescape("".join(rendered))
+
+
+def heading_slug(text: str) -> str:
+    """Portable GitHub/Obsidian heading slug: NFC, lowercase, punctuation out."""
+    text = nfc(_render_heading_inline(text))
+    text = re.sub(r"[`*_~]", "", text).casefold().strip()
+    chars = []
+    for char in text:
+        category = unicodedata.category(char)
+        if char.isspace():
+            chars.append(" ")
+        elif char == "-" or category[0] in {"L", "N", "M"}:
+            chars.append(char)
+    return re.sub(r"\s+", "-", "".join(chars))
+
+
 def extract_body(
-    lines: list[str], body_start: int
+    lines: list[str], body_start: int, *, line_offsets: list[int] | None = None
 ) -> tuple[list[dict], list[dict], list[str], list[dict]]:
-    """Returns (links, headings, bodyTags, tasks) per §5, §7, and §17."""
+    """Returns generic links, headings, bodyTags, and tasks in document order."""
     links: list[dict] = []
     headings: list[dict] = []
+    heading_slug_counts: dict[str, int] = {}
     body_tags: set[str] = set()
     tasks: list[dict] = []
+    if line_offsets is None:
+        line_offsets = []
+        offset = 0
+        for source_line in lines:
+            line_offsets.append(offset)
+            offset += len(source_line.encode("utf-8")) + 1
     for lineno, raw, masked in body_lines_masked(lines, body_start):
         tm = TASK_RE.match(masked)
         if tm:
@@ -1768,15 +2068,40 @@ def extract_body(
         if hm:
             text = raw[hm.start(3) :]
             text = re.sub(r"\s+#+\s*$", "", text).strip()
-            headings.append({"level": len(hm.group(2)), "line": lineno, "text": text})
-        for m in LINK_RE.finditer(masked):
-            if m.start() > 0 and masked[m.start() - 1] == "\\":
+            base_slug = heading_slug(text)
+            duplicate = heading_slug_counts.get(base_slug, 0)
+            heading_slug_counts[base_slug] = duplicate + 1
+            slug = base_slug if duplicate == 0 else f"{base_slug}-{duplicate}"
+            headings.append(
+                {
+                    "level": len(hm.group(2)),
+                    "line": lineno,
+                    "slug": slug,
+                    "text": text,
+                }
+            )
+        line_offset = line_offsets[lineno - 1]
+        for m in WIKILINK_RE.finditer(masked):
+            if _is_escaped(masked, m.start()):
                 continue
-            links.append(parse_link(m.group(2), m.group(1) == "!", m.group(0), lineno))
+            raw_link = raw[m.start() : m.end()]
+            inner = raw_link[3:-2] if m.group(1) == "!" else raw_link[2:-2]
+            links.append(
+                parse_link(
+                    inner,
+                    m.group(1) == "!",
+                    raw_link,
+                    lineno,
+                    source_start=line_offset + len(raw[: m.start()].encode("utf-8")),
+                    column=m.start(),
+                )
+            )
+        links.extend(parse_markdown_links(raw, masked, lineno, line_offset))
         for m in BODY_TAG_RE.finditer(masked):
             tag = m.group(1)
             if any(not c.isdigit() for c in tag):
                 body_tags.add(tag)
+    links.sort(key=lambda record: record["range"]["start"]["offset"])
     return links, headings, sorted(body_tags), tasks
 
 
@@ -1805,10 +2130,6 @@ class Resolver:
             if t:
                 self.title_fold.setdefault(fold(t), []).append(p)
 
-    @staticmethod
-    def _pick(cands: list[str]) -> str:
-        return min(cands, key=lambda p: (p.count("/"), p))
-
     def _ladder(
         self, target: str, base: dict, full_set: set, full_fold: dict, suffix: str
     ) -> tuple[str | None, list[str]]:
@@ -1816,9 +2137,9 @@ class Resolver:
             cands = base.get(fold(target))
             if cands:
                 warnings = []
-                r = cands[0] if len(cands) == 1 else self._pick(cands)
                 if len(cands) > 1:
-                    warnings.append("ambiguous")
+                    return None, ["ambiguous", *(f"candidate:{p}" for p in sorted(cands))]
+                r = cands[0]
                 actual = r.rsplit("/", 1)[-1]
                 if suffix:
                     actual = actual[: -len(suffix)]
@@ -1832,22 +2153,59 @@ class Resolver:
         ci = full_fold.get(fold(full))
         if ci:
             warnings = ["case-mismatch"]
-            r = ci[0] if len(ci) == 1 else self._pick(ci)
             if len(ci) > 1:
-                warnings.insert(0, "ambiguous")
+                return None, ["ambiguous", *(f"candidate:{p}" for p in sorted(ci))]
+            r = ci[0]
             return r, warnings
         return None, []
 
-    def resolve(self, target: str, containing: str) -> tuple[str | None, list[str]]:
+    def _full_path(
+        self, full: str, full_set: set[str], full_fold: dict[str, list[str]]
+    ) -> tuple[str | None, list[str]]:
+        if full in full_set:
+            return full, []
+        candidates = full_fold.get(fold(full), [])
+        if len(candidates) > 1:
+            return None, ["ambiguous", *(f"candidate:{p}" for p in sorted(candidates))]
+        if candidates:
+            return candidates[0], ["case-mismatch"]
+        return None, []
+
+    def _resolve_markdown(self, target: str, containing: str) -> tuple[str | None, list[str]]:
+        if target == "":
+            return containing, []
+        raw = target.replace("\\", "/")
+        if raw.startswith("/"):
+            return None, ["unsupported-absolute-path"]
+        parent = posixpath.dirname(containing)
+        candidate = posixpath.normpath(posixpath.join(parent, raw))
+        if candidate in {"", ".", ".."} or candidate.startswith("../"):
+            return None, ["outside-vault"]
+        final = candidate.rsplit("/", 1)[-1]
+        if candidate.endswith(".md"):
+            return self._full_path(candidate, self.notes, self.note_fold)
+        if not EXT_RE.search(final):
+            resolved, warnings = self._full_path(
+                candidate + ".md", self.notes, self.note_fold
+            )
+            if resolved is not None or warnings:
+                return resolved, warnings
+        return self._full_path(candidate, self.assets, self.asset_fold)
+
+    def resolve(
+        self, target: str, containing: str, *, format: str = "wikilink"
+    ) -> tuple[str | None, list[str]]:
+        if format == "markdown":
+            return self._resolve_markdown(target, containing)
         if target == "":
             return containing, []
         r, warnings = self._ladder(target, self.note_base, self.notes, self.note_fold, ".md")
-        if r:
+        if r is not None or warnings:
             return r, warnings
         final = target.rsplit("/", 1)[-1]
         if EXT_RE.search(final) and not final.endswith(".md"):
             r, warnings = self._ladder(target, self.asset_base, self.assets, self.asset_fold, "")
-            if r:
+            if r is not None or warnings:
                 return r, warnings
         hints = sorted(self.title_fold.get(fold(target), []))
         return None, [f"title-match:{p}" for p in hints]
@@ -1855,6 +2213,72 @@ class Resolver:
 
 # ---------------------------------------------------------------------------
 # §8 Index build and serialization
+
+
+def _resolve_link_record(
+    link: dict, containing: str, resolver: Resolver, records: dict[str, dict]
+) -> None:
+    """Populate both schema-v2 resolution and schema-v1 compatibility aliases."""
+    if link["placeholder"]:
+        return
+    if link.get("resolution", {}).get("status") == "unsupported-destination":
+        # Syntax-level destination failures are terminal. In particular, do
+        # not let a decodable path prefix turn an invalid query/fragment into
+        # a resolved v1 alias during the resolution pass.
+        link["resolved"] = None
+        link["warnings"] = list(link["resolution"].get("warnings", []))
+        return
+    resolved, warnings = resolver.resolve(
+        link["target"], containing, format=link["format"]
+    )
+    fragment_resolution = None
+    status = "resolved" if resolved is not None else "unresolved"
+    if "ambiguous" in warnings:
+        status = "ambiguous"
+    elif "unsupported-absolute-path" in warnings:
+        status = "unsupported-destination"
+    fragment = link["fragment"]
+    if resolved is not None and fragment:
+        if fragment.startswith("^"):
+            status = "unsupported-block-reference"
+            if "unsupported-block-reference" not in warnings:
+                warnings.append("unsupported-block-reference")
+        else:
+            headings = records.get(resolved, {}).get("headings", [])
+            if link["format"] == "wikilink":
+                candidates = [h for h in headings if fold(h["text"]) == fold(fragment)]
+            else:
+                candidates = [h for h in headings if h["slug"] == fragment]
+                if not candidates:
+                    candidates = [h for h in headings if fold(h["slug"]) == fold(fragment)]
+                    if candidates:
+                        warnings.append("fragment-case-mismatch")
+            if len(candidates) > 1:
+                warnings.extend(
+                    ["ambiguous-fragment"]
+                    + [f"heading-candidate:{h['line']}" for h in candidates]
+                )
+                resolved = None
+                status = "ambiguous"
+            elif candidates:
+                heading = candidates[0]
+                fragment_resolution = {
+                    "line": heading["line"],
+                    "slug": heading["slug"],
+                }
+            else:
+                # Path resolution remains useful for backlinks and legacy
+                # imports. WP9 can repair these before converting the corpus.
+                warnings.append("unresolved-fragment")
+                status = "unresolved-fragment"
+    link["resolved"] = resolved
+    link["warnings"] = warnings
+    link["resolution"] = {
+        "fragment": fragment_resolution,
+        "path": resolved,
+        "status": status,
+        "warnings": list(warnings),
+    }
 
 
 def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
@@ -1899,18 +2323,33 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
         }
     resolver = Resolver(notes, assets, {p: r["title"] for p, r in records.items()})
     backlinks: dict[str, set[str]] = {p: set() for p in notes}
+    link_counts = {
+        "legacy": 0,
+        "markdown": 0,
+        "placeholder": 0,
+        "unsupportedBlockReference": 0,
+        "wikilink": 0,
+    }
     for rel, rec in records.items():
         for link in rec["links"]:
+            link_counts[link["format"]] += 1
+            if link["format"] == "wikilink":
+                link_counts["legacy"] += 1
             if link["placeholder"]:
-                continue
-            resolved, warnings = resolver.resolve(link["target"], rel)
-            link["resolved"] = resolved
-            link["warnings"] = warnings
-            if resolved in backlinks:
-                backlinks[resolved].add(rel)
+                link_counts["placeholder"] += 1
+            if link["fragment"] and link["fragment"].startswith("^"):
+                link_counts["unsupportedBlockReference"] += 1
+            _resolve_link_record(link, rel, resolver, records)
+            if link["resolved"] in backlinks:
+                backlinks[link["resolved"]].add(rel)
     for rel, rec in records.items():
         rec["backlinks"] = sorted(backlinks[rel])
-    return {"assets": assets, "notes": records, "schemaVersion": SCHEMA_VERSION}
+    return {
+        "assets": assets,
+        "linkCounts": link_counts,
+        "notes": records,
+        "schemaVersion": SCHEMA_VERSION,
+    }
 
 
 # §8.3 restricted-note reduction (issue #17). Frontmatter tags only —
@@ -1943,9 +2382,20 @@ def reduce_restricted(index: dict) -> dict:
             rec["tasks"] = []  # §17: task text/metadata is body content
             for link in rec.get("links", []):
                 link["display"] = None
+                link["label"] = None
                 link["fragment"] = None
                 target = link.get("target") or ""
-                link["raw"] = ("![[%s]]" if link.get("embed") else "[[%s]]") % target
+                if link.get("format") == "markdown":
+                    destination = link.get("destination") or ""
+                    link["raw"] = (
+                        ("![](%s)" if link.get("embed") else "[](%s)")
+                        % destination
+                    )
+                else:
+                    link["raw"] = (
+                        "![[%s]]" if link.get("embed") else "[[%s]]"
+                    ) % target
+                link["resolution"]["fragment"] = None
     return index
 
 
@@ -2768,7 +3218,23 @@ def run_validate(
         for link in rec["links"]:
             if link["placeholder"]:
                 continue
+            status = link["resolution"]["status"]
+            if status == "unsupported-block-reference":
+                warn(
+                    rel,
+                    "unsupported-block-reference",
+                    f"{link['raw']} uses an unsupported block reference",
+                    link["line"],
+                )
             if link["resolved"] is None:
+                if status == "ambiguous":
+                    err(
+                        rel,
+                        "ambiguous-link",
+                        f"{link['raw']} has multiple path or heading candidates",
+                        link["line"],
+                    )
+                    continue
                 hints = [w[len("title-match:") :] for w in link["warnings"]]
                 message = f"unresolved link {link['raw']}"
                 if hints:
@@ -2787,9 +3253,7 @@ def run_validate(
                         link["line"],
                     )
                 for w in link["warnings"]:
-                    if w == "ambiguous":
-                        warn(rel, "ambiguous-link", f"{link['raw']} is ambiguous; resolved to {link['resolved']}", link["line"])
-                    elif w == "case-mismatch":
+                    if w in {"case-mismatch", "fragment-case-mismatch"}:
                         warn(rel, "case-mismatch", f"{link['raw']} differs in case from {link['resolved']}", link["line"])
 
     skill_dirs: dict[str, list[str]] = {}
@@ -3682,6 +4146,1272 @@ def tag_matches(tag_filter: str, tags: set[str]) -> bool:
     return tag_filter in tags
 
 
+# ---------------------------------------------------------------------------
+# §22 Legacy-link migration
+
+
+class LinkMigrationError(RuntimeError):
+    pass
+
+
+def _sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def _canonical_json(data: object) -> bytes:
+    return json.dumps(
+        data, ensure_ascii=False, separators=(",", ":"), sort_keys=True
+    ).encode("utf-8")
+
+
+def _raw_document(raw: bytes) -> tuple[str, list[str], list[int], int]:
+    """Decode without newline conversion; offsets are raw UTF-8 byte offsets."""
+    bom_bytes = 3 if raw.startswith(b"\xef\xbb\xbf") else 0
+    try:
+        text = raw[bom_bytes:].decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise LinkMigrationError("migration source is not UTF-8") from exc
+    # Match the indexer's physical-line contract exactly: CRLF, CR, and LF
+    # are line endings; Unicode NEL/VT/FF/line separators are ordinary body
+    # characters rather than implicit lines.
+    kept: list[str] = []
+    start = 0
+    cursor = 0
+    while cursor < len(text):
+        char = text[cursor]
+        if char == "\r":
+            cursor += 2 if cursor + 1 < len(text) and text[cursor + 1] == "\n" else 1
+            kept.append(text[start:cursor])
+            start = cursor
+        elif char == "\n":
+            cursor += 1
+            kept.append(text[start:cursor])
+            start = cursor
+        else:
+            cursor += 1
+    if start < len(text):
+        kept.append(text[start:])
+    lines: list[str] = []
+    offsets: list[int] = []
+    offset = bom_bytes
+    for physical in kept:
+        offsets.append(offset)
+        if physical.endswith("\r\n"):
+            content = physical[:-2]
+        elif physical.endswith(("\n", "\r")):
+            content = physical[:-1]
+        else:
+            content = physical
+        lines.append(content)
+        offset += len(physical.encode("utf-8"))
+    if not lines:
+        lines = [""]
+        offsets = [bom_bytes]
+    return text, lines, offsets, bom_bytes
+
+
+def _migration_links(raw: bytes) -> tuple[list[dict], list[dict]]:
+    _text, lines, offsets, _bom = _raw_document(raw)
+    _fm, _errors, body_start, _has = parse_frontmatter(lines)
+    links, headings, _tags, _tasks = extract_body(
+        lines, body_start, line_offsets=offsets
+    )
+    return links, headings
+
+
+def _escape_markdown_label(label: str) -> str:
+    return label.replace("\\", "\\\\").replace("[", "\\[").replace("]", "\\]")
+
+
+def _encoded_relative_path(source: str, resolved: str) -> str:
+    parent = posixpath.dirname(source) or "."
+    relative = posixpath.relpath(resolved, parent)
+    return quote(relative, safe="/-._~")
+
+
+def render_migrated_link(source: str, link: dict) -> str:
+    """Render a resolved wikilink as source-relative standard Markdown."""
+    resolved = link["resolved"]
+    if resolved is None:
+        raise LinkMigrationError("cannot render an unresolved legacy link")
+    fragment = link["resolution"].get("fragment")
+    if link.get("fragment") and fragment is None:
+        raise LinkMigrationError("cannot render an unresolved legacy fragment")
+    if link["target"] == "" and fragment is not None:
+        destination = ""
+    else:
+        destination = _encoded_relative_path(source, resolved)
+    if fragment is not None:
+        destination += "#" + quote(fragment["slug"], safe="-._~")
+    if link["label"] is not None:
+        label = link["label"]
+    elif link["target"] == "" and link["fragment"]:
+        label = link["fragment"]
+    else:
+        label = posixpath.basename(link["destination"] or resolved)
+        if label.endswith(".md"):
+            label = label[:-3]
+    escaped = _escape_markdown_label(label)
+    prefix = "!" if link["embed"] else ""
+    return f"{prefix}[{escaped}]({destination})"
+
+
+def _migration_blocker(path: str, link: dict, rule: str, message: str) -> dict:
+    return {"line": link["line"], "message": message, "path": path, "rule": rule}
+
+
+def build_link_migration_plan(root: Path) -> dict:
+    """Build a deterministic, source-hashed preview without changing files."""
+    notes, assets = walk_corpus(root)
+    tracked = git_tracked(root)
+    if tracked is not None:
+        notes = [path for path in notes if path in tracked]
+        assets = [path for path in assets if path in tracked]
+    index = build_index(root, notes, assets)
+    resolver = Resolver(
+        notes, assets, {path: rec["title"] for path, rec in index["notes"].items()}
+    )
+    blockers: list[dict] = []
+    edits: list[dict] = []
+    summary = {
+        "filesChanged": 0,
+        "filesScanned": len(notes),
+        "legacyLinks": 0,
+        "linksConverted": 0,
+        "markdownLinks": index["linkCounts"]["markdown"],
+        "placeholders": 0,
+        "unsupportedBlockReferences": 0,
+    }
+    for rel in notes:
+        try:
+            raw = _read_nofollow_bytes(root, rel)
+            links, _headings = _migration_links(raw)
+        except (OSError, LinkMigrationError):
+            blockers.append(
+                {"line": None, "message": "source is unreadable or unsafe", "path": rel, "rule": "unsafe-source"}
+            )
+            continue
+        replacements: list[dict] = []
+        previous_end = -1
+        for link in links:
+            if link["format"] != "wikilink":
+                continue
+            summary["legacyLinks"] += 1
+            if link["placeholder"]:
+                summary["placeholders"] += 1
+                continue
+            start = link["range"]["start"]["offset"]
+            end = link["range"]["end"]["offset"]
+            if any(
+                other is not link
+                and start < other["range"]["end"]["offset"]
+                and other["range"]["start"]["offset"] < end
+                for other in links
+            ):
+                blockers.append(
+                    _migration_blocker(
+                        rel,
+                        link,
+                        "overlapping-edits",
+                        "legacy link overlaps another parsed link",
+                    )
+                )
+                continue
+            _resolve_link_record(link, rel, resolver, index["notes"])
+            if link["resolution"]["status"] == "unsupported-block-reference":
+                summary["unsupportedBlockReferences"] += 1
+                blockers.append(
+                    _migration_blocker(
+                        rel,
+                        link,
+                        "unsupported-block-reference",
+                        "legacy block references cannot be migrated safely",
+                    )
+                )
+                continue
+            if link["resolution"]["status"] == "ambiguous":
+                blockers.append(
+                    _migration_blocker(
+                        rel,
+                        link,
+                        "ambiguous-link",
+                        "legacy target or heading has multiple candidates",
+                    )
+                )
+                continue
+            if link["resolved"] is None:
+                blockers.append(
+                    _migration_blocker(
+                        rel, link, "unresolved-link", "legacy target is unresolved"
+                    )
+                )
+                continue
+            if link["resolution"]["status"] == "unresolved-fragment":
+                blockers.append(
+                    _migration_blocker(
+                        rel,
+                        link,
+                        "unresolved-fragment",
+                        "legacy heading fragment has no matching heading",
+                    )
+                )
+                continue
+            if start < previous_end:
+                blockers.append(
+                    _migration_blocker(
+                        rel, link, "overlapping-edits", "migration ranges overlap"
+                    )
+                )
+                continue
+            before_bytes = raw[start:end]
+            try:
+                before = before_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                blockers.append(
+                    _migration_blocker(
+                        rel, link, "invalid-range", "source range is not valid UTF-8"
+                    )
+                )
+                continue
+            if before != link["raw"]:
+                blockers.append(
+                    _migration_blocker(
+                        rel, link, "stale-range", "source range does not match parsed link"
+                    )
+                )
+                continue
+            after = render_migrated_link(rel, link)
+            replacements.append(
+                {
+                    "after": after,
+                    "before": before,
+                    "line": link["line"],
+                    "range": {"end": end, "start": start},
+                    "resolved": link["resolved"],
+                }
+            )
+            previous_end = end
+        if not replacements:
+            continue
+        desired = raw
+        for replacement in reversed(replacements):
+            start = replacement["range"]["start"]
+            end = replacement["range"]["end"]
+            desired = (
+                desired[:start]
+                + replacement["after"].encode("utf-8")
+                + desired[end:]
+            )
+        summary["linksConverted"] += len(replacements)
+        edits.append(
+            {
+                "mode": stat.S_IMODE(os.lstat(root / rel).st_mode),
+                "path": rel,
+                "replacements": replacements,
+                "restricted": is_restricted(index["notes"][rel]),
+                "resultSha256": _sha256_bytes(desired),
+                "sourceSha256": _sha256_bytes(raw),
+            }
+        )
+    edits.sort(key=lambda row: row["path"])
+    blockers.sort(key=lambda row: (row["path"], row["line"] or 0, row["rule"]))
+    summary["filesChanged"] = len(edits)
+    body = {
+        "blockers": blockers,
+        "edits": edits,
+        "regenerateRequired": [
+            INDEX_RELPATH,
+            ".vscode/second-brain.code-snippets",
+            "generated skill adapters",
+        ],
+        "schemaVersion": LINK_MIGRATION_SCHEMA_VERSION,
+        "status": "blocked" if blockers else "ready",
+        "summary": summary,
+    }
+    body["planId"] = _sha256_bytes(_canonical_json(body))
+    return body
+
+
+def public_link_migration_plan(plan: dict) -> dict:
+    """Redact restricted-note body prose from any serialized CLI plan."""
+    public = json.loads(json.dumps(plan, ensure_ascii=False))
+    for edit in public.get("edits", []):
+        if not edit.get("restricted"):
+            continue
+        for replacement in edit.get("replacements", []):
+            replacement["after"] = None
+            replacement["before"] = None
+            replacement["redacted"] = True
+    return public
+
+
+def _migration_planned_paths(plan: dict) -> list[str]:
+    return sorted({row["path"] for row in plan.get("edits", [])})
+
+
+def dirty_migration_paths(root: Path, plan: dict) -> list[str] | None:
+    paths = _migration_planned_paths(plan)
+    if not paths:
+        return []
+    try:
+        probe = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--is-inside-work-tree"],
+            capture_output=True,
+            check=True,
+            text=True,
+        )
+        if probe.stdout.strip() != "true":
+            return None
+        status_result = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "status",
+                "--porcelain=v1",
+                "-z",
+                "--untracked-files=all",
+                "--",
+                *paths,
+            ],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return sorted(
+        entry.decode("utf-8", "replace")
+        for entry in status_result.stdout.split(b"\0")
+        if entry
+    )
+
+
+def _validate_migration_plan(plan: dict) -> None:
+    if not isinstance(plan, dict) or plan.get("schemaVersion") != LINK_MIGRATION_SCHEMA_VERSION:
+        raise LinkMigrationError("unsupported or malformed migration plan")
+    supplied = plan.get("planId")
+    body = {key: value for key, value in plan.items() if key != "planId"}
+    if not isinstance(supplied, str) or supplied != _sha256_bytes(_canonical_json(body)):
+        raise LinkMigrationError("migration plan ID does not match its contents")
+    if plan.get("blockers"):
+        raise LinkMigrationError("migration plan has blockers")
+
+
+def _desired_migration_bytes(source: bytes, row: dict) -> bytes:
+    previous_end = -1
+    replacements = row.get("replacements")
+    if not isinstance(replacements, list):
+        raise LinkMigrationError("malformed migration replacements")
+    for replacement in replacements:
+        source_range = replacement.get("range", {})
+        start, end = source_range.get("start"), source_range.get("end")
+        if type(start) is not int or type(end) is not int or start < previous_end or end <= start:
+            raise LinkMigrationError("overlapping or malformed migration ranges")
+        before = replacement.get("before")
+        after = replacement.get("after")
+        if not isinstance(before, str) or not isinstance(after, str):
+            raise LinkMigrationError("malformed migration replacement text")
+        if source[start:end] != before.encode("utf-8"):
+            raise LinkMigrationError("stale migration replacement range")
+        previous_end = end
+    desired = source
+    for replacement in reversed(replacements):
+        start = replacement["range"]["start"]
+        end = replacement["range"]["end"]
+        desired = desired[:start] + replacement["after"].encode("utf-8") + desired[end:]
+    if _sha256_bytes(desired) != row.get("resultSha256"):
+        raise LinkMigrationError("migration result hash mismatch")
+    return desired
+
+
+def _migration_mutation_supported() -> bool:
+    """Mutation needs held-parent descriptor operations; preview stays portable."""
+    required = (os.open, os.rename, os.link, os.unlink, os.stat)
+    return all(function in getattr(os, "supports_dir_fd", set()) for function in required)
+
+
+def _open_migration_parent(root: Path, relative: str) -> tuple[int, str]:
+    parts = Path(relative).parts
+    if (
+        not parts
+        or Path(relative).is_absolute()
+        or any(part in {"", ".", ".."} for part in parts)
+    ):
+        raise LinkMigrationError("migration source path is unsafe")
+    directory = getattr(os, "O_DIRECTORY", 0)
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    cloexec = getattr(os, "O_CLOEXEC", 0)
+    if not directory or not nofollow:
+        raise LinkMigrationError("safe link migration writes are unavailable on this runtime")
+    descriptor = os.open(root, os.O_RDONLY | directory | cloexec)
+    try:
+        for part in parts[:-1]:
+            child = os.open(
+                part,
+                os.O_RDONLY | directory | nofollow | cloexec,
+                dir_fd=descriptor,
+            )
+            os.close(descriptor)
+            descriptor = child
+        return descriptor, parts[-1]
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _read_migration_at(parent: int, name: str) -> tuple[bytes, os.stat_result]:
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0)
+    descriptor = os.open(name, flags, dir_fd=parent)
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode):
+            raise LinkMigrationError("migration source is not a regular file")
+        chunks = []
+        while True:
+            chunk = os.read(descriptor, 64 * 1024)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        return b"".join(chunks), info
+    finally:
+        os.close(descriptor)
+
+
+def _link_migration_identity(info: os.stat_result) -> tuple[int, int, int, int]:
+    return (
+        info.st_dev,
+        info.st_ino,
+        stat.S_IFMT(info.st_mode),
+        stat.S_IMODE(info.st_mode),
+    )
+
+
+def _unused_migration_name(parent: int, basename: str, kind: str) -> str:
+    for _attempt in range(64):
+        candidate = f".{basename}.migrate-{kind}-{secrets.token_hex(12)}"
+        try:
+            os.stat(candidate, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError:
+            return candidate
+    raise LinkMigrationError("cannot allocate a migration transaction name")
+
+
+def _stage_migration_at(
+    parent: int,
+    basename: str,
+    data: bytes,
+    mode: int,
+    *,
+    ownership: dict | None = None,
+    reserved_name: str | None = None,
+) -> str:
+    flags = (
+        os.O_WRONLY
+        | os.O_CREAT
+        | os.O_EXCL
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0)
+    )
+    attempts = 1 if reserved_name is not None else 64
+    for _attempt in range(attempts):
+        name = reserved_name or f".{basename}.migrate-new-{secrets.token_hex(12)}"
+        if reserved_name is not None and not _transaction_name_valid(
+            name, basename, "new"
+        ):
+            raise LinkMigrationError("reserved migration name is unsafe")
+        try:
+            descriptor = os.open(name, flags, 0o600, dir_fd=parent)
+        except FileExistsError:
+            if reserved_name is not None:
+                raise LinkMigrationError("reserved migration stage is occupied")
+            continue
+        try:
+            offset = 0
+            while offset < len(data):
+                offset += os.write(descriptor, data[offset:])
+            os.fchmod(descriptor, stat.S_IMODE(mode))
+            os.fsync(descriptor)
+            if ownership is not None:
+                ownership["identity"] = _link_migration_identity(
+                    os.fstat(descriptor)
+                )
+        except BaseException:
+            os.close(descriptor)
+            try:
+                os.unlink(name, dir_fd=parent)
+            except FileNotFoundError:
+                pass
+            raise
+        os.close(descriptor)
+        return name
+    raise LinkMigrationError("cannot stage migration output")
+
+
+def _remove_owned_migration_stage(item: dict) -> None:
+    expected_identity = item.get("stage_ownership", {}).get("identity")
+    if expected_identity is None:
+        return
+    try:
+        contents, info = _read_migration_at(item["parent"], item["new"])
+    except FileNotFoundError:
+        return
+    if (
+        _link_migration_identity(info) != expected_identity
+        or contents != item["desired"]
+    ):
+        raise LinkMigrationError(
+            "migration stage ownership changed; foreign stage preserved"
+        )
+    os.unlink(item["new"], dir_fd=item["parent"])
+    os.fsync(item["parent"])
+
+
+def _remove_owned_migration_backup(item: dict) -> None:
+    try:
+        contents, info = _read_migration_at(item["parent"], item["backup"])
+    except FileNotFoundError:
+        return
+    if (
+        _link_migration_identity(info) != item["identity"]
+        or contents != item["source"]
+    ):
+        raise LinkMigrationError(
+            "migration backup ownership changed; foreign backup preserved"
+        )
+    os.unlink(item["backup"], dir_fd=item["parent"])
+    os.fsync(item["parent"])
+
+
+def _quarantine_migration_at(parent: int, name: str, backup: str) -> None:
+    os.rename(name, backup, src_dir_fd=parent, dst_dir_fd=parent)
+    os.fsync(parent)
+
+
+def _install_migration_at(parent: int, staged: str, name: str) -> None:
+    # Hard-link creation is atomic and refuses a concurrently recreated target.
+    os.link(
+        staged,
+        name,
+        src_dir_fd=parent,
+        dst_dir_fd=parent,
+        follow_symlinks=False,
+    )
+    os.fsync(parent)
+
+
+def _verify_installed_migration(item: dict) -> None:
+    actual, actual_info = _read_migration_at(item["parent"], item["name"])
+    staged_info = os.stat(
+        item["new"], dir_fd=item["parent"], follow_symlinks=False
+    )
+    if (
+        actual != item["desired"]
+        or stat.S_IMODE(actual_info.st_mode) != item["identity"][3]
+        or (actual_info.st_dev, actual_info.st_ino)
+        != (staged_info.st_dev, staged_info.st_ino)
+    ):
+        raise LinkMigrationError("migration result changed during apply")
+
+
+def _restore_quarantined_at(parent: int, backup: str, name: str) -> bool:
+    try:
+        os.link(
+            backup,
+            name,
+            src_dir_fd=parent,
+            dst_dir_fd=parent,
+            follow_symlinks=False,
+        )
+    except FileExistsError:
+        return False
+    os.fsync(parent)
+    return True
+
+
+def _journal_payload(plan: dict, prepared: list[dict]) -> dict:
+    return {
+        "committed": False,
+        "owner": "brain-link-migration",
+        "pid": os.getpid(),
+        "planId": plan["planId"],
+        "rows": [
+            {
+                "backup": item["backup"],
+                "mode": item["identity"][3],
+                "name": item["name"],
+                "new": item["new"],
+                "path": item["rel"],
+                "resultSha256": _sha256_bytes(item["desired"]),
+                "sourceSha256": _sha256_bytes(item["source"]),
+            }
+            for item in prepared
+            if "new" in item
+        ],
+        "schemaVersion": LINK_MIGRATION_SCHEMA_VERSION,
+    }
+
+
+def _read_descriptor_bytes(descriptor: int) -> bytes:
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    chunks = []
+    while True:
+        chunk = os.read(descriptor, 64 * 1024)
+        if not chunk:
+            break
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+def _journal_guard_matches(root_parent: int, guard: dict) -> bool:
+    try:
+        descriptor_info = os.fstat(guard["descriptor"])
+        path_info = os.stat(
+            LINK_MIGRATION_JOURNAL_RELPATH,
+            dir_fd=root_parent,
+            follow_symlinks=False,
+        )
+        return (
+            _link_migration_identity(descriptor_info) == guard["identity"]
+            and _link_migration_identity(path_info) == guard["identity"]
+            and _read_descriptor_bytes(guard["descriptor"]) == guard["contents"]
+        )
+    except (OSError, KeyError):
+        return False
+
+
+def _close_migration_journal_guard(guard: dict | None) -> None:
+    if guard is None:
+        return
+    try:
+        os.close(guard["descriptor"])
+    except OSError:
+        pass
+
+
+def _write_migration_journal(
+    root_parent: int,
+    payload: dict,
+    *,
+    create: bool,
+    guard: dict | None = None,
+) -> dict:
+    """Create once with O_EXCL, then append states through the held inode."""
+    data = _canonical_json(payload) + b"\n"
+    if create:
+        temporary = _stage_migration_at(
+            root_parent, LINK_MIGRATION_JOURNAL_RELPATH, data, 0o600
+        )
+        descriptor = None
+        result_guard = None
+        try:
+            try:
+                os.link(
+                    temporary,
+                    LINK_MIGRATION_JOURNAL_RELPATH,
+                    src_dir_fd=root_parent,
+                    dst_dir_fd=root_parent,
+                    follow_symlinks=False,
+                )
+            except FileExistsError as exc:
+                raise LinkMigrationError("another link migration is active") from exc
+            temporary_info = os.stat(
+                temporary, dir_fd=root_parent, follow_symlinks=False
+            )
+            descriptor = os.open(
+                LINK_MIGRATION_JOURNAL_RELPATH,
+                os.O_RDWR
+                | getattr(os, "O_NOFOLLOW", 0)
+                | getattr(os, "O_CLOEXEC", 0),
+                dir_fd=root_parent,
+            )
+            info = os.fstat(descriptor)
+            candidate_guard = {
+                "contents": data,
+                "descriptor": descriptor,
+                "identity": _link_migration_identity(info),
+            }
+            if (
+                _link_migration_identity(temporary_info)
+                != candidate_guard["identity"]
+                or not _journal_guard_matches(root_parent, candidate_guard)
+            ):
+                raise LinkMigrationError(
+                    "migration journal ownership changed during creation"
+                )
+            os.fsync(root_parent)
+            result_guard = candidate_guard
+            return result_guard
+        finally:
+            try:
+                os.unlink(temporary, dir_fd=root_parent)
+            except FileNotFoundError:
+                pass
+            if descriptor is not None and result_guard is None:
+                os.close(descriptor)
+    if guard is None or not _journal_guard_matches(root_parent, guard):
+        raise LinkMigrationError(
+            "migration journal ownership changed; foreign replacement preserved"
+        )
+    descriptor = guard["descriptor"]
+    os.lseek(descriptor, 0, os.SEEK_END)
+    offset = 0
+    while offset < len(data):
+        offset += os.write(descriptor, data[offset:])
+    os.fsync(descriptor)
+    guard["contents"] += data
+    if not _journal_guard_matches(root_parent, guard):
+        raise LinkMigrationError(
+            "migration journal ownership changed; foreign replacement preserved"
+        )
+    return guard
+
+
+def _parse_migration_journal(raw: bytes) -> dict:
+    # Every durable state is a complete JSON line. An unterminated tail is a
+    # power-loss write and is ignored in favor of the preceding durable state.
+    complete = raw.split(b"\n")
+    if not raw.endswith(b"\n"):
+        complete = complete[:-1]
+    candidates = [line for line in complete if line]
+    if not candidates:
+        raise LinkMigrationError("migration journal is malformed")
+    try:
+        payload = json.loads(candidates[-1].decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise LinkMigrationError("migration journal is malformed") from exc
+    if (
+        not isinstance(payload, dict)
+        or payload.get("owner") != "brain-link-migration"
+        or payload.get("schemaVersion") != LINK_MIGRATION_SCHEMA_VERSION
+        or type(payload.get("pid")) is not int
+        or type(payload.get("committed")) is not bool
+        or not isinstance(payload.get("rows"), list)
+    ):
+        raise LinkMigrationError("migration journal is malformed")
+    return payload
+
+
+def _read_migration_journal(root_parent: int) -> tuple[dict, dict]:
+    descriptor = os.open(
+        LINK_MIGRATION_JOURNAL_RELPATH,
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0),
+        dir_fd=root_parent,
+    )
+    info = os.fstat(descriptor)
+    if stat.S_IMODE(info.st_mode) != 0o600:
+        os.close(descriptor)
+        raise LinkMigrationError("migration journal permissions are unsafe")
+    try:
+        raw = _read_descriptor_bytes(descriptor)
+        guard = {
+            "contents": raw,
+            "descriptor": descriptor,
+            "identity": _link_migration_identity(info),
+        }
+        if not _journal_guard_matches(root_parent, guard):
+            raise LinkMigrationError(
+                "migration journal ownership changed; foreign replacement preserved"
+            )
+        return _parse_migration_journal(raw), guard
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _remove_migration_journal(root_parent: int, guard: dict) -> None:
+    """Remove only the held journal inode; never unlink a replacement."""
+    if not _journal_guard_matches(root_parent, guard):
+        raise LinkMigrationError(
+            "migration journal ownership changed; foreign replacement preserved"
+        )
+    quarantine = _unused_migration_name(
+        root_parent, LINK_MIGRATION_JOURNAL_RELPATH, "old"
+    )
+    os.rename(
+        LINK_MIGRATION_JOURNAL_RELPATH,
+        quarantine,
+        src_dir_fd=root_parent,
+        dst_dir_fd=root_parent,
+    )
+    os.fsync(root_parent)
+    moved_info = os.stat(quarantine, dir_fd=root_parent, follow_symlinks=False)
+    if _link_migration_identity(moved_info) != guard["identity"]:
+        try:
+            os.link(
+                quarantine,
+                LINK_MIGRATION_JOURNAL_RELPATH,
+                src_dir_fd=root_parent,
+                dst_dir_fd=root_parent,
+                follow_symlinks=False,
+            )
+            os.fsync(root_parent)
+        except FileExistsError:
+            pass
+        raise LinkMigrationError(
+            "migration journal ownership changed; foreign replacement preserved"
+        )
+    try:
+        os.stat(
+            LINK_MIGRATION_JOURNAL_RELPATH,
+            dir_fd=root_parent,
+            follow_symlinks=False,
+        )
+    except FileNotFoundError:
+        pass
+    else:
+        os.unlink(quarantine, dir_fd=root_parent)
+        os.fsync(root_parent)
+        raise LinkMigrationError(
+            "migration journal ownership changed; foreign replacement preserved"
+        )
+    os.unlink(quarantine, dir_fd=root_parent)
+    os.fsync(root_parent)
+    try:
+        os.stat(
+            LINK_MIGRATION_JOURNAL_RELPATH,
+            dir_fd=root_parent,
+            follow_symlinks=False,
+        )
+    except FileNotFoundError:
+        return
+    raise LinkMigrationError(
+        "migration journal ownership changed; foreign replacement preserved"
+    )
+
+
+def _migration_pid_alive(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def _transaction_name_valid(name: object, basename: str, kind: str) -> bool:
+    return isinstance(name, str) and bool(
+        re.fullmatch(
+            rf"\.{re.escape(basename)}\.migrate-{kind}-[0-9a-f]{{24}}", name
+        )
+    )
+
+
+def recover_link_migration(root: Path) -> bool:
+    """Roll an interrupted journal back to source bytes before a new command."""
+    if not _migration_mutation_supported():
+        journal = root / LINK_MIGRATION_JOURNAL_RELPATH
+        if os.path.lexists(journal):
+            raise LinkMigrationError(
+                "an interrupted migration exists but safe recovery is unavailable"
+            )
+        return False
+    root_parent, _unused = _open_migration_parent(root, "recovery-placeholder")
+    journal_guard = None
+    try:
+        try:
+            payload, journal_guard = _read_migration_journal(root_parent)
+        except FileNotFoundError:
+            return False
+        if payload["pid"] != os.getpid() and _migration_pid_alive(payload["pid"]):
+            raise LinkMigrationError("another link migration is active")
+        unresolved: list[str] = []
+        if payload["committed"]:
+            for row in payload["rows"]:
+                if not isinstance(row, dict) or not isinstance(row.get("path"), str):
+                    raise LinkMigrationError("migration journal is malformed")
+                parent, name = _open_migration_parent(root, row["path"])
+                try:
+                    if name != row.get("name") or not _transaction_name_valid(
+                        row.get("backup"), name, "old"
+                    ) or not _transaction_name_valid(row.get("new"), name, "new"):
+                        raise LinkMigrationError("migration journal names are unsafe")
+                    try:
+                        current, current_info = _read_migration_at(parent, name)
+                    except FileNotFoundError:
+                        unresolved.append(row["path"])
+                        continue
+                    if (
+                        _sha256_bytes(current) != row.get("resultSha256")
+                        or stat.S_IMODE(current_info.st_mode) != row.get("mode")
+                    ):
+                        unresolved.append(row["path"])
+                        continue
+                    for temporary, expected in (
+                        (row["backup"], row.get("sourceSha256")),
+                        (row["new"], row.get("resultSha256")),
+                    ):
+                        try:
+                            contents, temporary_info = _read_migration_at(
+                                parent, temporary
+                            )
+                        except FileNotFoundError:
+                            continue
+                        if (
+                            _sha256_bytes(contents) != expected
+                            or stat.S_IMODE(temporary_info.st_mode) != row.get("mode")
+                        ):
+                            unresolved.append(row["path"])
+                            continue
+                        os.unlink(temporary, dir_fd=parent)
+                finally:
+                    os.close(parent)
+            if unresolved:
+                raise LinkMigrationError(
+                    "committed migration needs manual recovery: "
+                    + ", ".join(sorted(set(unresolved)))
+                )
+            _remove_migration_journal(root_parent, journal_guard)
+            return True
+        for row in reversed(payload["rows"]):
+            if not isinstance(row, dict) or not isinstance(row.get("path"), str):
+                raise LinkMigrationError("migration journal is malformed")
+            parent, name = _open_migration_parent(root, row["path"])
+            try:
+                if name != row.get("name") or not _transaction_name_valid(
+                    row.get("backup"), name, "old"
+                ) or not _transaction_name_valid(row.get("new"), name, "new"):
+                    raise LinkMigrationError("migration journal names are unsafe")
+                backup = None
+                try:
+                    backup = _read_migration_at(parent, row["backup"])
+                except FileNotFoundError:
+                    pass
+                current = None
+                try:
+                    current = _read_migration_at(parent, name)
+                except FileNotFoundError:
+                    pass
+                if backup is not None:
+                    backup_bytes, backup_info = backup
+                    if (
+                        _sha256_bytes(backup_bytes) != row.get("sourceSha256")
+                        or stat.S_IMODE(backup_info.st_mode) != row.get("mode")
+                    ):
+                        unresolved.append(row["path"])
+                        continue
+                    if current is not None:
+                        current_bytes, current_info = current
+                        current_hash = _sha256_bytes(current_bytes)
+                        if current_hash == row.get("sourceSha256") and stat.S_IMODE(
+                            current_info.st_mode
+                        ) == row.get("mode"):
+                            os.unlink(row["backup"], dir_fd=parent)
+                        elif current_hash == row.get(
+                            "resultSha256"
+                        ) and stat.S_IMODE(current_info.st_mode) == row.get("mode"):
+                            os.unlink(name, dir_fd=parent)
+                            _install_migration_at(parent, row["backup"], name)
+                            os.unlink(row["backup"], dir_fd=parent)
+                        else:
+                            unresolved.append(row["path"])
+                            continue
+                    else:
+                        _install_migration_at(parent, row["backup"], name)
+                        os.unlink(row["backup"], dir_fd=parent)
+                elif current is None or _sha256_bytes(current[0]) != row.get(
+                    "sourceSha256"
+                ):
+                    unresolved.append(row["path"])
+                    continue
+                try:
+                    staged, staged_info = _read_migration_at(parent, row["new"])
+                    if (
+                        _sha256_bytes(staged) == row.get("resultSha256")
+                        and stat.S_IMODE(staged_info.st_mode) == row.get("mode")
+                    ):
+                        os.unlink(row["new"], dir_fd=parent)
+                    else:
+                        unresolved.append(row["path"])
+                except FileNotFoundError:
+                    pass
+            finally:
+                os.close(parent)
+        if unresolved:
+            raise LinkMigrationError(
+                "interrupted migration needs manual recovery: "
+                + ", ".join(sorted(set(unresolved)))
+            )
+        _remove_migration_journal(root_parent, journal_guard)
+        return True
+    finally:
+        _close_migration_journal_guard(journal_guard)
+        os.close(root_parent)
+
+
+def apply_link_migration_plan(root: Path, plan: dict) -> dict:
+    """Held-parent CAS transaction; never overwrites a concurrent final path."""
+    _validate_migration_plan(plan)
+    edits = plan.get("edits", [])
+    if not edits:
+        return {"filesChanged": 0, "linksConverted": 0, "planId": plan["planId"]}
+    if not _migration_mutation_supported():
+        raise LinkMigrationError(
+            "safe link migration writes are unavailable on this runtime; preview/check only"
+        )
+    recover_link_migration(root)
+    dirty = dirty_migration_paths(root, plan)
+    if dirty is None:
+        raise LinkMigrationError("cannot establish clean Git state for planned paths")
+    if dirty:
+        raise LinkMigrationError("planned migration paths are dirty")
+    root_parent, _unused = _open_migration_parent(root, "journal-placeholder")
+    prepared: list[dict] = []
+    quarantined: list[dict] = []
+    applied: list[dict] = []
+    previous_term = None
+    can_handle_term = hasattr(signal, "SIGTERM")
+    if can_handle_term:
+        try:
+            previous_term = signal.getsignal(signal.SIGTERM)
+
+            def interrupt_on_term(_signum, _frame):
+                raise KeyboardInterrupt
+
+            signal.signal(signal.SIGTERM, interrupt_on_term)
+        except (ValueError, OSError):
+            previous_term = None
+    recovery: list[str] = []
+    committed = False
+    journal_active = False
+    journal_guard = None
+    retire_journal = False
+    journal_payload = _journal_payload(plan, prepared)
+    try:
+        journal_guard = _write_migration_journal(
+            root_parent, journal_payload, create=True
+        )
+        journal_active = True
+        # Preparation is inside the same BaseException scope as mutation, so
+        # a later staging failure or interrupt cannot leak earlier siblings.
+        for row in edits:
+            rel = row.get("path")
+            if not isinstance(rel, str):
+                raise LinkMigrationError("migration source path is unsafe")
+            parent, name = _open_migration_parent(root, rel)
+            item = {"parent": parent, "name": name, "rel": rel}
+            prepared.append(item)
+            source, info = _read_migration_at(parent, name)
+            mode = stat.S_IMODE(info.st_mode)
+            if _sha256_bytes(source) != row.get("sourceSha256") or mode != row.get("mode"):
+                raise LinkMigrationError("stale migration source or file mode")
+            desired = _desired_migration_bytes(source, row)
+            item.update(
+                {
+                    "backup": _unused_migration_name(parent, name, "old"),
+                    "desired": desired,
+                    "identity": _link_migration_identity(info),
+                    "new": _unused_migration_name(parent, name, "new"),
+                    "source": source,
+                    "stage_ownership": {},
+                    "staged_owned": False,
+                }
+            )
+            # Make the random stage name durable before creating it. Recovery
+            # can now remove a verified complete stage after a power loss in
+            # the preparation window instead of leaving an unjournaled file.
+            journal_payload = _journal_payload(plan, prepared)
+            _write_migration_journal(
+                root_parent,
+                journal_payload,
+                create=False,
+                guard=journal_guard,
+            )
+            item["new"] = _stage_migration_at(
+                parent,
+                name,
+                desired,
+                mode,
+                ownership=item["stage_ownership"],
+                reserved_name=item["new"],
+            )
+            item["staged_owned"] = True
+        # Final held-handle preflight, then quarantine every original. A race
+        # becomes quarantined evidence and is restored, never overwritten.
+        for item in prepared:
+            current, info = _read_migration_at(item["parent"], item["name"])
+            if current != item["source"] or _link_migration_identity(info) != item["identity"]:
+                raise LinkMigrationError("migration source changed before quarantine")
+            quarantined.append(item)
+            _quarantine_migration_at(
+                item["parent"], item["name"], item["backup"]
+            )
+            moved, moved_info = _read_migration_at(item["parent"], item["backup"])
+            if moved != item["source"] or _link_migration_identity(moved_info) != item["identity"]:
+                raise LinkMigrationError("migration source changed during quarantine")
+        for item in prepared:
+            # Record the publication attempt before the helper's directory
+            # fsync: a successful link followed by fsync failure is still an
+            # installed result that rollback must authenticate and remove.
+            applied.append(item)
+            _install_migration_at(item["parent"], item["new"], item["name"])
+        for item in prepared:
+            _verify_installed_migration(item)
+        journal_payload["committed"] = True
+        _write_migration_journal(
+            root_parent,
+            journal_payload,
+            create=False,
+            guard=journal_guard,
+        )
+        # The commit-marker write is a mutation window. Re-authenticate every
+        # installed inode before declaring success or deleting recovery data.
+        for item in prepared:
+            _verify_installed_migration(item)
+        committed = True
+    except BaseException as exc:
+        rollback_errors: list[str] = []
+        for item in reversed(applied):
+            try:
+                current, info = _read_migration_at(item["parent"], item["name"])
+                staged_info = os.stat(
+                    item["new"], dir_fd=item["parent"], follow_symlinks=False
+                )
+                if current == item["desired"] and (
+                    info.st_dev,
+                    info.st_ino,
+                ) == (staged_info.st_dev, staged_info.st_ino) and stat.S_IMODE(
+                    info.st_mode
+                ) == item["identity"][3]:
+                    os.unlink(item["name"], dir_fd=item["parent"])
+            except FileNotFoundError:
+                # Publication may have failed before creating the final name.
+                pass
+            except (OSError, LinkMigrationError) as rollback_exc:
+                rollback_errors.append(str(rollback_exc))
+        for item in reversed(quarantined):
+            try:
+                try:
+                    _read_migration_at(item["parent"], item["backup"])
+                except FileNotFoundError:
+                    current, info = _read_migration_at(
+                        item["parent"], item["name"]
+                    )
+                    if current == item["source"] and _link_migration_identity(info) == item["identity"]:
+                        continue
+                    raise LinkMigrationError("quarantined original is unavailable")
+                restored = _restore_quarantined_at(
+                    item["parent"], item["backup"], item["name"]
+                )
+                if restored:
+                    os.unlink(item["backup"], dir_fd=item["parent"])
+                else:
+                    recovery.append(f"{item['rel']}::{item['backup']}")
+            except (OSError, LinkMigrationError) as rollback_exc:
+                rollback_errors.append(str(rollback_exc))
+                recovery.append(f"{item['rel']}::{item['backup']}")
+        if rollback_errors:
+            detail = ", ".join(recovery) if recovery else "unknown backup"
+            raise LinkMigrationError(
+                f"migration failed and rollback needs recovery from {detail}"
+            ) from exc
+        if recovery:
+            raise LinkMigrationError(
+                "migration refused concurrent content; originals retained at "
+                + ", ".join(recovery)
+            ) from exc
+        retire_journal = journal_active
+        raise
+    finally:
+        journal_cleanup_error = None
+        artifact_cleanup_error = None
+        if previous_term is not None:
+            signal.signal(signal.SIGTERM, previous_term)
+        for item in prepared:
+            parent = item["parent"]
+            try:
+                _remove_owned_migration_stage(item)
+                if committed:
+                    _remove_owned_migration_backup(item)
+            except LinkMigrationError as cleanup_exc:
+                if artifact_cleanup_error is None:
+                    artifact_cleanup_error = cleanup_exc
+            try:
+                os.close(parent)
+            except OSError:
+                pass
+        if artifact_cleanup_error is None and (committed or retire_journal) and journal_active:
+            try:
+                _remove_migration_journal(root_parent, journal_guard)
+                journal_active = False
+            except LinkMigrationError as cleanup_exc:
+                journal_cleanup_error = cleanup_exc
+        _close_migration_journal_guard(journal_guard)
+        os.close(root_parent)
+        if artifact_cleanup_error is not None:
+            raise artifact_cleanup_error
+        if journal_cleanup_error is not None:
+            raise journal_cleanup_error
+    return {
+        "filesChanged": len(edits),
+        "linksConverted": plan["summary"]["linksConverted"],
+        "planId": plan["planId"],
+    }
+
+
+def cmd_migrate_links(root: Path, args) -> int:
+    recovered = False
+    if args.write:
+        try:
+            recovered = recover_link_migration(root)
+        except LinkMigrationError as exc:
+            if args.json:
+                print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=1, sort_keys=True))
+            else:
+                print(f"error: {exc}", file=sys.stderr)
+            return 1
+    elif os.path.lexists(root / LINK_MIGRATION_JOURNAL_RELPATH):
+        # Preview and --check are strict zero-write operations. Recovery is a
+        # mutation and therefore requires the caller's explicit --write.
+        message = "interrupted-migration: explicit --write is required for recovery"
+        if args.json:
+            print(json.dumps({"error": message}, ensure_ascii=False, indent=1, sort_keys=True))
+        else:
+            print(f"error: {message}", file=sys.stderr)
+        return 1
+    plan = build_link_migration_plan(root)
+    public_plan = public_link_migration_plan(plan)
+    if args.write:
+        try:
+            applied = apply_link_migration_plan(root, plan)
+        except (LinkMigrationError, KeyboardInterrupt) as exc:
+            if args.json:
+                print(json.dumps({"error": str(exc), "plan": public_plan}, ensure_ascii=False, indent=1, sort_keys=True))
+            else:
+                print(f"error: {exc}", file=sys.stderr)
+            return 1
+        payload = {"applied": applied, "plan": public_plan, "recovered": recovered}
+        emit(
+            payload,
+            args.json,
+            [
+                f"migrated {applied['linksConverted']} links in {applied['filesChanged']} files",
+                "regenerate: " + ", ".join(plan["regenerateRequired"]),
+            ],
+        )
+        return 0
+    if args.json:
+        print(json.dumps(public_plan, ensure_ascii=False, indent=1, sort_keys=True))
+    else:
+        summary = plan["summary"]
+        print(
+            f"preview: {summary['linksConverted']} links in {summary['filesChanged']} files; "
+            f"{len(plan['blockers'])} blockers; {summary['placeholders']} placeholders"
+        )
+        for finding in plan["blockers"]:
+            location = finding["path"] + (f":{finding['line']}" if finding["line"] else "")
+            print(f"BLOCK {location} {finding['rule']}: {finding['message']}")
+    if args.check and (
+        plan["summary"]["legacyLinks"] > 0 or plan["edits"] or plan["blockers"]
+    ):
+        return 1
+    return 1 if plan["blockers"] else 0
+
+
 def resolve_note_arg(index: dict, arg: str) -> str | None:
     # Index paths are /-separated (spec §2); accept OS-native separators from
     # callers like the VS Code ${relativeFile} task on Windows.
@@ -3799,13 +5529,15 @@ def cmd_links(root: Path, args) -> int:
     )
     payload = {
         "backlinks": rec["backlinks"],
+        "legacyCount": sum(1 for link in rec["links"] if link["format"] == "wikilink"),
         "outgoing": rec["links"],
         "path": rel,
+        "placeholderCount": sum(1 for link in rec["links"] if link["placeholder"]),
         "unresolved": unresolved,
     }
     lines = [f"note: {rel}", "outgoing:"]
     for l in rec["links"]:
-        state = l["resolved"] or ("placeholder" if l["placeholder"] else "UNRESOLVED")
+        state = l["resolved"] or l["resolution"]["status"].upper()
         lines.append(f"  {l['raw']} -> {state}")
     lines.append("backlinks:")
     lines.extend(f"  {b}" for b in rec["backlinks"])
@@ -5774,6 +7506,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     p = add("links", help="outgoing links, backlinks, unresolved targets")
     p.add_argument("note")
+    p = add(
+        "migrate-links",
+        help="preview/check/write legacy wikilinks as relative Markdown",
+    )
+    migration_mode = p.add_mutually_exclusive_group()
+    migration_mode.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 1 while any legacy link (including placeholders) remains",
+    )
+    migration_mode.add_argument(
+        "--write",
+        action="store_true",
+        help="apply the source-hashed plan atomically (requires clean planned paths)",
+    )
     add("tags", help="tag usage counts by namespace")
     p = add("show", help="full index record for one note")
     p.add_argument("note")
@@ -5901,6 +7648,7 @@ def main(argv: list[str] | None = None) -> int:
         "list": cmd_list,
         "search": cmd_search,
         "links": cmd_links,
+        "migrate-links": cmd_migrate_links,
         "tags": cmd_tags,
         "show": cmd_show,
         "recent": cmd_recent,

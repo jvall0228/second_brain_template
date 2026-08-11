@@ -15,3 +15,9 @@ __pycache__/
 # onboard-harness, reversed by delete — never shared between machines).
 .cursor/
 .cursorignore
+
+# Crash-recovery state for `brain migrate-links --write`. The journal and
+# per-note quarantine/staging files are machine-local evidence, never corpus.
+/.brain-link-migration.json
+.*.migrate-new-*
+.*.migrate-old-*

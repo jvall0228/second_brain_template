@@ -92,19 +92,18 @@ The full parsed map is preserved as-is under `frontmatter` (values: string, list
 
 Template placeholders (`{{…}}`) are ordinary strings to the parser; the `09_Templates/` exemption is applied by `validate`, not the parser (§10.3).
 
-## 5. Wikilink grammar
+## 5. Generic link grammar
 
-### 5.1 Recognized forms
+### 5.1 Recognized forms and records
 
-`[[target]]`, `[[target|display]]`, `[[target#fragment]]`, `[[target#fragment|display]]`, and the embed variants prefixed `!`. Parsing inside the brackets:
+The schema-v2 extractor reads two formats into one record shape:
 
-1. Split at the **first display separator**: a `|`, optionally preceded by a backslash which is consumed — Obsidian requires the escaped form `[[target\|Display]]` inside markdown tables, and both forms mean the same link. Left of the separator is the link path, right is the display text.
-2. Split the link path at the **first `#`** → target / fragment. A fragment beginning `^` is a block reference; otherwise a heading reference. Fragments are recorded but **never affect resolution** (§6).
-3. Trim surrounding whitespace from target, fragment, and display.
-4. A target ending `.md` has **exactly one** such extension stripped (`[[foo.md]]` → `foo`; `[[foo.md.md]]` → `foo.md`). An **empty** target (`[[#heading]]`) is a self-reference and resolves to the containing note.
-5. A target containing `{{` is a **placeholder link**: recorded with `placeholder: true`, exempt from resolution (`resolved: null`, not counted as unresolved).
+- **Standard inline Markdown:** `[label](destination)`, `![alt](destination)`, angle-bracket destinations, balanced parentheses, escaped delimiters, one optional fully quoted/parenthesized ignored title, URL-encoded paths/fragments, and fragment-only self-links. Arbitrary text after a destination is invalid rather than silently discarded. Reference-style and multiline links are intentionally not recognized.
+- **Legacy import format:** `[[target]]`, `[[target|label]]`, `[[target#fragment]]`, `[[target#fragment|label]]`, and the `!` embed forms. The first `|` (or table-safe `\|`) separates the label; the first `#` separates the fragment; one final `.md` is stripped only from the compatibility `target` field. Odd backslash parity escapes either link syntax; even parity does not.
 
-The bracket body must be non-empty and may not contain `[`, `]`, or a newline. A `[[` preceded by a backslash is not a link.
+Each record always carries `raw`, `range`, `line`, `label`, `destination`, `fragment`, `format` (`markdown|wikilink`), `embed`, `placeholder`, and `resolution`. `range.start.offset`/`range.end.offset` are a half-open range in **normalized UTF-8 bytes**; endpoints also carry 1-based line and 0-based character column. `resolution` is `{status, path, fragment, warnings}`. During the transition, `display`, `target`, `resolved`, and top-level `warnings` mirror the schema-v1 meanings for existing consumers. `format: wikilink` is the authoritative legacy count; the index also exposes aggregate `linkCounts`.
+
+A destination or fragment containing `{{` is a placeholder: indexed with `status: placeholder`, counted, and exempt from normal resolution/validation. A fragment beginning `^` is an unsupported block reference: its path may resolve for backlink structure, but the record status/warning is explicit and migration refuses it. Raw/bare URLs and Markdown destinations with a URI scheme or `//` are external and excluded. A leading `/` Markdown destination is recorded as unsupported rather than treated as repository-relative; portable vault links are source-relative.
 
 ### 5.2 Exclusion zones
 
@@ -116,13 +115,9 @@ Links (and inline tags, §7.2) are **not** extracted from:
 
 This removes the known false-positive source from the M4 link check. Indented (4-space) code blocks, HTML comments, and Obsidian `%%` comments are **not** excluded in v1 (§11).
 
-### 5.3 Recorded fields
+## 6. Link and fragment resolution
 
-Each link is recorded in document order with: `raw` (full matched text), `target`, `fragment` (or `null`), `display` (or `null`), `embed` (bool), `placeholder` (bool), `line`, `resolved` (vault path or `null`), and `warnings` (list of strings, §6.5).
-
-## 6. Link resolution
-
-Mirrors Obsidian's filename-first model with **one deliberate omission: no title-based resolution.** The solutions note marks title matching unreliable, so a link that only matches some note's `title:` stays **unresolved** and `validate` flags it (with a repair hint, §6.5).
+Legacy wikilinks retain Obsidian's filename-first import model. Markdown links use source-relative explicit paths compatible with GitHub, VS Code, and Obsidian. Title matching remains a hint only.
 
 **Folding rule:** every case-insensitive comparison in this section means NFC normalization followed by `str.casefold()`. (For vaults conforming to the §10.2 filename rules this reduces to ASCII case-insensitivity, making behavior independent of the interpreter's Unicode database version.)
 
@@ -130,33 +125,41 @@ Mirrors Obsidian's filename-first model with **one deliberate omission: no title
 
 From the note corpus: **basename** (final path component minus `.md`) → list of paths, keyed by the folding rule with original case retained for mismatch detection.
 
-### 6.2 Algorithm
+### 6.2 Legacy algorithm
 
 For a target `T` (post §5.1 normalization), resolution tries **notes first, then assets**:
 
 1. **Self:** `T` is empty → resolves to the containing note.
 2. **Bare name** (`T` contains no `/`): look up the note basename table.
    - one candidate → resolved;
-   - multiple → **ambiguous**: resolve to the candidate with the fewest path segments, tie-broken by code-point path order; warning `ambiguous`;
+   - multiple → **ambiguous**: `path: null`, status `ambiguous`, and deterministic candidate warnings; never guess;
    - none → step 4.
 3. **Path** (`T` contains `/`): exact match against note path `T + ".md"`, case-sensitively; failing that, by the folding rule (unique hit → resolved; multiple hits → ambiguity rule above; none → step 4). Partial path *suffix* matching is **not** supported (§11).
 4. **Asset fallback:** if `T`'s final component has an extension — it matches `\.[A-Za-z0-9]+$` and the suffix is not `md` — resolve against the **asset list** with the same branch structure as steps 2–3 (bare name → asset basename table, *including* the extension; path → exact asset path; same ambiguity and case rules). Trying notes first means `[[web-2.0]]` finds a note named `web-2.0.md` even though `.0` looks like an extension; `![[img.png]]` finds the asset.
-5. **Unresolved:** `resolved: null`. If some note's `title` equals `T` under the folding rule, each such path is recorded as a `title-match:<path>` warning — the repair hint for the future `link-repair` skill.
+5. **Unresolved:** `path: null`. If some note's `title` equals `T` under the folding rule, each such path is recorded as a `title-match:<path>` repair hint.
 
-### 6.3 Case mismatches
+### 6.3 Markdown algorithm
+
+Percent-decode with UTF-8 semantics (`+` stays literal), normalize NFC, then repeat external-scheme/protocol-relative classification so encoding cannot disguise a URI as a local path. Join local destinations to the containing note's parent with POSIX separators. Reject a leading `/`, a normalized path that escapes the vault, external schemes, protocol-relative URLs, and unsafe/unsupported destinations. An explicit `.md` resolves as a note; an extensionless destination may resolve as a note for import tolerance; other extensions resolve as assets. Exact case wins, a unique folded match carries `case-mismatch`, and multiple folded candidates remain unresolved/ambiguous. Fragment-only destinations resolve to the containing note.
+
+### 6.4 Heading fragments and slugs
+
+ATX headings receive GitHub-compatible slugs in document order from their rendered inline text: inline link/image markup contributes its label/alt text rather than its destination, raw HTML tags are removed, and HTML entities are decoded before NFC + casefold. Inline punctuation/format marks (including `_`) are removed, whitespace collapses to `-`, Unicode letters/numbers/marks are preserved, and duplicate bases receive `-1`, `-2`, and so on. Markdown fragments match these unique slugs. Legacy fragments match heading text under the folding rule; duplicate text is ambiguous and leaves the whole link unresolved. A missing legacy fragment is recorded as `unresolved-fragment` while retaining the resolved path/backlink so WP8 can read the unchanged corpus honestly; migration still refuses it. A successful fragment resolution records `{line, slug}`.
+
+### 6.5 Case mismatches
 
 Any difference between the link text and the actual filename/path casing on a resolved link records the warning `case-mismatch` — the repo lives on case-sensitive filesystems where such links are latent breakage even though Obsidian resolves them.
 
-### 6.4 Backlinks and warnings
+### 6.6 Backlinks and warnings
 
 - **Backlinks:** for every resolved note-target link (embed or not), the containing note's path is added to the target's `backlinks` (sorted, de-duplicated).
-- Per-link `warnings` carry `ambiguous`, `case-mismatch`, and `title-match:<path>` entries; `validate` maps them to severities (§10).
+- Per-link warnings carry ambiguity candidates, case/fragment-case mismatches, title hints, unresolved fragments, and unsupported block/destination states; `validate` maps the blocking path states while WP8 reports legacy fragment debt without making the unchanged maintained tree fail.
 
 ## 7. Body extraction
 
 ### 7.1 Headings
 
-ATX headings only: 1–6 `#` characters at the start of a line (up to 3 leading spaces allowed), followed by a space and text; trailing closing-`#` sequences are stripped. Recorded in document order as `{level, line, text}` (`line` per §3, needed for `search` heading hits). Setext (underline) headings are not recognized (§11); the vault uses ATX exclusively. Exclusion zones (§5.2) apply.
+ATX headings only: 1–6 `#` characters at the start of a line (up to 3 leading spaces allowed), followed by a space and text; trailing closing-`#` sequences are stripped. Recorded in document order as `{level, line, slug, text}` (`line` per §3; `slug` per §6.4). Setext headings are not recognized (§11). Exclusion zones (§5.2) apply.
 
 ### 7.2 Inline tags
 
@@ -177,11 +180,17 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
    "bodyTags": [],
    "frontmatter": {"tags": ["type/meta"], "title": "PRD", "updated": "2026-08-11"},
    "frontmatterErrors": [],
-   "headings": [{"level": 1, "line": 8, "text": "PRD"}],
+   "headings": [{"level": 1, "line": 8, "slug": "prd", "text": "PRD"}],
    "links": [
-    {"display": null, "embed": false, "fragment": null, "line": 12,
-     "placeholder": false, "raw": "[[AGENTS]]", "resolved": "AGENTS.md",
-     "target": "AGENTS", "warnings": []}
+    {"destination": "AGENTS", "display": null, "embed": false,
+     "format": "wikilink", "fragment": null, "label": null, "line": 12,
+     "placeholder": false,
+     "range": {"start": {"column": 0, "line": 12, "offset": 200},
+               "end": {"column": 10, "line": 12, "offset": 210}},
+     "raw": "[[AGENTS]]",
+     "resolution": {"fragment": null, "path": "AGENTS.md",
+                    "status": "resolved", "warnings": []},
+     "resolved": "AGENTS.md", "target": "AGENTS", "warnings": []}
    ],
    "sizeBytes": 12345,
    "tasks": [
@@ -192,11 +201,13 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
    "updated": "2026-08-11"
   }
  },
- "schemaVersion": 1
+ "linkCounts": {"legacy": 1, "markdown": 0, "placeholder": 0,
+                "unsupportedBlockReference": 0, "wikilink": 1},
+ "schemaVersion": 2
 }
 ```
 
-Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is always present (empty lists/`null` rather than omitted keys) so the shape is predictable for consumers reading the JSON directly — the committed index is the primary discovery mechanism per PRD §9.4, usable without running Python.
+Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is always present (empty lists/`null` rather than omitted keys). `linkCounts` is the deterministic aggregate over every indexed record; `legacy` currently equals `wikilink` and remains named explicitly for migration/report consumers.
 
 `schemaVersion` bumps on any breaking change to this shape; consumers must check it.
 
@@ -204,7 +215,7 @@ Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is al
 
 The committed index must be a **pure function of tracked file contents** — a fresh CI clone rebuild must be byte-identical to the committed copy. Hence the index corpus in §2, plus:
 
-- Serialized exactly as Python's `json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True)` plus a single trailing `\n`, written as UTF-8 with LF endings. Only strings, integers, booleans, `null`, objects, and arrays appear (no floats), so output is stable across Python ≥ 3.10. (The §8.1 example shows the real emitted key order: `sort_keys` puts `assets` < `notes` < `schemaVersion`.)
+- Serialized exactly as Python's `json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True)` plus a single trailing `\n`, written as UTF-8 with LF endings. Only strings, integers, booleans, `null`, objects, and arrays appear (no floats), so output is stable across Python ≥ 3.10. (The §8.1 example shows the real emitted key order: `assets` < `linkCounts` < `notes` < `schemaVersion`.)
 - Object keys sort via `sort_keys`; every array is either **document order** (links, headings — deterministic from file content) or **explicitly sorted** (assets, backlinks, bodyTags, and the `notes` keys via key sort).
 - **No timestamps, no mtimes, no absolute paths, no environment data, no tool-version stamp.** In particular, **file mtime is excluded** even though the plan's extraction-scope bullet listed it: git does not preserve mtimes, so a fresh clone would always produce a different index and the CI freshness check could never pass. The `recent` command's mtime tiebreak stats the working tree at query time instead (§9). *(Deviation from the plan — flagged for owner review, §12.)*
 - `sizeBytes` is the UTF-8 byte length of the **normalized** text (§3; byte-level normalization for `not-utf8` files), not the on-disk size, for the same reason.
@@ -215,8 +226,8 @@ The committed index must be a **pure function of tracked file contents** — a f
 
 A note whose **frontmatter tags** contain `restricted/private` (bodyTags are informal and never trigger this, matching §10.2's posture) is **reduced** in the committed index rather than excluded — decided 2026-08-11 per the accepted triage recommendation on issue #17. The committed index is the vault's most-copied artifact (PRD §9.4); without reduction it would re-leak the very content the tag marks.
 
-- **Kept:** path (the `notes` key), `title`, `frontmatter` (including `tags` — consumers must be able to see *why* the record is reduced), `updated`, `sizeBytes`, `frontmatterErrors`, `links`, and `backlinks`. Links and backlinks stay so restricted notes remain discoverable and the §10.2 containment check has structure to work with — but only their **structure**: on a reduced record each link's `display` and `fragment` are nulled and `raw` is rewritten to the canonical `[[target]]` / `![[target]]` form, so alias text and verbatim body markup (which are body prose) never reach the committed index.
-- **Dropped (emptied/nulled, not omitted — §8.1's every-field-present shape holds, so no `schemaVersion` bump):** `headings: []`, `bodyTags: []`, and `tasks: []` (issue #28: task text and metadata are body prose) — the body-derived fields the index would otherwise publish — plus the link-record prose fields above.
+- **Kept:** path (the `notes` key), `title`, `frontmatter` (including `tags` — consumers must be able to see *why* the record is reduced), `updated`, `sizeBytes`, `frontmatterErrors`, `links`, and `backlinks`. Links/backlinks stay so containment and discovery retain structure. On a reduced link, `label`/`display` and `fragment` are nulled, the nested fragment resolution is nulled, and `raw` is rewritten to a label-free canonical form for its format, so link prose never reaches the committed index.
+- **Dropped (emptied/nulled, not omitted):** `headings: []`, `bodyTags: []`, and `tasks: []` — body-derived fields — plus the link-record prose fields above.
 - The reduction applies to the **committed index only**: `brain index` output and the `validate --check-index` rebuild (both serialize the reduced form, so the byte-compare stays consistent). Query commands (§9) keep the full in-memory record — they run against the local working tree, where the note body sits right beside them; reducing them would cost the owner `search`/`show` utility while protecting nothing.
 - This is a **sanctioned, tag-driven exception** to the spirit of the §15.1 config/index invariant: index output varies with note *content* (the tag), never with `00_Meta/config.yaml`. The committed index remains a pure function of tracked file contents (§8.2).
 - Honest framing (conventions § restricted/private): reduction is leak resistance, not access control — the note body is still in the repo, readable by anything that reads files.
@@ -230,7 +241,8 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 - **`index`** — rebuild from the index corpus and write `vault-index.json` per §8; print the path written.
 - **`list`** — note paths, sorted. Filters (ANDed): `--dir PREFIX` (path prefix), `--tag TAG` repeatable (effective-tag exact match; a trailing `/*` matches the whole namespace), `--type X` (sugar for `--tag type/X`). JSON: array of `{path, title, updated}`.
 - **`search <query>`** — case-insensitive substring over title, heading texts, and body (body searched in full, code blocks included); combinable with `--tag`. Human: `path:line: snippet` for body/heading hits, `path: title: <title>` for title hits. JSON: array of `{path, field, line, snippet}` (`field` ∈ `title` | `heading` | `body`; `line` is `null` for title hits). With `--semantic`, the command instead ranks whole notes by the §18.4 hybrid rule (degrading to exactly this keyword behavior when semantic ranking is impossible — §18.4 defines both modes).
-- **`links <note>`** — the note's outgoing links (with resolution state and warnings), its backlinks, and its unresolved targets. JSON: `{path, outgoing, backlinks, unresolved}` drawn from the index record.
+- **`links <note>`** — the note's outgoing generic records, backlinks, unresolved targets, and explicit `legacyCount`/`placeholderCount`. JSON: `{path, outgoing, backlinks, unresolved, legacyCount, placeholderCount}`.
+- **`migrate-links`** — §22: source-hashed preview by default; `--check` exits 1 while any legacy link (including a placeholder) or blocker remains; explicit `--write` performs recovery and the crash-recoverable transaction. `--check` and `--write` are mutually exclusive; all modes support `--json`.
 - **`tags`** — effective-tag usage counts grouped by namespace (text before the first `/`; tags without `/` group under `(none)`), sorted by namespace then value. JSON: `{namespace: {value: count}}`.
 - **`show <note>`** — the full §8.1 record for one note (human output: a readable summary of the same fields).
 - **`recent [n]`** — `n` (default 10) notes by `updated` descending; ties broken by working-tree mtime descending, then path ascending; notes with `updated: null` sort last (per PRD §15, `updated` is the primary recency signal and day-granular). JSON: array of `{path, title, updated}`.
@@ -249,13 +261,13 @@ Tag namespace membership is read **at runtime** from the authoritative table in 
 
 ### 10.2 Checks
 
-**Errors** (exit 1): missing frontmatter; missing/null `title` or `updated`; a missing, null, or **empty** `tags` list (`tags: []` declares no tags and fails the same `missing-tags` check; the §10.3 template-placeholder exemption is per-value, and an empty list has no values to exempt, so it fires in `09_Templates/` too); `not-readable` (§3 read failure — `validate` reports it as the note's only finding, suppressing the derived frontmatter-field checks, and `not-utf8` behaves the same way; every other command skips the file); `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved wikilink (placeholder links exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems. Secret-scanning findings (§10.5) are also errors.
+**Errors** (exit 1): missing frontmatter; missing/null `title` or `updated`; a missing, null, or **empty** `tags` list (`tags: []` declares no tags and fails the same `missing-tags` check; the §10.3 template-placeholder exemption is per-value, and an empty list has no values to exempt, so it fires in `09_Templates/` too); `not-readable` (§3 read failure — `validate` reports it as the note's only finding, suppressing the derived frontmatter-field checks, and `not-utf8` behaves the same way; every other command skips the file); `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved or ambiguous internal link (placeholders exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems. Secret-scanning findings (§10.5) are also errors.
 
 **Filename convention:** applies to the **basename** of note files only (directories and assets are not checked). A note basename must match `^[a-z0-9]+(-[a-z0-9]+)*\.md$` — all-digit segments are allowed, so dated notes like `2025-01-15.md` and `2024-01-review.md` pass. Exceptions per [[00_Meta/CONVENTIONS]]: `AGENTS.md`, `CLAUDE.md`, `README.md` at any level; the 14 exact-case framework paths registered in `CORE_FRAMEWORK_PATHS`; periodic tokens `YYYY-W##-review.md` and `YYYY-Q#-review.md`; `SKILL.md` inside `10_Agents/skills/` (Agent Skills format, M6). Case variants of a registered framework path fail even when the lowercase basename would otherwise match kebab-case; the exception does not apply to an identically named note elsewhere.
 
 **Agent Skills contract (`10_Agents/skills/`, added at M6 per the implementation plan):** every skill directory (a direct child of `10_Agents/skills/` containing notes) must hold a `SKILL.md` whose frontmatter carries — in addition to the vault contract — an Agent Skills `name` equal to the directory name (`skill-name-mismatch`) and a non-empty `description` string (`skill-missing-description`); a skill directory without a `SKILL.md` is `skill-missing`. All three are errors.
 
-**Warnings** (exit 2 if no errors): `ambiguous` links; `case-mismatch` links; `tags-not-a-list`; `duplicate-key`; `restricted-link` — a note **without** `restricted/private` in its frontmatter tags links to or embeds a resolved note **with** it (context bleed, issue #17: the linking note's prose tends to carry a summary of what it links; restricted → restricted links are clean). Advisory by design — a warning, never an error, because linking restricted content can be legitimate; the duty not to quote/summarize it lives in [[10_Agents/docs/OPERATING-RULES]]. `missing-author` — a `02_Inbox/` note whose frontmatter tags include **both** `audience/agent` and `workflow/draft` but whose frontmatter has no non-empty `author:` value (issue #18 provenance; field semantics — harness-level `author:`, optional `session:` reference — are defined in [[00_Meta/CONVENTIONS]] § Provenance; templates are exempt per the §10.3 placeholder pattern, a placeholder `author:` value counting as present); a `title-match:` hint accompanies its unresolved-link error message. `task-invalid-date` — a date-bearing task emoji whose value is missing or not a real `YYYY-MM-DD` date (§17.2; tasks are informal body content, matching the `bodyTags` posture, so this never blocks a commit; a template task whose text contains `{{` is exempt per the §10.3 placeholder pattern). With the §14 curation gate on: `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget`, and `bootstrap-budget-total`. `invalid-expires` (an `expires:` value that is not a real `YYYY-MM-DD`) is an **error**, with the same template-placeholder exemption as `invalid-updated`.
+**Warnings** (exit 2 if no errors): `case-mismatch`; `unsupported-block-reference`; `tags-not-a-list`; `duplicate-key`; `restricted-link` — a note **without** `restricted/private` in its frontmatter tags links to or embeds a resolved note **with** it. Legacy `unresolved-fragment` remains visible in records/migration blockers without a validate finding during the WP8 compatibility window. `missing-author` — a `02_Inbox/` agent draft with no non-empty `author:`; `task-invalid-date`; and the §14 curation signals. `invalid-expires` remains an error. Placeholders are counted/reported but exempt.
 
 **`--check-index`:** re-serialize the index corpus per §8.2 and byte-compare against the committed `vault-index.json`; a mismatch or missing file is an error ("stale index — run `brain index`").
 
@@ -299,12 +311,12 @@ The two assignment rules require the value to be *entirely* quoted token charact
 
 - **No title-based resolution** (deliberate; §6). Title matches become repair hints, not links.
 - **No partial path-suffix matching** (`[[to/foo]]` matching `a/to/foo.md`): full path or bare name only — the plan's three-step ladder is the whole ladder.
-- Block references (`#^id`) and heading fragments parse but are never verified against the target (deferred, §13).
+- Block references (`#^id`) are explicitly unsupported and migration-blocking; heading fragments are verified per §6.4.
 - Inline code spans are line-scoped; CommonMark multi-line spans are not recognized (§5.2).
 - Indented code blocks, HTML comments, and `%%` comments are scanned for links/tags (only fenced blocks and inline spans are excluded).
 - Setext headings are not recognized.
 - Quoted-scalar escape sequences are not processed (§4.3).
-- Ambiguous bare links resolve deterministically (fewest segments, then path order) — an approximation of Obsidian's "shortest path" pick — and always warn, so ambiguity never persists silently.
+- Ambiguous path or legacy-heading matches remain unresolved; migration never guesses.
 
 ## 12. Decisions this spec makes beyond the plan (review focus)
 
@@ -322,7 +334,7 @@ The two assignment rules require the value to be *entirely* quoted token charact
 ## 13. Future considerations (out of M5 scope)
 
 - Verifying heading/block fragments against the target's indexed headings.
-- Indexing markdown-style relative links (`[text](path)`) — today only wikilinks are the navigation contract.
+- Reference-style and multiline Markdown links remain future parser work; inline relative Markdown and legacy wikilinks are the current dual-format contract.
 - Excluding HTML/`%%` comments from extraction.
 - ~~A `restricted/*`-aware output filter~~ — adopted 2026-08-11 (issue #17): tag-only `restricted/private`, index reduction in §8.3, `restricted-link` warning in §10.2. Still future: directory-based restriction and finer-grained values, revisited only if tag-only proves insufficient.
 
@@ -334,7 +346,7 @@ Detection lives in `brain`; the judgment lives in the `curate` skill; findings n
 - **oversized** — normalized size or line count over the constants; exempt `07_Archives/` and the changelog (frozen/append-only content is never a split candidate).
 - **stale** — `updated:` older than `CURATE_STALE_DAYS`; score = days-old × (1 + backlink count), sorted worst-first, so heavily-referenced stale notes surface first.
 - **orphans** — zero backlinks; exempt the expires-exempt set plus `AGENTS.md`, `CLAUDE.md`, and the root `README.md`.
-- **unreferenced assets** — `08_Assets/` files no resolved link or embed points at (only `08_Assets/`: reference configs elsewhere are cited by backticked path, not wikilink).
+- **unreferenced assets** — `08_Assets/` files no resolved generic link or embed points at.
 - **dead URLs** — `--check-urls` only: HEAD each distinct `http(s)` URL (10s timeout); 403/405 responses are HEAD-hostile hosts, not dead links. Network access makes this opt-in forever: never run by `validate`, the pre-commit hook, or CI.
 
 `validate` surfaces only the free, offline, low-noise subset as warnings — `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget[-total]` — gated behind `VALIDATE_CURATION_WARNINGS` (flipped on with the one-time backfill). Warnings never block commits (§10.4); expired/stale/orphan findings stay report-only because they demand judgment, not mechanical fixes.
@@ -392,7 +404,7 @@ A read-only synthesis of the in-memory index (§9's usual `walk_corpus` + `build
 All tag reads in this section are **frontmatter tags only** (a bare-scalar `tags:` coerced to one element per §4.5; body `#tags` are informal, mirroring §10.2), and values containing `{{` (template placeholders) are ignored.
 
 1. **Stale-active** (`staleActive`): notes carrying the frontmatter tag `status/active` whose `updated:` is **strictly more than** `stale_days` days (default 30) before today. Notes with `updated: null` cannot be aged and are skipped (`validate` already flags `missing-updated`/`invalid-updated`). Rows `{daysOld, path, title, updated}`, sorted oldest-first (`daysOld` descending, then path).
-2. **Orphans** (`orphans`): notes with **zero backlinks and zero outgoing wikilinks** (placeholder links don't count as outgoing) — fully disconnected, per the issue's definition. Excluded as legitimately leaf-like: any note whose basename is `README.md`, `AGENTS.md`, or `CLAUDE.md`, and everything under `07_Archives/` or `09_Templates/`. Sorted path list. (Distinct from `curate`'s inbound-only orphan signal, which serves the curation charter; this section measures disconnection.)
+2. **Orphans** (`orphans`): notes with **zero backlinks and zero outgoing non-placeholder links** — fully disconnected, per the issue's definition. Excluded as legitimately leaf-like: any note whose basename is `README.md`, `AGENTS.md`, or `CLAUDE.md`, and everything under `07_Archives/` or `09_Templates/`. Sorted path list. (Distinct from `curate`'s inbound-only orphan signal, which serves the curation charter; this section measures disconnection.)
 3. **Inbox aging** (`inboxAging`): every note under `02_Inbox/` except its `README.md`, bucketed by age in days. A note's **capture date** is the `YYYY-MM-DD` filename prefix of its basename when present and a valid calendar date (`source: "filename"`), else its `updated:` value (`source: "updated"`), else unknown (`source: "unknown"`, `ageDays: null`). Age = today − capture date, floored at 0. Buckets, fixed order: `0-7d` (≤ 7), `8-30d`, `31-90d`, `90+d`, `unknown`; each holds `{ageDays, path, source}` rows sorted by path. `triageDebt` additionally lists the paths whose age is strictly greater than `inbox_days` (default 14).
 4. **Tag drift** (`tagDrift`): frontmatter tag usage vs the §10.1 conventions taxonomy, read by the **same** `load_taxonomy` machinery `validate` uses (consistency by construction). Tags are counted once per note that carries them, over the §16.3 note universe. `taxonomyReadable: false` (with all three lists empty) when the table is unreadable — `validate` owns that error. Otherwise: `unknown` — rows `{count, reason, tag}` sorted by tag, `reason` ∈ `not-namespaced` | `unknown-namespace` | `unknown-value` (closed namespaces only); `singleUse` — sorted tags in **open** namespaces used by exactly one note (near-duplicate bait, e.g. `topic/sw`); `nearDuplicates` — rows `{namespace, values: [shorter, longer]}` for pairs of distinct open-namespace values where, under the §6 folding rule, the shorter (≥ 2 chars, strictly shorter) shares its first character with the longer and is an in-order subsequence of it — catching both prefixes (`tool`/`tools`) and abbreviations (the issue's `sw`/`software`); sorted by namespace then value pair.
 5. **Unresolved links** (`unresolvedLinks`): `{count, links}` where `links` rows are `{line, path, target}` for every non-placeholder link with `resolved: null`, over the §16.3 note universe, sorted by path, line, target — the same population `validate` errors on, given trend context here.
@@ -628,6 +640,28 @@ executable-export field. This repository therefore does not invent plugin
 metadata; project and managed PATH launchers are the supported surfaces. Revisit
 plugin exposure only after an official host schema documents it and an
 end-to-end compatibility test passes.
+
+## 22. Legacy link migration (`brain migrate-links`) — issue #74
+
+### 22.1 Preview and plan
+
+No flag is a read-only preview. The migrator scans tracked working-corpus notes, parses raw UTF-8 bytes without newline conversion, resolves each legacy record through the same §6 engine, and emits a deterministic version-1 plan. The envelope is `{schemaVersion, planId, status, summary, edits, blockers, regenerateRequired}`. Each path-sorted edit carries `path`, `restricted`, preserved `mode`, raw `sourceSha256`/`resultSha256`, and ordered replacements with raw-byte half-open `range`, `line`, `before`, `after`, and `resolved`. `planId` is SHA-256 over canonical compact JSON excluding the ID. The summary counts scanned/changed files, legacy/Markdown links, conversions, placeholders, and unsupported block refs. A second identical preview is byte-stable. Internal exact replacement text remains available for apply, but every serialized CLI plan nulls `before`/`after` and sets `redacted: true` for `restricted/private` sources so migration diagnostics do not republish protected body prose.
+
+Placeholders stay unchanged and counted. Ambiguous paths/headings, unresolved targets/fragments, block refs, unsafe sources, stale ranges, and overlapping edits are blockers; a plan with any blocker is never writable. Rendering uses the resolved target rather than regex text: notes keep explicit `.md`, paths are relative to the source and URL-encoded, heading links use §6.4 slugs, aliases become escaped labels, self-headings stay fragment-only, and embeds become Markdown images with a meaningful alt label. Splicing operates on raw byte ranges, preserving UTF-8 BOM, LF/CRLF/mixed endings, final-newline state, unrelated bytes, and file mode.
+
+`--check` is read-only and exits 1 while **any legacy record** (placeholders included), edit, or blocker remains, otherwise 0. This makes it the WP9 zero-legacy acceptance gate rather than merely an automatic-edit-complete signal. `--json` exposes the same complete plan. Explicit `--write` is the only mutation mode; it reports that index/snippets/skill adapters require regeneration, leaving that generated-artifact step to the reviewed WP9 corpus commit.
+
+### 22.2 Write refusal and transaction
+
+Write requires Git to establish that every **planned source path** is clean; unrelated owner edits do not block and are never touched. Before mutation the plan ID/shape, source hash, mode, replacement text/ranges, result hash, regular-file type, parent chain, and final identity are rechecked. Symlink/reparse paths, stale content/mode, unsupported mutation primitives, a foreign journal, or concurrent activity fail closed before overwrite.
+
+On POSIX, every source parent is opened component-by-component with directory descriptors and no-follow flags and held through the transaction. Random same-directory stage names are journaled durably before creation, then desired files are fsynced there. Stage ownership identity is recorded before the staging helper returns, so an interruption at the return boundary still authenticates/removes that stage before the journal can retire; a concurrent occupant at the reserved name is preserved. Originals are descriptor-relatively quarantined and hash/mode/identity-verified, then desired files are installed with hard-link create-if-absent, so a concurrent final-component insertion is preserved and refused rather than overwritten. Publication attempts are rollback-tracked before the directory fsync, every containing directory is fsynced before the durable commit marker, and installed bytes/mode/inode are re-authenticated after that marker before success can remove recovery evidence. Any ordinary exception, `KeyboardInterrupt`, `SystemExit`, or trapped `SIGTERM` removes only authenticated staged outputs and restores quarantined originals without overwriting concurrent content. Platforms without the required held-parent descriptor operations (including the current unimplemented Win32 mutation path) are preview/check-only and fail before any write.
+
+### 22.3 Crash recovery and idempotence
+
+The O_EXCL lock and recovery journal is `.brain-link-migration.json` at the vault root (dot-pruned from the corpus, mode 0600). It records only authenticated transaction names, source/result hashes, modes, plan ID, PID, and commit state — no note bodies. Creation returns a held descriptor/inode/content guard; later states are complete append-only JSON lines written and fsynced through that descriptor, never path-replaced. Every update verifies the path still names the held inode with the expected mode/content before and after append. Cleanup descriptor-relatively quarantines the pathname, authenticates the moved inode, and deletes only that owned journal. A foreign replacement or in-place mutation is never overwritten or removed: it is preserved byte-for-byte with its mode and the operation fails closed. A second starter receives a stable active-migration refusal. The root journal and per-directory `.NAME.migrate-{new,old}-*` recovery artifacts are gitignored so a crash cannot make them accidental commit candidates; their existence remains visible to the recovery detector.
+
+Preview and `--check` never recover: if a journal exists they report `interrupted-migration`, exit nonzero, and make zero writes. Explicit `--write` recovers a dead transaction before planning. If `committed: false`, recovery removes only verified installed results and restores verified backups; foreign final content is preserved and the backup retained for explicit manual recovery. If `committed: true`, recovery finishes the commit by verifying current results and removing verified backup/stage artifacts. Malformed/unsafe journals, live owning PIDs, hash drift, or missing evidence fail closed. Once complete, the journal disappears. A successful second automatic migration has zero edits; `--check` reaches 0 only after placeholders and every other maintained legacy record are also gone.
 
 ## 18. Semantic search (QMD — issue #8)
 

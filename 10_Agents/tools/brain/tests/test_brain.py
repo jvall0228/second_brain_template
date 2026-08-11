@@ -140,8 +140,15 @@ class ResolutionTests(unittest.TestCase):
         self.assertEqual(self.r.resolve("01_Notes/alpha", "x"), ("01_Notes/alpha.md", []))
         self.assertEqual(self.r.resolve("", "01_Notes/alpha.md"), ("01_Notes/alpha.md", []))
         resolved, warnings = self.r.resolve("dup", "x")
-        self.assertEqual(resolved, "01_Notes/dup.md")
-        self.assertEqual(warnings, ["ambiguous"])
+        self.assertIsNone(resolved)
+        self.assertEqual(
+            warnings,
+            [
+                "ambiguous",
+                "candidate:01_Notes/dup.md",
+                "candidate:02_Other/dup.md",
+            ],
+        )
         resolved, warnings = self.r.resolve("ALPHA", "x")
         self.assertEqual(resolved, "01_Notes/alpha.md")
         self.assertEqual(warnings, ["case-mismatch"])
@@ -390,6 +397,7 @@ class ValidateTests(unittest.TestCase):
         self.assertEqual(
             sorted(by_rule),
             [
+                "ambiguous-link",
                 "filename-convention",
                 "invalid-updated",
                 "tag-not-namespaced",
@@ -397,7 +405,15 @@ class ValidateTests(unittest.TestCase):
                 "unresolved-link",
             ],
         )
-        self.assertTrue(all(f["path"] == "bad/Bad_Name.md" for fs in by_rule.values() for f in fs))
+        self.assertEqual(by_rule["ambiguous-link"][0]["path"], "01_Notes/beta.md")
+        self.assertTrue(
+            all(
+                f["path"] == "bad/Bad_Name.md"
+                for rule, findings in by_rule.items()
+                if rule != "ambiguous-link"
+                for f in findings
+            )
+        )
         unresolved = by_rule["unresolved-link"]
         self.assertEqual(len(unresolved), 2)
         hinted = [f for f in unresolved if "title matches: 02_Other/title-note.md" in f["message"]]
@@ -405,7 +421,7 @@ class ValidateTests(unittest.TestCase):
         warn_rules = sorted({(f["rule"], f["path"]) for f in warnings})
         self.assertEqual(
             warn_rules,
-            [("ambiguous-link", "01_Notes/beta.md"), ("case-mismatch", "01_Notes/beta.md")],
+            [("case-mismatch", "01_Notes/beta.md")],
         )
 
     def test_exemptions_and_collisions(self):
