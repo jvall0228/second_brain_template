@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 10_Agents/tools/brain/brain.py validate || true"
+            "command": "sh 10_Agents/harnesses/claude-code/validate-hook.sh"
           }
         ]
       }
