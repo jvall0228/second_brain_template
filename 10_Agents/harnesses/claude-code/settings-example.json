@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 10_Agents/tools/brain/brain.py *)",
+      "Bash(python3 -m unittest *)"
+    ],
+    "deny": [
+      "Edit(00_Meta/prd.md)",
+      "Edit(00_Meta/conventions.md)",
+      "Edit(00_Meta/index.md)",
+      "Edit(AGENTS.md)",
+      "Edit(CLAUDE.md)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 10_Agents/tools/brain/brain.py validate || true"
+          }
+        ]
+      }
+    ]
+  }
+}

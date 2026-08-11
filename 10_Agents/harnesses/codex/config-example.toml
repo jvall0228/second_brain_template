@@ -1,0 +1,13 @@
+# Reference Codex config for this vault (verified 2026-08-11).
+# Project scope: <vault>/.codex/config.toml (loads only once the project is
+# trusted). User scope: merge into ~/.codex/config.toml.
+
+# The vault's combined AGENTS.md docs are far below the 32 KiB default cap;
+# raise this only if your fork's project docs outgrow it.
+# project_doc_max_bytes = 65536
+
+# External-source MCP servers (M7) register here. The vault itself ships no
+# MCP server — the brain CLI is its programmatic interface.
+# [mcp_servers.example]
+# command = "..."
+# args = []

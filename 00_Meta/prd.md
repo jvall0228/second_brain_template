@@ -165,8 +165,8 @@ Tier meanings:
 ### 9.2 Solutions knowledge base
 `10_Agents/solutions/` is a standing knowledge base of solutions to recurring problems, organized by category. Agents **may append** solution notes here whenever they solve something worth not re-deriving later — this is a deliberate, bounded carve-out from the Inbox-first rule. Solution notes must carry required frontmatter (including `audience/agent` and `type/solution`), use kebab-case filenames, and follow the note format in `10_Agents/solutions/README.md`. Agents add notes; restructuring or deleting within `solutions/` still requires human direction.
 
-### 9.3 M6 target structure (`tools/brain/` shipped at M5; `skills/` and `harnesses/` not built)
-At M6 the directory grows into a plugin library:
+### 9.3 Plugin library structure (shipped: `tools/brain/` at M5; `skills/` and `harnesses/` at M6)
+The directory is a plugin library:
 ```
 10_Agents/
   skills/<skill-name>/   # Agent Skills format: SKILL.md + optional bundled files
@@ -326,8 +326,8 @@ Shipped as specified below; the parsing/link-resolution contract lives in `10_Ag
 - Also: `validate` (§18) — enforced via the pre-commit hook and CI.
 - Obsidian's MetadataCache is the design inspiration; concrete parsing and link-resolution rules must be specified before implementation in a spec note shipped alongside the tool (start from [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]).
 
-### M6: Agent Plugin Library (core) — **Not started**
-Repo-only content; environment-dependent work moved to the new M7 (decision 2026-08-11). Standards-first build order (§8.3):
+### M6: Agent Plugin Library (core) — **Done (2026-08-11)**
+Shipped as specified below (skill list confirmed by the owner at the M6 checkpoint). Verified: all nine skills pass `brain validate` including the Agent Skills contract checks (name = folder, non-empty description); the `onboard-harness` install was demonstrated end-to-end into Claude Code's user config — 18 symlinks across `~/.agents/skills/` and `~/.claude/skills/`, the marker-delimited memory-file import block in `~/.claude/CLAUDE.md` with user content preserved, re-run a byte-identical no-op, uninstall removing exactly the manifest entries while leaving pre-existing foreign skills untouched. Seven adapters shipped under `10_Agents/harnesses/` (P0: Claude Code, Codex, opencode, Pi; P1: Cursor, Copilot, Muse Code — the last `workflow/draft` as a volatile surface). Repo-only content; environment-dependent work lives in M7 (decision 2026-08-11). Standards-first build order (§8.3):
 1. **Standards track (P0 foundation):** populate `10_Agents/skills/` and `10_Agents/tools/` (`brain` is already here from M5) as harness-agnostic primitives. Skills use the **Agent Skills format** (§9.3). Initial skill families: capture & triage, periodic reviews, vault maintenance, research → resource, and **onboarding** — a skill that installs the library into each supported harness's **user-level** config **symlink-first** (the harness's user-config discovery paths, e.g. `~/.claude`, symlink back to the canonical `10_Agents/` copies of every primitive that harness supports; merge for shared config files, copy where the platform lacks symlinks; manifest-driven, idempotent, reversible — links are created at install time, never committed, per the §8.2 symlink retirement), updates the harness's user-level memory file (its `CLAUDE.md` equivalent) to import the vault entrypoint, and installs the pre-commit hook. This step alone must leave harnesses outside the support list working with no bespoke adapter.
 2. **P0 adapters:** add `10_Agents/harnesses/` with reference configs and wiring docs for Claude Code, Codex, Opencode, and Pi. Adapters carry only what a standard cannot.
 3. **P1 second wave:** Cursor, Copilot, Muse Code.

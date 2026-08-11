@@ -12,6 +12,12 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — M6: Agent Plugin Library Shipped
+
+- **Nine skills** at `10_Agents/skills/` in the Agent Skills format (folder-per-skill `SKILL.md`, superset frontmatter — standard `name`/`description` plus the vault contract): `inbox-capture`, `triage-inbox`, `daily-log`, `periodic-review`, `vault-maintenance`, `link-repair`, `solution-capture`, `research-to-resource`, `onboard-harness`. Skill list confirmed by the owner; shipped skills are canonical. `brain validate` now enforces the Agent Skills contract for `skills/` dirs, and `SKILL.md` joined the filename-convention exceptions ([[00_Meta/conventions]], spec §10.2).
+- **Seven harness adapters** at `10_Agents/harnesses/` (P0: Claude Code, Codex, opencode, Pi; P1: Cursor, Copilot, Muse Code — the last kept `workflow/draft` as a six-day-old volatile surface). Each ships a wiring doc (entrypoint loading, skills paths, hook install, `brain` invocation, caveats) plus reference configs, grounded in the 2026-08-11 harness research; adapters carry only what the standards track cannot.
+- **Onboarding verified end-to-end** into Claude Code's user config: symlinks into `~/.agents/skills/` + `~/.claude/skills/`, marker-delimited import block in `~/.claude/CLAUDE.md`, idempotent re-run, exact-manifest uninstall with foreign content untouched.
+
 ## 2026-08-11 — M5: `brain` Vault Index CLI Shipped
 
 - Landed `10_Agents/tools/brain/`: `spec.md` (the parsing/link-resolution/index contract, owner-reviewed and promoted to canonical), stdlib-only `brain.py` (Python 3.10+) with `index`, `list`, `search`, `links`, `tags`, `show`, `recent`, and `validate` (all supporting `--json`), the committed deterministic `vault-index.json` (built from git-tracked files; byte-identical on rebuild), and a 21-test `unittest` suite with a fixture mini-vault under `tests/`.

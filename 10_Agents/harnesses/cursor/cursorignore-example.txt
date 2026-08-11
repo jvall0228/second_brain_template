@@ -1,0 +1,5 @@
+# Example .cursorignore for privacy exclusions (copy to the vault root as
+# .cursorignore). The vault-wide privacy policy is an open owner decision
+# (PRD section 21) — these lines are illustrative, not shipped defaults.
+# 03_Journal/people/
+# 08_Assets/private/
