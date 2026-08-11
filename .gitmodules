@@ -1,0 +1,6 @@
+[submodule ".extern/i-have-adhd"]
+	path = .extern/i-have-adhd
+	url = https://github.com/ayghri/i-have-adhd
+[submodule ".extern/andrej-karpathy-skills"]
+	path = .extern/andrej-karpathy-skills
+	url = https://github.com/multica-ai/andrej-karpathy-skills

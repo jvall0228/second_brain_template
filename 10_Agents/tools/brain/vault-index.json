@@ -6903,17 +6903,17 @@
     },
     {
      "level": 3,
-     "line": 48,
+     "line": 49,
      "text": "karpathy"
     },
     {
      "level": 2,
-     "line": 57,
+     "line": 59,
      "text": "Recommended user-scope memory-file content"
     },
     {
      "level": 2,
-     "line": 61,
+     "line": 67,
      "text": "Rules"
     }
    ],
@@ -6954,8 +6954,30 @@
     {
      "display": null,
      "embed": false,
-     "fragment": null,
+     "fragment": "karpathy",
      "line": 63,
+     "placeholder": false,
+     "raw": "[[#karpathy]]",
+     "resolved": "06_Resources/recommended-skills.md",
+     "target": "",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "karpathy",
+     "line": 63,
+     "placeholder": false,
+     "raw": "[[#karpathy]]",
+     "resolved": "06_Resources/recommended-skills.md",
+     "target": "",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 69,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -6966,7 +6988,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 66,
+     "line": 72,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -6974,7 +6996,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5223,
+   "sizeBytes": 6326,
    "tasks": [],
    "title": "Recommended Community Skills",
    "updated": "2026-08-11"
@@ -13328,6 +13350,17 @@
      "display": null,
      "embed": false,
      "fragment": null,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[06_Resources/recommended-skills]]",
+     "resolved": "06_Resources/recommended-skills.md",
+     "target": "06_Resources/recommended-skills",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
      "line": 75,
      "placeholder": false,
      "raw": "[[06_Resources/recommended-skills]]",
@@ -13336,7 +13369,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 14473,
+   "sizeBytes": 15015,
    "tasks": [],
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
