@@ -803,6 +803,9 @@ DEFAULT_TASKS_CARRY_OVER = True  # carry_over: on
 # ever ADDS to this set. Session-scoped carve-outs (onboard-owner interviews,
 # agent-generated skills/tools) are policy prose, not path constants.
 AGENT_WRITE_DEFAULT_PREFIXES = ("02_Inbox/", "02_Outbox/", "10_Agents/solutions/")
+# Single-file standing exceptions: append-only agent logs that live inside
+# otherwise PR-only prefixes (conventions § Agent Write Rules).
+AGENT_WRITE_DEFAULT_FILES = ("10_Agents/docs/rejected-proposals.md",)
 DEFAULT_EXTENSION_TRUST = "first-party"
 EXTENSION_TRUST_VALUES = frozenset({"first-party", "relaxed"})
 DEFAULT_CONTEXT = "personal"
@@ -973,6 +976,8 @@ def agent_write_allowed(rel: str, config: dict) -> bool:
         return False
     if any(part in ("..", ".") for part in rel.split("/")):
         return False
+    if rel in AGENT_WRITE_DEFAULT_FILES:
+        return True
     return rel.startswith(write_exception_prefixes(config))
 
 

@@ -5,7 +5,7 @@ title: "Skill: Sync Upstream"
 tags:
   - type/reference
   - audience/agent
-  - workflow/draft
+  - workflow/canonical
 updated: 2026-08-11
 expires: 2027-08-11
 ---
@@ -84,10 +84,11 @@ Lanes:
 | `00_Meta/config.yaml` | owner-content | Per-fork policy record (spec §15.1) — upstream grammar/comment changes are proposals at most |
 | `00_Meta/changelog.md` | owner-content | The fork's own history, not the template's |
 | `00_Meta/status.md` | owner-content | The fork's own state |
-| `09_Templates/` context-specialized periodic templates | owner-content | Issue #12: a fork whose `context:` is recorded (onboard-owner specialization rewrote the periodic templates in place) owns those files — backfilling upstream template updates over them would reintroduce the personal sections. Upstream changes to them become proposals |
+| `09_Templates/` templates onboard-owner actually rewrote from `variants/` | owner-content | Issue #12: a work-context fork owns the periodic templates the specialization stage rewrote in place (currently `template-daily-log.md` and `template-weekly-review.md`; detectable as diverged from upstream) — backfilling upstream updates over them would reintroduce the personal sections, so upstream changes to them become proposals. Periodic templates that were **never rewritten** stay machinery; the cross-cutting divergence rule governs them like any other file |
 | `10_Agents/solutions/` | owner-content | The fork's learned solution notes |
 | `10_Agents/environments/` | owner-content | Issue #15: per-environment inventories belong to the fork |
 | `10_Agents/docs/` | canonical-docs | Operating rules and agent docs are §6.3 change-controlled |
+| `10_Agents/docs/rejected-proposals.md` | owner-content | Append-only agent log (self-improve's memory) — fork-local history; sync never overwrites it |
 
 ### Cross-cutting rules (apply after path lanes)
 
