@@ -13347,162 +13347,162 @@
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 45,
      "text": "4. Frontmatter grammar"
     },
     {
      "level": 3,
-     "line": 48,
+     "line": 49,
      "text": "4.1 Block detection"
     },
     {
      "level": 3,
-     "line": 54,
+     "line": 55,
      "text": "4.2 Line grammar (inside the block)"
     },
     {
      "level": 3,
-     "line": 70,
+     "line": 71,
      "text": "4.3 Scalars"
     },
     {
      "level": 3,
-     "line": 77,
+     "line": 78,
      "text": "4.4 Lists"
     },
     {
      "level": 3,
-     "line": 82,
+     "line": 83,
      "text": "4.5 Typed fields"
     },
     {
      "level": 2,
-     "line": 94,
+     "line": 95,
      "text": "5. Wikilink grammar"
     },
     {
      "level": 3,
-     "line": 96,
+     "line": 97,
      "text": "5.1 Recognized forms"
     },
     {
      "level": 3,
-     "line": 108,
+     "line": 109,
      "text": "5.2 Exclusion zones"
     },
     {
      "level": 3,
-     "line": 118,
+     "line": 119,
      "text": "5.3 Recorded fields"
     },
     {
      "level": 2,
-     "line": 122,
+     "line": 123,
      "text": "6. Link resolution"
     },
     {
      "level": 3,
-     "line": 128,
+     "line": 129,
      "text": "6.1 Resolution table"
     },
     {
      "level": 3,
-     "line": 132,
+     "line": 133,
      "text": "6.2 Algorithm"
     },
     {
      "level": 3,
-     "line": 145,
+     "line": 146,
      "text": "6.3 Case mismatches"
     },
     {
      "level": 3,
-     "line": 149,
+     "line": 150,
      "text": "6.4 Backlinks and warnings"
     },
     {
      "level": 2,
-     "line": 154,
+     "line": 155,
      "text": "7. Body extraction"
     },
     {
      "level": 3,
-     "line": 156,
+     "line": 157,
      "text": "7.1 Headings"
     },
     {
      "level": 3,
-     "line": 160,
+     "line": 161,
      "text": "7.2 Inline tags"
     },
     {
      "level": 2,
-     "line": 166,
+     "line": 167,
      "text": "8. Index schema and determinism"
     },
     {
      "level": 3,
-     "line": 168,
+     "line": 169,
      "text": "8.1 Shape"
     },
     {
      "level": 3,
-     "line": 198,
+     "line": 199,
      "text": "8.2 Deterministic serialization"
     },
     {
      "level": 2,
-     "line": 208,
+     "line": 209,
      "text": "9. CLI command semantics"
     },
     {
      "level": 2,
-     "line": 225,
+     "line": 226,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 227,
+     "line": 228,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 231,
+     "line": 232,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 243,
+     "line": 244,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 248,
+     "line": 249,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 254,
+     "line": 255,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 279,
+     "line": 280,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 290,
+     "line": 291,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 303,
+     "line": 304,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 310,
+     "line": 311,
      "text": "14. Curation signals (ops plan Phase 4)"
     }
    ],
@@ -13555,7 +13555,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 46,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -13566,7 +13566,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 229,
+     "line": 230,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -13577,7 +13577,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 235,
+     "line": 236,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13588,7 +13588,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 312,
+     "line": 313,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13596,7 +13596,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 34395,
+   "sizeBytes": 35325,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

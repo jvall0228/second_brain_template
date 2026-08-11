@@ -502,13 +502,18 @@ class Resolver:
 def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
     records: dict[str, dict] = {}
     for rel in notes:
-        text, size = load_text(root, rel)
+        try:
+            text, size = load_text(root, rel)
+            read_error = "not-utf8" if text is None else None
+        except OSError:
+            # §3 read failure: broken symlink, permission denied, … — never fatal.
+            text, size, read_error = None, 0, "not-readable"
         if text is None:
             records[rel] = {
                 "backlinks": [],
                 "bodyTags": [],
                 "frontmatter": {},
-                "frontmatterErrors": ["not-utf8"],
+                "frontmatterErrors": [read_error],
                 "headings": [],
                 "links": [],
                 "sizeBytes": size,
@@ -759,7 +764,9 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                     continue
                 else:
                     err(rel, rule, fe)
-            if not fm and "not-utf8" not in rec["frontmatterErrors"]:
+            if not fm and not (
+                {"not-utf8", "not-readable"} & set(rec["frontmatterErrors"])
+            ):
                 if "unterminated-frontmatter" not in rec["frontmatterErrors"]:
                     err(rel, "missing-frontmatter", "note has no frontmatter block")
             else:
@@ -768,7 +775,10 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                 ):
                     err(rel, "missing-title", "frontmatter lacks a title string")
                 raw_tags = fm.get("tags")
-                if raw_tags is None and not (template and has_placeholder(raw_tags)):
+                if raw_tags is None or raw_tags == []:
+                    # §10.2: an explicitly empty list declares no tags — same
+                    # missing-tags error as an absent/null key. The per-value
+                    # template exemption cannot apply: no values to exempt.
                     err(rel, "missing-tags", "frontmatter lacks a tags list")
                 if "updated" not in fm:
                     err(rel, "missing-updated", "frontmatter lacks an updated date")
@@ -931,7 +941,10 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
         elif "expires" not in fm and fm and not expires_exempt(rel, fm) and not is_template(rel):
             missing.append(rel)
         if not (rel in OVERSIZED_EXEMPT_PATHS or rel.startswith("07_Archives/")):
-            text, _ = load_text(root, rel)
+            try:
+                text, _ = load_text(root, rel)
+            except OSError:  # §3 read failure: skip, best-effort
+                text = None
             lines = len(text.splitlines()) if text else 0
             if rec["sizeBytes"] > CURATE_MAX_BYTES or lines > CURATE_MAX_LINES:
                 oversized.append(
@@ -1003,7 +1016,10 @@ def collect_urls(root: Path, notes: list[str]) -> dict[str, str]:
     so example URLs in code samples are never probed as source URLs."""
     found: dict[str, str] = {}
     for rel in notes:
-        text, _ = load_text(root, rel)
+        try:
+            text, _ = load_text(root, rel)
+        except OSError:  # §3 read failure: skip, best-effort
+            continue
         if text is None:
             continue
         lines = text.split("\n")
@@ -1122,7 +1138,10 @@ def cmd_search(root: Path, args) -> int:
                 hits.append(
                     {"field": "heading", "line": h["line"], "path": rel, "snippet": h["text"]}
                 )
-        text, _ = load_text(root, rel)
+        try:
+            text, _ = load_text(root, rel)
+        except OSError:  # §3 read failure: skip, best-effort
+            continue
         if text is None:
             continue
         for i, line in enumerate(text.split("\n"), start=1):
@@ -1219,7 +1238,14 @@ def cmd_recent(root: Path, args) -> int:
     index = build_index(root, notes, assets)
     entries = list(index["notes"].items())
     entries.sort(key=lambda kv: kv[0])
-    entries.sort(key=lambda kv: (root / kv[0]).stat().st_mtime, reverse=True)
+
+    def mtime(rel: str) -> float:
+        try:
+            return (root / rel).stat().st_mtime
+        except OSError:  # §3 read failure (e.g. broken symlink): sort last
+            return 0.0
+
+    entries.sort(key=lambda kv: mtime(kv[0]), reverse=True)
     entries.sort(key=lambda kv: kv[1]["updated"] or "", reverse=True)
     entries = entries[: args.n]
     rows = [
