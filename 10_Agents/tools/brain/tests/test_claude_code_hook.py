@@ -55,6 +55,19 @@ class SettingsExampleContractTests(unittest.TestCase):
     def test_shim_exists_next_to_settings_example(self):
         self.assertTrue(SHIM.is_file())
 
+    def test_session_start_arms_hooks_and_merge_driver(self):
+        # The repo's own Claude Code settings must install everything the
+        # docs promise per-clone setup does: hooksPath AND the merge driver.
+        settings = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
+        commands = [
+            hook["command"]
+            for entry in settings["hooks"]["SessionStart"]
+            for hook in entry["hooks"]
+        ]
+        joined = " ; ".join(commands)
+        self.assertIn("core.hooksPath .githooks", joined)
+        self.assertIn("merge.regenerate.driver true", joined)
+
 
 def write_note(root: Path, relpath: str, body: str) -> None:
     path = root / relpath

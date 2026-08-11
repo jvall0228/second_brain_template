@@ -15,6 +15,7 @@ Red cases run against modified scratch copies of the real repo — copying and
 validating this vault takes well under a second per run.
 """
 
+import os
 import shutil
 import subprocess
 import sys
@@ -81,6 +82,17 @@ class AdoptCheckTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertIn("does not exist", proc.stderr)
         self.assertIn("example-idea", proc.stderr)
+
+    @unittest.skipUnless(os.name == "posix", "relies on POSIX symlinks")
+    def test_red_not_traceback_on_broken_symlink(self):
+        # An unreadable entry in the working tree flows through the failure
+        # report (spec §3 posture), never an unhandled shutil traceback.
+        copy_repo(self.copy)
+        os.symlink("../missing-target.md", self.copy / "02_Inbox" / "dangling.md")
+        proc = run_adopt_check(self.copy)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertNotIn("Traceback", proc.stderr)
+        self.assertIn("cannot copy working tree", proc.stderr)
 
     def test_red_on_readme_drift(self):
         # README's bullet list and adopt_examples.json must agree.

@@ -21,6 +21,7 @@ Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests
 """
 
+import os
 import shutil
 import subprocess
 import tempfile
@@ -29,16 +30,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 GIT = shutil.which("git")
+SH = shutil.which("sh")
 
 
 def run_git(cwd, *args, check=True):
     """Run git in cwd with a hermetic config surface; return CompletedProcess."""
+    # Layer the hermetic knobs over the real environment (keeps the platform's
+    # PATH and required vars) and use os.devnull for portability.
     env = {
-        "GIT_CONFIG_GLOBAL": "/dev/null",
-        "GIT_CONFIG_SYSTEM": "/dev/null",
+        **os.environ,
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_CONFIG_SYSTEM": os.devnull,
         "GIT_CONFIG_NOSYSTEM": "1",
         "HOME": str(cwd),
-        "PATH": "/usr/bin:/bin:/usr/local/bin",
     }
     proc = subprocess.run(
         [GIT, *args],
@@ -112,6 +116,7 @@ class MergeDriverIntegrationTests(unittest.TestCase):
 
 
 @unittest.skipIf(GIT is None, "git not available")
+@unittest.skipIf(SH is None, "no POSIX sh available")
 class PostMergeHookTests(unittest.TestCase):
     def test_post_merge_hook_is_best_effort_outside_the_vault(self):
         """The hook must never fail a merge: in a repo with no brain tooling it
@@ -121,7 +126,7 @@ class PostMergeHookTests(unittest.TestCase):
             run_git(repo, "init", "-b", "main")
             hook = ROOT / ".githooks" / "post-merge"
             proc = subprocess.run(
-                ["sh", str(hook)],
+                [SH, str(hook)],
                 cwd=str(repo),
                 capture_output=True,
                 text=True,

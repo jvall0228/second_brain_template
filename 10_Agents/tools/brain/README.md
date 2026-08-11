@@ -39,7 +39,7 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 | `tags` | Tag usage counts grouped by namespace |
 | `show <note>` | The full index record for one note |
 | `recent [n]` | Notes by `updated:` descending (default 10) |
-| `validate` | Convention checks; exit 0 clean / 1 errors / 2 warnings. `--check-index` also verifies the committed index is fresh |
+| `validate` | Convention checks plus secret scanning (`secret-*` rules, spec §10.5; per-line escape: an HTML comment containing `brain:allow-secret-pattern`); exit 0 clean / 1 errors / 2 warnings. `--check-index` also verifies the committed index is fresh |
 | `curate` | Re-review signals: expired / missing / over-cap `expires:`, oversized, stale (backlink-weighted), orphans, unreferenced assets. `--check-urls` adds network URL probes (opt-in; never pre-commit) |
 | `context` | Bootstrap docs' sizes against their context budgets (spec §14; tunables live in one constants block in `brain.py`) |
 
@@ -50,7 +50,7 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 ## Tests
 
 ```
-python3 -m unittest discover -s 10_Agents/tools/brain/tests
+python3 10_Agents/tools/run_tests.py
 ```
 
-The fixture mini-vault under `tests/fixtures/vault/` is excluded from the real corpus by design (spec §2).
+The runner is the canonical entrypoint for every tool suite (see [[10_Agents/tools/README]]); plain `unittest discover -s 10_Agents/tools/brain/tests` still works for this suite alone. Fixture mini-vaults under any `10_Agents/tools/*/tests/` tree are excluded from the real corpus by design (spec §2).
