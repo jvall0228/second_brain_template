@@ -1172,51 +1172,56 @@
     {
      "level": 3,
      "line": 61,
+     "text": "Provenance (`author:` / `session:`)"
+    },
+    {
+     "level": 3,
+     "line": 72,
      "text": "Expiration (`expires:`)"
     },
     {
      "level": 3,
-     "line": 75,
+     "line": 86,
      "text": "Template Placeholder Exception"
     },
     {
      "level": 3,
-     "line": 79,
+     "line": 90,
      "text": "Adapter File Exception"
     },
     {
      "level": 2,
-     "line": 83,
+     "line": 94,
      "text": "Tag Namespaces"
     },
     {
      "level": 2,
-     "line": 97,
+     "line": 108,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 110,
+     "line": 121,
      "text": "Change Control"
     },
     {
      "level": 3,
-     "line": 120,
+     "line": 131,
      "text": "Draft → Canonical Promotion"
     },
     {
      "level": 2,
-     "line": 132,
+     "line": 143,
      "text": "Bootstrap Context Budgets"
     },
     {
      "level": 2,
-     "line": 136,
+     "line": 147,
      "text": "Operating Rhythm"
     },
     {
      "level": 2,
-     "line": 140,
+     "line": 151,
      "text": "Recency"
     }
    ],
@@ -1236,7 +1241,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 81,
+     "line": 92,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1247,7 +1252,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 96,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1258,7 +1263,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 96,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1269,7 +1274,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 114,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1280,7 +1285,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 115,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -1291,7 +1296,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 108,
+     "line": 119,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -1302,7 +1307,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 127,
+     "line": 138,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1313,7 +1318,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 128,
+     "line": 139,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1324,7 +1329,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 130,
+     "line": 141,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1335,7 +1340,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 145,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1346,7 +1351,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 145,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -1357,7 +1362,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 145,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -1368,7 +1373,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 145,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -1379,7 +1384,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 145,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1390,7 +1395,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 138,
+     "line": 149,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -1401,7 +1406,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 144,
+     "line": 155,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1409,7 +1414,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9115,
+   "sizeBytes": 10203,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -9522,17 +9527,17 @@
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 67,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 70,
+     "line": 71,
      "text": "Session-End Flush"
     },
     {
      "level": 2,
-     "line": 80,
+     "line": 81,
      "text": "Related"
     }
    ],
@@ -9593,10 +9598,21 @@
      "warnings": []
     },
     {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 62,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
      "display": "brain",
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -9607,7 +9623,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 65,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -9618,7 +9634,7 @@
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 74,
+     "line": 75,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -9629,7 +9645,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 75,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -9640,7 +9656,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 83,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -9651,7 +9667,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 83,
+     "line": 84,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -9662,7 +9678,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 84,
+     "line": 85,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -9670,7 +9686,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4978,
+   "sizeBytes": 5188,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -11479,17 +11495,17 @@
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 40,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 45,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2035,
+   "sizeBytes": 2405,
    "title": "Skill: Inbox Capture",
    "updated": "2026-08-11"
   },
@@ -12161,7 +12177,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 3766,
+   "sizeBytes": 3984,
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -12242,12 +12258,12 @@
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 48,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 1902,
+   "sizeBytes": 2204,
    "title": "Skill: Solution Capture",
    "updated": "2026-08-11"
   },
@@ -12314,7 +12330,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3481,
+   "sizeBytes": 3834,
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
   },
@@ -13661,6 +13677,17 @@
      "display": null,
      "embed": false,
      "fragment": null,
+     "line": 241,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
      "line": 314,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
@@ -13680,7 +13707,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 42036,
+   "sizeBytes": 42474,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },
