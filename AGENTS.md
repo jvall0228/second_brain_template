@@ -38,7 +38,7 @@ Agent writes are **two-lane**, both review-gated:
 Standing exceptions:
 
 - Agents may append solution notes to `10_Agents/solutions/` — see [[10_Agents/README]].
-- During a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session, agents write interview results directly to `01_Profile/`, `04_Projects/`, and `05_Areas/` — and, in its context-specialization stage, rewrite the periodic templates in `09_Templates/` from `09_Templates/variants/` and record `context:` in `00_Meta/config.yaml`. The owner's in-the-moment approval is the review. Outside that session, Inbox-first applies as usual.
+- During a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session, agents write interview results directly to `01_Profile/`, `03_Journal/people/` (owner-confirmed people notes), `04_Projects/`, and `05_Areas/` — and, in its context-specialization stage, rewrite the periodic templates in `09_Templates/` from `09_Templates/variants/` and record `context:` in `00_Meta/config.yaml`. The owner's in-the-moment approval is the review. Outside that session, Inbox-first applies as usual.
 
 See [[02_Inbox/README]] for triage instructions.
 
