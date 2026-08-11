@@ -16213,27 +16213,27 @@
     },
     {
      "level": 2,
-     "line": 30,
+     "line": 31,
      "text": "Inbound flows (adapt per owner)"
     },
     {
      "level": 2,
-     "line": 39,
+     "line": 40,
      "text": "Rhythm jobs (from the cadence table)"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 53,
      "text": "Scheduling mechanism per harness"
     },
     {
      "level": 2,
-     "line": 64,
+     "line": 65,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 71,
+     "line": 72,
      "text": "References"
     }
    ],
@@ -16253,7 +16253,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 66,
+     "line": 67,
      "placeholder": false,
      "raw": "[[10_Agents/environments/README]]",
      "resolved": "10_Agents/environments/README.md",
@@ -16264,7 +16264,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 73,
+     "line": 74,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -16272,7 +16272,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6171,
+   "sizeBytes": 6961,
    "tasks": [],
    "title": "Skill: Recommended Automations",
    "updated": "2026-08-11"
@@ -18333,12 +18333,12 @@
     },
     {
      "level": 3,
-     "line": 530,
+     "line": 534,
      "text": "19.2 Provider boundary and decisions"
     },
     {
      "level": 3,
-     "line": 554,
+     "line": 559,
      "text": "19.3 Output, exit status, and shared guard"
     }
    ],
@@ -18498,7 +18498,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 76663,
+   "sizeBytes": 77057,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

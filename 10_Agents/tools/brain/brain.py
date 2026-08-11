@@ -315,6 +315,34 @@ def _git_push_urls(root: Path) -> tuple[list[str], list[str]]:
     if inside.stdout.strip() != "true":
         return [], ["not-git-repository"]
 
+    # `--local` does not make an include local: a repository can name
+    # `include.path = ~/...`, and Git expands that path through ambient HOME.
+    # Such an include can replace a public push target with a private-looking
+    # one (or the reverse) after the repository itself has been inspected.
+    # Read the raw local config with includes disabled and fail closed on every
+    # include/includeIf directive before asking Git for effective URLs.
+    include_kwargs = dict(kwargs)
+    include_kwargs["check"] = False
+    try:
+        include_result = subprocess.run(
+            command
+            + [
+                "config",
+                "--local",
+                "--no-includes",
+                "--name-only",
+                "--get-regexp",
+                r"^include.*\.path$",
+            ],
+            **include_kwargs,
+        )
+    except (OSError, UnicodeError, subprocess.SubprocessError):
+        return [], ["push-url-enumeration-failed"]
+    if include_result.returncode not in (0, 1):
+        return [], ["push-url-enumeration-failed"]
+    if include_result.stdout.splitlines():
+        return [], ["unsafe-local-config-include"]
+
     try:
         remote_result = subprocess.run(command + ["remote"], **kwargs)
     except (OSError, UnicodeError, subprocess.SubprocessError):

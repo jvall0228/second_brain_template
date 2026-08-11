@@ -518,6 +518,10 @@ allows it.
   therefore evaluates every effective **push** URL, never fetch URLs alone. Exact
   `DISABLED`, `NO_PUSH`, and `no-push`/`no_push` sentinel values are treated as a
   deliberately fetch-only remote. A discovery failure is `unknown`, not local-only.
+- Repository-local `include.path` and `includeIf.*.path` directives are also
+  `unknown` (`unsafe-local-config-include`). They can expand through ambient
+  HOME or another path outside the clone and substitute a target, so discovery
+  reads the raw local config with includes disabled and refuses the indirection.
 - GitHub HTTPS and SSH (`ssh://` or SCP-style) URLs on their default ports
   normalize to a provider key without userinfo, query, fragment, or `.git`.
   Insecure transports, nonstandard ports, malformed URLs, and non-GitHub hosts
@@ -533,7 +537,8 @@ The default injectable provider runs `gh repo view OWNER/REPO --json
 visibility,isPrivate,isTemplate,templateRepository` with prompting disabled and a
 bounded timeout. It pins `GH_HOST=github.com` and removes debug/trace sinks and Git
 control/config-injection variables from child environments. Git discovery ignores
-ambient user/system config and reads repository-local config only. Missing `gh`, auth/access
+ambient user/system config and reads repository-local config only; local config
+that delegates to another file is rejected as described in §19.1. Missing `gh`, auth/access
 failures, timeouts, malformed JSON, and missing or inconsistent fields are stable
 `unknown` reason codes; subprocess text is never forwarded.
 

@@ -279,6 +279,53 @@ class EvaluationTests(unittest.TestCase):
         self.assertNotIn(("acme", "private"), provider.calls)
         connector.assert_not_called()
 
+    def test_local_include_cannot_substitute_push_target_through_home(self):
+        cases = [
+            ("public", "private", PUBLIC),
+            ("private", "public", PRIVATE),
+        ]
+        for configured, included, configured_metadata in cases:
+            with self.subTest(configured=configured, included=included), tempfile.TemporaryDirectory() as td:
+                base = Path(td)
+                root = base / "repo"
+                root.mkdir()
+                root = init_repo(root)
+                hostile_home = base / "hostile-home"
+                hostile_home.mkdir()
+                git(
+                    root,
+                    "remote",
+                    "add",
+                    "origin",
+                    f"https://github.com/acme/{configured}.git",
+                )
+                git(root, "config", "include.path", "~/remote-safety.inc")
+                (hostile_home / "remote-safety.inc").write_text(
+                    "[remote \"origin\"]\n"
+                    f"\tpushurl = https://github.com/acme/{included}.git\n",
+                    encoding="utf-8",
+                )
+                provider = FakeProvider(
+                    {
+                        ("acme", configured): configured_metadata,
+                        ("acme", included): PRIVATE if included == "private" else PUBLIC,
+                    }
+                )
+                connector = mock.Mock()
+                with mock.patch.dict(os.environ, {"HOME": str(hostile_home)}):
+                    result = self.evaluate(root, provider)
+                    with self.assertRaises(brain.RemoteSafetyError):
+                        brain.guarded_personal_data_call(
+                            root,
+                            connector,
+                            metadata_provider=provider,
+                            persist=True,
+                        )
+                self.assertEqual(result["state"], "unknown")
+                self.assertIn("unsafe-local-config-include", result["reasonCodes"])
+                self.assertEqual(provider.calls, [])
+                connector.assert_not_called()
+
 
 class GuardTests(unittest.TestCase):
     def repo(self, td: str, url: str | None) -> Path:
@@ -498,6 +545,14 @@ class DocumentationContractTests(unittest.TestCase):
         self.assertIn("## Personal-data remote safety", text)
         self.assertIn("`--acknowledge-unknown`", text)
         self.assertIn("current invocation only", text)
+
+    def test_scheduled_inbound_automations_require_persistence_gate(self):
+        text = self.read("10_Agents/skills/recommended-automations/SKILL.md")
+        self.assertIn("remote-safety --persist --json", text)
+        self.assertIn("operationAllowed: true", text)
+        self.assertIn("zero connector calls", text)
+        self.assertIn("open zero output files", text)
+        self.assertIn("never use `--acknowledge-unknown`", text)
 
 
 if __name__ == "__main__":
