@@ -223,7 +223,7 @@ A note whose **frontmatter tags** contain `restricted/private` (bodyTags are inf
 
 ## 9. CLI command semantics
 
-Invocation: `python 10_Agents/tools/brain/brain.py <command> [args]` (a shell alias is documented in the tool README at M5.5). Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4.
+Invocation: `python 10_Agents/tools/brain/brain.py <command> [args]`, or directly as `./10_Agents/tools/brain/brain.py <command>` — the file is executable with a `#!/usr/bin/env python3` shebang (a shell alias is documented in the tool README at M5.5; a PATH install remains deferred, issue #4). Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4.
 
 Where a command takes a `<note>` argument, it accepts a vault-relative path or a bare name; the argument gets §5.1 target normalization (one trailing `.md` stripped — so `brain show 00_Meta/prd.md` works) and then the §6 ladder.
 
