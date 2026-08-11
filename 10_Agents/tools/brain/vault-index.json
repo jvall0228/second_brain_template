@@ -13237,7 +13237,7 @@
     },
     {
      "level": 2,
-     "line": 34,
+     "line": 35,
      "text": "Related"
     }
    ],
@@ -13323,7 +13323,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 36,
+     "line": 37,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -13334,7 +13334,7 @@
      "display": "Harness adapters",
      "embed": false,
      "fragment": null,
-     "line": 37,
+     "line": 38,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/README|Harness adapters]]",
      "resolved": "10_Agents/harnesses/README.md",
@@ -13345,7 +13345,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 39,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -13353,7 +13353,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3338,
+   "sizeBytes": 3695,
    "tasks": [],
    "title": "Environments",
    "updated": "2026-08-11"
@@ -14973,7 +14973,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 13670,
+   "sizeBytes": 13878,
    "tasks": [],
    "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
@@ -18332,87 +18332,87 @@
     },
     {
      "level": 3,
-     "line": 494,
+     "line": 500,
      "text": "20.2 Clone-local state"
     },
     {
      "level": 3,
-     "line": 504,
+     "line": 515,
      "text": "20.3 Selection"
     },
     {
      "level": 3,
-     "line": 524,
+     "line": 538,
      "text": "20.4 Commands and migration"
     },
     {
      "level": 2,
-     "line": 543,
+     "line": 560,
      "text": "21. Portable `brain` resolver and installer"
     },
     {
      "level": 3,
-     "line": 545,
+     "line": 562,
      "text": "21.1 Repository launchers"
     },
     {
      "level": 3,
-     "line": 566,
+     "line": 585,
      "text": "21.2 Managed PATH installation"
     },
     {
      "level": 3,
-     "line": 593,
+     "line": 624,
      "text": "21.3 Host capability boundary"
     },
     {
      "level": 2,
-     "line": 601,
+     "line": 632,
      "text": "18. Semantic search (QMD — issue #8)"
     },
     {
      "level": 3,
-     "line": 605,
+     "line": 636,
      "text": "18.1 Embeddings sidecar"
     },
     {
      "level": 3,
-     "line": 625,
+     "line": 656,
      "text": "18.2 Staleness and store loading"
     },
     {
      "level": 3,
-     "line": 630,
+     "line": 661,
      "text": "18.3 `brain embed`"
     },
     {
      "level": 3,
-     "line": 639,
+     "line": 670,
      "text": "18.4 `brain search --semantic <query>`"
     },
     {
      "level": 3,
-     "line": 648,
+     "line": 679,
      "text": "18.5 Determinism and invariants"
     },
     {
      "level": 2,
-     "line": 654,
+     "line": 685,
      "text": "19. Remote safety (`brain remote-safety`) — issue #83"
     },
     {
      "level": 3,
-     "line": 662,
+     "line": 693,
      "text": "19.1 Push-target discovery and normalization"
     },
     {
      "level": 3,
-     "line": 686,
+     "line": 717,
      "text": "19.2 Provider boundary and decisions"
     },
     {
      "level": 3,
-     "line": 712,
+     "line": 743,
      "text": "19.3 Output, exit status, and shared guard"
     }
    ],
@@ -18572,7 +18572,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 85349,
+   "sizeBytes": 87553,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
