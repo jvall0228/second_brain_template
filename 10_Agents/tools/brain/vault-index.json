@@ -14886,12 +14886,12 @@
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 50,
      "text": "The committed index"
     },
     {
      "level": 2,
-     "line": 57,
+     "line": 54,
      "text": "Tests"
     }
    ],
@@ -14911,7 +14911,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 60,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -14919,7 +14919,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4446,
+   "sizeBytes": 4405,
    "tasks": [],
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
@@ -15398,7 +15398,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 71250,
+   "sizeBytes": 71708,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

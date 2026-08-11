@@ -26,7 +26,7 @@ from pathlib import Path
 
 SCHEMA_VERSION = 1
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
-# §17.1 embeddings sidecar: gitignored, machine-local, pruned from the corpus
+# §18.1 embeddings sidecar: gitignored, machine-local, pruned from the corpus
 # exactly like the index file (constants for the rest of §17 sit with its code).
 EMBED_RELPATH = "10_Agents/tools/brain/vault-embeddings.json"
 # Any tool's test tree (fixture mini-vaults, secret-shaped test data) stays
@@ -411,7 +411,9 @@ TASK_EMOJI_RE = re.compile(
     )
     + ")\ufe0f?"  # tolerate an emoji variation selector
 )
-TASK_DATE_TOKEN_RE = re.compile(r"\s*(\d{4}-\d{2}-\d{2})(?!\d)")
+# ASCII digits only: unicode \d would accept e.g. Arabic-Indic digits that
+# int() then mis-parses into a "valid" date the owner never wrote.
+TASK_DATE_TOKEN_RE = re.compile(r"\s*([0-9]{4}-[0-9]{2}-[0-9]{2})(?![0-9])")
 
 
 def parse_task_text(text: str) -> tuple[str, str | None, str | None, list[str]]:
@@ -1892,7 +1894,7 @@ def check_urls(root: Path, notes: list[str]) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# §17 Semantic search (QMD — issue #8)
+# §18 Semantic search (QMD — issue #8)
 #
 # Module-internal store section: the sidecar (EMBED_RELPATH, gitignored) is
 # read and written ONLY here, and only `embed` and `search --semantic` ever
@@ -1902,7 +1904,7 @@ def check_urls(root: Path, notes: list[str]) -> list[dict]:
 
 EMBED_SCHEMA_VERSION = 1
 EMBED_LOCAL_MODEL_DEFAULT = "all-MiniLM-L6-v2"
-# §17.4 hybrid ranking weights: score = 0.7·sem + 0.3·kw, rounded to 6 dp.
+# §18.4 hybrid ranking weights: score = 0.7·sem + 0.3·kw, rounded to 6 dp.
 SEMANTIC_WEIGHT = 0.7
 KEYWORD_WEIGHT = 0.3
 SEMANTIC_TOP_DEFAULT = 10
@@ -1932,7 +1934,7 @@ def _valid_vector(v, dim: int | None = None) -> bool:
 
 
 def load_embeddings(root: Path) -> dict:
-    """§17.2: best-effort sidecar load. Missing file -> empty store; any
+    """§18.2: best-effort sidecar load. Missing file -> empty store; any
     malformed content is treated as absent with a stderr notice. Never raises."""
 
     def ignored(reason: str) -> dict:
@@ -1987,7 +1989,7 @@ def save_embeddings(root: Path, store: dict) -> None:
 
 
 def cosine(a: list[float], b: list[float]) -> float:
-    """§17.4 cosine similarity; zero-magnitude vectors give 0.0."""
+    """§18.4 cosine similarity; zero-magnitude vectors give 0.0."""
     dot = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(x * x for x in b))
@@ -2010,7 +2012,7 @@ def note_hashes(root: Path, index: dict) -> dict[str, str | None]:
 
 
 def fresh_entries(index: dict, store: dict, hashes: dict) -> dict[str, list[float]]:
-    """§17.2 freshness ∩ §17.1 restricted containment: path -> vector for
+    """§18.2 freshness ∩ §18.1 restricted containment: path -> vector for
     every sidecar entry that is current (note exists, hash matches, length
     == dim) and whose note is not currently restricted/private. Everything
     else is stale — excluded, never re-ranked."""
@@ -2029,7 +2031,7 @@ def fresh_entries(index: dict, store: dict, hashes: dict) -> dict[str, list[floa
 
 
 def embeddable_notes(index: dict, hashes: dict) -> list[str]:
-    """§17.3: the embeddable universe — readable, non-restricted notes."""
+    """§18.3: the embeddable universe — readable, non-restricted notes."""
     return sorted(
         rel
         for rel, rec in index["notes"].items()
@@ -2058,7 +2060,7 @@ def local_embedder(model_name: str):
 
 
 def cmd_embed(root: Path, args) -> int:
-    """§17.3: maintain the embeddings sidecar (--stdin-json / --local /
+    """§18.3: maintain the embeddings sidecar (--stdin-json / --local /
     --status). Exit 0 success, 1 operational error; the sidecar is written
     only on a fully-validated update."""
     notes, assets = walk_corpus(root)
@@ -2151,7 +2153,7 @@ def cmd_embed(root: Path, args) -> int:
             del vectors[rel]
             print(
                 f"notice: skipping restricted note {rel} — restricted/private "
-                "content never enters the embeddings sidecar (spec §17.1)",
+                "content never enters the embeddings sidecar (spec §18.1)",
                 file=sys.stderr,
             )
         skipped_unreadable = sorted(rel for rel in vectors if hashes[rel] is None)
@@ -2164,7 +2166,7 @@ def cmd_embed(root: Path, args) -> int:
         if store["notes"] and (store["model"] != model or store["dim"] != dim):
             print(
                 f"notice: model/dim changed ({store['model']}/{store['dim']} -> "
-                f"{model}/{dim}) — replacing the sidecar wholesale (spec §17.3)",
+                f"{model}/{dim}) — replacing the sidecar wholesale (spec §18.3)",
                 file=sys.stderr,
             )
             merged: dict[str, dict] = {}
@@ -2203,14 +2205,14 @@ def cmd_embed(root: Path, args) -> int:
         print(
             "error: local embedding model unavailable — install the optional "
             "`sentence-transformers` package, pipe precomputed vectors via "
-            "`brain embed --stdin-json`, or use keyword `brain search` (spec §17.3)",
+            "`brain embed --stdin-json`, or use keyword `brain search` (spec §18.3)",
             file=sys.stderr,
         )
         return 1
     if store["notes"] and store["model"] != model_name:
         print(
             f"notice: model changed ({store['model']} -> {model_name}) — "
-            "replacing the sidecar wholesale (spec §17.3)",
+            "replacing the sidecar wholesale (spec §18.3)",
             file=sys.stderr,
         )
         store = _empty_store()
@@ -2223,6 +2225,11 @@ def cmd_embed(root: Path, args) -> int:
     vecs = encode(texts) if todo else []
     dim = store["dim"]
     merged = {rel: store["notes"][rel] for rel in fresh}
+    if not todo and not merged:
+        # Nothing to embed and nothing retained: writing a {"dim": null}
+        # store would be shape-invalid (§18.1) — report and leave it absent.
+        print("nothing to embed — sidecar unchanged", file=sys.stderr)
+        return 0
     for rel, vec in zip(todo, vecs):
         if dim is None:
             dim = len(vec)
@@ -2250,7 +2257,7 @@ def cmd_embed(root: Path, args) -> int:
 
 
 def semantic_search(root: Path, index: dict, args) -> int:
-    """§17.4: hybrid semantic+keyword note ranking, degrading to the plain
+    """§18.4: hybrid semantic+keyword note ranking, degrading to the plain
     keyword search (exit 0, identical output shape) whenever semantic
     ranking is impossible."""
     store = load_embeddings(root)
@@ -2260,7 +2267,7 @@ def semantic_search(root: Path, index: dict, args) -> int:
     def degrade(reason: str) -> int:
         print(
             f"notice: semantic search unavailable ({reason}) — falling back to "
-            "keyword search; populate the sidecar with `brain embed` (spec §17.4)",
+            "keyword search; populate the sidecar with `brain embed` (spec §18.4)",
             file=sys.stderr,
         )
         emit_keyword_hits(keyword_hits(root, index, args.query, args.tag), args.json)
@@ -2406,7 +2413,7 @@ def cmd_list(root: Path, args) -> int:
 
 def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) -> list[dict]:
     """§9 search: case-insensitive substring hits over title, headings, and
-    body. Shared by plain search, semantic degradation, and the §17.4 keyword
+    body. Shared by plain search, semantic degradation, and the §18.4 keyword
     component."""
     query = query.lower()
     hits: list[dict] = []
@@ -2724,8 +2731,15 @@ def cmd_tasks(root: Path, args) -> int:
     notes, assets = walk_corpus(root)
     index = build_index(root, notes, assets)
     rows: list[dict] = []
+    # Normalize like every other path input (§2): NFC, forward slashes,
+    # no leading ./ — a macOS NFD prefix or backslash must still match.
+    project = (
+        nfc(args.project.strip()).replace("\\", "/").removeprefix("./")
+        if args.project
+        else None
+    )
     for rel in sorted(index["notes"]):
-        if args.project and not rel.startswith(args.project):
+        if project and not rel.startswith(project):
             continue
         for t in index["notes"][rel]["tasks"]:
             if args.open and t["status"] != "open":
@@ -2809,7 +2823,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--semantic",
         action="store_true",
-        help="rank notes by embedding similarity (spec §17.4), degrading to keyword search without vectors",
+        help="rank notes by embedding similarity (spec §18.4), degrading to keyword search without vectors",
     )
     p.add_argument(
         "--top",
@@ -2856,7 +2870,7 @@ def main(argv: list[str] | None = None) -> int:
         metavar="YYYY-MM-DD",
         help="scope tag drift and unresolved links to notes updated on/after this date",
     )
-    p = add("embed", help="maintain the semantic-search embeddings sidecar (spec §17.3)")
+    p = add("embed", help="maintain the semantic-search embeddings sidecar (spec §18.3)")
     mode = p.add_mutually_exclusive_group(required=True)
     mode.add_argument(
         "--stdin-json",

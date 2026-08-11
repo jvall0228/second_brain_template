@@ -76,6 +76,15 @@ def carry_over_tasks(root: Path, today: datetime.date) -> list[str]:
     if text is None:
         return []
     lines = text.split("\n")
+    # Containment (conventions § restricted/private): never copy task text
+    # out of a restricted note into a new, non-restricted daily note.
+    fm_probe, _e, _b, _h = brain.parse_frontmatter(lines)
+    raw_tags = fm_probe.get("tags")
+    tags = raw_tags if isinstance(raw_tags, list) else (
+        [raw_tags] if isinstance(raw_tags, str) else []
+    )
+    if "restricted/private" in tags:
+        return []
     _fm, _errs, body_start, _has = brain.parse_frontmatter(lines)
     carried: list[str] = []
     for _lineno, raw, masked in brain.body_lines_masked(lines, body_start):

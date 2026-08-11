@@ -311,6 +311,43 @@ class TasksCommandTests(unittest.TestCase):
         self.assertEqual(self.json_rows("--open"), self.json_rows("--open"))
 
 
+class TasksHardeningTests(unittest.TestCase):
+    """M11 gate fixes: --project normalization, ASCII-only dates."""
+
+    def test_project_prefix_is_normalized(self):
+        import io as _io
+        from contextlib import redirect_stdout as _rs
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": CONVENTIONS,
+                    "04_Projects/alpha/a.md": note("- [ ] in alpha\n"),
+                },
+            )
+            for prefix in ("04_Projects\\alpha", "./04_Projects/alpha"):
+                buf = _io.StringIO()
+                with _rs(buf):
+                    code = brain.main(
+                        ["tasks", "--project", prefix, "--vault", str(root)]
+                    )
+                self.assertEqual(code, 0)
+                self.assertIn("in alpha", buf.getvalue(), prefix)
+
+    def test_non_ascii_digits_are_not_date_shaped(self):
+        # Arabic-Indic digits must not parse into a due date (§17.2).
+        line = "- [ ] task \U0001F4C5 ٢٠٢٦-٠١-٠١\n"
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {"00_Meta/conventions.md": CONVENTIONS, "x.md": note(line)},
+            )
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            task = index["notes"]["x.md"]["tasks"][0]
+            self.assertIsNone(task["due"])
+
+
 class TasksConfigTests(unittest.TestCase):
     """§15.3/§15.4/§17.4: the `tasks` config key and carry-over reader."""
 

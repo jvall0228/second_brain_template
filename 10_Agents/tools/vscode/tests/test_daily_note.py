@@ -161,6 +161,22 @@ class CarryOverTests(unittest.TestCase):
         )
         self.assertLess(content.index("- [ ] carry me"), content.index("### Health"))
 
+    def test_restricted_yesterday_carries_nothing(self):
+        # Containment (spec §17.5): task text never flows out of a
+        # restricted note into the new, non-restricted daily note.
+        restricted = (
+            "---\ntitle: \"2026-08-10\"\ntags:\n  - type/journal\n"
+            "  - restricted/private\nupdated: 2026-08-10\n---\n\n"
+            "- [ ] secret errand\n"
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            write_yesterday(root, content=restricted)
+            target, created = daily_note.ensure_note(root, TODAY)
+            self.assertTrue(created)
+            content = target.read_text(encoding="utf-8")
+        self.assertNotIn("secret errand", content)
+
     def test_no_yesterday_note_means_no_carry_over(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = make_root(tmp)

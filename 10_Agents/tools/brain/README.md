@@ -34,7 +34,7 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 |---------|------|
 | `index` | Rebuild and write the committed `vault-index.json` (git-tracked files only) |
 | `list` | Note paths; filters: `--dir PREFIX`, `--tag TAG` (repeatable; `type/*` matches a namespace), `--type X` |
-| `search <query>` | Case-insensitive substring over titles, headings, and body. `--semantic` ranks whole notes by embedding similarity instead (spec §17.4), degrading to keyword search on a vectorless vault; `--query-vector` reads the query embedding from stdin, `--top N` caps results |
+| `search <query>` | Case-insensitive substring over titles, headings, and body. `--semantic` ranks whole notes by embedding similarity instead (spec §18.4), degrading to keyword search on a vectorless vault; `--query-vector` reads the query embedding from stdin, `--top N` caps results |
 | `links <note>` | Outgoing links, backlinks, and unresolved targets for one note |
 | `tags` | Tag usage counts grouped by namespace |
 | `show <note>` | The full index record for one note |
@@ -44,11 +44,8 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 | `context` | Bootstrap docs' sizes against their context budgets (spec §14; tunables live in one constants block in `brain.py`) |
 | `config` | Effective vault config: `00_Meta/config.yaml` merged over built-in defaults — agent write-exception prefixes, VS Code extension trust, fork context, report thresholds (spec §15). The file is optional; absence means pure defaults. `validate` reports malformed or unknown config content as per-file findings on it |
 | `report` | Vault-health synthesis (spec §16): stale-active notes, fully-disconnected orphans, Inbox aging buckets, tag drift vs the conventions taxonomy, unresolved-link count. `--since YYYY-MM-DD` scopes tag drift and unresolved links to notes updated in the review period. Thresholds come from the `report` config key (`stale_days`, `inbox_days`) |
-<<<<<<< HEAD
-| `embed` | Maintain the gitignored semantic-search embeddings sidecar (`vault-embeddings.json`, spec §17): `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional `sentence-transformers` model, `--status` reports coverage. Restricted/private notes never enter the sidecar |
-=======
 | `tasks` | Checkbox tasks across the vault (spec §17; Obsidian Tasks emoji metadata — 📅 due, ⏫/🔼/🔽 priority). Filters: `--open`, `--due <YYYY-MM-DD\|today>`, `--overdue`, `--project PREFIX`. Ordered due-date first (undated last), then path, then line |
->>>>>>> origin/main
+| `embed` | Maintain the gitignored semantic-search embeddings sidecar (`vault-embeddings.json`, spec §18): `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional `sentence-transformers` model, `--status` reports coverage. Restricted/private notes never enter the sidecar |
 
 ## The committed index
 

@@ -36,7 +36,7 @@
     },
     {
       "label": "Brain: Semantic Search",
-      "detail": "Relevance-ranked notes via the embeddings sidecar (spec \u00a717); degrades to keyword search when no vectors exist",
+      "detail": "Relevance-ranked notes via the embeddings sidecar (spec \u00a718); degrades to keyword search when no vectors exist",
       "type": "shell",
       "command": "python3 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"",
       "windows": { "command": "python 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"" },

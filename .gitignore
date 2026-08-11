@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 
-# Semantic-search embeddings sidecar (brain spec §17.1): model- and
+# Semantic-search embeddings sidecar (brain spec §18.1): model- and
 # machine-specific, regenerated per clone — never committed, unlike the index.
 10_Agents/tools/brain/vault-embeddings.json
 
