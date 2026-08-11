@@ -324,10 +324,10 @@ class InstallerTests(unittest.TestCase):
             state_file = base / "state.json"
             original_write = brain._atomic_external_write
 
-            def fail_manifest(path, data, mode, guard):
+            def fail_manifest(path, data, mode, guard, expected_digest):
                 if path.name == "state.json":
                     raise OSError("injected")
-                return original_write(path, data, mode, guard)
+                return original_write(path, data, mode, guard, expected_digest)
 
             with mock.patch.object(brain, "_atomic_external_write", side_effect=fail_manifest):
                 code, _, _ = self.run_install(bin_dir, state_file, "--apply")
@@ -343,10 +343,10 @@ class InstallerTests(unittest.TestCase):
             state_file = base / "state/brain-install.json"
             original_write = brain._atomic_external_write
 
-            def interrupt_manifest(path, data, mode, guard):
+            def interrupt_manifest(path, data, mode, guard, expected_digest):
                 if path == state_file.resolve(strict=False):
                     raise KeyboardInterrupt
-                return original_write(path, data, mode, guard)
+                return original_write(path, data, mode, guard, expected_digest)
 
             with mock.patch.object(
                 brain, "_atomic_external_write", side_effect=interrupt_manifest
@@ -354,6 +354,7 @@ class InstallerTests(unittest.TestCase):
                 self.run_install(bin_dir, state_file, "--apply")
             self.assertFalse((bin_dir / "brain").exists())
             self.assertFalse(state_file.exists())
+            self.assertFalse(state_file.parent.exists())
 
     def test_keyboard_interrupt_after_target_replace_rolls_back_unrecorded_install(self):
         with tempfile.TemporaryDirectory() as td:
@@ -363,8 +364,8 @@ class InstallerTests(unittest.TestCase):
             state_file = base / "state/brain-install.json"
             original_write = brain._atomic_external_write
 
-            def interrupt_after_target(path, data, mode, guard):
-                result = original_write(path, data, mode, guard)
+            def interrupt_after_target(path, data, mode, guard, expected_digest):
+                result = original_write(path, data, mode, guard, expected_digest)
                 if path.name == "brain":
                     raise KeyboardInterrupt
                 return result
@@ -373,6 +374,144 @@ class InstallerTests(unittest.TestCase):
                 brain, "_atomic_external_write", side_effect=interrupt_after_target
             ), self.assertRaises(KeyboardInterrupt):
                 self.run_install(bin_dir, state_file, "--apply")
+            self.assertFalse((bin_dir / "brain").exists())
+            self.assertFalse(state_file.exists())
+            self.assertFalse(state_file.parent.exists())
+
+    def test_system_exit_during_manifest_write_restores_exact_prestate(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "nested/state/brain-install.json"
+            original_write = brain._atomic_external_write
+
+            def exit_manifest(path, data, mode, guard, expected_digest):
+                if path == state_file.resolve(strict=False):
+                    raise SystemExit(73)
+                return original_write(path, data, mode, guard, expected_digest)
+
+            with mock.patch.object(
+                brain, "_atomic_external_write", side_effect=exit_manifest
+            ), self.assertRaisesRegex(SystemExit, "73"):
+                self.run_install(bin_dir, state_file, "--apply")
+            self.assertFalse((bin_dir / "brain").exists())
+            self.assertFalse((base / "nested").exists())
+
+    @unittest.skipUnless(os.name == "posix", "POSIX final-component CAS fixture")
+    def test_absent_target_inserted_at_publish_is_not_clobbered(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state.json"
+            target = bin_dir / "brain"
+            original_link = os.link
+            injected = False
+
+            def insert_foreign(source, destination, *args, **kwargs):
+                nonlocal injected
+                if destination == "brain" and not injected:
+                    injected = True
+                    target.write_bytes(b"foreign-race\n")
+                return original_link(source, destination, *args, **kwargs)
+
+            with mock.patch.object(brain.os, "link", side_effect=insert_foreign):
+                code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+            self.assertEqual(code, 1)
+            self.assertEqual(target.read_bytes(), b"foreign-race\n")
+            self.assertFalse(state_file.exists())
+
+    @unittest.skipUnless(os.name == "posix", "POSIX final-component CAS fixture")
+    def test_upgrade_target_changed_at_exchange_is_restored_not_clobbered(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state.json"
+            target = bin_dir / "brain"
+            old = b"#!/bin/sh\nexit 0\n"
+            foreign = b"foreign-race\n"
+            target.write_bytes(old)
+            target.chmod(0o755)
+            state_file.write_text(
+                json.dumps(
+                    {
+                        "artifacts": [{
+                            "installedDigest": hashlib.sha256(old).hexdigest(),
+                            "platform": "posix",
+                            "target": str(target),
+                        }],
+                        "schemaVersion": 1,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            state_file.chmod(0o600)
+            original_rename = brain._rename_external_at
+            injected = False
+
+            def insert_foreign(descriptor, source, destination, *, exchange=False):
+                nonlocal injected
+                if destination == "brain" and exchange and not injected:
+                    injected = True
+                    target.write_bytes(foreign)
+                return original_rename(
+                    descriptor, source, destination, exchange=exchange
+                )
+
+            before_manifest = state_file.read_bytes()
+            with mock.patch.object(
+                brain, "_rename_external_at", side_effect=insert_foreign
+            ):
+                code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+            self.assertEqual(code, 1)
+            self.assertEqual(target.read_bytes(), foreign)
+            self.assertEqual(state_file.read_bytes(), before_manifest)
+
+    @unittest.skipUnless(os.name == "posix", "POSIX final-component CAS fixture")
+    def test_uninstall_target_changed_at_quarantine_is_not_deleted(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state.json"
+            code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+            self.assertEqual(code, 0)
+            target = bin_dir / "brain"
+            foreign = b"foreign-race\n"
+            original_rename = brain._rename_external_at
+            injected = False
+
+            def insert_foreign(descriptor, source, destination, *, exchange=False):
+                nonlocal injected
+                if source == "brain" and not exchange and not injected:
+                    injected = True
+                    target.write_bytes(foreign)
+                return original_rename(
+                    descriptor, source, destination, exchange=exchange
+                )
+
+            before_manifest = state_file.read_bytes()
+            with mock.patch.object(
+                brain, "_rename_external_at", side_effect=insert_foreign
+            ):
+                code, _, _ = self.run_install(
+                    bin_dir, state_file, "--uninstall", "--apply"
+                )
+            self.assertEqual(code, 1)
+            self.assertEqual(target.read_bytes(), foreign)
+            self.assertEqual(state_file.read_bytes(), before_manifest)
+
+    def test_mutation_fails_closed_without_parent_bound_primitives(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state.json"
+            with mock.patch.object(brain, "_open_external_parent", return_value=None):
+                code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+            self.assertEqual(code, 1)
             self.assertFalse((bin_dir / "brain").exists())
             self.assertFalse(state_file.exists())
 
@@ -387,10 +526,17 @@ class InstallerTests(unittest.TestCase):
             target = bin_dir / "brain"
             original_remove = brain._remove_external
 
-            def interrupt_manifest_removal(path, guard, *, missing_ok=False):
+            def interrupt_manifest_removal(
+                path, guard, *, expected_digest, missing_ok=False
+            ):
                 if path == state_file.resolve(strict=False):
                     raise KeyboardInterrupt
-                return original_remove(path, guard, missing_ok=missing_ok)
+                return original_remove(
+                    path,
+                    guard,
+                    expected_digest=expected_digest,
+                    missing_ok=missing_ok,
+                )
 
             with mock.patch.object(
                 brain, "_remove_external", side_effect=interrupt_manifest_removal
@@ -410,8 +556,15 @@ class InstallerTests(unittest.TestCase):
             target = bin_dir / "brain"
             original_remove = brain._remove_external
 
-            def interrupt_after_target(path, guard, *, missing_ok=False):
-                result = original_remove(path, guard, missing_ok=missing_ok)
+            def interrupt_after_target(
+                path, guard, *, expected_digest, missing_ok=False
+            ):
+                result = original_remove(
+                    path,
+                    guard,
+                    expected_digest=expected_digest,
+                    missing_ok=missing_ok,
+                )
                 if path.name == "brain":
                     raise KeyboardInterrupt
                 return result
@@ -436,13 +589,13 @@ class InstallerTests(unittest.TestCase):
             original_write = brain._atomic_external_write
             swapped = False
 
-            def swap_before_target_write(path, data, mode, guard):
+            def swap_before_target_write(path, data, mode, guard, expected_digest):
                 nonlocal swapped
                 if path.name == "brain" and not swapped:
                     swapped = True
                     bin_dir.rename(parked)
                     os.symlink(malicious, bin_dir)
-                return original_write(path, data, mode, guard)
+                return original_write(path, data, mode, guard, expected_digest)
 
             try:
                 with mock.patch.object(
@@ -473,13 +626,15 @@ class InstallerTests(unittest.TestCase):
             original_write = brain._atomic_external_write
             swapped = False
 
-            def swap_before_manifest_write(path, data, mode, guard):
+            def swap_before_manifest_write(
+                path, data, mode, guard, expected_digest
+            ):
                 nonlocal swapped
                 if path.name == "brain-install.json" and not swapped:
                     swapped = True
                     state_dir.rename(parked)
                     os.symlink(malicious, state_dir)
-                return original_write(path, data, mode, guard)
+                return original_write(path, data, mode, guard, expected_digest)
 
             try:
                 with mock.patch.object(
@@ -563,6 +718,24 @@ class WindowsContractTests(unittest.TestCase):
         self.assertNotIn("plugin.json", combined)
         self.assertNotIn(".bashrc", combined)
         self.assertNotIn("PowerShell", combined)
+
+    def test_reparse_validation_is_builtin_and_fail_closed(self):
+        text = WINDOWS_LAUNCHER.read_text(encoding="utf-8")
+        self.assertIn("%%~aI", text)
+        self.assertIn("unable to verify path attributes", text)
+        self.assertIn("BRAIN_ATTRIBUTES:l=", text)
+        self.assertNotIn("fsutil", text.lower())
+
+    def test_installer_contract_uses_bound_win32_handles(self):
+        text = (ROOT / "10_Agents/tools/brain/brain.py").read_text(encoding="utf-8")
+        for token in (
+            "FILE_FLAG_OPEN_REPARSE_POINT",
+            "GetFileInformationByHandleEx",
+            "SetFileInformationByHandle",
+            "_win32_open_guard_chain",
+            "external artifact changed before bound replacement",
+        ):
+            self.assertIn(token, text)
 
 
 if __name__ == "__main__":

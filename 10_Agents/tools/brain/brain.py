@@ -13,6 +13,7 @@ Commands: index, list, search, links, tags, show, recent, validate,
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import json
 import math
@@ -4142,7 +4143,12 @@ def _capture_external_parent(root: Path, path: Path, label: str) -> dict:
             )
     except OSError:
         raise InstallError(f"{label} parent is unavailable") from None
-    return {"label": label, "parent": parent, "snapshots": tuple(snapshots)}
+    return {
+        "created": (),
+        "label": label,
+        "parent": parent,
+        "snapshots": tuple(snapshots),
+    }
 
 
 def _assert_external_parent(guard: dict) -> None:
@@ -4178,13 +4184,193 @@ def _open_external_parent(guard: dict) -> int | None:
     return descriptor
 
 
+def _win32_api():
+    if os.name != "nt":
+        raise InstallError("Windows filesystem primitives are unavailable")
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32.CreateFileW.argtypes = [
+        ctypes.c_wchar_p,
+        ctypes.c_uint32,
+        ctypes.c_uint32,
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+        ctypes.c_uint32,
+        ctypes.c_void_p,
+    ]
+    kernel32.CreateFileW.restype = ctypes.c_void_p
+    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+    kernel32.GetFileInformationByHandleEx.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_int,
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+    ]
+    kernel32.GetFileSizeEx.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+    kernel32.SetFilePointerEx.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_longlong,
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+    ]
+    kernel32.SetEndOfFile.argtypes = [ctypes.c_void_p]
+    kernel32.ReadFile.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+        ctypes.c_void_p,
+        ctypes.c_void_p,
+    ]
+    kernel32.WriteFile.argtypes = kernel32.ReadFile.argtypes
+    kernel32.FlushFileBuffers.argtypes = [ctypes.c_void_p]
+    kernel32.SetFileInformationByHandle.argtypes = [
+        ctypes.c_void_p,
+        ctypes.c_int,
+        ctypes.c_void_p,
+        ctypes.c_uint32,
+    ]
+    return kernel32
+
+
+def _win32_open_path(path: Path, access: int, creation: int, *, directory: bool) -> int:
+    kernel32 = _win32_api()
+    flags = 0x00200000  # FILE_FLAG_OPEN_REPARSE_POINT
+    if directory:
+        flags |= 0x02000000  # FILE_FLAG_BACKUP_SEMANTICS
+    handle = kernel32.CreateFileW(
+        str(path), access, 0x1 | 0x2, None, creation, flags, None
+    )
+    if handle == ctypes.c_void_p(-1).value:
+        raise InstallError("external path could not be opened safely")
+    attributes = (ctypes.c_uint32 * 2)()
+    if not kernel32.GetFileInformationByHandleEx(
+        handle, 9, ctypes.byref(attributes), ctypes.sizeof(attributes)
+    ):
+        kernel32.CloseHandle(handle)
+        raise InstallError("external path attributes could not be verified")
+    is_directory = bool(attributes[0] & 0x10)
+    if attributes[0] & 0x400 or is_directory != directory:
+        kernel32.CloseHandle(handle)
+        raise InstallError("external path is a reparse point or has the wrong type")
+    return int(handle)
+
+
+def _win32_open_guard_chain(guard: dict) -> list[int]:
+    _assert_external_parent(guard)
+    handles = []
+    try:
+        for raw, _device, _inode, _kind in guard["snapshots"]:
+            handles.append(_win32_open_path(Path(raw), 0, 3, directory=True))
+        _assert_external_parent(guard)
+        return handles
+    except BaseException:
+        _win32_close_handles(handles)
+        raise
+
+
+def _win32_close_handles(handles: list[int]) -> None:
+    if os.name != "nt":
+        return
+    kernel32 = _win32_api()
+    while handles:
+        kernel32.CloseHandle(handles.pop())
+
+
+def _win32_read_handle(handle: int, max_bytes: int) -> bytes:
+    kernel32 = _win32_api()
+    size = ctypes.c_longlong()
+    if not kernel32.GetFileSizeEx(handle, ctypes.byref(size)) or size.value > max_bytes:
+        raise InstallError("external artifact exceeds its read limit")
+    if not kernel32.SetFilePointerEx(handle, 0, None, 0):
+        raise InstallError("external artifact could not be read safely")
+    output = bytearray()
+    while len(output) < size.value:
+        count = min(64 * 1024, size.value - len(output))
+        buffer = ctypes.create_string_buffer(count)
+        read = ctypes.c_uint32()
+        if not kernel32.ReadFile(handle, buffer, count, ctypes.byref(read), None):
+            raise InstallError("external artifact could not be read safely")
+        if not read.value:
+            break
+        output.extend(buffer.raw[: read.value])
+    if len(output) != size.value:
+        raise InstallError("external artifact changed during read")
+    return bytes(output)
+
+
+def _win32_write_handle(handle: int, data: bytes) -> None:
+    kernel32 = _win32_api()
+    if not kernel32.SetFilePointerEx(handle, 0, None, 0) or not kernel32.SetEndOfFile(handle):
+        raise InstallError("external artifact could not be updated safely")
+    offset = 0
+    while offset < len(data):
+        chunk = data[offset : offset + 64 * 1024]
+        buffer = ctypes.create_string_buffer(chunk)
+        written = ctypes.c_uint32()
+        if not kernel32.WriteFile(
+            handle, buffer, len(chunk), ctypes.byref(written), None
+        ) or written.value != len(chunk):
+            raise InstallError("external artifact could not be updated safely")
+        offset += written.value
+    if not kernel32.FlushFileBuffers(handle):
+        raise InstallError("external artifact could not be flushed safely")
+
+
+def _win32_mark_delete(handle: int) -> None:
+    kernel32 = _win32_api()
+    disposition = ctypes.c_ubyte(1)
+    if not kernel32.SetFileInformationByHandle(
+        handle, 4, ctypes.byref(disposition), ctypes.sizeof(disposition)
+    ):
+        raise InstallError("external artifact could not be removed safely")
+
+
+def _win32_ensure_external_parent(root: Path, path: Path, label: str) -> dict:
+    parent = path.parent
+    missing = []
+    cursor = parent
+    while not cursor.exists() and not cursor.is_symlink():
+        missing.append(cursor)
+        cursor = cursor.parent
+    base_guard = _capture_external_parent(root, cursor / ".brain-anchor", label)
+    handles = _win32_open_guard_chain(base_guard)
+    created = []
+    try:
+        for directory_path in reversed(missing):
+            os.mkdir(directory_path, 0o700)
+            handles.append(
+                _win32_open_path(directory_path, 0, 3, directory=True)
+            )
+            created.append(str(directory_path))
+        guard = _capture_external_parent(root, path, label)
+        guard["created_windows"] = tuple(created)
+        guard["win_chain_handles"] = handles
+        return guard
+    except BaseException:
+        cleanup_failed = False
+        for directory_path in reversed(created):
+            _win32_api().CloseHandle(handles.pop())
+            try:
+                os.rmdir(directory_path)
+            except OSError:
+                cleanup_failed = True
+        _win32_close_handles(handles)
+        if cleanup_failed:
+            raise InstallError(
+                "created state directories could not be rolled back safely"
+            ) from None
+        raise
+
+
 def _ensure_external_parent(root: Path, path: Path, label: str) -> dict:
     """Create a missing private parent without traversing a link on POSIX."""
     parent = path.parent
     if parent.exists() or parent.is_symlink():
         return _capture_external_parent(root, path, label)
+    if os.name == "nt":
+        return _win32_ensure_external_parent(root, path, label)
     nofollow = getattr(os, "O_NOFOLLOW", 0)
     directory = getattr(os, "O_DIRECTORY", 0)
+    created: list[tuple[str, int, tuple[int, int, int]]] = []
     if nofollow and directory and os.open in getattr(os, "supports_dir_fd", set()):
         parts = parent.parts
         current_path = Path(parts[0])
@@ -4203,6 +4389,20 @@ def _ensure_external_parent(root: Path, path: Path, label: str) -> dict:
                 except FileNotFoundError:
                     try:
                         os.mkdir(part, 0o700, dir_fd=descriptor)
+                        child_info = os.stat(
+                            part, dir_fd=descriptor, follow_symlinks=False
+                        )
+                        created.append(
+                            (
+                                str(current_path / part),
+                                os.dup(descriptor),
+                                (
+                                    child_info.st_dev,
+                                    child_info.st_ino,
+                                    stat.S_IFMT(child_info.st_mode),
+                                ),
+                            )
+                        )
                     except FileExistsError:
                         pass
                     child = os.open(
@@ -4214,14 +4414,73 @@ def _ensure_external_parent(root: Path, path: Path, label: str) -> dict:
                 descriptor = child
                 current_path = current_path / part
         except OSError:
+            _cleanup_created_external_parents(created)
             raise InstallError(f"{label} parent could not be created safely") from None
         finally:
             os.close(descriptor)
     else:
-        # The subsequent capture rejects a reparse-point chain and binds the
-        # resulting identities. Windows mutation helpers recheck that guard.
-        parent.mkdir(parents=True, mode=0o700, exist_ok=True)
-    return _capture_external_parent(root, path, label)
+        raise InstallError("safe parent-bound directory creation is unavailable")
+    try:
+        guard = _capture_external_parent(root, path, label)
+    except BaseException:
+        _cleanup_created_external_parents(created)
+        raise
+    guard["created"] = tuple(created)
+    return guard
+
+
+def _cleanup_created_external_parents(
+    created: tuple[tuple[str, int, tuple[int, int, int]], ...]
+    | list[tuple[str, int, tuple[int, int, int]]],
+) -> None:
+    """Remove exactly empty directories created by this transaction."""
+    failure = False
+    for raw, parent_descriptor, expected in reversed(created):
+        try:
+            name = Path(raw).name
+            info = os.stat(name, dir_fd=parent_descriptor, follow_symlinks=False)
+            observed = (info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode))
+            if observed != expected or not stat.S_ISDIR(info.st_mode):
+                failure = True
+                continue
+            os.rmdir(name, dir_fd=parent_descriptor)
+        except FileNotFoundError:
+            pass
+        except OSError:
+            failure = True
+        finally:
+            os.close(parent_descriptor)
+    if failure:
+        raise InstallError("created state directories could not be rolled back safely")
+
+
+def _release_created_external_parents(guard: dict | None) -> None:
+    if guard is None:
+        return
+    for _raw, parent_descriptor, _expected in guard.get("created", ()):
+        os.close(parent_descriptor)
+    guard["created"] = ()
+    _win32_close_handles(guard.get("win_chain_handles", []))
+    guard["win_chain_handles"] = []
+
+
+def _cleanup_external_parent_guard(guard: dict) -> None:
+    _cleanup_created_external_parents(guard.get("created", ()))
+    handles = guard.get("win_chain_handles", [])
+    failure = False
+    for raw in reversed(guard.get("created_windows", ())):
+        if handles:
+            _win32_api().CloseHandle(handles.pop())
+        try:
+            os.rmdir(raw)
+        except FileNotFoundError:
+            pass
+        except OSError:
+            failure = True
+    _win32_close_handles(handles)
+    guard["win_chain_handles"] = []
+    if failure:
+        raise InstallError("created state directories could not be rolled back safely")
 
 
 def _external_lstat(path: Path, guard: dict) -> os.stat_result | None:
@@ -4421,11 +4680,119 @@ def _path_install_directory(
     return candidates[0]
 
 
-def _atomic_external_write(path: Path, data: bytes, mode: int, guard: dict) -> None:
+def _rename_external_at(
+    descriptor: int, source: str, target: str, *, exchange: bool = False
+) -> None:
+    """Atomic POSIX no-replace rename or exchange, never a clobbering rename."""
+    libc = ctypes.CDLL(None, use_errno=True)
+    source_bytes = os.fsencode(source)
+    target_bytes = os.fsencode(target)
+    if sys.platform == "darwin" and hasattr(libc, "renameatx_np"):
+        operation = libc.renameatx_np
+        operation.argtypes = [
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        operation.restype = ctypes.c_int
+        flags = 0x00000002 if exchange else 0x00000004
+    elif sys.platform.startswith("linux") and hasattr(libc, "renameat2"):
+        operation = libc.renameat2
+        operation.argtypes = [
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        operation.restype = ctypes.c_int
+        flags = 0x2 if exchange else 0x1
+    else:
+        raise InstallError("safe final-component mutation is unavailable")
+    if operation(descriptor, source_bytes, descriptor, target_bytes, flags) != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error))
+
+
+def _external_name_digest(
+    descriptor: int, name: str, *, max_bytes: int
+) -> str:
+    opened = os.open(
+        name,
+        os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0),
+        dir_fd=descriptor,
+    )
+    try:
+        info = os.fstat(opened)
+        if not stat.S_ISREG(info.st_mode) or info.st_size > max_bytes:
+            raise InstallError("external artifact is not a safe regular file")
+        digest = hashlib.sha256()
+        total = 0
+        while True:
+            chunk = os.read(opened, 64 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > max_bytes:
+                raise InstallError("external artifact exceeds its read limit")
+            digest.update(chunk)
+        return digest.hexdigest()
+    finally:
+        os.close(opened)
+
+
+def _atomic_external_write(
+    path: Path,
+    data: bytes,
+    mode: int,
+    guard: dict,
+    expected_digest: object | str,
+) -> None:
+    if os.name == "nt":
+        parent_handles = _win32_open_guard_chain(guard)
+        handle = None
+        created = expected_digest is _EXTERNAL_ABSENT
+        prior = None
+        try:
+            if not created and not isinstance(expected_digest, str):
+                raise InstallError("invalid external mutation expectation")
+            handle = _win32_open_path(
+                path,
+                0x80000000 | 0x40000000 | 0x00010000,
+                1 if created else 3,
+                directory=False,
+            )
+            if not created:
+                prior = _win32_read_handle(handle, 1024 * 1024)
+                if hashlib.sha256(prior).hexdigest() != expected_digest:
+                    raise InstallError(
+                        "external artifact changed before bound replacement"
+                    )
+            _win32_write_handle(handle, data)
+        except BaseException:
+            if handle is not None:
+                try:
+                    if created:
+                        _win32_mark_delete(handle)
+                    elif prior is not None:
+                        _win32_write_handle(handle, prior)
+                except InstallError:
+                    raise InstallError(
+                        "bound replacement rollback could not restore the target"
+                    ) from None
+            raise
+        finally:
+            if handle is not None:
+                _win32_api().CloseHandle(handle)
+            _win32_close_handles(parent_handles)
+        return
     descriptor = _open_external_parent(guard)
     if descriptor is not None:
         temporary = None
         file_descriptor = None
+        exchanged = False
         try:
             for _attempt in range(20):
                 candidate = ".brain-install-" + secrets.token_hex(12)
@@ -4448,13 +4815,53 @@ def _atomic_external_write(path: Path, data: bytes, mode: int, guard: dict) -> N
                 handle.flush()
                 os.fsync(handle.fileno())
                 os.fchmod(handle.fileno(), mode)
-            os.replace(
-                temporary,
-                path.name,
-                src_dir_fd=descriptor,
-                dst_dir_fd=descriptor,
-            )
-            temporary = None
+            if expected_digest is _EXTERNAL_ABSENT:
+                # Hard-link publication is an atomic create-if-absent CAS.
+                os.link(
+                    temporary,
+                    path.name,
+                    src_dir_fd=descriptor,
+                    dst_dir_fd=descriptor,
+                    follow_symlinks=False,
+                )
+                os.unlink(temporary, dir_fd=descriptor)
+                temporary = None
+            elif isinstance(expected_digest, str):
+                _rename_external_at(
+                    descriptor, temporary, path.name, exchange=True
+                )
+                exchanged = True
+                observed = _external_name_digest(
+                    descriptor, temporary, max_bytes=1024 * 1024
+                )
+                if observed != expected_digest:
+                    _rename_external_at(
+                        descriptor, temporary, path.name, exchange=True
+                    )
+                    exchanged = False
+                    raise InstallError(
+                        "external artifact changed before atomic replacement"
+                    )
+                os.unlink(temporary, dir_fd=descriptor)
+                temporary = None
+                exchanged = False
+            else:
+                raise InstallError("invalid external mutation expectation")
+        except BaseException:
+            if exchanged and temporary is not None:
+                try:
+                    _rename_external_at(
+                        descriptor, temporary, path.name, exchange=True
+                    )
+                    exchanged = False
+                except (OSError, InstallError):
+                    # The prior file remains at the private quarantine name;
+                    # never unlink an object whose identity is now uncertain.
+                    temporary = None
+                    raise InstallError(
+                        "atomic replacement rollback could not restore the target"
+                    ) from None
+            raise
         finally:
             if file_descriptor is not None:
                 os.close(file_descriptor)
@@ -4465,44 +4872,81 @@ def _atomic_external_write(path: Path, data: bytes, mode: int, guard: dict) -> N
                     pass
             os.close(descriptor)
         return
-
-    _assert_external_parent(guard)
-    fd, temporary = tempfile.mkstemp(prefix=".brain-install-", dir=path.parent)
-    temporary_path = Path(temporary)
-    try:
-        with os.fdopen(fd, "wb") as handle:
-            handle.write(data)
-            handle.flush()
-            os.fsync(handle.fileno())
-            os.fchmod(handle.fileno(), mode)
-        _assert_external_parent(guard)
-        os.replace(temporary_path, path)
-    finally:
-        try:
-            temporary_path.unlink()
-        except FileNotFoundError:
-            pass
+    raise InstallError("safe parent-bound mutation is unavailable")
 
 
-def _remove_external(path: Path, guard: dict, *, missing_ok: bool = False) -> None:
-    descriptor = _open_external_parent(guard)
-    if descriptor is not None:
+def _remove_external(
+    path: Path,
+    guard: dict,
+    *,
+    expected_digest: str,
+    missing_ok: bool = False,
+) -> None:
+    if os.name == "nt":
+        parent_handles = _win32_open_guard_chain(guard)
+        handle = None
         try:
             try:
-                os.unlink(path.name, dir_fd=descriptor)
+                handle = _win32_open_path(
+                    path,
+                    0x80000000 | 0x00010000,
+                    3,
+                    directory=False,
+                )
+            except InstallError:
+                if missing_ok and _external_lstat(path, guard) is None:
+                    return
+                raise
+            observed = hashlib.sha256(
+                _win32_read_handle(handle, 1024 * 1024)
+            ).hexdigest()
+            if observed != expected_digest:
+                raise InstallError("external artifact changed before bound removal")
+            _win32_mark_delete(handle)
+        finally:
+            if handle is not None:
+                _win32_api().CloseHandle(handle)
+            _win32_close_handles(parent_handles)
+        return
+    descriptor = _open_external_parent(guard)
+    if descriptor is not None:
+        quarantine = ".brain-remove-" + secrets.token_hex(12)
+        moved = False
+        try:
+            try:
+                _rename_external_at(descriptor, path.name, quarantine)
             except FileNotFoundError:
                 if not missing_ok:
                     raise
+                return
+            moved = True
+            observed = _external_name_digest(
+                descriptor, quarantine, max_bytes=1024 * 1024
+            )
+            if observed != expected_digest:
+                _rename_external_at(descriptor, quarantine, path.name)
+                moved = False
+                raise InstallError(
+                    "external artifact changed before atomic removal"
+                )
+            os.unlink(quarantine, dir_fd=descriptor)
+            moved = False
+        except BaseException:
+            if moved:
+                try:
+                    _rename_external_at(descriptor, quarantine, path.name)
+                    moved = False
+                except (OSError, InstallError):
+                    # Preserve the quarantined object rather than deleting or
+                    # overwriting an unrecognized final component.
+                    raise InstallError(
+                        "atomic removal rollback could not restore the target"
+                    ) from None
+            raise
         finally:
             os.close(descriptor)
         return
-    _assert_external_parent(guard)
-    try:
-        path.unlink()
-    except FileNotFoundError:
-        if not missing_ok:
-            raise
-    _assert_external_parent(guard)
+    raise InstallError("safe parent-bound removal is unavailable")
 
 
 def _manifest_bytes(manifest: dict) -> bytes:
@@ -4556,14 +5000,22 @@ def _restore_external(
     elif _external_digest(path, guard) != expected_current:
         raise InstallError("rollback refused because target changed")
     if prior is None:
-        _remove_external(path, guard, missing_ok=True)
+        _remove_external(
+            path,
+            guard,
+            expected_digest=expected_current,
+            missing_ok=True,
+        )
         return
-    _atomic_external_write(path, prior[0], prior[1], guard)
+    _atomic_external_write(
+        path, prior[0], prior[1], guard, expected_current
+    )
 
 
 def cmd_install(root: Path, args) -> int:
     """§21: preview/apply/doctor/uninstall the resolver outside the vault."""
     environ = os.environ
+    created_state_guard = None
     try:
         platform_name, filename = _install_platform()
         source = _installer_source(root, filename)
@@ -4660,6 +5112,7 @@ def cmd_install(root: Path, args) -> int:
                 return 0
             if state_guard is None:
                 state_guard = _ensure_external_parent(root, state_file, "state file")
+                created_state_guard = state_guard
             else:
                 _assert_external_parent(state_guard)
             if not _manifest_is_unchanged(
@@ -4685,18 +5138,32 @@ def cmd_install(root: Path, args) -> int:
             }
             try:
                 if prior is not None:
-                    _remove_external(target, target_guard)
+                    _remove_external(
+                        target,
+                        target_guard,
+                        expected_digest=hashlib.sha256(prior[0]).hexdigest(),
+                    )
                 if not _manifest_is_unchanged(
                     state_file, manifest_present, manifest_snapshot, state_guard
                 ):
                     raise OSError("manifest changed")
                 if remaining:
                     _atomic_external_write(
-                        state_file, _manifest_bytes(updated), 0o600, state_guard
+                        state_file,
+                        _manifest_bytes(updated),
+                        0o600,
+                        state_guard,
+                        hashlib.sha256(manifest_snapshot or b"").hexdigest(),
                     )
                 else:
-                    _remove_external(state_file, state_guard)
-            except (OSError, InstallError, KeyboardInterrupt) as exc:
+                    _remove_external(
+                        state_file,
+                        state_guard,
+                        expected_digest=hashlib.sha256(
+                            manifest_snapshot or b""
+                        ).hexdigest(),
+                    )
+            except (OSError, InstallError, KeyboardInterrupt, SystemExit) as exc:
                 manifest_committed = False
                 try:
                     if remaining:
@@ -4726,12 +5193,21 @@ def cmd_install(root: Path, args) -> int:
                             raise InstallError(
                                 "uninstall rollback refused because target changed"
                             ) from None
-                if isinstance(exc, KeyboardInterrupt):
+                if isinstance(exc, (KeyboardInterrupt, SystemExit)):
+                    if created_state_guard is not None:
+                        if manifest_committed:
+                            _release_created_external_parents(created_state_guard)
+                        else:
+                            _cleanup_external_parent_guard(created_state_guard)
+                        created_state_guard = None
                     raise
                 raise InstallError(
                     "uninstall could not update its manifest; target restored"
                 ) from None
             payload["writesPerformed"] = True
+            if created_state_guard is not None:
+                _release_created_external_parents(created_state_guard)
+                created_state_guard = None
             emit(payload, args.json, [f"removed managed launcher: {target}"])
             return 0
 
@@ -4753,6 +5229,7 @@ def cmd_install(root: Path, args) -> int:
         changed_target = state != "current"
         if state_guard is None:
             state_guard = _ensure_external_parent(root, state_file, "state file")
+            created_state_guard = state_guard
         else:
             _assert_external_parent(state_guard)
         if not _manifest_is_unchanged(
@@ -4784,16 +5261,28 @@ def cmd_install(root: Path, args) -> int:
         try:
             if changed_target:
                 _atomic_external_write(
-                    target, source_bytes, source_mode, target_guard
+                    target,
+                    source_bytes,
+                    source_mode,
+                    target_guard,
+                    _EXTERNAL_ABSENT
+                    if state == "absent"
+                    else artifact["installedDigest"],
                 )
             if not _manifest_is_unchanged(
                 state_file, manifest_present, manifest_snapshot, state_guard
             ):
                 raise OSError("manifest changed")
             _atomic_external_write(
-                state_file, _manifest_bytes(updated), 0o600, state_guard
+                state_file,
+                _manifest_bytes(updated),
+                0o600,
+                state_guard,
+                _EXTERNAL_ABSENT
+                if not manifest_present
+                else hashlib.sha256(manifest_snapshot or b"").hexdigest(),
             )
-        except (OSError, InstallError, KeyboardInterrupt) as exc:
+        except (OSError, InstallError, KeyboardInterrupt, SystemExit) as exc:
             manifest_committed = False
             try:
                 stored = _read_external_regular(
@@ -4820,16 +5309,31 @@ def cmd_install(root: Path, args) -> int:
                     raise InstallError(
                         "install rollback refused because target changed"
                     ) from None
-            if isinstance(exc, KeyboardInterrupt):
+            if isinstance(exc, (KeyboardInterrupt, SystemExit)):
+                if created_state_guard is not None:
+                    if manifest_committed:
+                        _release_created_external_parents(created_state_guard)
+                    else:
+                        _cleanup_external_parent_guard(created_state_guard)
+                    created_state_guard = None
                 raise
             raise InstallError(
                 "install could not write its manifest; target restored"
             ) from None
         payload["status"] = "current"
         payload["writesPerformed"] = True
+        if created_state_guard is not None:
+            _release_created_external_parents(created_state_guard)
+            created_state_guard = None
         emit(payload, args.json, [f"installed managed launcher: {target}"])
         return 0
     except (InstallError, OSError) as exc:
+        if created_state_guard is not None:
+            try:
+                _cleanup_external_parent_guard(created_state_guard)
+            except InstallError as cleanup_exc:
+                exc = cleanup_exc
+            created_state_guard = None
         message = str(exc) if isinstance(exc, InstallError) else "external filesystem operation failed"
         print(f"error: brain install refused ({message})", file=sys.stderr)
         return 1

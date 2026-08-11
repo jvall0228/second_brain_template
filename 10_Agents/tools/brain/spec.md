@@ -570,7 +570,9 @@ contains both a regular `AGENTS.md` and
 invalid roots, symlinked markers/tools, and no ancestor match are rejected
 without printing the candidate path. A higher-precedence invalid input never
 falls through. This gives nested vaults nearest-root behavior and keeps sibling
-forks isolated.
+forks isolated. The Windows resolver uses `cmd.exe`'s built-in file-attribute
+expansion for every trusted component and fails closed if attributes cannot be
+verified; it does not depend on optional `fsutil` behavior.
 
 After resolution, the launcher invokes that checkout's Python 3 tool with the
 original argument vector. It does not capture or transform stdout/stderr and
@@ -586,7 +588,8 @@ override, or modify the environment.
 absolute, non-symlinked, writable directory in `PATH`; `--target DIRECTORY`
 selects another existing writable directory explicitly. It never creates a PATH
 directory or edits shell/profile/registry configuration. `--apply` copies the
-platform launcher atomically. `--doctor` is read-only. `--uninstall` previews;
+platform launcher with a final-component compare-and-swap. `--doctor` is
+read-only. `--uninstall` previews;
 `--uninstall --apply` removes only the recognized managed launcher.
 
 Ownership lives in a version-1 external manifest: POSIX defaults to
@@ -601,13 +604,18 @@ and a requested target different from the recorded target are refusals.
 
 An absent target or a byte-identical current launcher is safe to record. A
 different target is replaceable only when its digest matches this manifest's
-recorded digest. Apply uses same-directory temporary files and `os.replace`; if
-manifest update fails after a target mutation, the old target is restored (or
-the new target removed). Uninstall likewise refuses drift and restores a removed
-target if manifest cleanup fails. Target and state parent chains are
-identity-bound before reads or writes; POSIX mutations use a held directory
-descriptor, while the portable fallback rechecks every component and rejects
-symlink/reparse-point swaps. A `KeyboardInterrupt` during target mutation or
+recorded digest. POSIX apply publishes absent files with create-if-absent and
+replaces existing files with an atomic exchange whose displaced object is
+digest-verified before removal. POSIX uninstall first moves the final component
+to a no-replace quarantine name and verifies it there. Windows holds every
+verified non-reparse parent-chain handle without delete sharing and performs
+create/open/delete through a bound final handle; the digest is checked on that
+handle before mutation. If manifest update fails after a target mutation, the
+old target is restored (or the new target removed). Uninstall likewise refuses
+drift and restores a removed target if manifest cleanup fails. Platforms without
+the required parent-bound mutation primitives fail closed. State directories
+created for an attempted install are identity-bound and removed in reverse order
+on rollback, restoring the pre-transaction directory state. A `KeyboardInterrupt` during target mutation or
 before the ownership-manifest commit rolls the mutation back before propagating;
 an already committed target/manifest pair remains consistent. Preview, doctor,
 and refused operations make zero writes. Tests use fake PATH/state/home

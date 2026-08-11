@@ -75,37 +75,18 @@ if not exist "%BRAIN_ROOT%\10_Agents\tools\brain\brain.py" call :brain_error "va
 if errorlevel 1 exit /b %ERRORLEVEL%
 if exist "%BRAIN_ROOT%\10_Agents\tools\brain\brain.py\" call :brain_error "brain.py is not a regular file" 2
 if errorlevel 1 exit /b %ERRORLEVEL%
-where fsutil >nul 2>nul
-if errorlevel 1 goto brain_find_python
-fsutil reparsepoint query "%BRAIN_ROOT%" >nul 2>nul
-if errorlevel 1 goto brain_check_agents_reparse
-call :brain_error "vault root must not be a reparse point" 2
-exit /b %ERRORLEVEL%
-:brain_check_agents_reparse
-fsutil reparsepoint query "%BRAIN_ROOT%\AGENTS.md" >nul 2>nul
-if errorlevel 1 goto brain_check_tool_reparse
-call :brain_error "AGENTS.md must not be a reparse point" 2
-exit /b %ERRORLEVEL%
-:brain_check_tool_reparse
-fsutil reparsepoint query "%BRAIN_ROOT%\10_Agents" >nul 2>nul
-if errorlevel 1 goto brain_check_tools_dir_reparse
-call :brain_error "vault tool path must not contain a reparse point" 2
-exit /b %ERRORLEVEL%
-:brain_check_tools_dir_reparse
-fsutil reparsepoint query "%BRAIN_ROOT%\10_Agents\tools" >nul 2>nul
-if errorlevel 1 goto brain_check_brain_dir_reparse
-call :brain_error "vault tool path must not contain a reparse point" 2
-exit /b %ERRORLEVEL%
-:brain_check_brain_dir_reparse
-fsutil reparsepoint query "%BRAIN_ROOT%\10_Agents\tools\brain" >nul 2>nul
-if errorlevel 1 goto brain_check_brain_file_reparse
-call :brain_error "vault tool path must not contain a reparse point" 2
-exit /b %ERRORLEVEL%
-:brain_check_brain_file_reparse
-fsutil reparsepoint query "%BRAIN_ROOT%\10_Agents\tools\brain\brain.py" >nul 2>nul
-if errorlevel 1 goto brain_find_python
-call :brain_error "brain.py must not be a reparse point" 2
-exit /b %ERRORLEVEL%
+call :brain_reject_reparse "%BRAIN_ROOT%" "vault root must not be a reparse point"
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :brain_reject_reparse "%BRAIN_ROOT%\AGENTS.md" "AGENTS.md must not be a reparse point"
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :brain_reject_reparse "%BRAIN_ROOT%\10_Agents" "vault tool path must not contain a reparse point"
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :brain_reject_reparse "%BRAIN_ROOT%\10_Agents\tools" "vault tool path must not contain a reparse point"
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :brain_reject_reparse "%BRAIN_ROOT%\10_Agents\tools\brain" "vault tool path must not contain a reparse point"
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :brain_reject_reparse "%BRAIN_ROOT%\10_Agents\tools\brain\brain.py" "brain.py must not be a reparse point"
+if errorlevel 1 exit /b %ERRORLEVEL%
 
 :brain_find_python
 where py >nul 2>nul
@@ -144,6 +125,15 @@ if /I "%BRAIN_PARENT%"=="%BRAIN_CANDIDATE%" call :brain_error "no vault found fr
 if errorlevel 1 exit /b %ERRORLEVEL%
 set "BRAIN_CANDIDATE=%BRAIN_PARENT%"
 goto brain_walk_up
+
+:brain_reject_reparse
+set "BRAIN_ATTRIBUTES="
+for %%I in ("%~1") do set "BRAIN_ATTRIBUTES=%%~aI"
+if not defined BRAIN_ATTRIBUTES call :brain_error "unable to verify path attributes" 2
+if errorlevel 1 exit /b %ERRORLEVEL%
+set "BRAIN_WITHOUT_REPARSE=%BRAIN_ATTRIBUTES:l=%"
+if not "%BRAIN_ATTRIBUTES%"=="%BRAIN_WITHOUT_REPARSE%" call :brain_error "%~2" 2
+exit /b %ERRORLEVEL%
 
 :brain_error
 >&2 echo brain: %~1
