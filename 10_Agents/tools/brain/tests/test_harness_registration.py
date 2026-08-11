@@ -58,6 +58,12 @@ class SharedRegistrationContractTests(unittest.TestCase):
         self.assertIn("only when its recorded content hash matches", text)
         self.assertIn("Never leave a broken symlink", text)
 
+    def test_copilot_does_not_register_duplicate_vault_skill_sets(self):
+        text = read(HARNESS_WIRING["copilot"])
+        self.assertIn("become consumers rather than adding duplicate directories", text)
+        self.assertIn("one manifest-owned global provider at a time", text)
+        self.assertIn("Additional vaults are consumers, not duplicate registrations", text)
+
     def test_every_supported_harness_accounts_for_shared_registration(self):
         for name, path in HARNESS_WIRING.items():
             with self.subTest(harness=name):
