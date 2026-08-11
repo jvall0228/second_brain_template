@@ -14,6 +14,7 @@ Notable structural changes to the vault. For individual file history, use `git l
 
 ## 2026-08-11 — Copilot Research Deduped
 
+- Owner-directed policy, folded into two canonical skills: notes are **atomic — one topic, one note**. [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] now requires corrective research to merge into the existing note (git keeps history; no parallel "supersedes X" notes left under banners), and [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] gained a duplication-scan step that proposes merges to the human.
 - Merged `06_Resources/copilot-harness-deep-dive.md` into [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]], which it had superseded — one note now holds all seven harnesses again. The stale M6 Copilot pass was replaced wholesale by the deep-dive's verified content (corrections, per-surface facts, wiring implications, unverified list, sources); the section header moves to P0 and the overlap matrix's Copilot hooks cell drops its "Preview/VS Code-only" qualifier. Inbound links retargeted (harnesses README, Copilot wiring doc, changelog, archived P0 plan).
 
 ## 2026-08-11 — onboard-owner Skill Shipped
