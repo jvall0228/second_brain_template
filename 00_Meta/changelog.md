@@ -12,6 +12,11 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Harness Support Tiers
+
+- Recorded the target harness support list in [[00_Meta/prd]] §8.3: **P0** — Claude Code (CLI, web, desktop app), Codex (CLI, web, desktop app), Opencode, Pi; **P1** — Cursor, Copilot, Muse Code; **P2** — universal standards + protocols in place of further bespoke adapters.
+- Rescoped milestone M6 accordingly: harness adapters for all four P0 harnesses (was "at least one harness (Claude Code)"), with P1 as a second wave.
+
 ## 2026-08-11 — AGENTS.md Becomes the Entrypoint
 
 - Retired `CONTEXT.md`: its content now lives in `AGENTS.md`, the standard cross-harness agent entrypoint (git history preserved via rename).

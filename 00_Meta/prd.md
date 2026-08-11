@@ -133,6 +133,25 @@ Claude Code auto-loads `CLAUDE.md` and the `@AGENTS.md` line injects the entrypo
 
 **Decision history:** the vault originally used `CONTEXT.md` as the entrypoint with `AGENTS.md`/`CLAUDE.md` as aliases (stub files, later symlinks). On 2026-08-11 `CONTEXT.md` was retired: its content moved to `AGENTS.md` (now the real file) and `CLAUDE.md` became the `@`-import adapter above — no symlinks remain, which also removes the old platform-portability caveat.
 
+### 8.3 Supported harnesses (decision 2026-08-11)
+Support is tiered by priority. "Supported" means the entrypoint loads in that harness (natively via `AGENTS.md`, or through a thin adapter like §8.2) and, at M6, the harness gets a `10_Agents/harnesses/<name>/` directory with a reference config and wiring doc (§9.3). Per-harness wiring specifics are settled when that harness's M6 adapter ships.
+
+| Tier | Harness | Entrypoint today |
+|------|---------|------------------|
+| P0 | Claude Code (CLI, web, and desktop app) | `CLAUDE.md` adapter (§8.2) |
+| P0 | Codex (CLI, web, and desktop app) | Reads `AGENTS.md` natively |
+| P0 | Opencode | Reads `AGENTS.md` natively |
+| P0 | Pi | Reads `AGENTS.md` natively |
+| P1 | Cursor | To specify at M6 |
+| P1 | Copilot | To specify at M6 |
+| P1 | Muse Code | To specify at M6 |
+| P2 | Universal standards + protocols | — (see below) |
+
+Tier meanings:
+- **P0 — must support:** the first wave of M6 adapters; the vault is not considered harness-complete without all four.
+- **P1 — should support:** second wave, after P0 ships.
+- **P2 — everything else via standards:** not a harness. Rather than enumerating more adapters, invest in cross-harness standards and protocols (the `AGENTS.md` convention itself, MCP, portable skill definitions) so unlisted harnesses bootstrap correctly with no bespoke adapter.
+
 ## 9. Agent library directory (`10_Agents/`)
 ### 9.1 Shipped structure
 ```
@@ -153,7 +172,7 @@ At M6 the directory grows into a plugin library:
   tools/                 # executable tools (e.g., brain CLI)
   harnesses/<name>/      # harness-specific adapters (hooks, rules)
 ```
-Design principles: universal primitives (skills, tools) work across any agent harness; harness-specific adapters are isolated under `harnesses/<name>/`; adapters ship both reference configs and wiring docs.
+Design principles: universal primitives (skills, tools) work across any agent harness; harness-specific adapters are isolated under `harnesses/<name>/`; adapters ship both reference configs and wiring docs. Which harnesses get adapters, and in what order, is defined by the support tiers in §8.3.
 
 ### 9.4 Discovery
 Today, agents discover available docs and solutions by reading `10_Agents/README.md`. Once M5 ships, the `brain` index becomes the primary discovery mechanism.
@@ -302,7 +321,8 @@ Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 
 ### M6: Agent Plugin Library — **Not started**
 - Populate `10_Agents/skills/` (universal skill definitions) and `10_Agents/tools/` (migrate `brain` here).
-- Add `10_Agents/harnesses/` with reference configs and wiring docs for at least one harness (Claude Code).
+- Add `10_Agents/harnesses/` with reference configs and wiring docs for every P0 harness (§8.3): Claude Code, Codex, Opencode, Pi.
+- Second wave: P1 harnesses (Cursor, Copilot, Muse Code). The P2 tier is served by the universal primitives and cross-harness standards themselves, not by per-harness adapters.
 
 ## 20. Acceptance criteria (M0, objective)
 - All eleven number-prefixed directories exist.
