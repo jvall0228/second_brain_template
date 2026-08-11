@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Daily Log
+
+**CODE stage:** Capture.
 
 Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone — check `01_Profile/defaults.md`).
 

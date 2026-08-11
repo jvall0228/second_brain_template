@@ -10,12 +10,71 @@ updated: 2026-08-11
 
 # Changelog
 
-Notable structural changes to the vault. For individual file history, use `git log`.
+Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
-## 2026-08-11 — Copilot Research Deduped
+## [2026-08-11] review-fixes | Adversarial review: doc-consistency + brain hygiene
+
+A multi-agent adversarial review of the CODE-operations branch returned no blocking defects; its 12 confirmed findings (doc drift + code hygiene) are fixed here:
+
+- **brain:** `collect_urls` now excludes fenced/inline code and frontmatter (example URLs in code are no longer probed as dead source links); the oversized line count uses `splitlines()` (was off-by-one on newline-terminated notes). Tests added for the dead-URL classifier (403/405 skip, 404/URLError → dead), the total-bootstrap-budget warning, and code-fence URL exclusion — suite now 33.
+- **Contradictions removed:** [[00_Meta/prd]] §6.2/§7 updated to the two-lane write rule and the `02_Outbox/` directory (they had lagged the shipped reality); recommended-automations' "never write outside `02_Inbox/`" scoped to *inbound flows* only (rhythm jobs write to each skill's own home); [[00_Meta/conventions]] § Expiration exempt list now names `09_Templates/`+`CLAUDE.md`, and the changelog-format claim no longer overstates grep coverage.
+- **Consistency:** cadence table gained a Yearly row (periodic-review already supports it); distill-note's merge-into-existing step gained the canonical carve-out its sibling skills carry; curate's link to conventions § Expiration dropped a fragile backtick heading anchor; the three onboarding skills share one CODE-stage label.
+
+## [2026-08-11] restructure | Split harness research per-harness; resolve expires backfill review
+
+Owner approved the four action items in the (now archived) [[07_Archives/inbox/2026-08-11-expires-backfill-report|`expires:` backfill review]]:
+
+- **Harness research split.** The 114 KB [[06_Resources/harness-primitives-research]] became 8 self-contained notes — [[06_Resources/harness-standards|standards & protocols]] plus one per harness ([[06_Resources/harness-claude-code|Claude Code]], [[06_Resources/harness-codex|Codex]], [[06_Resources/harness-opencode|opencode]], [[06_Resources/harness-pi|Pi]], [[06_Resources/harness-cursor|Cursor]], [[06_Resources/harness-copilot|GitHub Copilot]], [[06_Resources/harness-muse-code|Muse Code]]) — satisfying one-topic-one-note. The hub keeps the headline findings, overlap matrix, overlaps, implications, and a per-harness index. Content moved **verbatim** (line-multiset verified); the 7 wiring docs' and the changelog's fragment links retargeted to the new notes; archived-note links left frozen. Hub: 114 KB → 12 KB.
+- **Decision records exempt from `expires:`.** `type/decision` added to brain's `EXPIRES_EXEMPT_TYPE_TAGS` (+ [[00_Meta/conventions]] § Expiration, spec §14); the example decision record's `expires:` dropped and `updated:` restored to its event date (event records freeze). The orphan check stays path-only — a decision record still wants inbound links.
+- **Orphan READMEs linked** from [[00_Meta/index]] (Profile, Meta, Agent docs, Harness adapters); the orphan signal is clean without a blanket README exemption.
+- **Accepted as coherent single-topic notes** (oversized-but-fine; their warnings are expected, reviewed): [[00_Meta/prd]], `10_Agents/tools/brain/spec.md`, [[06_Resources/harness-copilot]]. The Now-page TTL stays 12 months (the quarterly review refreshes it; a shorter TTL would double-signal).
+
+## [2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)
+
+- [[10_Agents/skills/README]] restructured into CODE-staged sections (Capture / Organize / Distill / Express / System / Onboarding) with "The CODE Loop in This Vault" intro mapping stage → skills → directories (R5); skill names stay imperative verbs — categorization, no renames (R1). [[AGENTS]] points at the loop in one Key Links line.
+- Every SKILL.md now opens with a one-line **CODE stage:** note (R1), with boundary notes where a skill spans stages (R4): research-to-resource is Capture + Distill; periodic-review's weekly cadence is the Organize heartbeat; vault-answer and express-packet close the Express → Capture loop.
+- Changelog entry headers standardized to the grep-parseable form above (R21), documented in [[00_Meta/conventions]] § Recency — this entry is the first compliant one; history is untouched.
+
+## 2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)
+
+- **One canonical cadence table** now lives in [[10_Agents/skills/README]] § The Rhythm (daily log → weekly triage/review/Outbox sweep → monthly maintenance/curation → quarterly refresh incl. self-maintenance audit); [[00_Meta/conventions]] § Operating Rhythm points there and nothing duplicates it.
+- [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] charter widened to two flow families: inbound capture flows (unchanged) plus **rhythm jobs** — headless skill runs wired from the cadence table under the **unattended contract** (self-contained outcomes only; judgment → Inbox report; the run's output is the deliverable, never a plan or a question). Guardrails: no automation ships from `02_Outbox/`; everything dry-runs first.
+- [[10_Agents/skills/periodic-review/SKILL|periodic-review]] gained the **goal-alignment check** (each active project vs [[01_Profile/now]], and vice versa), the **archive completion path** (done/dead projects and areas → proposed move to `07_Archives/` via merge-notes' safe-move, with changelog entry), and the quarterly duty to **refresh the Now page** with the owner. Weekly/monthly/quarterly review templates gained the matching Alignment section.
+- [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] now teaches the rhythm in stage 4 and pitches rhythm jobs in stage 6.
+
+## 2026-08-11 — Express & Outbox (Ops Plan Phase 5)
+
+- **New structure `02_Outbox/`** — the vault's loading dock: outbound deliverables awaiting the owner's review and shipping. Lifecycle mirrors the Inbox (draft → owner ships → `07_Archives/outbox/` with `status/done`); trends toward empty; **agents never ship**. Shares the `02_` prefix — both are review gates, no renumbering.
+- New canonical skill [[10_Agents/skills/express-packet/SKILL|express-packet]]: assembles briefs, outlines, decision docs, comparisons, and draft posts/emails *from* vault notes with provenance wikilinks, behind a per-packet **privacy gate** — no `01_Profile/` or `03_Journal/` content without per-packet owner direction, and personal-context sources are flagged in the draft. Recapture loop returns shipping learnings to the Inbox.
+- **Two-lane write rule** landed everywhere it governs: [[AGENTS]] § Where Agents Write, [[00_Meta/conventions]] § Agent Write Rules, the operating-rules self-validation checklist, and [[00_Meta/index]]. Vault content → Inbox; world-bound deliverables → Outbox; both review-gated.
+- Wiring deviation (noted in the plan): `02_Outbox/` joined brain's expires/orphan exemption set — packets are ephemeral snapshots whose lifecycle is the archive path, not a TTL.
+
+## 2026-08-11 — Curation & Signals (Ops Plan Phase 4)
+
+- **`brain` grew its curation engine** (spec §14; all tunables in one constants block): new `curate` command reporting expired / missing / over-cap `expires:`, oversized notes, staleness weighted by backlink count, orphans, unreferenced `08_Assets/` files, and opt-in `--check-urls` dead-link probes; new `context` command reporting bootstrap-doc sizes against byte budgets (~150% of measured size, 32 KiB total). Nine new tests; suite at 30.
+- **`expires:` schema shipped**: [[00_Meta/conventions]] gained the Expiration section (TTL defaults 3/6/12 months by volatility, hard one-year cap, exemption list for events-not-claims), the Bootstrap Context Budgets section, and the draft→canonical promotion checklist; five knowledge templates carry an `expires:` placeholder.
+- **One-time backfill** added `expires:` to all 56 in-scope notes (3-month for harness wiring facts, 12-month evergreen default); judgment calls batched into `02_Inbox/2026-08-11-expires-backfill-report.md` for owner review. Validate-side curation warnings then flipped on — warn-only, never blocking; the three standing oversized warnings (prd, harness research, brain spec) are the queued split candidates.
+- New canonical skill [[10_Agents/skills/curate/SKILL|curate]] (epistemic integrity, vs vault-maintenance's mechanical): four outcomes per flagged note (refresh / re-verify / propose-archive / propose-split), semantic-lint pass (contradictions, superseded claims, concept-with-no-note, missing cross-links — proposals only), run summary to the Inbox.
+
+## 2026-08-11 — Note Surgery (Ops Plan Phase 3)
+
+- New canonical skill [[10_Agents/skills/merge-notes/SKILL|merge-notes]]: executes **approved** note surgery only — merge (survivor rewritten by replacement, backlinks retargeted via `brain links`, losers archived), split (one note per subject, backlinks re-pointed by citing intent), and the safe rename/move procedure (backlinks captured first, `git mv`, retarget, reindex).
+- [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]'s duplication scan now hands approved proposals to merge-notes: detection proposes there; this skill executes.
+
+## 2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)
+
+- New canonical skill [[10_Agents/skills/distill-note/SKILL|distill-note]]: reshape an existing note into an atomic evergreen zettel — declarative-claim title, standalone summary layer, wired links, supersede-by-replacement — invoked by triage for `type/zettel` items and by the Journal→Resources graduation path.
+- [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]] rewritten once with the full pipeline, in order: **atomize** multi-topic captures before classifying (capture stays zero-friction), **extract action items** into project tasks, classify, **propagate** — propose edits to the existing notes each capture extends/corrects/contradicts, alongside the filing — and hand zettels to distill-note. The report gains action-item and propagation columns; everything still gates on human approval.
+- [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] gains the matching propagation step: a source is fully ingested only when every note it touches reflects it.
+
+## 2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)
+
+- Fourteenth library skill, [[10_Agents/skills/vault-answer/SKILL|vault-answer]] (canonical, owner-authorized via the ops implementation plan): retrieval discipline for "what do I know about X?" — brain search → index → grep, wikilink citations on every vault claim, explicit separation of vault knowledge from model knowledge, capture offers for substantive synthesized answers, and research-to-resource offers when the vault comes up empty.
+- `10_Agents/docs/operating-rules.md` gained two sections: **Stuck/Escalation Protocol** (blocked or conflicting sources → `workflow/needs-review` Inbox note and stop; never guess-and-commit) and **Session-End Flush** (before session end or context compaction, write durable learnings to the daily log, an Inbox capture, or solution-capture — the vault only knows what reaches disk).
+- Plan of record: `02_Inbox/2026-08-11-para-operations-implementation-plan.md` (executes the R1–R25 requirements note beside it).
 
 - Owner-directed policy, folded into two canonical skills: notes are **atomic — one topic, one note**. [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] now requires corrective research to merge into the existing note (git keeps history; no parallel "supersedes X" notes left under banners), and [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] gained a duplication-scan step that proposes merges to the human. Companion rule in the same pass: **update by replacement, not accumulation** — merges and updates rewrite or delete conflicting sections instead of appending beside them (git history is the archive; appending is for logs/journals only). General form in `10_Agents/docs/operating-rules.md`, reinforced in both skills.
-- Merged `06_Resources/copilot-harness-deep-dive.md` into [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]], which it had superseded — one note now holds all seven harnesses again. The stale M6 Copilot pass was replaced wholesale by the deep-dive's verified content (corrections, per-surface facts, wiring implications, unverified list, sources); the section header moves to P0 and the overlap matrix's Copilot hooks cell drops its "Preview/VS Code-only" qualifier. Inbound links retargeted (harnesses README, Copilot wiring doc, changelog, archived P0 plan).
+- Merged `06_Resources/copilot-harness-deep-dive.md` into [[06_Resources/harness-copilot|the harness research's Copilot section]], which it had superseded — one note now holds all seven harnesses again. The stale M6 Copilot pass was replaced wholesale by the deep-dive's verified content (corrections, per-surface facts, wiring implications, unverified list, sources); the section header moves to P0 and the overlap matrix's Copilot hooks cell drops its "Preview/VS Code-only" qualifier. Inbound links retargeted (harnesses README, Copilot wiring doc, changelog, archived P0 plan).
 
 ## 2026-08-11 — onboard-owner Skill Shipped
 
@@ -25,7 +84,7 @@ Notable structural changes to the vault. For individual file history, use `git l
 
 ## 2026-08-11 — Copilot Promoted to P0
 
-- Owner-directed ("add copilot support"): re-verified the whole Copilot surface against live docs — deep-dive research superseding the M6 note's Copilot section (since merged into [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|that section]]). Key corrections: agent hooks run on the Copilot CLI **and** cloud agent (not just VS Code); symlinked skills fail in the CLI, so the `~/.agents/skills/` install path doesn't reach Copilot; `.github/copilot-instructions.md` is the only repo instruction channel for github.com Chat/Eclipse/Visual Studio; cloud-agent PRs run no CI until a human clicks "Approve and run workflows" (default).
+- Owner-directed ("add copilot support"): re-verified the whole Copilot surface against live docs — deep-dive research superseding the M6 note's Copilot section (since merged into [[06_Resources/harness-copilot|that section]]). Key corrections: agent hooks run on the Copilot CLI **and** cloud agent (not just VS Code); symlinked skills fail in the CLI, so the `~/.agents/skills/` install path doesn't reach Copilot; `.github/copilot-instructions.md` is the only repo instruction channel for github.com Chat/Eclipse/Visual Studio; cloud-agent PRs run no CI until a human clicks "Approve and run workflows" (default).
 - Shipped **working config in-repo** (dot-paths sit outside the note corpus, so `brain` never validates or indexes them): a thin `.github/copilot-instructions.md` bootstrap shim, and an `agentStop` agent hook (`.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh`) that blocks the cloud agent from finishing while `brain validate --check-index` reports errors — cloud-only, repeat-block-guarded, `SECOND_BRAIN_HOOK_DISABLE=1` escape hatch. [[00_Meta/prd]] §18 records the new enforcement layer.
 - Rewrote [[10_Agents/harnesses/copilot/wiring|the wiring doc]] to P0 depth (per-surface entrypoints, skills, enforcement chain, permissions, MCP, secrets, automation; the example `.txt` shim was deleted — the real file ships now). Corrected two canonical skills: [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] (Copilot gets `copilot skill add`/copies, never symlinks) and [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] (Copilot schedules via gh-aw/`gh agent-task`, not cron-only).
 - [[00_Meta/prd]] §8.3 moves Copilot to P0 and §9.3 sanctions root-scope shipped adapter config (`CLAUDE.md` precedent). The tier placement awaits owner confirmation; plan + adversarial-review log in `07_Archives/inbox/2026-08-11-copilot-p0-plan.md`.
@@ -89,4 +148,4 @@ Resolved the findings of the spec review in `2026-08-11-prd-review.md` (then in 
 - Seeded one worked example per section (project, area, resource, person, idea, daily log, weekly review) — delete these once you've learned the pattern.
 - Preserved structure, conventions, note templates, and agent operating docs.
 
-<!-- Add a dated entry here each time you make a structural change to the vault. -->
+<!-- Add an entry at the top for each structural change: ## [YYYY-MM-DD] <operation> | <summary> -->

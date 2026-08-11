@@ -6,12 +6,14 @@ tags:
   - audience/human
   - audience/agent
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Vault Index (Map of Content)
 
 ## Core Context (Agent Bootstrap)
 - [[AGENTS]] — Entrypoint, structure, rules
+- [[01_Profile/README|Profile]] — What the owner-context notes are for
 - [[01_Profile/now]] — Current focus
 - [[01_Profile/preferences]] — Communication style
 - [[01_Profile/defaults]] — Timezone, locale, defaults
@@ -25,6 +27,7 @@ updated: 2026-08-11
 - [[04_Projects/README|Projects]] — Outcomes with deadlines
   - [[04_Projects/example-project/README|Example Project]] — Sample; delete once you've seen the pattern
 - [[02_Inbox/README|Inbox]] — Triage queue
+- [[02_Outbox/README|Outbox]] — Outbound deliverables awaiting the owner's review and shipping
 
 ## Knowledge & Reference
 - [[06_Resources/README|Resources]] — Topic notes
@@ -40,6 +43,7 @@ updated: 2026-08-11
   - [[05_Areas/example-area/README|Example Area]] — Sample; delete once you've seen the pattern
 
 ## Maintenance
+- [[00_Meta/README|Meta]] — What the vault-level meta docs are
 - [[07_Archives/README|Archives]] — Completed or inactive items
 - [[08_Assets/README|Assets]] — Images, attachments, non-markdown files
 - [[00_Meta/changelog]] — Structural change log
@@ -51,3 +55,6 @@ updated: 2026-08-11
 
 ## Agent Docs
 - [[10_Agents/README]] — Agent behavior and write rules
+- [[10_Agents/docs/README|Agent docs]] — Operating rules, task patterns
+- [[10_Agents/harnesses/README|Harness adapters]] — Per-harness wiring
+- [[10_Agents/skills/README|The CODE loop]] — Skill catalog + cadence table

@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Link Repair
+
+**CODE stage:** System (outside the loop).
 
 Drive unresolved wikilinks to zero without guessing.
 

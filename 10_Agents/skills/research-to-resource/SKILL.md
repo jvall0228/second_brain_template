@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Research to Resource
+
+**CODE stage:** Capture + Distill (boundary skill) — research is captured and distilled in one pass: provenance is the capture, the note shape is the distillation.
 
 Convert research output into reference material that stays useful after the session ends.
 
@@ -23,7 +26,8 @@ Convert research output into reference material that stays useful after the sess
 3. **Write with provenance.** Every non-obvious claim carries its source; end the note with a `## Sources` section listing URLs/titles **with retrieval dates** — research decays, and the date tells future readers how stale it might be. Distinguish verified facts from your inference.
 4. **Frontmatter:** real `title`, `updated:` today, `topic/*` tags for the subject, and `workflow/draft` — research stays draft until the human reviews it.
 5. **Link it in:** wikilink related notes both ways where the related note is non-canonical (full paths across directories).
-6. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
+6. **Propagate:** research that extends, corrects, or contradicts *other* existing notes gets merged into those notes now, per step 1's merge rules (canonical targets → propose via Inbox instead). A source is fully ingested only when every note it touches reflects it — one source at a time, supervised.
+7. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
 
 ## Rules
 

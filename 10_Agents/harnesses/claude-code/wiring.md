@@ -7,11 +7,12 @@ tags:
   - topic/software
   - workflow/canonical
 updated: 2026-08-11
+expires: 2026-11-11
 ---
 
 # Claude Code Wiring
 
-Facts verified 2026-08-11 against [code.claude.com/docs](https://code.claude.com/docs) (see [[06_Resources/harness-primitives-research#Claude Code|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [code.claude.com/docs](https://code.claude.com/docs) (see [[06_Resources/harness-claude-code|research]]); re-verify before relying on paths.
 
 ## Entrypoint loading
 

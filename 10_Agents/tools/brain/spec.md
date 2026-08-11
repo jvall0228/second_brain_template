@@ -7,6 +7,7 @@ tags:
   - topic/software
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # `brain` Spec — Parsing, Link Resolution, and Index Schema
@@ -213,6 +214,8 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 - **`show <note>`** — the full §8.1 record for one note (human output: a readable summary of the same fields).
 - **`recent [n]`** — `n` (default 10) notes by `updated` descending; ties broken by working-tree mtime descending, then path ascending; notes with `updated: null` sort last (per PRD §15, `updated` is the primary recency signal and day-granular). JSON: array of `{path, title, updated}`.
 - **`validate`** — §10.
+- **`curate`** — the §14 re-review signals as one report: expired, missing `expires:`, expires beyond the one-year cap, oversized, stale (days-old weighted by backlink count, sorted worst-first), orphans, unreferenced `08_Assets/` files; `--check-urls` additionally probes source URLs over the network (opt-in only; never runs pre-commit). JSON: one sorted array per signal.
+- **`context`** — each bootstrap doc's byte size against its §14 budget, plus the total; missing docs report `null`. JSON: `{docs, totalBudget, totalBytes}`.
 
 ## 10. Validate semantics
 
@@ -228,7 +231,7 @@ Tag namespace membership is read **at runtime** from the authoritative table in 
 
 **Agent Skills contract (`10_Agents/skills/`, added at M6 per the implementation plan):** every skill directory (a direct child of `10_Agents/skills/` containing notes) must hold a `SKILL.md` whose frontmatter carries — in addition to the vault contract — an Agent Skills `name` equal to the directory name (`skill-name-mismatch`) and a non-empty `description` string (`skill-missing-description`); a skill directory without a `SKILL.md` is `skill-missing`. All three are errors.
 
-**Warnings** (exit 2 if no errors): `ambiguous` links; `case-mismatch` links; `tags-not-a-list`; `duplicate-key`; a `title-match:` hint accompanies its unresolved-link error message.
+**Warnings** (exit 2 if no errors): `ambiguous` links; `case-mismatch` links; `tags-not-a-list`; `duplicate-key`; a `title-match:` hint accompanies its unresolved-link error message. With the §14 curation gate on: `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget`, and `bootstrap-budget-total`. `invalid-expires` (an `expires:` value that is not a real `YYYY-MM-DD`) is an **error**, with the same template-placeholder exemption as `invalid-updated`.
 
 **`--check-index`:** re-serialize the index corpus per §8.2 and byte-compare against the committed `vault-index.json`; a mismatch or missing file is an error ("stale index — run `brain index`").
 
@@ -273,3 +276,16 @@ Exit codes: `0` clean · `1` at least one error · `2` warnings only. The pre-co
 - Indexing markdown-style relative links (`[text](path)`) — today only wikilinks are the navigation contract.
 - Excluding HTML/`%%` comments from extraction.
 - A `restricted/*`-aware output filter, if PRD §21 ever adopts that namespace.
+
+## 14. Curation signals (ops plan Phase 4)
+
+Detection lives in `brain`; the judgment lives in the `curate` skill; findings needing owner decisions land as Inbox proposals. Every tunable is a module constant in one block at the top of `brain.py` — `CURATE_MAX_LINES`/`CURATE_MAX_BYTES` (oversized), `CURATE_STALE_DAYS`, `EXPIRES_CAP_DAYS`, the exemption sets, and the `BOOTSTRAP_BUDGETS` map with `BOOTSTRAP_TOTAL_BUDGET`. Policy prose (TTL defaults, what's exempt and why) lives in [[00_Meta/conventions]] § Expiration; the constants are authoritative for values.
+
+- **`expires:`** — optional frontmatter date (`YYYY-MM-DD`). Malformed → `invalid-expires` error (§10.2). Present and past → **expired** (curate report only). More than `EXPIRES_CAP_DAYS` after `updated:` → **expires-beyond-cap**. Absent on a note that should carry one → **missing-expires**; exempt by path: `02_Inbox/` (zero-friction capture; assigned at triage), `02_Outbox/` (ephemeral packets; lifecycle is the archive path), `03_Journal/`, `07_Archives/`, `09_Templates/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`, and `CLAUDE.md`; exempt by type tag: `type/decision` (event records, via `EXPIRES_EXEMPT_TYPE_TAGS`). The orphan check uses the path exemptions only — a decision record still wants inbound links.
+- **oversized** — normalized size or line count over the constants; exempt `07_Archives/` and the changelog (frozen/append-only content is never a split candidate).
+- **stale** — `updated:` older than `CURATE_STALE_DAYS`; score = days-old × (1 + backlink count), sorted worst-first, so heavily-referenced stale notes surface first.
+- **orphans** — zero backlinks; exempt the expires-exempt set plus `AGENTS.md`, `CLAUDE.md`, and the root `README.md`.
+- **unreferenced assets** — `08_Assets/` files no resolved link or embed points at (only `08_Assets/`: reference configs elsewhere are cited by backticked path, not wikilink).
+- **dead URLs** — `--check-urls` only: HEAD each distinct `http(s)` URL (10s timeout); 403/405 responses are HEAD-hostile hosts, not dead links. Network access makes this opt-in forever: never run by `validate`, the pre-commit hook, or CI.
+
+`validate` surfaces only the free, offline, low-noise subset as warnings — `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget[-total]` — gated behind `VALIDATE_CURATION_WARNINGS` (flipped on with the one-time backfill). Warnings never block commits (§10.4); expired/stale/orphan findings stay report-only because they demand judgment, not mechanical fixes.

@@ -7,11 +7,12 @@ tags:
   - topic/software
   - workflow/draft
 updated: 2026-08-11
+expires: 2026-11-11
 ---
 
 # Muse Code Wiring
 
-**Volatile adapter.** Muse Code (Meta) launched 2026-08-05 — six days before this doc. Facts verified 2026-08-11 (see [[06_Resources/harness-primitives-research#Muse Code|research]]); its SKILL.md frontmatter spec is unpublished and paths are undocumented in places. This doc stays `workflow/draft` (unlike the other adapters) until the surface stabilizes — **re-verify everything before relying on it.**
+**Volatile adapter.** Muse Code (Meta) launched 2026-08-05 — six days before this doc. Facts verified 2026-08-11 (see [[06_Resources/harness-muse-code|research]]); its SKILL.md frontmatter spec is unpublished and paths are undocumented in places. This doc stays `workflow/draft` (unlike the other adapters) until the surface stabilizes — **re-verify everything before relying on it.**
 
 ## Entrypoint loading
 

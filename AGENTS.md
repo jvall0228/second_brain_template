@@ -5,6 +5,7 @@ tags:
   - type/meta
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Second Brain
@@ -29,7 +30,10 @@ After reading all four, the agent has enough context to begin work.
 
 ## Where Agents Write
 
-All agent-generated output goes to **`02_Inbox/`** unless explicitly directed elsewhere. This is the **Inbox-first rule** — a human reviews and triages Inbox contents into the appropriate PARA directory.
+Agent writes are **two-lane**, both review-gated:
+
+- Output **for the vault** (captures, research, reports, proposals) goes to **`02_Inbox/`** unless explicitly directed elsewhere. This is the **Inbox-first rule** — a human reviews and triages Inbox contents into the appropriate PARA directory.
+- Deliverables **for the world** (briefs, outlines, draft posts/emails) go to **`02_Outbox/`** via [[10_Agents/skills/express-packet/SKILL|express-packet]] — the owner reviews and ships; **agents never ship**. See [[02_Outbox/README]].
 
 Standing exceptions:
 
@@ -63,6 +67,7 @@ Directories use numbered prefixes for sort stability. Each directory has a READM
 | `00_Meta/` | Vault-level conventions and meta docs |
 | `01_Profile/` | Owner context: Now page, preferences |
 | `02_Inbox/` | Raw capture, agent output, unsorted notes |
+| `02_Outbox/` | Outbound deliverables awaiting owner review and shipping |
 | `03_Journal/` | Personal knowledge and experience |
 | `04_Projects/` | Active projects with clear outcomes |
 | `05_Areas/` | Ongoing areas of responsibility |
@@ -102,4 +107,5 @@ To detect recent changes: check `updated:` fields, read [[00_Meta/changelog]], o
 - Inbox: [[02_Inbox/README]]
 - PARA roots: [[04_Projects/README|Projects]] | [[05_Areas/README|Areas]] | [[06_Resources/README|Resources]] | [[07_Archives/README|Archives]]
 - Agent docs: [[10_Agents/README]]
+- The CODE loop: [[10_Agents/skills/README]] — stage → skill → directory map, and the cadence table
 - Templates: [[09_Templates/README]]

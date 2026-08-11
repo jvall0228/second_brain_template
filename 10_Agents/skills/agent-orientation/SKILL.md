@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Agent Orientation
+
+**CODE stage:** Onboarding.
 
 Map what this environment can reach, agree on what's worth ingesting, and generate the access layer — the vault reaches outward from here.
 

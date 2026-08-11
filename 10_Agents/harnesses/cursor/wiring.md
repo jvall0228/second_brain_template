@@ -7,11 +7,12 @@ tags:
   - topic/software
   - workflow/canonical
 updated: 2026-08-11
+expires: 2026-11-11
 ---
 
 # Cursor Wiring
 
-Facts verified 2026-08-11 against [cursor.com/docs](https://cursor.com/docs) (see [[06_Resources/harness-primitives-research#Cursor|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [cursor.com/docs](https://cursor.com/docs) (see [[06_Resources/harness-cursor|research]]); re-verify before relying on paths.
 
 ## Entrypoint loading
 

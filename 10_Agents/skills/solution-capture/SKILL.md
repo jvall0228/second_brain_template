@@ -7,9 +7,12 @@ tags:
   - audience/agent
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Solution Capture
+
+**CODE stage:** Capture.
 
 Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbox detour, no prior approval needed (adding is the carve-out; restructuring or deleting still requires human direction).
 
