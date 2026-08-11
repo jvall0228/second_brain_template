@@ -110,7 +110,7 @@ Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by de
 **Standing exceptions:**
 
 - Agents may append solution notes to `10_Agents/solutions/` (see [[10_Agents/README]]) with required frontmatter including `type/solution`.
-- A live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session writes interview results directly to `01_Profile/`, `04_Projects/`, `05_Areas/`, and in its specialization stage rewrites `09_Templates/` from `variants/` and records `context:` in the config. Owner approval in the moment is the review; scoped to that live session.
+- A live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
 
 **Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`. Before writing, check whether the file already exists; on collision, append a numeric suffix (`-2`). Never overwrite another agent's note.
 

@@ -1450,7 +1450,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10239,
+   "sizeBytes": 10234,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -2696,7 +2696,8 @@
   "01_Profile/identity.md": {
    "backlinks": [
     "00_Meta/index.md",
-    "01_Profile/README.md"
+    "01_Profile/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -2988,7 +2989,8 @@
   "01_Profile/work.md": {
    "backlinks": [
     "00_Meta/index.md",
-    "01_Profile/README.md"
+    "01_Profile/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -3919,7 +3921,8 @@
   },
   "03_Journal/people/README.md": {
    "backlinks": [
-    "00_Meta/index.md"
+    "00_Meta/index.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -12452,6 +12455,7 @@
     "09_Templates/README.md",
     "09_Templates/variants/README.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
    ],
@@ -12502,12 +12506,17 @@
     },
     {
      "level": 2,
-     "line": 71,
+     "line": 77,
+     "text": "People map: worked example"
+    },
+    {
+     "level": 2,
+     "line": 121,
      "text": "Orchestration rules"
     },
     {
      "level": 2,
-     "line": 75,
+     "line": 125,
      "text": "Exit criteria (\"onboarded\")"
     }
    ],
@@ -12606,6 +12615,61 @@
      "fragment": null,
      "line": 62,
      "placeholder": false,
+     "raw": "[[01_Profile/work]]",
+     "resolved": "01_Profile/work.md",
+     "target": "01_Profile/work",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 62,
+     "placeholder": false,
+     "raw": "[[01_Profile/identity]]",
+     "resolved": "01_Profile/identity.md",
+     "target": "01_Profile/identity",
+     "warnings": []
+    },
+    {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 63,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 65,
+     "placeholder": false,
+     "raw": "[[03_Journal/people/README]]",
+     "resolved": "03_Journal/people/README.md",
+     "target": "03_Journal/people/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "People map: worked example",
+     "line": 67,
+     "placeholder": false,
+     "raw": "[[#People map: worked example]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 68,
+     "placeholder": false,
      "raw": "[[09_Templates/template-project]]",
      "resolved": "09_Templates/template-project.md",
      "target": "09_Templates/template-project",
@@ -12615,7 +12679,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 62,
+     "line": 68,
      "placeholder": false,
      "raw": "[[09_Templates/template-area]]",
      "resolved": "09_Templates/template-area.md",
@@ -12626,7 +12690,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 69,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -12637,7 +12701,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 69,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -12648,7 +12712,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 69,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -12659,7 +12723,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 70,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -12670,7 +12734,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 71,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -12681,15 +12745,26 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 71,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
      "target": "10_Agents/skills/recommended-automations/SKILL",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 128,
+     "placeholder": false,
+     "raw": "[[01_Profile/work]]",
+     "resolved": "01_Profile/work.md",
+     "target": "01_Profile/work",
+     "warnings": []
     }
    ],
-   "sizeBytes": 9367,
+   "sizeBytes": 14885,
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
   },
@@ -15162,7 +15237,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 7023,
+   "sizeBytes": 7076,
    "title": "Agents",
    "updated": "2026-08-11"
   },
