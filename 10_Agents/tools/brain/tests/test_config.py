@@ -188,7 +188,6 @@ class ValidateConfigTests(unittest.TestCase):
         errors, warnings = self.findings_for_config(
             {
                 "00_Meta/config.yaml": (
-                    "context:\n  budget: 1\n"
                     "modules: [health]\n"
                     "sync: enabled\n"
                     "environments:\n  - work\n"
@@ -241,9 +240,49 @@ class ValidateConfigTests(unittest.TestCase):
 
     def test_null_values_equal_absent(self):
         errors, warnings = self.findings_for_config(
-            {"00_Meta/config.yaml": "write_exceptions:\nextension_trust:\n"}
+            {"00_Meta/config.yaml": "write_exceptions:\nextension_trust:\ncontext:\n"}
         )
         self.assertEqual((errors, warnings), ([], []))
+
+
+class ContextKeyTests(unittest.TestCase):
+    """Spec §15.3: `context` (issue #12) — one scalar, personal | work.
+    Recorded by onboard-owner's specialization step; parse-and-report only."""
+
+    def findings(self, text):
+        with tempfile.TemporaryDirectory() as td:
+            root = vault(Path(td), {"00_Meta/config.yaml": text})
+            errors, warnings = brain.run_validate(root, check_index=False)
+            return (
+                [f for f in errors if f["path"] == brain.CONFIG_RELPATH],
+                [f for f in warnings if f["path"] == brain.CONFIG_RELPATH],
+            )
+
+    def test_documented_values_are_clean(self):
+        for value in ("personal", "work"):
+            errors, warnings = self.findings(f"context: {value}\n")
+            self.assertEqual((errors, warnings), ([], []), value)
+
+    def test_non_scalar_is_invalid_value_error(self):
+        for text in ("context: [work]\n", "context:\n  kind: work\n"):
+            errors, _ = self.findings(text)
+            self.assertEqual([f["rule"] for f in errors], ["config-invalid-value"], text)
+
+    def test_undocumented_scalar_warns(self):
+        errors, warnings = self.findings("context: school\n")
+        self.assertEqual(errors, [])
+        self.assertEqual([f["rule"] for f in warnings], ["config-unknown-value"])
+
+    def test_vault_context_accessor(self):
+        self.assertEqual(brain.vault_context({}), "personal")
+        self.assertEqual(brain.vault_context({"context": None}), "personal")
+        self.assertEqual(brain.vault_context({"context": ["work"]}), "personal")
+        self.assertEqual(brain.vault_context({"context": "work"}), "work")
+        self.assertEqual(brain.DEFAULT_CONTEXT, "personal")
+
+    def test_context_no_longer_reserved(self):
+        self.assertIn("context", brain.CONFIG_IMPLEMENTED_KEYS)
+        self.assertNotIn("context", brain.CONFIG_RESERVED_KEYS)
 
 
 class ConfigCliTests(unittest.TestCase):
@@ -262,6 +301,7 @@ class ConfigCliTests(unittest.TestCase):
             self.assertFalse(data["present"])
             self.assertEqual(data["raw"], {})
             self.assertEqual(data["extensionTrust"], "first-party")
+            self.assertEqual(data["context"], "personal")
             self.assertEqual(
                 data["writeExceptions"], list(brain.AGENT_WRITE_DEFAULT_PREFIXES)
             )
@@ -273,7 +313,8 @@ class ConfigCliTests(unittest.TestCase):
                 {
                     "06_Resources/README.md": note(),
                     "00_Meta/config.yaml": (
-                        "extension_trust: relaxed\nwrite_exceptions:\n  - 06_Resources\n"
+                        "extension_trust: relaxed\ncontext: work\n"
+                        "write_exceptions:\n  - 06_Resources\n"
                     ),
                 },
             )
@@ -282,10 +323,12 @@ class ConfigCliTests(unittest.TestCase):
             data = json.loads(out)
             self.assertTrue(data["present"])
             self.assertEqual(data["extensionTrust"], "relaxed")
+            self.assertEqual(data["context"], "work")
             self.assertIn("06_Resources/", data["writeExceptions"])
             code, human = self.run_cli(root, "config")
             self.assertEqual(code, 0)
             self.assertIn("extension trust: relaxed", human)
+            self.assertIn("context: work", human)
 
 
 if __name__ == "__main__":

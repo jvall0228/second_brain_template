@@ -24,7 +24,14 @@
 #                          # extensions (e.g. Foam) — see
 #                          # 06_Resources/vscode-editor-support.md.
 #
+# context: work            # Fork context (issue #12): personal (default) |
+#                          # work. Recorded by onboard-owner's specialization
+#                          # step, which rewrites the periodic templates in
+#                          # place from 09_Templates/variants/ for a work
+#                          # fork. A record, not a switch — brain parses and
+#                          # reports it but drives no behavior from it.
+#
 # ---------------------------------------------------------------------------
 # Reserved keys (parsed and tolerated, not yet implemented — claimed by
-# open issues): context, environments, modules, provenance, report, sync,
+# open issues): environments, modules, provenance, report, sync,
 # template_version.

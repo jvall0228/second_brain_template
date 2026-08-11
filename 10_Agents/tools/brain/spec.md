@@ -254,7 +254,7 @@ Tag namespace membership is read **at runtime** from the authoritative table in 
 
 ### 10.3 Exemptions
 
-- `09_Templates/**`: any frontmatter value (or list item) containing `{{` is deemed to satisfy the required-field, format, and membership checks it would otherwise fail — the placeholder **is** the value. The exemption is per-value, not per-note: a template-directory note without placeholder values (e.g. the section README) is fully checked. Placeholder **links** are exempt everywhere by construction (§5.1).
+- `09_Templates/**`: any frontmatter value (or list item) containing `{{` is deemed to satisfy the required-field, format, and membership checks it would otherwise fail — the placeholder **is** the value. The exemption is per-value, not per-note: a template-directory note without placeholder values (e.g. the section README) is fully checked. The glob is recursive, so `09_Templates/variants/` (issue #12 specialization sources) is covered the same way — variant files carry placeholder frontmatter like the templates they mirror. Placeholder **links** are exempt everywhere by construction (§5.1).
 - `CLAUDE.md` at the vault root: exempt from all frontmatter checks (one-line adapter, PRD §8.2).
 
 ### 10.4 Output and exit codes
@@ -357,7 +357,7 @@ Top-level keys are registered here so later issues cannot collide:
 |-----|--------|---------|
 | `write_exceptions` | **implemented** | List of vault-relative directory paths agents may write to **in addition to** the Inbox-first defaults (`02_Inbox/`, `02_Outbox/`, `10_Agents/solutions/` — `AGENT_WRITE_DEFAULT_PREFIXES`). Config only ever widens the set; entries are normalized to a trailing `/`. The enforcement point is `agent_write_allowed(rel, config)`, for harness write-gates and skills; session-scoped carve-outs (onboard-owner, agent-generated skills/tools per PRD §6.2) remain policy prose, not paths. |
 | `extension_trust` | **implemented** | VS Code extension trust policy (PRD §6.5): `first-party` (default) or `relaxed`. A documented override consumed by the editor docs ([[06_Resources/vscode-editor-support]]) — `brain` exposes the effective value via `extension_trust(config)` and `brain config`; it drives no `brain` behavior itself. |
-| `context` | reserved (#12) | — |
+| `context` | **implemented** (#12) | Fork context recorded by [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]'s specialization step: **one scalar**, `personal` (the default when absent) or `work`. Beyond parsing and reporting it — `vault_context(config)` and `brain config` expose the effective value — `brain` acts on it in no way yet: specialization happens at onboarding time by rewriting the periodic templates in `09_Templates/` in place from `09_Templates/variants/`, not at read time, so the key is a record for tooling and future skills, not a switch. |
 | `environments` | reserved (#15) | — |
 | `modules` | reserved (#32) | — |
 | `provenance` | reserved (#18) | — |
@@ -369,8 +369,8 @@ Reserved keys parse and are **tolerated silently** whatever their shape. **Unkno
 
 ### 15.4 Validate semantics
 
-All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` not a scalar; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key`; `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust` value outside the documented pair).
+All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` or `context` not a scalar; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key`; `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust` or `context` value outside its documented pair).
 
 ### 15.5 `config` command
 
-`brain config` (§9 conventions: `--json`, exit 0) prints the **effective** configuration: presence, the raw parsed map, the merged write-exception prefixes (defaults first), the effective `extension_trust`, the reserved-key list, and any findings. It is the non-Python surface of the reader API for harness tasks and scripts.
+`brain config` (§9 conventions: `--json`, exit 0) prints the **effective** configuration: presence, the raw parsed map, the merged write-exception prefixes (defaults first), the effective `extension_trust`, the effective `context`, the reserved-key list, and any findings. It is the non-Python surface of the reader API for harness tasks and scripts.
