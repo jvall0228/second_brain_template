@@ -95,5 +95,5 @@ Sources:
 ## Process notes
 
 - Requirements were brainstormed first and the trust policy set by the owner before this configuration was finalized; an earlier draft of this branch shipped the Tier 2 community set (Foam et al.) and was reworked to strict first-party on owner direction.
-- Delivered on the dedicated branch `claude/vscode-editor-support`, isolated from parallel skill-rearchitecture work.
+- Delivered on branch `claude/second-brain-vscode-support-jjtrlg` (owner decision 2026-08-11). `claude/vscode-editor-support` is a session-created duplicate pointing at the same history — no unique commits; ignore it and delete whenever convenient.
 - `brain validate` remains the sole authoritative convention check for the vault; editor tooling is assistance only.
