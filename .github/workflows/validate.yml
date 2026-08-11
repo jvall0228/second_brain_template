@@ -9,9 +9,6 @@ on:
   push:
   pull_request:
 
-permissions:
-  contents: write
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -21,17 +18,6 @@ jobs:
         run: python3 -m unittest discover -s 10_Agents/tools/brain/tests
       - name: snippet parity (PRD §6.5)
         run: python3 10_Agents/tools/vscode/gen_snippets.py --check
-      - name: refresh index on implementation branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/chatgpt/shared-second-brain-registration'
-        run: |
-          python3 10_Agents/tools/brain/brain.py index
-          if ! git diff --quiet -- 10_Agents/tools/brain/vault-index.json; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add 10_Agents/tools/brain/vault-index.json
-            git commit -m 'Regenerate vault index for shared registration'
-            git push
-          fi
       - name: brain validate --check-index
         run: |
           set +e
