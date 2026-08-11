@@ -1123,10 +1123,13 @@
     "10_Agents/README.md",
     "10_Agents/docs/operating-rules.md",
     "10_Agents/docs/task-patterns.md",
+    "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
     "10_Agents/skills/curate/SKILL.md",
     "10_Agents/skills/express-packet/SKILL.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
+    "10_Agents/skills/research-to-resource/SKILL.md",
+    "10_Agents/skills/triage-inbox/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
    ],
@@ -1190,33 +1193,38 @@
      "text": "Tag Namespaces"
     },
     {
+     "level": 3,
+     "line": 98,
+     "text": "restricted/private"
+    },
+    {
      "level": 2,
-     "line": 97,
+     "line": 102,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 110,
+     "line": 115,
      "text": "Change Control"
     },
     {
      "level": 3,
-     "line": 120,
+     "line": 125,
      "text": "Draft → Canonical Promotion"
     },
     {
      "level": 2,
-     "line": 132,
+     "line": 137,
      "text": "Bootstrap Context Budgets"
     },
     {
      "level": 2,
-     "line": 136,
+     "line": 141,
      "text": "Operating Rhythm"
     },
     {
      "level": 2,
-     "line": 140,
+     "line": 145,
      "text": "Recency"
     }
    ],
@@ -1269,7 +1277,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 100,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 108,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1280,7 +1299,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 109,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -1291,7 +1310,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 108,
+     "line": 113,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -1302,7 +1321,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 127,
+     "line": 132,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1313,7 +1332,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 128,
+     "line": 133,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1324,7 +1343,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 130,
+     "line": 135,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -1335,7 +1354,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 139,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1346,7 +1365,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 139,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -1357,7 +1376,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 139,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -1368,7 +1387,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 139,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -1379,7 +1398,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 134,
+     "line": 139,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -1390,7 +1409,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 138,
+     "line": 143,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -1401,7 +1420,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 144,
+     "line": 149,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1409,7 +1428,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9115,
+   "sizeBytes": 9967,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -9522,17 +9541,17 @@
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 67,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 70,
+     "line": 71,
      "text": "Session-End Flush"
     },
     {
      "level": 2,
-     "line": 80,
+     "line": 81,
      "text": "Related"
     }
    ],
@@ -9593,10 +9612,21 @@
      "warnings": []
     },
     {
+     "display": "restricted/private",
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 63,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces|restricted/private]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
      "display": "brain",
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -9607,7 +9637,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 65,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -9618,7 +9648,7 @@
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 74,
+     "line": 75,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -9629,7 +9659,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 75,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -9640,7 +9670,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 83,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -9651,7 +9681,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 83,
+     "line": 84,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -9662,7 +9692,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 84,
+     "line": 85,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -9670,7 +9700,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4978,
+   "sizeBytes": 5334,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -10208,6 +10238,11 @@
     {
      "level": 2,
      "line": 43,
+     "text": "Restricted content → `.cursorignore`"
+    },
+    {
+     "level": 2,
+     "line": 53,
      "text": "Reference configs"
     }
    ],
@@ -10233,9 +10268,20 @@
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 45,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2768,
+   "sizeBytes": 3848,
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -12156,12 +12202,24 @@
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 41,
      "text": "References"
     }
    ],
-   "links": [],
-   "sizeBytes": 3766,
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 36,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 4073,
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -12286,16 +12344,27 @@
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 38,
      "text": "References"
     }
    ],
    "links": [
     {
+     "display": null,
+     "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 31,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 33,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -12306,7 +12375,7 @@
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 42,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -12314,7 +12383,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3481,
+   "sizeBytes": 3851,
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
   },
@@ -13494,88 +13563,93 @@
      "text": "8.2 Deterministic serialization"
     },
     {
-     "level": 2,
+     "level": 3,
      "line": 210,
+     "text": "8.3 Restricted-note reduction (issue #17)"
+    },
+    {
+     "level": 2,
+     "line": 220,
      "text": "9. CLI command semantics"
     },
     {
      "level": 2,
-     "line": 227,
+     "line": 237,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 229,
+     "line": 239,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 233,
+     "line": 243,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 245,
+     "line": 255,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 250,
+     "line": 260,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 256,
+     "line": 266,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 281,
+     "line": 291,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 292,
+     "line": 302,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 305,
+     "line": 315,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 312,
+     "line": 322,
      "text": "14. Curation signals (ops plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 325,
+     "line": 335,
      "text": "15. Vault config (`00_Meta/config.yaml`) — issue #2"
     },
     {
      "level": 3,
-     "line": 329,
+     "line": 339,
      "text": "15.1 Location, optionality, change control"
     },
     {
      "level": 3,
-     "line": 336,
+     "line": 346,
      "text": "15.2 Grammar bounds"
     },
     {
      "level": 3,
-     "line": 342,
+     "line": 352,
      "text": "15.3 Key registry"
     },
     {
      "level": 3,
-     "line": 360,
+     "line": 370,
      "text": "15.4 Validate semantics"
     },
     {
      "level": 3,
-     "line": 364,
+     "line": 374,
      "text": "15.5 `config` command"
     }
    ],
@@ -13639,7 +13713,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 231,
+     "line": 241,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -13650,7 +13724,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 237,
+     "line": 247,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13661,7 +13735,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 314,
+     "line": 251,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 324,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13672,7 +13757,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 349,
+     "line": 359,
      "placeholder": false,
      "raw": "[[06_Resources/vscode-editor-support]]",
      "resolved": "06_Resources/vscode-editor-support.md",
@@ -13680,7 +13765,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 42036,
+   "sizeBytes": 44567,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

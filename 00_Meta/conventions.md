@@ -91,8 +91,13 @@ Tags use **slash-delimited namespaces**. **This table is the authoritative tag t
 | `topic/*` | Subject matter | Free-form (e.g., `software`, `physics`, `health`, `ttrpg`, `finance`, `identity`) |
 | `workflow/*` | Lifecycle stage | `canonical`, `draft`, `review`, `needs-review` |
 | `status/*` | Actionability | `active`, `someday`, `done` |
+| `restricted/*` | Privacy marking | `private` |
 
 Notes tagged `workflow/canonical` are foundational vault docs. They require a PR or explicit human approval to modify.
+
+### restricted/private
+
+`restricted/private` marks content the owner does not want spread beyond the note. **It is not access control** ([[00_Meta/prd]] §10.3 — every connected service reads the whole repo): it is leak resistance and intent signaling, **advisory everywhere except mechanically-enforced surfaces**. Enforced today: the committed index reduces restricted notes to path/title/tags (brain spec §8.3); `brain validate` warns on non-restricted → restricted links (`restricted-link`); Cursor's `.cursorignore` can exclude restricted paths — the only true access exclusion (see its wiring doc). Everywhere else the tag is a request: agents never quote or summarize restricted content into non-restricted notes, and truly sensitive material still belongs outside the repo (PRD §16.2).
 
 ## Agent Write Rules
 
