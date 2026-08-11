@@ -55,6 +55,8 @@ python3 10_Agents/tools/brain/brain.py <command> --json
 
 CLI pre-approval: `--allow-tool='shell(python3 10_Agents/tools/brain/brain.py)'` matches the **exact** bare command only (argument matching is undocumented); `--allow-tool='shell(python3:*)'` covers all python3 invocations (the colon wildcard is shell's only wildcard). Interactive approvals persist per-directory in `~/.copilot/permissions-config.json`. Deny rules always beat allow rules, even under `--allow-all`/`--yolo`. The cloud agent runs brain fine offline — the egress firewall (default-on) only affects network access, which brain never uses.
 
+**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §17): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+
 ## Harness-specific notes
 
 - **MCP is per-surface:** `.vscode/mcp.json` (VS Code workspace), `~/.copilot/mcp-config.json` (CLI, `/mcp add`), and the cloud agent's JSON config lives in **repository settings on github.com** (shared with code review — cannot be committed as a file). The vault ships no servers (vault MCP is permanently out of scope, PRD §19); M7 external-source servers register per-surface.

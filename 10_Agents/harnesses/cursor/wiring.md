@@ -32,6 +32,8 @@ Cursor supports Agent Skills and scans `.cursor/skills/`, the shared `.agents/sk
 python3 10_Agents/tools/brain/brain.py <command> --json
 ```
 
+**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §17): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+
 ## Harness-specific notes
 
 - **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([[00_Meta/prd]] §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.

@@ -11094,12 +11094,12 @@
     },
     {
      "level": 2,
-     "line": 46,
+     "line": 48,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 54,
      "text": "Reference config"
     }
    ],
@@ -11125,9 +11125,20 @@
      "resolved": "10_Agents/tools/brain/spec.md",
      "target": "10_Agents/tools/brain/spec",
      "warnings": []
+    },
+    {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 46,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
     }
    ],
-   "sizeBytes": 4767,
+   "sizeBytes": 5372,
    "tasks": [],
    "title": "Claude Code Wiring",
    "updated": "2026-08-11"
@@ -11178,12 +11189,12 @@
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 44,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 51,
      "text": "Reference config"
     }
    ],
@@ -11198,9 +11209,20 @@
      "resolved": "06_Resources/harness-codex.md",
      "target": "06_Resources/harness-codex",
      "warnings": []
+    },
+    {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 42,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
     }
    ],
-   "sizeBytes": 3149,
+   "sizeBytes": 3754,
    "tasks": [],
    "title": "Codex Wiring",
    "updated": "2026-08-11"
@@ -11254,17 +11276,17 @@
     },
     {
      "level": 2,
-     "line": 58,
+     "line": 60,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 69,
      "text": "User scope (onboard-harness)"
     },
     {
      "level": 2,
-     "line": 72,
+     "line": 74,
      "text": "Reference config"
     }
    ],
@@ -11281,10 +11303,21 @@
      "warnings": []
     },
     {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 58,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
+    },
+    {
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 62,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -11295,7 +11328,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 74,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/README]]",
      "resolved": "10_Agents/harnesses/README.md",
@@ -11306,7 +11339,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 74,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -11314,7 +11347,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10389,
+   "sizeBytes": 10994,
    "tasks": [],
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
@@ -11366,17 +11399,17 @@
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 37,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 45,
      "text": "Restricted content → `.cursorignore`"
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 55,
      "text": "Reference configs"
     }
    ],
@@ -11393,10 +11426,21 @@
      "warnings": []
     },
     {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 37,
+     "line": 39,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -11407,7 +11451,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 45,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -11418,7 +11462,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 57,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/README]]",
      "resolved": "10_Agents/harnesses/README.md",
@@ -11429,7 +11473,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 57,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -11437,7 +11481,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4484,
+   "sizeBytes": 5089,
    "tasks": [],
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
@@ -11488,12 +11532,12 @@
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 37,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 43,
      "text": "Reference config"
     }
    ],
@@ -11508,9 +11552,20 @@
      "resolved": "06_Resources/harness-muse-code.md",
      "target": "06_Resources/harness-muse-code",
      "warnings": []
+    },
+    {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2585,
+   "sizeBytes": 3190,
    "tasks": [],
    "title": "Muse Code Wiring",
    "updated": "2026-08-11"
@@ -11561,12 +11616,12 @@
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 39,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 46,
      "text": "Reference config"
     }
    ],
@@ -11581,9 +11636,20 @@
      "resolved": "06_Resources/harness-opencode.md",
      "target": "06_Resources/harness-opencode",
      "warnings": []
+    },
+    {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 37,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2548,
+   "sizeBytes": 3153,
    "tasks": [],
    "title": "opencode Wiring",
    "updated": "2026-08-11"
@@ -11634,12 +11700,12 @@
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 39,
      "text": "Harness-specific notes"
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 45,
      "text": "Reference config"
     }
    ],
@@ -11654,9 +11720,20 @@
      "resolved": "06_Resources/harness-pi.md",
      "target": "06_Resources/harness-pi",
      "warnings": []
+    },
+    {
+     "display": "spec",
+     "embed": false,
+     "fragment": null,
+     "line": 37,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec|spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
     }
    ],
-   "sizeBytes": 2654,
+   "sizeBytes": 3259,
    "tasks": [],
    "title": "Pi Wiring",
    "updated": "2026-08-11"
@@ -14809,12 +14886,12 @@
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 53,
      "text": "The committed index"
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 57,
      "text": "Tests"
     }
    ],
@@ -14834,7 +14911,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -14842,7 +14919,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3898,
+   "sizeBytes": 4446,
    "tasks": [],
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
@@ -14851,6 +14928,12 @@
    "backlinks": [
     "06_Resources/vscode-editor-support.md",
     "10_Agents/harnesses/claude-code/wiring.md",
+    "10_Agents/harnesses/codex/wiring.md",
+    "10_Agents/harnesses/copilot/wiring.md",
+    "10_Agents/harnesses/cursor/wiring.md",
+    "10_Agents/harnesses/muse-code/wiring.md",
+    "10_Agents/harnesses/opencode/wiring.md",
+    "10_Agents/harnesses/pi/wiring.md",
     "10_Agents/tools/README.md",
     "10_Agents/tools/brain/README.md"
    ],
@@ -15006,138 +15089,168 @@
     },
     {
      "level": 2,
-     "line": 243,
+     "line": 244,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 245,
+     "line": 246,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 249,
+     "line": 250,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 261,
+     "line": 262,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 266,
+     "line": 267,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 272,
+     "line": 273,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 297,
+     "line": 298,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 308,
+     "line": 309,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 321,
+     "line": 322,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 328,
+     "line": 329,
      "text": "14. Curation signals (ops plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 341,
+     "line": 342,
      "text": "15. Vault config (`00_Meta/config.yaml`) — issue #2"
     },
     {
      "level": 3,
-     "line": 345,
+     "line": 346,
      "text": "15.1 Location, optionality, change control"
     },
     {
      "level": 3,
-     "line": 352,
+     "line": 353,
      "text": "15.2 Grammar bounds"
     },
     {
      "level": 3,
-     "line": 358,
+     "line": 359,
      "text": "15.3 Key registry"
     },
     {
      "level": 3,
-     "line": 377,
+     "line": 378,
      "text": "15.4 Validate semantics"
     },
     {
      "level": 3,
-     "line": 381,
+     "line": 382,
      "text": "15.5 `config` command"
     },
     {
      "level": 2,
-     "line": 385,
+     "line": 386,
      "text": "16. Health report (`brain report`) — issue #16"
     },
     {
      "level": 3,
-     "line": 389,
+     "line": 390,
      "text": "16.1 Sections"
     },
     {
      "level": 3,
-     "line": 399,
+     "line": 400,
      "text": "16.2 JSON shape"
     },
     {
      "level": 3,
-     "line": 403,
+     "line": 404,
      "text": "16.3 `--since YYYY-MM-DD`"
     },
     {
      "level": 3,
-     "line": 407,
+     "line": 408,
      "text": "16.4 Thresholds"
     },
     {
      "level": 2,
-     "line": 411,
+     "line": 412,
      "text": "17. Task tracking (`brain tasks`) — issue #28"
     },
     {
      "level": 3,
-     "line": 415,
+     "line": 416,
      "text": "17.1 Recognition"
     },
     {
      "level": 3,
-     "line": 421,
+     "line": 422,
      "text": "17.2 Task record and emoji metadata"
     },
     {
      "level": 3,
-     "line": 432,
+     "line": 433,
      "text": "17.3 `tasks` command"
     },
     {
      "level": 3,
-     "line": 443,
+     "line": 444,
      "text": "17.4 Config: `tasks.carry_over`"
     },
     {
      "level": 3,
-     "line": 447,
+     "line": 448,
      "text": "17.5 Surfacing: daily-note carry-over"
+    },
+    {
+     "level": 2,
+     "line": 454,
+     "text": "18. Semantic search (QMD — issue #8)"
+    },
+    {
+     "level": 3,
+     "line": 458,
+     "text": "18.1 Embeddings sidecar"
+    },
+    {
+     "level": 3,
+     "line": 478,
+     "text": "18.2 Staleness and store loading"
+    },
+    {
+     "level": 3,
+     "line": 483,
+     "text": "18.3 `brain embed`"
+    },
+    {
+     "level": 3,
+     "line": 492,
+     "text": "18.4 `brain search --semantic <query>`"
+    },
+    {
+     "level": 3,
+     "line": 501,
+     "text": "18.5 Determinism and invariants"
     }
    ],
    "links": [
@@ -15200,7 +15313,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 247,
+     "line": 248,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -15211,7 +15324,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 253,
+     "line": 254,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -15222,7 +15335,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 257,
+     "line": 258,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -15233,7 +15346,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 257,
+     "line": 258,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -15244,7 +15357,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 330,
+     "line": 331,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -15255,7 +15368,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 365,
+     "line": 366,
      "placeholder": false,
      "raw": "[[06_Resources/vscode-editor-support]]",
      "resolved": "06_Resources/vscode-editor-support.md",
@@ -15266,7 +15379,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 366,
+     "line": 367,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -15277,7 +15390,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 413,
+     "line": 414,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -15285,7 +15398,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 60103,
+   "sizeBytes": 71250,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

@@ -7,13 +7,15 @@ references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
 Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context, config, report, tasks
+          curate, context, config, report, tasks, embed
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -24,6 +26,9 @@ from pathlib import Path
 
 SCHEMA_VERSION = 1
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
+# §17.1 embeddings sidecar: gitignored, machine-local, pruned from the corpus
+# exactly like the index file (constants for the rest of §17 sit with its code).
+EMBED_RELPATH = "10_Agents/tools/brain/vault-embeddings.json"
 # Any tool's test tree (fixture mini-vaults, secret-shaped test data) stays
 # out of the corpus — mirrors run_tests.py's */tests/ discovery rule.
 TOOL_TESTS_RE = re.compile(r"^10_Agents/tools/[^/]+/tests$")
@@ -121,7 +126,7 @@ def walk_corpus(root: Path) -> tuple[list[str], list[str]]:
             if name.startswith("."):
                 continue
             rel = nfc(f"{rel_dir}/{name}" if rel_dir != "." else name)
-            if rel == INDEX_RELPATH:
+            if rel in (INDEX_RELPATH, EMBED_RELPATH):
                 continue
             if name.endswith(".md"):
                 notes.append(rel)
@@ -1887,6 +1892,453 @@ def check_urls(root: Path, notes: list[str]) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# §17 Semantic search (QMD — issue #8)
+#
+# Module-internal store section: the sidecar (EMBED_RELPATH, gitignored) is
+# read and written ONLY here, and only `embed` and `search --semantic` ever
+# touch it — index/validate output is provably unaffected (§17.5). The one
+# sanctioned optional non-stdlib dependency (sentence-transformers) is
+# imported lazily inside local_embedder(); every other path is stdlib.
+
+EMBED_SCHEMA_VERSION = 1
+EMBED_LOCAL_MODEL_DEFAULT = "all-MiniLM-L6-v2"
+# §17.4 hybrid ranking weights: score = 0.7·sem + 0.3·kw, rounded to 6 dp.
+SEMANTIC_WEIGHT = 0.7
+KEYWORD_WEIGHT = 0.3
+SEMANTIC_TOP_DEFAULT = 10
+
+
+def note_content_hash(text: str) -> str:
+    """§17.1: SHA-256 hex over the note's full normalized text (§3)."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _empty_store() -> dict:
+    return {"dim": None, "model": None, "notes": {}, "schemaVersion": EMBED_SCHEMA_VERSION}
+
+
+def _valid_vector(v, dim: int | None = None) -> bool:
+    """A non-empty list of finite numbers (bools excluded), optionally of
+    exactly `dim` components."""
+    return (
+        isinstance(v, list)
+        and bool(v)
+        and all(
+            isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+            for x in v
+        )
+        and (dim is None or len(v) == dim)
+    )
+
+
+def load_embeddings(root: Path) -> dict:
+    """§17.2: best-effort sidecar load. Missing file -> empty store; any
+    malformed content is treated as absent with a stderr notice. Never raises."""
+
+    def ignored(reason: str) -> dict:
+        print(
+            f"warning: ignoring embeddings sidecar ({reason}) — "
+            "regenerate it with `brain embed`",
+            file=sys.stderr,
+        )
+        return _empty_store()
+
+    path = root / EMBED_RELPATH
+    if not path.exists():
+        return _empty_store()
+    try:
+        raw = path.read_bytes()
+    except OSError:
+        return ignored("not readable")
+    try:
+        store = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return ignored("not valid JSON")
+    if not isinstance(store, dict) or store.get("schemaVersion") != EMBED_SCHEMA_VERSION:
+        return ignored("unknown schemaVersion")
+    dim, model, entries = store.get("dim"), store.get("model"), store.get("notes")
+    if not (
+        isinstance(dim, int)
+        and not isinstance(dim, bool)
+        and dim > 0
+        and isinstance(model, str)
+        and model
+        and isinstance(entries, dict)
+    ):
+        return ignored("invalid shape")
+    for rel, entry in entries.items():
+        if not (
+            isinstance(rel, str)
+            and isinstance(entry, dict)
+            and isinstance(entry.get("hash"), str)
+            and _valid_vector(entry.get("vector"), dim)
+        ):
+            return ignored("invalid entry shape")
+    return {"dim": dim, "model": model, "notes": entries, "schemaVersion": EMBED_SCHEMA_VERSION}
+
+
+def save_embeddings(root: Path, store: dict) -> None:
+    """§17.1 serialization: like the index (§8.2) but floats are allowed."""
+    path = root / EMBED_RELPATH
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(
+        (json.dumps(store, ensure_ascii=False, indent=1, sort_keys=True) + "\n").encode("utf-8")
+    )
+
+
+def cosine(a: list[float], b: list[float]) -> float:
+    """§17.4 cosine similarity; zero-magnitude vectors give 0.0."""
+    dot = sum(x * y for x, y in zip(a, b))
+    na = math.sqrt(sum(x * x for x in a))
+    nb = math.sqrt(sum(x * x for x in b))
+    if na == 0.0 or nb == 0.0:
+        return 0.0
+    return dot / (na * nb)
+
+
+def note_hashes(root: Path, index: dict) -> dict[str, str | None]:
+    """path -> current content hash; None for notes that cannot be read or
+    decoded (§3) — such notes are never embeddable."""
+    hashes: dict[str, str | None] = {}
+    for rel in index["notes"]:
+        try:
+            text, _ = load_text(root, rel)
+        except OSError:
+            text = None
+        hashes[rel] = None if text is None else note_content_hash(text)
+    return hashes
+
+
+def fresh_entries(index: dict, store: dict, hashes: dict) -> dict[str, list[float]]:
+    """§17.2 freshness ∩ §17.1 restricted containment: path -> vector for
+    every sidecar entry that is current (note exists, hash matches, length
+    == dim) and whose note is not currently restricted/private. Everything
+    else is stale — excluded, never re-ranked."""
+    fresh: dict[str, list[float]] = {}
+    for rel, entry in store["notes"].items():
+        rec = index["notes"].get(rel)
+        if rec is None or is_restricted(rec):
+            continue
+        if (
+            hashes.get(rel) is not None
+            and entry["hash"] == hashes[rel]
+            and len(entry["vector"]) == store["dim"]
+        ):
+            fresh[rel] = entry["vector"]
+    return fresh
+
+
+def embeddable_notes(index: dict, hashes: dict) -> list[str]:
+    """§17.3: the embeddable universe — readable, non-restricted notes."""
+    return sorted(
+        rel
+        for rel, rec in index["notes"].items()
+        if hashes[rel] is not None and not is_restricted(rec)
+    )
+
+
+def local_embedder(model_name: str):
+    """§17.3: the ONE sanctioned optional non-stdlib dependency
+    (sentence-transformers), imported lazily and only here. Returns a
+    texts -> vectors callable, or None when the import or model load fails —
+    callers degrade cleanly, never crash."""
+    try:
+        from sentence_transformers import SentenceTransformer  # optional — §17.3
+    except Exception:
+        return None
+    try:
+        model = SentenceTransformer(model_name)
+    except Exception:
+        return None
+
+    def encode(texts: list[str]) -> list[list[float]]:
+        return [[float(x) for x in vec] for vec in model.encode(texts)]
+
+    return encode
+
+
+def cmd_embed(root: Path, args) -> int:
+    """§17.3: maintain the embeddings sidecar (--stdin-json / --local /
+    --status). Exit 0 success, 1 operational error; the sidecar is written
+    only on a fully-validated update."""
+    notes, assets = walk_corpus(root)
+    index = build_index(root, notes, assets)
+    store = load_embeddings(root)
+    hashes = note_hashes(root, index)
+
+    if args.status:
+        fresh = fresh_entries(index, store, hashes)
+        universe = embeddable_notes(index, hashes)
+        payload = {
+            "dim": store["dim"],
+            "embedded": len(fresh),
+            "missing": len([r for r in universe if r not in store["notes"]]),
+            "model": store["model"],
+            "notes": len(universe),
+            "present": (root / EMBED_RELPATH).exists(),
+            "stale": len([r for r in store["notes"] if r not in fresh]),
+        }
+        emit(
+            payload,
+            args.json,
+            [
+                f"sidecar: {EMBED_RELPATH} "
+                f"({'present' if payload['present'] else 'absent'})",
+                f"model: {payload['model']}  dim: {payload['dim']}",
+                f"embeddable notes: {payload['notes']}  fresh: {payload['embedded']}  "
+                f"stale: {payload['stale']}  missing: {payload['missing']}",
+            ],
+        )
+        return 0
+
+    if args.stdin_json:
+        try:
+            data = json.load(sys.stdin)
+        except json.JSONDecodeError as e:
+            print(f"error: --stdin-json input is not valid JSON: {e}", file=sys.stderr)
+            return 1
+        if not isinstance(data, dict) or set(data) != {"model", "vectors"}:
+            print(
+                'error: input must be an object with exactly the keys "model" and "vectors"',
+                file=sys.stderr,
+            )
+            return 1
+        if not (isinstance(data["model"], str) and data["model"].strip()):
+            print("error: model must be a non-empty string", file=sys.stderr)
+            return 1
+        if not (isinstance(data["vectors"], dict) and data["vectors"]):
+            print(
+                "error: vectors must be a non-empty object of note path -> number array",
+                file=sys.stderr,
+            )
+            return 1
+        model = data["model"].strip()
+        vectors: dict[str, list[float]] = {}
+        dim: int | None = None
+        unknown: list[str] = []
+        for key in sorted(data["vectors"]):
+            vec = data["vectors"][key]
+            if not _valid_vector(vec):
+                print(
+                    f"error: vector for {key!r} must be a non-empty array of finite numbers",
+                    file=sys.stderr,
+                )
+                return 1
+            if dim is None:
+                dim = len(vec)
+            elif len(vec) != dim:
+                print(
+                    f"error: vector for {key!r} has length {len(vec)}, expected {dim} "
+                    "— all vectors must share one dimension",
+                    file=sys.stderr,
+                )
+                return 1
+            rel = nfc(key.strip()).replace("\\", "/").removeprefix("./")
+            if rel not in index["notes"]:
+                unknown.append(key)
+                continue
+            vectors[rel] = [float(x) for x in vec]
+        if unknown:
+            print(
+                "error: unknown note paths (nothing written): " + ", ".join(unknown),
+                file=sys.stderr,
+            )
+            return 1
+        skipped_restricted = sorted(
+            rel for rel in vectors if is_restricted(index["notes"][rel])
+        )
+        for rel in skipped_restricted:
+            del vectors[rel]
+            print(
+                f"notice: skipping restricted note {rel} — restricted/private "
+                "content never enters the embeddings sidecar (spec §17.1)",
+                file=sys.stderr,
+            )
+        skipped_unreadable = sorted(rel for rel in vectors if hashes[rel] is None)
+        for rel in skipped_unreadable:
+            del vectors[rel]
+            print(
+                f"notice: skipping unreadable note {rel} — no text to hash (spec §17.3)",
+                file=sys.stderr,
+            )
+        if store["notes"] and (store["model"] != model or store["dim"] != dim):
+            print(
+                f"notice: model/dim changed ({store['model']}/{store['dim']} -> "
+                f"{model}/{dim}) — replacing the sidecar wholesale (spec §17.3)",
+                file=sys.stderr,
+            )
+            merged: dict[str, dict] = {}
+        else:
+            merged = dict(store["notes"])
+        for rel, vec in vectors.items():
+            merged[rel] = {"hash": hashes[rel], "vector": vec}
+        save_embeddings(
+            root,
+            {"dim": dim, "model": model, "notes": merged, "schemaVersion": EMBED_SCHEMA_VERSION},
+        )
+        payload = {
+            "dim": dim,
+            "model": model,
+            "path": EMBED_RELPATH,
+            "skippedRestricted": skipped_restricted,
+            "skippedUnreadable": skipped_unreadable,
+            "stored": len(vectors),
+        }
+        emit(
+            payload,
+            args.json,
+            [
+                f"stored {len(vectors)} vectors (model {model}, dim {dim}) "
+                f"-> {EMBED_RELPATH}"
+            ]
+            + [f"skipped restricted: {r}" for r in skipped_restricted]
+            + [f"skipped unreadable: {r}" for r in skipped_unreadable],
+        )
+        return 0
+
+    # --local (§17.3): the offline path via the optional dependency.
+    model_name = args.model or store["model"] or EMBED_LOCAL_MODEL_DEFAULT
+    encode = local_embedder(model_name)
+    if encode is None:
+        print(
+            "error: local embedding model unavailable — install the optional "
+            "`sentence-transformers` package, pipe precomputed vectors via "
+            "`brain embed --stdin-json`, or use keyword `brain search` (spec §17.3)",
+            file=sys.stderr,
+        )
+        return 1
+    if store["notes"] and store["model"] != model_name:
+        print(
+            f"notice: model changed ({store['model']} -> {model_name}) — "
+            "replacing the sidecar wholesale (spec §17.3)",
+            file=sys.stderr,
+        )
+        store = _empty_store()
+    fresh = fresh_entries(index, store, hashes)
+    todo = [rel for rel in embeddable_notes(index, hashes) if rel not in fresh]
+    texts: list[str] = []
+    for rel in todo:
+        text, _ = load_text(root, rel)  # readable by construction (hash present)
+        texts.append(text)
+    vecs = encode(texts) if todo else []
+    dim = store["dim"]
+    merged = {rel: store["notes"][rel] for rel in fresh}
+    for rel, vec in zip(todo, vecs):
+        if dim is None:
+            dim = len(vec)
+        merged[rel] = {"hash": hashes[rel], "vector": vec}
+    save_embeddings(
+        root,
+        {"dim": dim, "model": model_name, "notes": merged, "schemaVersion": EMBED_SCHEMA_VERSION},
+    )
+    payload = {
+        "dim": dim,
+        "embedded": len(todo),
+        "model": model_name,
+        "path": EMBED_RELPATH,
+        "total": len(merged),
+    }
+    emit(
+        payload,
+        args.json,
+        [
+            f"embedded {len(todo)} notes (model {model_name}, dim {dim}), "
+            f"{len(merged)} total -> {EMBED_RELPATH}"
+        ],
+    )
+    return 0
+
+
+def semantic_search(root: Path, index: dict, args) -> int:
+    """§17.4: hybrid semantic+keyword note ranking, degrading to the plain
+    keyword search (exit 0, identical output shape) whenever semantic
+    ranking is impossible."""
+    store = load_embeddings(root)
+    hashes = note_hashes(root, index)
+    fresh = fresh_entries(index, store, hashes)
+
+    def degrade(reason: str) -> int:
+        print(
+            f"notice: semantic search unavailable ({reason}) — falling back to "
+            "keyword search; populate the sidecar with `brain embed` (spec §17.4)",
+            file=sys.stderr,
+        )
+        emit_keyword_hits(keyword_hits(root, index, args.query, args.tag), args.json)
+        return 0
+
+    if not fresh:
+        return degrade("no fresh embeddings")
+
+    qvec: list[float] | None = None
+    if args.query_vector:
+        try:
+            data = json.load(sys.stdin)
+        except json.JSONDecodeError as e:
+            print(f"error: --query-vector stdin is not valid JSON: {e}", file=sys.stderr)
+            return 1
+        if not _valid_vector(data):
+            print(
+                "error: --query-vector must be a non-empty JSON array of finite numbers",
+                file=sys.stderr,
+            )
+            return 1
+        if len(data) != store["dim"]:
+            print(
+                f"error: --query-vector has length {len(data)}, store dim is {store['dim']}",
+                file=sys.stderr,
+            )
+            return 1
+        qvec = [float(x) for x in data]
+    else:
+        encode = local_embedder(store["model"])
+        if encode is not None:
+            try:
+                qvec = encode([args.query])[0]
+            except Exception:
+                qvec = None
+            if qvec is not None and len(qvec) != store["dim"]:
+                qvec = None
+    if qvec is None:
+        return degrade("no query embedding source")
+
+    kw_counts: dict[str, int] = {}
+    for h in keyword_hits(root, index, args.query, args.tag):
+        kw_counts[h["path"]] = kw_counts.get(h["path"], 0) + 1
+    rows: list[dict] = []
+    for rel in sorted(index["notes"]):
+        rec = index["notes"][rel]
+        if args.tag and not all(tag_matches(t, effective_tags(rec)) for t in args.tag):
+            continue
+        vec = fresh.get(rel)
+        kw = kw_counts.get(rel, 0)
+        if vec is None and kw == 0:
+            continue
+        sem_raw = 0.0 if vec is None else (cosine(qvec, vec) + 1) / 2
+        rows.append(
+            {
+                "keywordHits": kw,
+                "path": rel,
+                "score": round(
+                    SEMANTIC_WEIGHT * sem_raw + KEYWORD_WEIGHT * (1.0 if kw else 0.0), 6
+                ),
+                "semanticScore": None if vec is None else round(sem_raw, 6),
+                "title": rec["title"],
+            }
+        )
+    rows.sort(key=lambda r: (-r["score"], r["path"]))
+    rows = rows[: args.top]
+    emit(
+        rows,
+        args.json,
+        (
+            f"{r['score']:.6f}  {r['path']}" + (f"  ({r['title']})" if r["title"] else "")
+            for r in rows
+        ),
+    )
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # §9 CLI commands
 
 
@@ -1952,14 +2404,15 @@ def cmd_list(root: Path, args) -> int:
     return 0
 
 
-def cmd_search(root: Path, args) -> int:
-    notes, assets = walk_corpus(root)
-    index = build_index(root, notes, assets)
-    query = args.query.lower()
-    hits = []
+def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) -> list[dict]:
+    """§9 search: case-insensitive substring hits over title, headings, and
+    body. Shared by plain search, semantic degradation, and the §17.4 keyword
+    component."""
+    query = query.lower()
+    hits: list[dict] = []
     for rel in sorted(index["notes"]):
         rec = index["notes"][rel]
-        if args.tag and not all(tag_matches(t, effective_tags(rec)) for t in args.tag):
+        if tag_filters and not all(tag_matches(t, effective_tags(rec)) for t in tag_filters):
             continue
         if rec["title"] and query in rec["title"].lower():
             hits.append({"field": "title", "line": None, "path": rel, "snippet": rec["title"]})
@@ -1981,9 +2434,13 @@ def cmd_search(root: Path, args) -> int:
                 continue
             if query in line.lower():
                 hits.append({"field": "body", "line": i, "path": rel, "snippet": line.strip()})
+    return hits
+
+
+def emit_keyword_hits(hits: list[dict], as_json: bool) -> None:
     emit(
         hits,
-        args.json,
+        as_json,
         (
             f"{h['path']}: title: {h['snippet']}"
             if h["line"] is None
@@ -1991,6 +2448,14 @@ def cmd_search(root: Path, args) -> int:
             for h in hits
         ),
     )
+
+
+def cmd_search(root: Path, args) -> int:
+    notes, assets = walk_corpus(root)
+    index = build_index(root, notes, assets)
+    if args.semantic:
+        return semantic_search(root, index, args)
+    emit_keyword_hits(keyword_hits(root, index, args.query, args.tag), args.json)
     return 0
 
 
@@ -2341,6 +2806,22 @@ def main(argv: list[str] | None = None) -> int:
     p = add("search", help="substring search over title, headings, body")
     p.add_argument("query")
     p.add_argument("--tag", action="append", default=[], help="effective-tag filter")
+    p.add_argument(
+        "--semantic",
+        action="store_true",
+        help="rank notes by embedding similarity (spec §17.4), degrading to keyword search without vectors",
+    )
+    p.add_argument(
+        "--top",
+        type=int,
+        default=SEMANTIC_TOP_DEFAULT,
+        help="semantic mode: max ranked notes returned",
+    )
+    p.add_argument(
+        "--query-vector",
+        action="store_true",
+        help="semantic mode: read the query embedding as a JSON array from stdin",
+    )
     p = add("links", help="outgoing links, backlinks, unresolved targets")
     p.add_argument("note")
     add("tags", help="tag usage counts by namespace")
@@ -2375,6 +2856,20 @@ def main(argv: list[str] | None = None) -> int:
         metavar="YYYY-MM-DD",
         help="scope tag drift and unresolved links to notes updated on/after this date",
     )
+    p = add("embed", help="maintain the semantic-search embeddings sidecar (spec §17.3)")
+    mode = p.add_mutually_exclusive_group(required=True)
+    mode.add_argument(
+        "--stdin-json",
+        action="store_true",
+        help="ingest precomputed vectors from stdin JSON ({model, vectors})",
+    )
+    mode.add_argument(
+        "--local",
+        action="store_true",
+        help="embed changed notes with the optional local model (sentence-transformers)",
+    )
+    mode.add_argument("--status", action="store_true", help="report sidecar coverage; no writes")
+    p.add_argument("--model", default=None, help="--local: embedding model name override")
 
     args = parser.parse_args(argv)
     root = (args.vault or default_vault_root()).resolve()
@@ -2392,6 +2887,7 @@ def main(argv: list[str] | None = None) -> int:
         "config": cmd_config,
         "report": cmd_report,
         "tasks": cmd_tasks,
+        "embed": cmd_embed,
     }
     return handlers[args.command](root, args)
 
