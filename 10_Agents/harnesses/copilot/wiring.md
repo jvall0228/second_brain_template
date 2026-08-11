@@ -66,7 +66,7 @@ CLI pre-approval: `--allow-tool='shell(python3 10_Agents/tools/brain/brain.py)'`
 
 ## User scope (onboard-harness)
 
-- **Memory:** append the marker block to `~/.copilot/copilot-instructions.md` as a **plain-text pointer** with the absolute vault path — the CLI's `@`-includes do not load absolute or `~/` paths, so no import syntax, just "read `<vault>/AGENTS.md` first".
+- **Memory:** create or reconcile `~/.agents/second-brain/AGENTS.md`, then append a marker-delimited **plain-text pointer** to that stable shared registration in `~/.copilot/copilot-instructions.md`. Do not put the adopter's vault path in Copilot's file. Because import behavior for external home-directory paths varies by Copilot surface and documentation, baseline onboarding does not rely on `@` here; the instruction says to read `~/.agents/second-brain/AGENTS.md` when owner-specific context materially helps. The shared registration contains the runtime-resolved vault path and routes onward to the vault's `AGENTS.md`.
 - **Skills:** `copilot skill add` the real directory, or copy into `~/.copilot/skills/` (see Skills above). Record either in the manifest; uninstall = `copilot skill remove` / delete recorded copies.
 
 ## Reference config
