@@ -4064,6 +4064,1163 @@
    "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
+  "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md": {
+   "backlinks": [
+    "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md"
+   ],
+   "bodyTags": [
+    "15/",
+    "71/"
+   ],
+   "frontmatter": {
+    "author": "codex",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/reference",
+     "topic/software",
+     "workflow/needs-review",
+     "status/active"
+    ],
+    "title": "Ready backlog implementation plan",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 14,
+     "text": "Ready Backlog Implementation Plan"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Objective and authority"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "text": "Delivery rules"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "Work packages and critical path"
+    },
+    {
+     "level": 2,
+     "line": 66,
+     "text": "Phase 0 — Baseline and approval"
+    },
+    {
+     "level": 3,
+     "line": 68,
+     "text": "Tasks"
+    },
+    {
+     "level": 2,
+     "line": 80,
+     "text": "Phase 1 — Safety and onboarding"
+    },
+    {
+     "level": 3,
+     "line": 82,
+     "text": "WP1 — Remote safety (#83, P0)"
+    },
+    {
+     "level": 3,
+     "line": 95,
+     "text": "WP2 — Repo-local skills (#82)"
+    },
+    {
+     "level": 3,
+     "line": 108,
+     "text": "WP3 — Onboarding/adoption (#81/#84)"
+    },
+    {
+     "level": 2,
+     "line": 119,
+     "text": "Phase 2 — Product contract"
+    },
+    {
+     "level": 3,
+     "line": 121,
+     "text": "WP4 — PRD rewrite (#71/#72/#73)"
+    },
+    {
+     "level": 2,
+     "line": 136,
+     "text": "Phase 3 — Environment and CLI"
+    },
+    {
+     "level": 3,
+     "line": 138,
+     "text": "WP5 — Environment model (#15)"
+    },
+    {
+     "level": 3,
+     "line": 149,
+     "text": "WP6 — Portable `brain` (#4)"
+    },
+    {
+     "level": 2,
+     "line": 163,
+     "text": "Phase 4 — Final core filenames"
+    },
+    {
+     "level": 3,
+     "line": 165,
+     "text": "WP7 — Uppercase core files (#75)"
+    },
+    {
+     "level": 2,
+     "line": 178,
+     "text": "Phase 5 — Portable links"
+    },
+    {
+     "level": 3,
+     "line": 180,
+     "text": "WP8 — Dual-format engine/migrator (#74 part 1)"
+    },
+    {
+     "level": 3,
+     "line": 191,
+     "text": "WP9 — Corpus migration (#74 part 2)"
+    },
+    {
+     "level": 2,
+     "line": 203,
+     "text": "Phase 6 — AYMT and Home"
+    },
+    {
+     "level": 3,
+     "line": 205,
+     "text": "WP10 — AYMT (#79)"
+    },
+    {
+     "level": 3,
+     "line": 216,
+     "text": "WP11 — Home (#78)"
+    },
+    {
+     "level": 2,
+     "line": 228,
+     "text": "Phase 7 — Local artifacts"
+    },
+    {
+     "level": 3,
+     "line": 230,
+     "text": "WP12 — Artifact pipeline (#23)"
+    },
+    {
+     "level": 2,
+     "line": 243,
+     "text": "Phase 8 — Owner notifications"
+    },
+    {
+     "level": 3,
+     "line": 245,
+     "text": "WP13 — Push-only v1 (#21)"
+    },
+    {
+     "level": 2,
+     "line": 262,
+     "text": "Phase 9 — Consolidation and closure"
+    },
+    {
+     "level": 3,
+     "line": 264,
+     "text": "WP14 tasks"
+    },
+    {
+     "level": 3,
+     "line": 273,
+     "text": "Final gate"
+    },
+    {
+     "level": 2,
+     "line": 291,
+     "text": "Risk and rollback register"
+    },
+    {
+     "level": 2,
+     "line": 305,
+     "text": "Owner action queue"
+    },
+    {
+     "level": 2,
+     "line": 314,
+     "text": "Progress ledger"
+    },
+    {
+     "level": 2,
+     "line": 328,
+     "text": "Immediate next action"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm]]",
+     "resolved": "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md",
+     "target": "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 19395,
+   "tasks": [
+    {
+     "due": null,
+     "line": 70,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Refresh Project 3 and record any Ready-set change instead of silently changing scope."
+    },
+    {
+     "due": null,
+     "line": 71,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Record `main` SHA, Python/Git versions, filesystem case behavior, and editor versions used for smoke tests."
+    },
+    {
+     "due": null,
+     "line": 72,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Preserve unrelated work, including untracked `02_Inbox/2026-08-11-triage-report-2.md`."
+    },
+    {
+     "due": null,
+     "line": 73,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Ensure hooks/merge driver are armed: `core.hooksPath=.githooks`, `merge.regenerate.driver=true`."
+    },
+    {
+     "due": null,
+     "line": 74,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Baseline all Python tests, `brain validate`, index/snippet freshness, `adopt_check.py`, link metrics, repo-skill count, and long-form brain invocations."
+    },
+    {
+     "due": null,
+     "line": 75,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Map every `R…` and `X…` requirement to a WP and verification check."
+    },
+    {
+     "due": null,
+     "line": 76,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add planning/dependency links to the 15 issues after approval."
+    },
+    {
+     "due": null,
+     "line": 86,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Specify `brain remote-safety` states/reason codes and injectable provider boundary."
+    },
+    {
+     "due": null,
+     "line": 87,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Enumerate push URLs; normalize/redact GitHub URL forms; query repository privacy/template metadata."
+    },
+    {
+     "due": null,
+     "line": 88,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Fail closed on public/template/unknown before personal-data connector calls. Keep capability inventory separate."
+    },
+    {
+     "due": null,
+     "line": 89,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Support local-only/no-push behavior and one-session unknown acknowledgment; verified public/template remains unoverrideable."
+    },
+    {
+     "due": null,
+     "line": 90,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Integrate the shared guard into orientation, onboarding, and future personal-data adapters."
+    },
+    {
+     "due": null,
+     "line": 91,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test all URL/state/auth/provider/no-push cases in temporary repos; spy connectors must receive zero blocked calls."
+    },
+    {
+     "due": null,
+     "line": 99,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Derive adapter catalog from canonical skill frontmatter; mirror name/description and point to canonical SKILL.md."
+    },
+    {
+     "due": null,
+     "line": 100,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Generate text adapters (no symlinks), version markers, `--check`, and missing/extra/collision/parity checks."
+    },
+    {
+     "due": null,
+     "line": 101,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Enforce freshness in pre-commit/CI."
+    },
+    {
+     "due": null,
+     "line": 102,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Make project verification the onboarding default. Global mode previews exact paths and writes only after consent."
+    },
+    {
+     "due": null,
+     "line": 103,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add fake-home canary; project/dry-run modes must make zero external writes."
+    },
+    {
+     "due": null,
+     "line": 104,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Publish tested compatibility/trust table; leave Copilot on its current user-copy route until proven."
+    },
+    {
+     "due": null,
+     "line": 112,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add four starter intents, conditional recommendation, free-form answer, and change-later wording."
+    },
+    {
+     "due": null,
+     "line": 113,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Remove selective example deletion; manifest becomes the sole bundle authority."
+    },
+    {
+     "due": null,
+     "line": 114,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add atomic plan/apply with exact deletions/reference edits, stale/dirty/unmarked-reference refusal, and post-apply validation."
+    },
+    {
+     "due": null,
+     "line": 115,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test the four reported dangling links, aliases, unmarked references, dirty files, and skill-contract wording."
+    },
+    {
+     "due": null,
+     "line": 127,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Inventory PRD/status/conventions/rules/config/spec claims as current, stale, historical, duplicate, or unresolved."
+    },
+    {
+     "due": null,
+     "line": 128,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Rewrite current claims in place; move meaningful history to one changelog entry; remove revision banners/addenda/resolved narrative."
+    },
+    {
+     "due": null,
+     "line": 129,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Replace M0–M7-only and shipped-as-planned language."
+    },
+    {
+     "due": null,
+     "line": 130,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Make Obsidian and VS Code contract-level throughout; separate editor-neutral integrity from enhancements."
+    },
+    {
+     "due": null,
+     "line": 131,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add the edit-in-place PRD maintenance rule and reconcile all current contracts."
+    },
+    {
+     "due": null,
+     "line": 132,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Search for stale phrases and run a cross-document consistency/adversarial omission review."
+    },
+    {
+     "due": null,
+     "line": 142,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Specify versioned `environment.json`, privacy-safe fingerprinting, ignored selector/overlay, and selection precedence."
+    },
+    {
+     "due": null,
+     "line": 143,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Implement `brain env detect|list` and `--env current|slug`; ambiguity/no match fails closed."
+    },
+    {
+     "due": null,
+     "line": 144,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Apply current-only filtering to bootstrap, search/report, maintenance, sync, and generated integrations."
+    },
+    {
+     "due": null,
+     "line": 145,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Keep all-environment diagnostic metadata-only; never emit raw identity/path/secret."
+    },
+    {
+     "due": null,
+     "line": 146,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Update orientation to generate/maintain the selected slug safely; preview migration of existing notes."
+    },
+    {
+     "due": null,
+     "line": 147,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test zero/one/two environments, all selection routes, conflicting infrastructure, sync classification, and privacy snapshots."
+    },
+    {
+     "due": null,
+     "line": 153,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Implement resolver precedence: `--vault`, `BRAIN_VAULT`, upward CWD walk for AGENTS + brain.py."
+    },
+    {
+     "due": null,
+     "line": 154,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Preserve arguments/output/exit code; reject invalid/ambiguous roots."
+    },
+    {
+     "due": null,
+     "line": 155,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add install preview/apply, doctor, uninstall, recognized-overwrite protection, and reversible external manifest."
+    },
+    {
+     "due": null,
+     "line": 156,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Prefer existing writable PATH directory; never edit shell rc automatically."
+    },
+    {
+     "due": null,
+     "line": 157,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test root/subdir, spaces/Unicode, nested/sibling forks, overrides, missing Python/tool, POSIX/Windows behavior."
+    },
+    {
+     "due": null,
+     "line": 158,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Prefer `brain` in active docs after support lands, retaining long Python fallback."
+    },
+    {
+     "due": null,
+     "line": 159,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Record current plugin-bin capability as unavailable; do not add a nonstandard manifest field."
+    },
+    {
+     "due": null,
+     "line": 169,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Freeze the 14-file manifest from the requirements note and enumerate all references/constants/allowlists/tests."
+    },
+    {
+     "due": null,
+     "line": 170,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Use two-step `git mv` for every case-only rename."
+    },
+    {
+     "due": null,
+     "line": 171,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Update links, bootstrap budgets, code constants, settings/permissions, tests, tasks, and docs from one manifest where possible."
+    },
+    {
+     "due": null,
+     "line": 172,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Regenerate index/snippets/adapters; add exact-case and filename-validation tests."
+    },
+    {
+     "due": null,
+     "line": 173,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Require `git ls-files` exact final casing and no active old-case paths outside fixtures."
+    },
+    {
+     "due": null,
+     "line": 174,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Smoke test bootstrap and navigation on case-sensitive and case-insensitive environments where CI permits."
+    },
+    {
+     "due": null,
+     "line": 184,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Specify generic link records, source ranges, resolution/encoding/fragments/images/placeholders/block refs."
+    },
+    {
+     "due": null,
+     "line": 185,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Parse Markdown while excluding YAML, fenced/inline code, escapes, and external URLs; retain legacy wikilinks with counts."
+    },
+    {
+     "due": null,
+     "line": 186,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Resolve source-relative paths and tested heading slugs; report ambiguity instead of guessing."
+    },
+    {
+     "due": null,
+     "line": 187,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Implement `brain migrate-links`: preview default, `--check`, `--json`, explicit `--write`, source hashes, deterministic atomic writes."
+    },
+    {
+     "due": null,
+     "line": 188,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Preserve labels, fragments, self-links, images, encoding, and line endings; refuse stale/dirty/ambiguous/unsupported plans."
+    },
+    {
+     "due": null,
+     "line": 189,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test syntax/false positives, legacy import, idempotence, rollback, and a ≥ current-corpus performance fixture."
+    },
+    {
+     "due": null,
+     "line": 193,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Generate a complete categorized plan on merged WP8; manually sample each link class before apply."
+    },
+    {
+     "due": null,
+     "line": 194,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Convert maintained content once; update conventions/templates/skills/examples/spec/solutions/tests to make relative Markdown canonical."
+    },
+    {
+     "due": null,
+     "line": 195,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Regenerate snippets/index/adapters; configure/document Obsidian relative Markdown new links."
+    },
+    {
+     "due": null,
+     "line": 196,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Retain only named legacy fixtures and run a second no-op migration."
+    },
+    {
+     "due": null,
+     "line": 197,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Verify same/parent/child, spaces/Unicode, display label, heading, self-link, image, and placeholder in GitHub, VS Code, Obsidian, and brain."
+    },
+    {
+     "due": null,
+     "line": 209,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Define deterministic candidate schema and local collectors; GitHub is optional/authenticated."
+    },
+    {
+     "due": null,
+     "line": 210,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Score urgency/leverage/effort/confidence/dependency/staleness, dedupe outcomes, cap at 5–7."
+    },
+    {
+     "due": null,
+     "line": 211,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Render Do next / Unblock or decide / Keep warm with sources, why-now, next step, and caveat."
+    },
+    {
+     "due": null,
+     "line": 212,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Apply restriction/current-environment filtering before candidate creation."
+    },
+    {
+     "due": null,
+     "line": 213,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add local-only, JSON explanation, preview/write/`--check`, stable-output tests."
+    },
+    {
+     "due": null,
+     "line": 214,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add a narrow generated-write exception only after canonical approval."
+    },
+    {
+     "due": null,
+     "line": 220,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Disposable-vault spike: toggle Obsidian 1.11 native default file and diff settings. Commit only a stable repository key; otherwise document setup + CLI fallback."
+    },
+    {
+     "due": null,
+     "line": 221,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Generate Home separately from canonical INDEX using AYMT, tasks, Inbox, projects/areas, reviews, Now/status/changelog, expiry/health, and environment."
+    },
+    {
+     "due": null,
+     "line": 222,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Keep maintainer GitHub backlog optional; omit missed-automation claims until a run-log contract exists."
+    },
+    {
+     "due": null,
+     "line": 223,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Preserve VS Code's folder-open task; document trust/automatic-task recovery."
+    },
+    {
+     "due": null,
+     "line": 224,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test empty/adopted/stale/overdue/environment states, restriction filtering, deterministic check, startup, and navigation."
+    },
+    {
+     "due": null,
+     "line": 234,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Define deterministic manifest/naming/scope and implement link-graph + health-dashboard data."
+    },
+    {
+     "due": null,
+     "line": 235,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Filter restricted/non-current/secrets/absolute paths/raw bodies before serialization."
+    },
+    {
+     "due": null,
+     "line": 236,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Generate offline HTML with escaped JSON, safe DOM text APIs, hashed CSP or local bundle, and zero CDN/runtime network."
+    },
+    {
+     "due": null,
+     "line": 237,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add static/JS-off summary, keyboard/accessibility/reduced-motion/empty states."
+    },
+    {
+     "due": null,
+     "line": 238,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Document local browser/VS Code opening; define but disable hosting until environment configuration + owner consent."
+    },
+    {
+     "due": null,
+     "line": 239,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test golden bytes, injection, CSP/offline, privacy, accessibility, large-vault budget, and browser opening."
+    },
+    {
+     "due": null,
+     "line": 251,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Define versioned provider-neutral envelope and privacy class; implement fake/file transport first."
+    },
+    {
+     "due": null,
+     "line": 252,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Implement exactly one selected real provider with text fallback and provider limits."
+    },
+    {
+     "due": null,
+     "line": 253,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Keep credentials in ignored current-environment overlay/external manager; redact all boundaries."
+    },
+    {
+     "due": null,
+     "line": 254,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Verify/acknowledge private destination before one redacted test send."
+    },
+    {
+     "due": null,
+     "line": 255,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Implement category opt-ins, owner-timezone quiet hours, rate limit, dedupe, bounded transient retry, and ignored delivery state."
+    },
+    {
+     "due": null,
+     "line": 256,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Route producers through the envelope; buttons are safe links only—no inbound mutation endpoint."
+    },
+    {
+     "due": null,
+     "line": 257,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Add narrow owner-authorized operational-notification exception to “agents never ship.”"
+    },
+    {
+     "due": null,
+     "line": 258,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Test categories, redaction, payload/fallback, DST/quiet hours, dedupe/rate/retry/corrupt state, and approved real-provider smoke."
+    },
+    {
+     "due": null,
+     "line": 266,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Update PRD/status once with final current behavior; add concise changelog entries, not implementation diaries."
+    },
+    {
+     "due": null,
+     "line": 267,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Reconcile conventions, config, operating rules, task patterns, brain spec, environment/artifact/editor docs."
+    },
+    {
+     "due": null,
+     "line": 268,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Regenerate index, snippets, and project skill adapters."
+    },
+    {
+     "due": null,
+     "line": 269,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Search for old-case paths, maintained wikilinks, hardcoded deprecated invocations, secrets, hostnames, usernames, and absolute paths."
+    },
+    {
+     "due": null,
+     "line": 270,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Re-run every requirement against merged `main`; record honest final test/link/skill metrics."
+    },
+    {
+     "due": null,
+     "line": 271,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "For each issue, comment with merged PR/commit, acceptance evidence, adopted decisions, and limitations; then update project status and close."
+    },
+    {
+     "due": null,
+     "line": 307,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Approve protected canonical changes and narrow generated HOME/AYMT exceptions."
+    },
+    {
+     "due": null,
+     "line": 308,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Select a private notification provider/destination or accept that #21 remains open after fake/file infrastructure."
+    },
+    {
+     "due": null,
+     "line": 309,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Store the selected credential outside git for the smoke test."
+    },
+    {
+     "due": null,
+     "line": 310,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Opt into user-global harness discovery only if skills are needed outside this repo; default no."
+    },
+    {
+     "due": null,
+     "line": 311,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Choose/add a PATH directory manually if no existing writable PATH directory exists; installer will not edit shell rc."
+    },
+    {
+     "due": null,
+     "line": 312,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Resolve any unknown remote state before real personal-data access; public/template cannot be bypassed."
+    }
+   ],
+   "title": "Ready backlog implementation plan",
+   "updated": "2026-08-11"
+  },
+  "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md": {
+   "backlinks": [
+    "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md"
+   ],
+   "bodyTags": [
+    "71/"
+   ],
+   "frontmatter": {
+    "author": "codex",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/reference",
+     "topic/software",
+     "workflow/needs-review",
+     "status/active"
+    ],
+    "title": "Ready backlog requirements brainstorm",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 14,
+     "text": "Ready Backlog Requirements Brainstorm"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Purpose"
+    },
+    {
+     "level": 2,
+     "line": 20,
+     "text": "Scope and rebaseline"
+    },
+    {
+     "level": 2,
+     "line": 35,
+     "text": "Definition of done"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Recommended decisions"
+    },
+    {
+     "level": 2,
+     "line": 55,
+     "text": "Cross-cutting requirements"
+    },
+    {
+     "level": 2,
+     "line": 65,
+     "text": "Workstream A — Safety and onboarding"
+    },
+    {
+     "level": 3,
+     "line": 67,
+     "text": "#83 — Remote safety gate"
+    },
+    {
+     "level": 3,
+     "line": 81,
+     "text": "#82 — Project-local harness discovery"
+    },
+    {
+     "level": 3,
+     "line": 93,
+     "text": "#81 — Ask-and-recommend entry"
+    },
+    {
+     "level": 3,
+     "line": 99,
+     "text": "#84 — Atomic example cleanup"
+    },
+    {
+     "level": 2,
+     "line": 106,
+     "text": "Workstream B — Current product contract and portable content"
+    },
+    {
+     "level": 3,
+     "line": 108,
+     "text": "#71/#72/#73 — Maintained, dual-editor PRD"
+    },
+    {
+     "level": 3,
+     "line": 123,
+     "text": "#75 — Uppercase core/framework filenames"
+    },
+    {
+     "level": 3,
+     "line": 132,
+     "text": "#74 — Standard Markdown links"
+    },
+    {
+     "level": 2,
+     "line": 143,
+     "text": "Workstream C — Environment and command UX"
+    },
+    {
+     "level": 3,
+     "line": 145,
+     "text": "#15 — Environment-scoped infrastructure"
+    },
+    {
+     "level": 3,
+     "line": 155,
+     "text": "#4 — Portable `brain` command"
+    },
+    {
+     "level": 2,
+     "line": 164,
+     "text": "Workstream D — Action and navigation"
+    },
+    {
+     "level": 3,
+     "line": 166,
+     "text": "#79 — Actions You May Take"
+    },
+    {
+     "level": 3,
+     "line": 174,
+     "text": "#78 — Default Home"
+    },
+    {
+     "level": 2,
+     "line": 183,
+     "text": "Workstream E — Artifacts and notifications"
+    },
+    {
+     "level": 3,
+     "line": 185,
+     "text": "#23 — Artifact and visualization UX"
+    },
+    {
+     "level": 3,
+     "line": 194,
+     "text": "#21 — Private owner notification channel"
+    },
+    {
+     "level": 2,
+     "line": 206,
+     "text": "Dependency model"
+    },
+    {
+     "level": 2,
+     "line": 222,
+     "text": "Remaining decision gates"
+    },
+    {
+     "level": 2,
+     "line": 232,
+     "text": "Research basis"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-ready-backlog-implementation-plan]]",
+     "resolved": "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md",
+     "target": "02_Inbox/2026-08-11-ready-backlog-implementation-plan",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 19954,
+   "tasks": [],
+   "title": "Ready backlog requirements brainstorm",
+   "updated": "2026-08-11"
+  },
   "02_Inbox/README.md": {
    "backlinks": [
     "00_Meta/conventions.md",
