@@ -11985,7 +11985,7 @@
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 43,
      "text": "References"
     }
    ],
@@ -11994,7 +11994,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 37,
+     "line": 38,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -12005,7 +12005,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 39,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -12016,7 +12016,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 40,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -12024,7 +12024,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3146,
+   "sizeBytes": 3581,
    "title": "Skill: Periodic Review",
    "updated": "2026-08-11"
   },
@@ -12499,12 +12499,12 @@
     },
     {
      "level": 2,
-     "line": 34,
+     "line": 35,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 41,
      "text": "References"
     }
    ],
@@ -12513,7 +12513,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 28,
+     "line": 29,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -12524,7 +12524,7 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 39,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
@@ -12532,7 +12532,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2656,
+   "sizeBytes": 3011,
    "title": "Skill: Vault Maintenance",
    "updated": "2026-08-11"
   },
@@ -13309,12 +13309,12 @@
     },
     {
      "level": 2,
-     "line": 47,
+     "line": 48,
      "text": "The committed index"
     },
     {
      "level": 2,
-     "line": 51,
+     "line": 52,
      "text": "Tests"
     }
    ],
@@ -13334,7 +13334,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 58,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -13342,7 +13342,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3243,
+   "sizeBytes": 3597,
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
   },
@@ -13500,83 +13500,108 @@
     },
     {
      "level": 2,
-     "line": 227,
+     "line": 228,
      "text": "10. Validate semantics"
     },
     {
      "level": 3,
-     "line": 229,
+     "line": 230,
      "text": "10.1 Rule sources"
     },
     {
      "level": 3,
-     "line": 233,
+     "line": 234,
      "text": "10.2 Checks"
     },
     {
      "level": 3,
-     "line": 245,
+     "line": 246,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 250,
+     "line": 251,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 3,
-     "line": 256,
+     "line": 257,
      "text": "10.5 Secret scanning"
     },
     {
      "level": 2,
-     "line": 281,
+     "line": 282,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 292,
+     "line": 293,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 305,
+     "line": 306,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 312,
+     "line": 313,
      "text": "14. Curation signals (ops plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 325,
+     "line": 326,
      "text": "15. Vault config (`00_Meta/config.yaml`) — issue #2"
     },
     {
      "level": 3,
-     "line": 329,
+     "line": 330,
      "text": "15.1 Location, optionality, change control"
     },
     {
      "level": 3,
-     "line": 336,
+     "line": 337,
      "text": "15.2 Grammar bounds"
     },
     {
      "level": 3,
-     "line": 342,
+     "line": 343,
      "text": "15.3 Key registry"
     },
     {
      "level": 3,
-     "line": 360,
+     "line": 361,
      "text": "15.4 Validate semantics"
     },
     {
      "level": 3,
-     "line": 364,
+     "line": 365,
      "text": "15.5 `config` command"
+    },
+    {
+     "level": 2,
+     "line": 369,
+     "text": "16. Health report (`brain report`) — issue #16"
+    },
+    {
+     "level": 3,
+     "line": 373,
+     "text": "16.1 Sections"
+    },
+    {
+     "level": 3,
+     "line": 383,
+     "text": "16.2 JSON shape"
+    },
+    {
+     "level": 3,
+     "line": 387,
+     "text": "16.3 `--since YYYY-MM-DD`"
+    },
+    {
+     "level": 3,
+     "line": 391,
+     "text": "16.4 Thresholds"
     }
    ],
    "links": [
@@ -13639,7 +13664,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 231,
+     "line": 232,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -13650,7 +13675,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 237,
+     "line": 238,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13661,7 +13686,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 314,
+     "line": 315,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13672,7 +13697,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 349,
+     "line": 350,
      "placeholder": false,
      "raw": "[[06_Resources/vscode-editor-support]]",
      "resolved": "06_Resources/vscode-editor-support.md",
@@ -13680,7 +13705,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 42036,
+   "sizeBytes": 48572,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

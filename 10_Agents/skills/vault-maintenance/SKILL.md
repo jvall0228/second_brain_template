@@ -18,18 +18,19 @@ Keep the vault passing its own checks and its snapshots truthful.
 
 ## Steps
 
-1. **Run the full check:** `python3 10_Agents/tools/brain/brain.py validate --check-index`.
-2. **Fix errors by class:**
+1. **Open with the health report:** `python3 10_Agents/tools/brain/brain.py report` — stale-active notes, disconnected orphans, Inbox triage debt, tag drift, and the unresolved-link count in one pass. It sets the agenda for the steps below; the tag-drift section (single-use and near-duplicate tags) is a direct input to the duplication scan in step 5.
+2. **Run the full check:** `python3 10_Agents/tools/brain/brain.py validate --check-index`.
+3. **Fix errors by class:**
    - Stale index → `python3 10_Agents/tools/brain/brain.py index`
    - Unresolved links → use the `link-repair` skill
    - Frontmatter/tag/filename errors on **non-canonical** notes → fix directly (bump `updated:`)
    - Errors on `workflow/canonical` notes → do **not** edit directly; propose the fix via an Inbox note tagged `workflow/needs-review` (see `10_Agents/docs/operating-rules.md`), unless the human has directed the change in this session
-3. **Investigate warnings** (ambiguous links, case mismatches): fix the link text to the unambiguous full path where intent is clear; otherwise list them for the human.
-4. **Scan for duplication:** notes sharing a subject (e.g. one "supersedes" another, or two reference notes covering the same tool/topic) violate the one-topic-one-note rule — propose a merge to the human with a suggested surviving note and which conflicting sections get replaced — a merge rewrites overlapping content into one coherent whole, never concatenates two notes. Never merge unprompted. Approved proposals are executed via the [[10_Agents/skills/merge-notes/SKILL|merge-notes]] skill — detection proposes here; that skill executes.
-5. **Refresh snapshots:**
+4. **Investigate warnings** (ambiguous links, case mismatches): fix the link text to the unambiguous full path where intent is clear; otherwise list them for the human.
+5. **Scan for duplication:** notes sharing a subject (e.g. one "supersedes" another, or two reference notes covering the same tool/topic) violate the one-topic-one-note rule — propose a merge to the human with a suggested surviving note and which conflicting sections get replaced — a merge rewrites overlapping content into one coherent whole, never concatenates two notes. Never merge unprompted. Approved proposals are executed via the [[10_Agents/skills/merge-notes/SKILL|merge-notes]] skill — detection proposes here; that skill executes.
+6. **Refresh snapshots:**
    - `00_Meta/status.md` is deliberately non-canonical — update its snapshot/milestone table directly when reality moved.
    - Add a dated `00_Meta/changelog.md` entry **only** for structural changes (it's canonical: needs human direction).
-6. **Re-validate, commit, push.** The commit message should say what was fixed, not just "maintenance".
+7. **Re-validate, commit, push.** The commit message should say what was fixed, not just "maintenance".
 
 ## Rules
 

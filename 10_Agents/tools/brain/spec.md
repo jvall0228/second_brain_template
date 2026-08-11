@@ -20,7 +20,7 @@ Design inspiration is Obsidian's MetadataCache; the starting point is [[10_Agent
 
 **Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([[00_Meta/prd]] §6.5) — and `brain` is the compatibility keystone between them:
 - The **link-resolution model (§6) tracks Obsidian's**: a link that resolves differently in `brain` than in Obsidian is a bug in one of them, and every intentional divergence must be recorded in §11.
-- The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
+- The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, `report`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
 - Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [[10_Agents/docs/operating-rules]] (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
 
 Normative language: **must** = required behavior; **records an error/warning** = the finding is stored in the index or produced by `validate` (§10), never silently dropped.
@@ -223,6 +223,7 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 - **`validate`** — §10.
 - **`curate`** — the §14 re-review signals as one report: expired, missing `expires:`, expires beyond the one-year cap, oversized, stale (days-old weighted by backlink count, sorted worst-first), orphans, unreferenced `08_Assets/` files; `--check-urls` additionally probes source URLs over the network (opt-in only; never runs pre-commit). JSON: one sorted array per signal.
 - **`context`** — each bootstrap doc's byte size against its §14 budget, plus the total; missing docs report `null`. JSON: `{docs, totalBudget, totalBytes}`.
+- **`report`** — §16: the five-section vault-health synthesis (stale-active, orphans, Inbox aging, tag drift, unresolved links); `--since YYYY-MM-DD` scopes the two change-attributable sections per §16.3. Thresholds come from the `report` config key (§15.3) with built-in defaults.
 
 ## 10. Validate semantics
 
@@ -351,7 +352,7 @@ Top-level keys are registered here so later issues cannot collide:
 | `environments` | reserved (#15) | — |
 | `modules` | reserved (#32) | — |
 | `provenance` | reserved (#18) | — |
-| `report` | reserved (#16) | validate/curate thresholds |
+| `report` | **implemented** (#16) | Health-report thresholds (§16.4): a one-level nested mapping under `report:` whose subkeys are `stale_days` (stale-active threshold, default `30`) and `inbox_days` (Inbox triage-debt threshold, default `14`). Values are non-negative-integer scalars (digits only — §4.3 stores strings; `report_thresholds(config)` converts). A `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `brain report` only — never by `index`, and it moves no `validate` severity. |
 | `sync` | reserved (#26) | — |
 | `template_version` | reserved (#6) | — |
 
@@ -359,8 +360,34 @@ Reserved keys parse and are **tolerated silently** whatever their shape. **Unkno
 
 ### 15.4 Validate semantics
 
-All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` not a scalar; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key`; `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust` value outside the documented pair).
+All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` not a scalar, `report` not a nested mapping, or a known `report` subkey whose value is not a digits-only non-negative integer; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key` (an unknown top-level key, or an unknown subkey under `report`, reported dotted as `report.<key>`); `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust` value outside the documented pair).
 
 ### 15.5 `config` command
 
 `brain config` (§9 conventions: `--json`, exit 0) prints the **effective** configuration: presence, the raw parsed map, the merged write-exception prefixes (defaults first), the effective `extension_trust`, the reserved-key list, and any findings. It is the non-Python surface of the reader API for harness tasks and scripts.
+
+## 16. Health report (`brain report`) — issue #16
+
+A read-only synthesis of the in-memory index (§9's usual `walk_corpus` + `build_index` — **no new parsing**, no network, no git) into the five vault-health sections below, for the `periodic-review` and `vault-maintenance` skills and the "Brain: Health Report" VS Code task. Exit code is always `0` on success (the report informs; `validate` judges); `1` only for an operational error (a malformed `--since`). Ordering inside every section is deterministic; the human output prints the sections in the order listed here (most-actionable-first).
+
+### 16.1 Sections
+
+All tag reads in this section are **frontmatter tags only** (a bare-scalar `tags:` coerced to one element per §4.5; body `#tags` are informal, mirroring §10.2), and values containing `{{` (template placeholders) are ignored.
+
+1. **Stale-active** (`staleActive`): notes carrying the frontmatter tag `status/active` whose `updated:` is **strictly more than** `stale_days` days (default 30) before today. Notes with `updated: null` cannot be aged and are skipped (`validate` already flags `missing-updated`/`invalid-updated`). Rows `{daysOld, path, title, updated}`, sorted oldest-first (`daysOld` descending, then path).
+2. **Orphans** (`orphans`): notes with **zero backlinks and zero outgoing wikilinks** (placeholder links don't count as outgoing) — fully disconnected, per the issue's definition. Excluded as legitimately leaf-like: any note whose basename is `README.md`, `AGENTS.md`, or `CLAUDE.md`, and everything under `07_Archives/` or `09_Templates/`. Sorted path list. (Distinct from `curate`'s inbound-only orphan signal, which serves the curation charter; this section measures disconnection.)
+3. **Inbox aging** (`inboxAging`): every note under `02_Inbox/` except its `README.md`, bucketed by age in days. A note's **capture date** is the `YYYY-MM-DD` filename prefix of its basename when present and a valid calendar date (`source: "filename"`), else its `updated:` value (`source: "updated"`), else unknown (`source: "unknown"`, `ageDays: null`). Age = today − capture date, floored at 0. Buckets, fixed order: `0-7d` (≤ 7), `8-30d`, `31-90d`, `90+d`, `unknown`; each holds `{ageDays, path, source}` rows sorted by path. `triageDebt` additionally lists the paths whose age is strictly greater than `inbox_days` (default 14).
+4. **Tag drift** (`tagDrift`): frontmatter tag usage vs the §10.1 conventions taxonomy, read by the **same** `load_taxonomy` machinery `validate` uses (consistency by construction). Tags are counted once per note that carries them, over the §16.3 note universe. `taxonomyReadable: false` (with all three lists empty) when the table is unreadable — `validate` owns that error. Otherwise: `unknown` — rows `{count, reason, tag}` sorted by tag, `reason` ∈ `not-namespaced` | `unknown-namespace` | `unknown-value` (closed namespaces only); `singleUse` — sorted tags in **open** namespaces used by exactly one note (near-duplicate bait, e.g. `topic/sw`); `nearDuplicates` — rows `{namespace, values: [shorter, longer]}` for pairs of distinct open-namespace values where, under the §6 folding rule, the shorter (≥ 2 chars, strictly shorter) shares its first character with the longer and is an in-order subsequence of it — catching both prefixes (`tool`/`tools`) and abbreviations (the issue's `sw`/`software`); sorted by namespace then value pair.
+5. **Unresolved links** (`unresolvedLinks`): `{count, links}` where `links` rows are `{line, path, target}` for every non-placeholder link with `resolved: null`, over the §16.3 note universe, sorted by path, line, target — the same population `validate` errors on, given trend context here.
+
+### 16.2 JSON shape
+
+Top-level keys (always present): `inboxAging` (`{buckets, triageDebt}` with all five bucket keys always present), `orphans`, `since` (the `--since` date string or `null`), `staleActive`, `tagDrift` (`{nearDuplicates, singleUse, taxonomyReadable, unknown}`), `thresholds` (`{inboxDays, staleDays}` — the **effective** integers after config merge), `unresolvedLinks`. Emitted via the standard `--json` path. Output is a pure function of the tree, the config, today's date, and `--since` — no timestamps, mtimes, or environment data — so two runs on the same day are byte-identical.
+
+### 16.3 `--since YYYY-MM-DD`
+
+Review-period scoping. `--since` restricts **exactly two** sections — **tag drift** and **unresolved links** — to the notes whose `updated:` is on or after the given date (the changes attributable to the period under review; notes with `updated: null` are excluded from a scoped universe since they cannot be attributed). **Stale-active, orphans, and Inbox aging always cover the whole vault**: they measure accumulated debt, which a review must see regardless of period. A value that is not a real `YYYY-MM-DD` calendar date is an operational error (exit 1). Without `--since`, the note universe for every section is the full working corpus.
+
+### 16.4 Thresholds
+
+`stale_days` and `inbox_days` are read from the `report` config key (grammar and defaults in §15.3) via `report_thresholds(config)`; with no config file, both stay at their built-in defaults (`REPORT_STALE_ACTIVE_DAYS = 30`, `REPORT_INBOX_TRIAGE_DAYS = 14` — module constants beside the §14 tunables). Per §15.1 the config never influences `index` output, and the report is synthesis-only: nothing here feeds back into `validate` severities.
