@@ -76,6 +76,10 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | [[10_Agents/skills/onboard-harness/SKILL\|onboard-harness]] | Symlink-first user-scope install into a harness + memory-file wiring + hook |
 | [[10_Agents/skills/agent-orientation/SKILL\|agent-orientation]] | Discover reachable context sources and generate access tooling + capture skills |
 
+## Recommended community skills
+
+Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — pinned refs, license and trust notes, per-item owner sign-off — lives at [[06_Resources/recommended-skills]]. Community content installs to the harness's user scope via [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] and is never vendored into this directory.
+
 ## The Rhythm (cadence table)
 
 **This table is the single source of truth for the vault's operating cadence.** [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] wires it into the harness's scheduler; [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] teaches it as "the rhythm"; [[00_Meta/conventions]] points here.
