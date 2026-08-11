@@ -75,7 +75,7 @@ Plus two agent-native layers CODE doesn't name, both partially built: system hea
 
 ## Open questions (owner to decide)
 
-1. **Build order.** Suggested: R11+R14+R22 (cheap, high-leverage operating-rules wave) → R2+R7+R19 (policy debt already incurred) → R17+R17b+R18+R24+R20 (curation/brain milestone) → R10+R3+R12 (Express milestone) → R1/R4/R5/R13/R15/R16/R21 ride along with the recategorization pass → R25 last (deferred). R23 slots wherever, pending scope call.
+1. **Build order.** Proposed in full in [[02_Inbox/2026-08-11-para-operations-implementation-plan|the implementation plan]] (8 phases, grouped by artifact cluster) — approve or reorder there.
 2. **Entity notes** (tiered people/tool profiles, per COG-second-brain): in scope for the template, or explicitly out?
 3. **Size threshold** for R17b: confirm ~400 lines / ~20 KB starting point.
 4. **Missing-`expires:` warning timing**: immediately, or only after the backfill migration lands?
@@ -106,6 +106,7 @@ From the same research, considered and rejected for this vault (so review doesn'
 
 ## Related
 
+- [[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]] — phased execution of these requirements
 - [[10_Agents/skills/README]] — current skill catalog
 - [[00_Meta/conventions]] — change control, tag taxonomy
 - [[10_Agents/docs/operating-rules]] — write rules this plan amends

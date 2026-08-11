@@ -494,6 +494,7 @@
     "00_Meta/changelog.md",
     "00_Meta/index.md",
     "00_Meta/prd.md",
+    "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "06_Resources/example-resource.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
@@ -2108,8 +2109,175 @@
    "title": "Work",
    "updated": "2026-08-10"
   },
+  "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
+   "backlinks": [
+    "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/plan",
+     "audience/human",
+     "audience/agent",
+     "topic/second-brain",
+     "workflow/needs-review",
+     "status/active"
+    ],
+    "title": "Implementation Plan: CODE Operations & Vault Operations (R1–R25)",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 13,
+     "text": "Implementation Plan: CODE Operations & Vault Operations"
+    },
+    {
+     "level": 2,
+     "line": 17,
+     "text": "Ground rules (every phase)"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Assumed answers to open questions"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Phase overview"
+    },
+    {
+     "level": 2,
+     "line": 49,
+     "text": "Phase detail"
+    },
+    {
+     "level": 3,
+     "line": 51,
+     "text": "Phase 1 — Rules & retrieval (R11, R14, R22)"
+    },
+    {
+     "level": 3,
+     "line": 58,
+     "text": "Phase 2 — Triage & distill upgrade (R2, R6, R13, R19)"
+    },
+    {
+     "level": 3,
+     "line": 66,
+     "text": "Phase 3 — Note surgery (R7)"
+    },
+    {
+     "level": 3,
+     "line": 72,
+     "text": "Phase 4 — Curation & signals (R17, R17b, R20, R24, R8)"
+    },
+    {
+     "level": 3,
+     "line": 84,
+     "text": "Phase 5 — Express & Outbox (R10, R3, R12)"
+    },
+    {
+     "level": 3,
+     "line": 91,
+     "text": "Phase 6 — Rhythm & reviews (R15, R18, R9, R16)"
+    },
+    {
+     "level": 3,
+     "line": 99,
+     "text": "Phase 7 — Recategorize & polish (R1, R4, R5, R21)"
+    },
+    {
+     "level": 3,
+     "line": 108,
+     "text": "Phase 8 — Deferred (R25; R23 pending scope call)"
+    },
+    {
+     "level": 2,
+     "line": 113,
+     "text": "Sequencing rationale"
+    },
+    {
+     "level": 2,
+     "line": 117,
+     "text": "Risks"
+    },
+    {
+     "level": 2,
+     "line": 123,
+     "text": "Tracking"
+    },
+    {
+     "level": 2,
+     "line": 127,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "the R1–R25 requirements",
+     "embed": false,
+     "fragment": null,
+     "line": 15,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-para-operations-skills-requirements|the R1–R25 requirements]]",
+     "resolved": "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
+     "target": "02_Inbox/2026-08-11-para-operations-skills-requirements",
+     "warnings": []
+    },
+    {
+     "display": "Requirements (R1–R25)",
+     "embed": false,
+     "fragment": null,
+     "line": 129,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-para-operations-skills-requirements|Requirements (R1–R25)]]",
+     "resolved": "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
+     "target": "02_Inbox/2026-08-11-para-operations-skills-requirements",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 130,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 131,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 9783,
+   "title": "Implementation Plan: CODE Operations & Vault Operations (R1–R25)",
+   "updated": "2026-08-11"
+  },
   "02_Inbox/2026-08-11-para-operations-skills-requirements.md": {
    "backlinks": [
+    "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
    ],
    "bodyTags": [],
@@ -2222,10 +2390,32 @@
      "warnings": []
     },
     {
-     "display": null,
+     "display": "the implementation plan",
+     "embed": false,
+     "fragment": null,
+     "line": 78,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-para-operations-implementation-plan|the implementation plan]]",
+     "resolved": "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
+     "target": "02_Inbox/2026-08-11-para-operations-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": "Implementation plan",
      "embed": false,
      "fragment": null,
      "line": 109,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]]",
+     "resolved": "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
+     "target": "02_Inbox/2026-08-11-para-operations-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 110,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -2236,7 +2426,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 110,
+     "line": 111,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -2247,7 +2437,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 111,
+     "line": 112,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -2258,7 +2448,7 @@
      "display": "onboard-owner requirements",
      "embed": false,
      "fragment": null,
-     "line": 112,
+     "line": 113,
      "placeholder": false,
      "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|onboard-owner requirements]]",
      "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
@@ -2266,7 +2456,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 17989,
+   "sizeBytes": 17953,
    "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
@@ -7362,6 +7552,7 @@
   "10_Agents/docs/operating-rules.md": {
    "backlinks": [
     "00_Meta/prd.md",
+    "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "10_Agents/README.md",
     "10_Agents/docs/README.md"
@@ -8268,6 +8459,7 @@
   },
   "10_Agents/skills/README.md": {
    "backlinks": [
+    "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md"
