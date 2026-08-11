@@ -58,6 +58,17 @@ updated: YYYY-MM-DD
 ---
 ```
 
+### Provenance (`author:` / `session:`)
+
+Optional fields distinguishing agent-written notes from human-authored ones (`audience/agent` says who a note is *for*, not who wrote it):
+
+```yaml
+author: claude-code      # harness-level identifier
+session: SESSION_REF     # session URL, PR, or task reference when one exists
+```
+
+`author:` is the **harness identifier** (`claude-code`, `copilot`, `cursor`, …) — harness granularity is deliberate: stable, meaningful, no model-version churn (not a model id, not a person). `session:` points at the session URL, PR, or task reference; omit it when none exists. Privacy: session links can expose account/workspace identifiers — a work fork may prefer opaque ids. **Expected for agent-authored notes, absent for human notes**: absence means pre-convention or human — no migration needed. `brain validate` warns (`missing-author`, never an error) on a `02_Inbox/` note tagged both `audience/agent` and `workflow/draft` with no `author:`; templates unaffected (placeholders exempt, below).
+
 ### Expiration (`expires:`)
 
 Knowledge notes carry an optional-but-expected `expires: YYYY-MM-DD` — a best-effort "re-verify by" date set at write time, **hard-capped at one year** after `updated:`. It drives the curation loop (`brain curate` + the curate skill): claims decay, and the date says how fast.
@@ -96,7 +107,7 @@ Notes tagged `workflow/canonical` are foundational vault docs. They require a PR
 
 ## Agent Write Rules
 
-Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via the express-packet skill; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`.
+Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via the express-packet skill; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
 
 **Standing exceptions:**
 

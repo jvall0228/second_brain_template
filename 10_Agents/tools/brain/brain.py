@@ -1103,6 +1103,24 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                             "unknown-tag-value",
                             f"tag {tag!r} is not in the conventions value list",
                         )
+                # §10.2 missing-author (issue #18 provenance): an Inbox note
+                # tagged as agent-authored draft should say which harness wrote
+                # it. Warning only — absence elsewhere means pre-convention or
+                # human-authored. Template placeholders satisfy per §10.3, and
+                # `09_Templates/` never sits under `02_Inbox/` anyway.
+                if (
+                    rel.startswith("02_Inbox/")
+                    and not template
+                    and "audience/agent" in tags
+                    and "workflow/draft" in tags
+                    and not fm.get("author")
+                ):
+                    warn(
+                        rel,
+                        "missing-author",
+                        "agent-authored Inbox note has no author: field "
+                        "(see conventions § Provenance)",
+                    )
 
         for link in rec["links"]:
             if link["placeholder"]:
