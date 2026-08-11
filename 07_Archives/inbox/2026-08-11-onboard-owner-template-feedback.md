@@ -4,9 +4,9 @@ tags:
   - audience/agent
   - audience/human
   - type/note
-  - workflow/draft
   - topic/onboarding
   - topic/template
+  - status/done
 updated: 2026-08-11
 author: cursor
 session: onboarding-2026-08-11
@@ -15,6 +15,8 @@ session: onboarding-2026-08-11
 # Onboard-owner template feedback — 2026-08-11 dry run
 
 Owner feedback from a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] dry run (Cursor, vault `second_brain_test`). Capture for template / skill updates — not owner profile content.
+
+**Triaged:** see [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|the resulting requirements (R1–R5)]] and [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]] — executed against [[10_Agents/skills/onboard-owner/SKILL]] on branch `onboard-owner/adaptive-interview`.
 
 ## Feedback
 

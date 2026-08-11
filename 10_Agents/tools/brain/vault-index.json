@@ -158,146 +158,151 @@
     {
      "level": 2,
      "line": 15,
+     "text": "[2026-08-11] skill-update | onboard-owner adaptive interview (UI probe, ask+recommend default, research-before-ask)"
+    },
+    {
+     "level": 2,
+     "line": 23,
      "text": "[2026-08-11] milestone | M12 Sync & self-improvement shipped (issues #6, #22) — M8–M12 plan complete"
     },
     {
      "level": 2,
-     "line": 22,
+     "line": 30,
      "text": "[2026-08-11] milestone | M11 Search & tasks shipped (issues #8, #28)"
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 36,
      "text": "[2026-08-11] milestone | M10 Orientation & onboarding shipped (issues #3, #7, #13, #14)"
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 44,
      "text": "[2026-08-11] milestone | M9 Config & core conventions shipped (issues #2, #12, #16, #17, #18)"
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 53,
      "text": "[2026-08-11] milestone | M8 Hardening & test foundation shipped (issues #5, #9, #10, #11, #20, #24, #25)"
     },
     {
      "level": 2,
-     "line": 55,
+     "line": 63,
      "text": "[2026-08-11] config | Claude Code sessions auto-install the pre-commit hook"
     },
     {
      "level": 2,
-     "line": 59,
+     "line": 67,
      "text": "[2026-08-11] rework | CI validate workflow is now self-healing"
     },
     {
      "level": 2,
-     "line": 63,
+     "line": 71,
      "text": "[2026-08-11] triage | VS Code support note filed to Resources"
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 75,
      "text": "2026-08-11 — VS Code Alternative-Editor Support (strict first-party)"
     },
     {
      "level": 2,
-     "line": 73,
+     "line": 81,
      "text": "[2026-08-11] review-fixes | Adversarial review: doc-consistency + brain hygiene"
     },
     {
      "level": 2,
-     "line": 81,
+     "line": 89,
      "text": "[2026-08-11] restructure | Split harness research per-harness; resolve expires backfill review"
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 98,
      "text": "[2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)"
     },
     {
      "level": 2,
-     "line": 96,
+     "line": 104,
      "text": "2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)"
     },
     {
      "level": 2,
-     "line": 103,
+     "line": 111,
      "text": "2026-08-11 — Express & Outbox (Ops Plan Phase 5)"
     },
     {
      "level": 2,
-     "line": 110,
+     "line": 118,
      "text": "2026-08-11 — Curation & Signals (Ops Plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 117,
+     "line": 125,
      "text": "2026-08-11 — Note Surgery (Ops Plan Phase 3)"
     },
     {
      "level": 2,
-     "line": 122,
+     "line": 130,
      "text": "2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)"
     },
     {
      "level": 2,
-     "line": 128,
+     "line": 136,
      "text": "2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)"
     },
     {
      "level": 2,
-     "line": 134,
+     "line": 142,
      "text": "2026-08-11 — Copilot Research Deduped"
     },
     {
      "level": 2,
-     "line": 139,
+     "line": 147,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 145,
+     "line": 153,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 152,
+     "line": 160,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 159,
+     "line": 167,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 165,
+     "line": 173,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 171,
+     "line": 179,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 181,
+     "line": 189,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 186,
+     "line": 194,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 192,
+     "line": 200,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 203,
+     "line": 211,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
@@ -314,10 +319,54 @@
      "warnings": []
     },
     {
+     "display": "Cursor dry-run feedback",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|Cursor dry-run feedback]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback",
+     "warnings": []
+    },
+    {
+     "display": "requirements R1–R5",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|requirements R1–R5]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements",
+     "warnings": []
+    },
+    {
+     "display": "implementation plan",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 18,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/docs/rejected-proposals]]",
      "resolved": "10_Agents/docs/rejected-proposals.md",
@@ -328,7 +377,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 32,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -339,7 +388,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 40,
      "placeholder": false,
      "raw": "[[06_Resources/recommended-skills]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -350,7 +399,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -361,7 +410,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 47,
+     "line": 55,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -372,7 +421,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 65,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -383,44 +432,11 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 65,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
      "target": "10_Agents/docs/operating-rules",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 61,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 65,
-     "placeholder": false,
-     "raw": "[[06_Resources/vscode-editor-support]]",
-     "resolved": "06_Resources/vscode-editor-support.md",
-     "target": "06_Resources/vscode-editor-support",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 65,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
      "warnings": []
     },
     {
@@ -438,7 +454,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 70,
+     "line": 73,
+     "placeholder": false,
+     "raw": "[[06_Resources/vscode-editor-support]]",
+     "resolved": "06_Resources/vscode-editor-support.md",
+     "target": "06_Resources/vscode-editor-support",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 73,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -449,7 +476,29 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 70,
+     "line": 77,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 78,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 78,
      "placeholder": false,
      "raw": "[[06_Resources/vscode-editor-support]]",
      "resolved": "06_Resources/vscode-editor-support.md",
@@ -460,7 +509,7 @@
      "display": "vscode tools",
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 79,
      "placeholder": false,
      "raw": "[[10_Agents/tools/vscode/README|vscode tools]]",
      "resolved": "10_Agents/tools/vscode/README.md",
@@ -471,7 +520,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 79,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -482,132 +531,11 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 78,
+     "line": 86,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 78,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": "backfill review",
-     "embed": false,
-     "fragment": null,
-     "line": 83,
-     "placeholder": false,
-     "raw": "[[07_Archives/inbox/2026-08-11-expires-backfill-report|           backfill review]]",
-     "resolved": "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
-     "target": "07_Archives/inbox/2026-08-11-expires-backfill-report",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-primitives-research]]",
-     "resolved": "06_Resources/harness-primitives-research.md",
-     "target": "06_Resources/harness-primitives-research",
-     "warnings": []
-    },
-    {
-     "display": "standards & protocols",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-standards|standards & protocols]]",
-     "resolved": "06_Resources/harness-standards.md",
-     "target": "06_Resources/harness-standards",
-     "warnings": []
-    },
-    {
-     "display": "Claude Code",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-claude-code|Claude Code]]",
-     "resolved": "06_Resources/harness-claude-code.md",
-     "target": "06_Resources/harness-claude-code",
-     "warnings": []
-    },
-    {
-     "display": "Codex",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-codex|Codex]]",
-     "resolved": "06_Resources/harness-codex.md",
-     "target": "06_Resources/harness-codex",
-     "warnings": []
-    },
-    {
-     "display": "opencode",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-opencode|opencode]]",
-     "resolved": "06_Resources/harness-opencode.md",
-     "target": "06_Resources/harness-opencode",
-     "warnings": []
-    },
-    {
-     "display": "Pi",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-pi|Pi]]",
-     "resolved": "06_Resources/harness-pi.md",
-     "target": "06_Resources/harness-pi",
-     "warnings": []
-    },
-    {
-     "display": "Cursor",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-cursor|Cursor]]",
-     "resolved": "06_Resources/harness-cursor.md",
-     "target": "06_Resources/harness-cursor",
-     "warnings": []
-    },
-    {
-     "display": "GitHub Copilot",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-copilot|GitHub Copilot]]",
-     "resolved": "06_Resources/harness-copilot.md",
-     "target": "06_Resources/harness-copilot",
-     "warnings": []
-    },
-    {
-     "display": "Muse Code",
-     "embed": false,
-     "fragment": null,
-     "line": 85,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-muse-code|Muse Code]]",
-     "resolved": "06_Resources/harness-muse-code.md",
-     "target": "06_Resources/harness-muse-code",
      "warnings": []
     },
     {
@@ -622,58 +550,113 @@
      "warnings": []
     },
     {
-     "display": null,
+     "display": "backfill review",
      "embed": false,
      "fragment": null,
-     "line": 87,
+     "line": 91,
      "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
+     "raw": "[[07_Archives/inbox/2026-08-11-expires-backfill-report|           backfill review]]",
+     "resolved": "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
+     "target": "07_Archives/inbox/2026-08-11-expires-backfill-report",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 88,
+     "line": 93,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[06_Resources/harness-primitives-research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     },
     {
-     "display": null,
+     "display": "standards & protocols",
      "embed": false,
      "fragment": null,
-     "line": 88,
+     "line": 93,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-copilot]]",
+     "raw": "[[06_Resources/harness-standards|standards & protocols]]",
+     "resolved": "06_Resources/harness-standards.md",
+     "target": "06_Resources/harness-standards",
+     "warnings": []
+    },
+    {
+     "display": "Claude Code",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-claude-code|Claude Code]]",
+     "resolved": "06_Resources/harness-claude-code.md",
+     "target": "06_Resources/harness-claude-code",
+     "warnings": []
+    },
+    {
+     "display": "Codex",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-codex|Codex]]",
+     "resolved": "06_Resources/harness-codex.md",
+     "target": "06_Resources/harness-codex",
+     "warnings": []
+    },
+    {
+     "display": "opencode",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-opencode|opencode]]",
+     "resolved": "06_Resources/harness-opencode.md",
+     "target": "06_Resources/harness-opencode",
+     "warnings": []
+    },
+    {
+     "display": "Pi",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-pi|Pi]]",
+     "resolved": "06_Resources/harness-pi.md",
+     "target": "06_Resources/harness-pi",
+     "warnings": []
+    },
+    {
+     "display": "Cursor",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-cursor|Cursor]]",
+     "resolved": "06_Resources/harness-cursor.md",
+     "target": "06_Resources/harness-cursor",
+     "warnings": []
+    },
+    {
+     "display": "GitHub Copilot",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|GitHub Copilot]]",
      "resolved": "06_Resources/harness-copilot.md",
      "target": "06_Resources/harness-copilot",
      "warnings": []
     },
     {
-     "display": null,
+     "display": "Muse Code",
      "embed": false,
      "fragment": null,
-     "line": 92,
+     "line": 93,
      "placeholder": false,
-     "raw": "[[10_Agents/skills/README]]",
-     "resolved": "10_Agents/skills/README.md",
-     "target": "10_Agents/skills/README",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 92,
-     "placeholder": false,
-     "raw": "[[AGENTS]]",
-     "resolved": "AGENTS.md",
-     "target": "AGENTS",
+     "raw": "[[06_Resources/harness-muse-code|Muse Code]]",
+     "resolved": "06_Resources/harness-muse-code.md",
+     "target": "06_Resources/harness-muse-code",
      "warnings": []
     },
     {
@@ -691,106 +674,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 98,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/README]]",
-     "resolved": "10_Agents/skills/README.md",
-     "target": "10_Agents/skills/README",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 98,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": "recommended-automations",
-     "embed": false,
-     "fragment": null,
-     "line": 99,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
-     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
-     "target": "10_Agents/skills/recommended-automations/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "periodic-review",
-     "embed": false,
-     "fragment": null,
-     "line": 100,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/periodic-review/SKILL|periodic-review]]",
-     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
-     "target": "10_Agents/skills/periodic-review/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 100,
-     "placeholder": false,
-     "raw": "[[01_Profile/now]]",
-     "resolved": "01_Profile/now.md",
-     "target": "01_Profile/now",
-     "warnings": []
-    },
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 101,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "express-packet",
-     "embed": false,
-     "fragment": null,
-     "line": 106,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
-     "resolved": "10_Agents/skills/express-packet/SKILL.md",
-     "target": "10_Agents/skills/express-packet/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 107,
-     "placeholder": false,
-     "raw": "[[AGENTS]]",
-     "resolved": "AGENTS.md",
-     "target": "AGENTS",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 107,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 107,
+     "line": 95,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -801,172 +685,40 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 113,
+     "line": 96,
      "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": "curate",
-     "embed": false,
-     "fragment": null,
-     "line": 115,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
-     "resolved": "10_Agents/skills/curate/SKILL.md",
-     "target": "10_Agents/skills/curate/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "merge-notes",
-     "embed": false,
-     "fragment": null,
-     "line": 119,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
-     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
-     "target": "10_Agents/skills/merge-notes/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 120,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
-     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
-     "target": "10_Agents/skills/vault-maintenance/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "distill-note",
-     "embed": false,
-     "fragment": null,
-     "line": 124,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
-     "resolved": "10_Agents/skills/distill-note/SKILL.md",
-     "target": "10_Agents/skills/distill-note/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "triage-inbox",
-     "embed": false,
-     "fragment": null,
-     "line": 125,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
-     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
-     "target": "10_Agents/skills/triage-inbox/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "research-to-resource",
-     "embed": false,
-     "fragment": null,
-     "line": 126,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
-     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
-     "target": "10_Agents/skills/research-to-resource/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-answer",
-     "embed": false,
-     "fragment": null,
-     "line": 130,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
-     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
-     "target": "10_Agents/skills/vault-answer/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "research-to-resource",
-     "embed": false,
-     "fragment": null,
-     "line": 136,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
-     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
-     "target": "10_Agents/skills/research-to-resource/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "vault-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 136,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
-     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
-     "target": "10_Agents/skills/vault-maintenance/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "the harness research's Copilot section",
-     "embed": false,
-     "fragment": null,
-     "line": 137,
-     "placeholder": false,
-     "raw": "[[06_Resources/harness-copilot|the harness research's Copilot section]]",
-     "resolved": "06_Resources/harness-copilot.md",
-     "target": "06_Resources/harness-copilot",
-     "warnings": []
-    },
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 141,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "onboard-harness",
-     "embed": false,
-     "fragment": null,
-     "line": 141,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
-     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
-     "target": "10_Agents/skills/onboard-harness/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "agent-orientation",
-     "embed": false,
-     "fragment": null,
-     "line": 141,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
-     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
-     "target": "10_Agents/skills/agent-orientation/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "recommended-automations",
-     "embed": false,
-     "fragment": null,
-     "line": 141,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
-     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
-     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 142,
+     "line": 96,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 100,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 100,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -977,7 +729,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 142,
+     "line": 102,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -985,36 +737,245 @@
      "warnings": []
     },
     {
-     "display": "that section",
+     "display": null,
      "embed": false,
      "fragment": null,
-     "line": 147,
+     "line": 106,
      "placeholder": false,
-     "raw": "[[06_Resources/harness-copilot|that section]]",
-     "resolved": "06_Resources/harness-copilot.md",
-     "target": "06_Resources/harness-copilot",
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 148,
+     "line": 106,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
      "warnings": []
     },
     {
-     "display": "the wiring doc",
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 107,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 108,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 108,
+     "placeholder": false,
+     "raw": "[[01_Profile/now]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 109,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "express-packet",
+     "embed": false,
+     "fragment": null,
+     "line": 114,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
+     "resolved": "10_Agents/skills/express-packet/SKILL.md",
+     "target": "10_Agents/skills/express-packet/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 115,
+     "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 115,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 115,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 121,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": "curate",
+     "embed": false,
+     "fragment": null,
+     "line": 123,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
+     "resolved": "10_Agents/skills/curate/SKILL.md",
+     "target": "10_Agents/skills/curate/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "merge-notes",
+     "embed": false,
+     "fragment": null,
+     "line": 127,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
+     "resolved": "10_Agents/skills/merge-notes/SKILL.md",
+     "target": "10_Agents/skills/merge-notes/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 128,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
+     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
+     "target": "10_Agents/skills/vault-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "distill-note",
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 133,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 134,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-answer",
+     "embed": false,
+     "fragment": null,
+     "line": 138,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
+     "resolved": "10_Agents/skills/vault-answer/SKILL.md",
+     "target": "10_Agents/skills/vault-answer/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 144,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 144,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
+     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
+     "target": "10_Agents/skills/vault-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "the harness research's Copilot section",
+     "embed": false,
+     "fragment": null,
+     "line": 145,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|the harness research's Copilot section]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
      "embed": false,
      "fragment": null,
      "line": 149,
      "placeholder": false,
-     "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
-     "resolved": "10_Agents/harnesses/copilot/wiring.md",
-     "target": "10_Agents/harnesses/copilot/wiring",
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
      "warnings": []
     },
     {
@@ -1026,6 +987,17 @@
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
      "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 149,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
      "warnings": []
     },
     {
@@ -1045,16 +1017,82 @@
      "fragment": null,
      "line": 150,
      "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
      "warnings": []
     },
     {
      "display": null,
      "embed": false,
      "fragment": null,
+     "line": 150,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": "that section",
+     "embed": false,
+     "fragment": null,
+     "line": 155,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-copilot|that section]]",
+     "resolved": "06_Resources/harness-copilot.md",
+     "target": "06_Resources/harness-copilot",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 156,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "the wiring doc",
+     "embed": false,
+     "fragment": null,
      "line": 157,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
+     "resolved": "10_Agents/harnesses/copilot/wiring.md",
+     "target": "10_Agents/harnesses/copilot/wiring",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 157,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 157,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 158,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1065,7 +1103,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 161,
+     "line": 165,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 169,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1076,7 +1125,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 168,
+     "line": 176,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1087,7 +1136,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 169,
+     "line": 177,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -1098,7 +1147,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 173,
+     "line": 181,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1109,29 +1158,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 183,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 189,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 196,
+     "line": 191,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1153,7 +1180,29 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 197,
+     "line": 204,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 205,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 205,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1164,7 +1213,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 201,
+     "line": 209,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1172,7 +1221,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 40272,
+   "sizeBytes": 41641,
    "tasks": [],
    "title": "Changelog",
    "updated": "2026-08-11"
@@ -3496,75 +3545,6 @@
     }
    ],
    "title": "Implementation plan: M8–M12 (all non-deferred issues)",
-   "updated": "2026-08-11"
-  },
-  "02_Inbox/2026-08-11-onboard-owner-template-feedback.md": {
-   "backlinks": [],
-   "bodyTags": [],
-   "frontmatter": {
-    "author": "cursor",
-    "session": "onboarding-2026-08-11",
-    "tags": [
-     "audience/agent",
-     "audience/human",
-     "type/note",
-     "workflow/draft",
-     "topic/onboarding",
-     "topic/template"
-    ],
-    "title": "Onboard-owner template feedback — 2026-08-11 dry run",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 15,
-     "text": "Onboard-owner template feedback — 2026-08-11 dry run"
-    },
-    {
-     "level": 2,
-     "line": 19,
-     "text": "Feedback"
-    },
-    {
-     "level": 2,
-     "line": 27,
-     "text": "Context from the run (for triage)"
-    },
-    {
-     "level": 2,
-     "line": 36,
-     "text": "Suggested triage"
-    }
-   ],
-   "links": [
-    {
-     "display": "onboard-owner",
-     "embed": false,
-     "fragment": null,
-     "line": 17,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 33,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
-     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
-     "target": "10_Agents/skills/onboard-owner/SKILL",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 2298,
-   "tasks": [],
-   "title": "Onboard-owner template feedback — 2026-08-11 dry run",
    "updated": "2026-08-11"
   },
   "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
@@ -8361,9 +8341,312 @@
    "title": "M5–M7 Implementation Plan",
    "updated": "2026-08-11"
   },
+  "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/plan",
+     "audience/human",
+     "audience/agent",
+     "topic/onboarding",
+     "status/done"
+    ],
+    "title": "Implementation Plan: onboard-owner adaptive interview (R1–R5)",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Implementation Plan: onboard-owner adaptive interview"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Ground rules"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Edit plan"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Exit criteria"
+    },
+    {
+     "level": 2,
+     "line": 47,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "the R1–R5 requirements",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|the R1–R5 requirements]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements",
+     "warnings": []
+    },
+    {
+     "display": "the original onboard-owner requirements",
+     "embed": false,
+     "fragment": null,
+     "line": 44,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|the original onboard-owner requirements]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements",
+     "warnings": []
+    },
+    {
+     "display": "Requirements (R1–R5)",
+     "embed": false,
+     "fragment": null,
+     "line": 49,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|Requirements (R1–R5)]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 50,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 51,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 3865,
+   "tasks": [
+    {
+     "due": null,
+     "line": 41,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "SKILL.md reads as one coherent document — reviewed end-to-end post-edit."
+    },
+    {
+     "due": null,
+     "line": 42,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "Stages 2–9 no longer need to individually justify plain-text-only or cold-ask behavior; the interaction defaults section covers it once."
+    },
+    {
+     "due": null,
+     "line": 43,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "`brain validate` clean (0 errors, 4 pre-existing unrelated warnings); index regenerated; changelog entry added."
+    },
+    {
+     "due": null,
+     "line": 44,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "This plan and its requirements doc archived to `07_Archives/inbox/` with `status/done`, mirroring [[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|the original onboard-owner requirements]]'s lifecycle."
+    },
+    {
+     "due": null,
+     "line": 45,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "PR opened and merged — tracked outside this note; this note's `status/done` reflects the plan's own execution, not the PR merge."
+    }
+   ],
+   "title": "Implementation Plan: onboard-owner adaptive interview (R1–R5)",
+   "updated": "2026-08-11"
+  },
+  "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/plan",
+     "audience/human",
+     "audience/agent",
+     "topic/onboarding",
+     "status/done"
+    ],
+    "title": "Requirements: onboard-owner adaptive interview (UI enrichment, defaults, research-before-ask)",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Requirements: onboard-owner adaptive interview"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "text": "Feedback → gap → requirement"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Requirements"
+    },
+    {
+     "level": 2,
+     "line": 34,
+     "text": "Settled during triage (no longer open)"
+    },
+    {
+     "level": 2,
+     "line": 41,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "the 2026-08-11 Cursor dry-run feedback",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|the 2026-08-11 Cursor dry-run feedback]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "implementation plan",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 29,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "Source feedback",
+     "embed": false,
+     "fragment": null,
+     "line": 43,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|Source feedback]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback",
+     "warnings": []
+    },
+    {
+     "display": "Implementation plan",
+     "embed": false,
+     "fragment": null,
+     "line": 44,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|Implementation plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 45,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 46,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "Original onboard-owner requirements",
+     "embed": false,
+     "fragment": null,
+     "line": 47,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|Original onboard-owner requirements]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 5999,
+   "tasks": [],
+   "title": "Requirements: onboard-owner adaptive interview (UI enrichment, defaults, research-before-ask)",
+   "updated": "2026-08-11"
+  },
   "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md": {
    "backlinks": [
-    "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
+    "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -8573,6 +8856,111 @@
    "sizeBytes": 5243,
    "tasks": [],
    "title": "Requirements: onboard-owner skill",
+   "updated": "2026-08-11"
+  },
+  "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "cursor",
+    "session": "onboarding-2026-08-11",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/note",
+     "topic/onboarding",
+     "topic/template",
+     "status/done"
+    ],
+    "title": "Onboard-owner template feedback — 2026-08-11 dry run",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 15,
+     "text": "Onboard-owner template feedback — 2026-08-11 dry run"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Feedback"
+    },
+    {
+     "level": 2,
+     "line": 29,
+     "text": "Context from the run (for triage)"
+    },
+    {
+     "level": 2,
+     "line": 38,
+     "text": "Suggested triage"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "the resulting requirements (R1–R5)",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|the resulting requirements (R1–R5)]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements",
+     "warnings": []
+    },
+    {
+     "display": "implementation plan",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2647,
+   "tasks": [],
+   "title": "Onboard-owner template feedback — 2026-08-11 dry run",
    "updated": "2026-08-11"
   },
   "07_Archives/inbox/2026-08-11-prd-review.md": {
@@ -12913,6 +13301,8 @@
   "10_Agents/skills/agent-orientation/SKILL.md": {
    "backlinks": [
     "00_Meta/changelog.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
     "10_Agents/environments/README.md",
@@ -13787,7 +14177,9 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
-    "02_Inbox/2026-08-11-onboard-owner-template-feedback.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
+    "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md",
     "09_Templates/README.md",
     "09_Templates/variants/README.md",
     "10_Agents/skills/README.md",
@@ -13823,36 +14215,41 @@
     {
      "level": 2,
      "line": 29,
+     "text": "Interaction defaults"
+    },
+    {
+     "level": 2,
+     "line": 36,
      "text": "Teaching: tone and best practices"
     },
     {
      "level": 2,
-     "line": 40,
+     "line": 47,
      "text": "Write policy during onboarding"
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 51,
      "text": "State: the onboarding checklist"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 61,
      "text": "Stages"
     },
     {
      "level": 2,
-     "line": 77,
+     "line": 84,
      "text": "People map: worked example"
     },
     {
      "level": 2,
-     "line": 121,
+     "line": 128,
      "text": "Orchestration rules"
     },
     {
      "level": 2,
-     "line": 125,
+     "line": 132,
      "text": "Exit criteria (\"onboarded\")"
     }
    ],
@@ -13902,10 +14299,21 @@
      "warnings": []
     },
     {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 33,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 64,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -13916,7 +14324,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 64,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -13927,7 +14335,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 64,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -13938,7 +14346,7 @@
      "display": "09_Templates/variants/",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 66,
      "placeholder": false,
      "raw": "[[09_Templates/variants/README|09_Templates/variants/]]",
      "resolved": "09_Templates/variants/README.md",
@@ -13949,7 +14357,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 62,
+     "line": 69,
      "placeholder": false,
      "raw": "[[01_Profile/work]]",
      "resolved": "01_Profile/work.md",
@@ -13960,7 +14368,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 62,
+     "line": 69,
      "placeholder": false,
      "raw": "[[01_Profile/identity]]",
      "resolved": "01_Profile/identity.md",
@@ -13971,7 +14379,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 70,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -13982,7 +14390,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 72,
      "placeholder": false,
      "raw": "[[03_Journal/people/README]]",
      "resolved": "03_Journal/people/README.md",
@@ -13993,7 +14401,7 @@
      "display": null,
      "embed": false,
      "fragment": "People map: worked example",
-     "line": 67,
+     "line": 74,
      "placeholder": false,
      "raw": "[[#People map: worked example]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -14004,7 +14412,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 68,
+     "line": 75,
      "placeholder": false,
      "raw": "[[09_Templates/template-project]]",
      "resolved": "09_Templates/template-project.md",
@@ -14015,7 +14423,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 68,
+     "line": 75,
      "placeholder": false,
      "raw": "[[09_Templates/template-area]]",
      "resolved": "09_Templates/template-area.md",
@@ -14026,7 +14434,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -14037,7 +14445,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -14048,7 +14456,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -14059,7 +14467,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 70,
+     "line": 77,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -14070,7 +14478,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 78,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -14081,7 +14489,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 78,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -14092,7 +14500,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 128,
+     "line": 135,
      "placeholder": false,
      "raw": "[[01_Profile/work]]",
      "resolved": "01_Profile/work.md",
@@ -14100,7 +14508,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 15169,
+   "sizeBytes": 17059,
    "tasks": [],
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
