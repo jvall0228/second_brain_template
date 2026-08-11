@@ -23,7 +23,7 @@ Original review request preserved below for the record.
 
 ---
 
-The one-time backfill (ops plan Phase 4.3) added `expires:` to all 56 in-scope notes mechanically: 3-month TTL (2026-11-11) for the 8 harness wiring docs, the harnesses README, and [[06_Resources/harness-primitives-research]]; 6-month (2027-02-11) for [[06_Resources/example-resource]] (modeling the research TTL for adopters); 12-month (2027-08-11) for everything else. Every touched note's `updated:` was bumped per the duty-to-bump rule. The calls below were made mechanically but deserve an owner look:
+The one-time backfill (ops plan Phase 4.3) added `expires:` to all 56 in-scope notes mechanically: 3-month TTL (2026-11-11) for the 8 harness wiring docs, the harnesses README, and [[06_Resources/harness-primitives-research]]; 6-month (2027-02-11) for `06_Resources/example-resource.md` (modeling the research TTL for adopters; plain path — the note is a seeded example adopters delete); 12-month (2027-08-11) for everything else. Every touched note's `updated:` was bumped per the duty-to-bump rule. The calls below were made mechanically but deserve an owner look:
 
 ## Decisions to confirm or override
 
@@ -37,5 +37,5 @@ The one-time backfill (ops plan Phase 4.3) added `expires:` to all 56 in-scope n
 
 ## Related
 
-- [[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]] — Phase 4.3
+- `02_Inbox/2026-08-11-para-operations-implementation-plan.md` — Implementation plan, Phase 4.3 (plain path — a shipped capture note adopters delete)
 - [[00_Meta/conventions]] § Expiration — the schema this backfill instantiated

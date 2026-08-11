@@ -43,6 +43,10 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
    - `03_Journal/ideas/example-idea.md`
    - `03_Journal/periodic/daily/2025-01-15.md`
    - `03_Journal/periodic/weekly/2025-W03-review.md`
+   - `02_Inbox/2026-08-11-para-operations-implementation-plan.md` — shipped development capture, not structure
+   - `02_Inbox/2026-08-11-para-operations-skills-requirements.md` — shipped development capture, not structure
+
+   Index and README bullets pointing at an example are marked *"Delete once you've seen the pattern"* — drop those lines along with the note they point to. This list is mirrored machine-readably in `10_Agents/tools/adopt_examples.json`; CI's adopter-flow smoke test (`10_Agents/tools/adopt_check.py`) replays this whole section — delete the examples, fill `01_Profile/`, make a first capture — and fails if the list drifts or the post-adoption vault stops validating clean.
 7. Start capturing into `02_Inbox/` and triage from there.
 
 ## Validation and the vault index
