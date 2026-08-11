@@ -52,7 +52,11 @@ class OrientationOutputContractTests(unittest.TestCase):
             "missing interface ranking ladder heading",
         )
         # Six numbered rungs, browser explicitly present as a rung (issue #13).
-        rungs = re.findall(r"^[1-6]\. \*\*(.+?)\*\*", text, re.M)
+        # Scope the count to the ladder section so numbered-bold lists
+        # elsewhere in the skill can't satisfy (or inflate) it.
+        section = re.split(r"^#+ .*Interface ranking ladder.*$", text, flags=re.M)[1]
+        section = re.split(r"^#+ ", section, maxsplit=1, flags=re.M)[0]
+        rungs = re.findall(r"^[1-6]\. \*\*(.+?)\*\*", section, re.M)
         self.assertGreaterEqual(len(rungs), 6, "ladder must have six numbered rungs")
         joined = " ".join(rungs).lower()
         self.assertIn("browser", joined)
@@ -101,6 +105,31 @@ class InventoryFeedTests(unittest.TestCase):
             "10_Agents/environments/<env-slug>/orientation-inventory.md",
             read(SELF_MAINTENANCE),
         )
+
+
+class NeverBootstrapLinkedTests(unittest.TestCase):
+    """The environments landing convention says inventory notes are never
+    bootstrap-linked — enforce it mechanically over the bootstrap docs."""
+
+    BOOTSTRAP_DOCS = [
+        ROOT / "AGENTS.md",
+        ROOT / "00_Meta" / "index.md",
+        ROOT / "00_Meta" / "conventions.md",
+        ROOT / "01_Profile" / "now.md",
+        ROOT / "01_Profile" / "preferences.md",
+        ROOT / "01_Profile" / "defaults.md",
+    ]
+
+    def test_no_bootstrap_wikilinks_into_environments(self):
+        for doc in self.BOOTSTRAP_DOCS:
+            if not doc.exists():
+                continue
+            for match in re.findall(r"\[\[([^\]|#]+)", doc.read_text(encoding="utf-8")):
+                self.assertFalse(
+                    match.strip().startswith("10_Agents/environments/"),
+                    f"{doc.name} wikilinks into 10_Agents/environments/ — "
+                    "environment notes must never be bootstrap-linked",
+                )
 
 
 if __name__ == "__main__":

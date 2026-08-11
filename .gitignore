@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+
+# Machine-local Cursor overlay artifacts (installed per-clone by
+# onboard-harness, reversed by delete — never shared between machines).
+.cursor/
+.cursorignore

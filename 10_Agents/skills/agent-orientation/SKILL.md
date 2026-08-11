@@ -51,7 +51,7 @@ Per category, the solution in use **and how an agent can interface with it**, ra
 | Automation platforms | n8n (self-hosted = environment fact), Zapier, Make, none |
 | Other high-use tools | marketplaces, CRM systems, anything the owner touches daily |
 
-Per entry: solution name → best available ladder rung(s) → or **none**, with evidence (which CLI/MCC/connector was actually observed).
+Per entry: solution name → best available ladder rung(s) → or **none**, with evidence (which CLI/MCP/connector was actually observed).
 
 ### 2. Harness introspection
 
@@ -87,6 +87,7 @@ tags:
   - audience/agent
   - workflow/draft
 updated: <YYYY-MM-DD>
+expires: <YYYY-MM-DD +3 months — wiring/product facts TTL per conventions § Expiration>
 author: <harness-id>
 session: <session-or-pr-ref>
 ---

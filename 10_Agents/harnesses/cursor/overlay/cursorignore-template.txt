@@ -1,5 +1,9 @@
-# Example .cursorignore for privacy exclusions (copy to the vault root as
-# .cursorignore). The vault-wide privacy policy is an open owner decision
-# (PRD section 21) — these lines are illustrative, not shipped defaults.
-# 03_Journal/people/
-# 08_Assets/private/
+# .cursorignore — privacy exclusions for restricted/private-tagged notes.
+# Shipping policy since 2026-08-11 (issue #17 closed PRD section 21's open
+# question): the managed block below is rewritten from
+#   python3 10_Agents/tools/brain/brain.py list --tag restricted/private
+# by the onboard-harness overlay step — do not hand-edit inside the markers.
+# Lines outside the markers are yours (add extra owner exclusions freely).
+# See 10_Agents/harnesses/cursor/wiring.md (Restricted content).
+# BEGIN second-brain restricted/private (generated)
+# END second-brain restricted/private (generated)
