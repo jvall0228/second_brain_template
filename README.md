@@ -13,6 +13,29 @@ A Git-synced, Markdown-first **personal knowledge vault** that doubles as a shar
 
 This repository is a **template**. It ships the structure, conventions, note templates, and agent rules with all prior owner content removed and one worked example in each section. Fork it, delete the examples, and fill it with your own context.
 
+## Open with an AI agent
+
+New here? Hand this repo to an assistant with one click — it reads [AGENTS.md](AGENTS.md), bootstraps itself, and walks you through setup conversationally (no technical background needed):
+
+[![Open in Claude Code](.github/badges/claude-code.svg)](https://claude.ai/code/new?q=Help%20me%20setup%20https%3A%2F%2Fgithub.com%2Fjvall0228%2Fsecond_brain_template&repo=jvall0228%2Fsecond_brain_template)
+[![Open in Claude Web](.github/badges/claude-web.svg)](https://claude.ai/new?q=Help%20me%20setup%20https%3A%2F%2Fgithub.com%2Fjvall0228%2Fsecond_brain_template)
+[![Open in ChatGPT](.github/badges/chatgpt-web.svg)](https://chatgpt.com/?surface=tpp&skip_instant_query=1&q=Help%20me%20get%20started%20with%20https%3A%2F%2Fgithub.com%2Fjvall0228%2Fsecond_brain_template)
+
+**Claude Code** drops you straight into the repo. Prefer the **desktop app**? GitHub can't make `claude://` / `codex://` links clickable, so copy one into your browser's address bar:
+
+```
+# Claude desktop — Cowork
+claude://cowork/new?q=Help%20me%20setup%20https%3A%2F%2Fgithub.com%2Fjvall0228%2Fsecond_brain_template
+
+# Claude desktop — chat instead of Cowork
+claude://claude.ai/new?q=Help%20me%20setup%20https%3A%2F%2Fgithub.com%2Fjvall0228%2Fsecond_brain_template
+
+# ChatGPT desktop (Codex)
+codex://threads/new?prompt=Help%20me%20get%20started%20with%20https%3A%2F%2Fgithub.com%2Fjvall0228%2Fsecond_brain_template
+```
+
+Rather set it up yourself? The manual steps are in [Adopt this template](#adopt-this-template) below.
+
 ## Why
 
 Every AI conversation starts from scratch. This vault fixes that: a single source of truth for who you are, how you want output formatted, what you're working on, and what you know — so any agent can bootstrap itself without prior chat history.

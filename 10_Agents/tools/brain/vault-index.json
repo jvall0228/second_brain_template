@@ -17154,51 +17154,56 @@
     {
      "level": 2,
      "line": 16,
+     "text": "Open with an AI agent"
+    },
+    {
+     "level": 2,
+     "line": 39,
      "text": "Why"
     },
     {
      "level": 2,
-     "line": 20,
+     "line": 43,
      "text": "How it works"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 49,
      "text": "Adopt this template"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 77,
      "text": "Validation and the vault index"
     },
     {
      "level": 2,
-     "line": 65,
+     "line": 88,
      "text": "Personal vs work"
     },
     {
      "level": 2,
-     "line": 74,
+     "line": 97,
      "text": "Structure"
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 113,
      "text": "Entrypoints"
     },
     {
      "level": 2,
-     "line": 97,
+     "line": 120,
      "text": "Frameworks"
     },
     {
      "level": 2,
-     "line": 103,
+     "line": 126,
      "text": "Agent rules (summary)"
     }
    ],
    "links": [],
-   "sizeBytes": 6877,
+   "sizeBytes": 8398,
    "tasks": [],
    "title": "Second Brain Template",
    "updated": "2026-08-11"
