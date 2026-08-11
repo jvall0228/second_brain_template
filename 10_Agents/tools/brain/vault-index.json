@@ -3609,6 +3609,108 @@
    "title": "Implementation plan: M8–M12 (all non-deferred issues)",
    "updated": "2026-08-11"
   },
+  "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "claude-code",
+    "session": "onboarding-2026-08-11",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/note",
+     "topic/onboarding",
+     "topic/template",
+     "workflow/draft"
+    ],
+    "title": "Onboard-owner template feedback — 2026-08-11 dry run 2",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 15,
+     "text": "Onboard-owner template feedback — 2026-08-11 dry run 2"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Feedback"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Context from the run (for triage)"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "Suggested triage"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "adaptive-interview requirements",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|adaptive-interview requirements]]",
+     "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md",
+     "target": "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 6160,
+   "tasks": [],
+   "title": "Onboard-owner template feedback — 2026-08-11 dry run 2",
+   "updated": "2026-08-11"
+  },
   "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
    "backlinks": [
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
@@ -9007,6 +9109,7 @@
   "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md": {
    "backlinks": [
     "00_Meta/changelog.md",
+    "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md"
    ],
    "bodyTags": [],
@@ -13640,6 +13743,7 @@
   "10_Agents/skills/agent-orientation/SKILL.md": {
    "backlinks": [
     "00_Meta/changelog.md",
+    "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
@@ -14402,6 +14506,7 @@
   "10_Agents/skills/onboard-harness/SKILL.md": {
    "backlinks": [
     "00_Meta/changelog.md",
+    "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "06_Resources/recommended-skills.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
@@ -14540,6 +14645,7 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
+    "02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md",
