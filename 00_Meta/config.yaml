@@ -45,6 +45,15 @@
 #   stale_days: 30
 #   inbox_days: 14
 #
+# Upstream template version (issue #6): the upstream second_brain_template
+# release this fork has adopted — by convention the upstream release tag.
+# Written by the sync-upstream skill after a completed sync; the skill
+# compares this value against the upstream repo's template-v* git tags to
+# find pending releases. Free-form string; a record, not a switch — brain
+# parses and reports it (`brain config`) but drives no behavior from it.
+#
+# template_version: template-v1.2.0
+#
 # ---------------------------------------------------------------------------
 # Reserved keys (parsed and tolerated, not yet implemented — claimed by
-# open issues): environments, modules, provenance, sync, template_version.
+# open issues): environments, modules, provenance, sync.

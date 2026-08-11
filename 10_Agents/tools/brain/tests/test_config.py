@@ -320,6 +320,52 @@ class ContextKeyTests(unittest.TestCase):
         self.assertNotIn("context", brain.CONFIG_RESERVED_KEYS)
 
 
+class TemplateVersionKeyTests(unittest.TestCase):
+    """Spec §15.3: `template_version` (issue #6) — one scalar, free-form
+    version string. Written by the sync-upstream skill; parse-and-report
+    only, and free-form means no config-unknown-value warning exists."""
+
+    def findings(self, text):
+        with tempfile.TemporaryDirectory() as td:
+            root = vault(Path(td), {"00_Meta/config.yaml": text})
+            errors, warnings = brain.run_validate(root, check_index=False)
+            return (
+                [f for f in errors if f["path"] == brain.CONFIG_RELPATH],
+                [f for f in warnings if f["path"] == brain.CONFIG_RELPATH],
+            )
+
+    def test_any_scalar_is_clean(self):
+        for value in ("template-v1.2.0", "3", "2026-08-11-adhoc"):
+            errors, warnings = self.findings(f"template_version: {value}\n")
+            self.assertEqual((errors, warnings), ([], []), value)
+
+    def test_null_equals_absent(self):
+        errors, warnings = self.findings("template_version:\n")
+        self.assertEqual((errors, warnings), ([], []))
+
+    def test_non_scalar_is_invalid_value_error(self):
+        for text in (
+            "template_version: [template-v1]\n",
+            "template_version:\n  tag: template-v1\n",
+        ):
+            errors, warnings = self.findings(text)
+            self.assertEqual([f["rule"] for f in errors], ["config-invalid-value"], text)
+            self.assertEqual(warnings, [], text)
+
+    def test_template_version_accessor(self):
+        self.assertIsNone(brain.template_version({}))
+        self.assertIsNone(brain.template_version({"template_version": None}))
+        self.assertIsNone(brain.template_version({"template_version": ["v1"]}))
+        self.assertEqual(
+            brain.template_version({"template_version": " template-v1.2.0 "}),
+            "template-v1.2.0",
+        )
+
+    def test_template_version_no_longer_reserved(self):
+        self.assertIn("template_version", brain.CONFIG_IMPLEMENTED_KEYS)
+        self.assertNotIn("template_version", brain.CONFIG_RESERVED_KEYS)
+
+
 class ConfigCliTests(unittest.TestCase):
     def run_cli(self, root, *argv):
         out = io.StringIO()
@@ -337,6 +383,7 @@ class ConfigCliTests(unittest.TestCase):
             self.assertEqual(data["raw"], {})
             self.assertEqual(data["extensionTrust"], "first-party")
             self.assertEqual(data["context"], "personal")
+            self.assertIsNone(data["templateVersion"])
             self.assertEqual(
                 data["writeExceptions"], list(brain.AGENT_WRITE_DEFAULT_PREFIXES)
             )
@@ -349,6 +396,7 @@ class ConfigCliTests(unittest.TestCase):
                     "06_Resources/README.md": note(),
                     "00_Meta/config.yaml": (
                         "extension_trust: relaxed\ncontext: work\n"
+                        "template_version: template-v1.2.0\n"
                         "write_exceptions:\n  - 06_Resources\n"
                     ),
                 },
@@ -359,11 +407,13 @@ class ConfigCliTests(unittest.TestCase):
             self.assertTrue(data["present"])
             self.assertEqual(data["extensionTrust"], "relaxed")
             self.assertEqual(data["context"], "work")
+            self.assertEqual(data["templateVersion"], "template-v1.2.0")
             self.assertIn("06_Resources/", data["writeExceptions"])
             code, human = self.run_cli(root, "config")
             self.assertEqual(code, 0)
             self.assertIn("extension trust: relaxed", human)
             self.assertIn("context: work", human)
+            self.assertIn("template version: template-v1.2.0", human)
 
 
 if __name__ == "__main__":
