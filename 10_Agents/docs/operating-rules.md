@@ -23,6 +23,10 @@ Before creating or modifying a note, read:
 2. Any existing note you're about to update
 3. Relevant templates from `09_Templates/`
 
+## Update by Replacement, Not Accumulation
+
+When updating an existing note, **replace** the sections the new content conflicts with or obsoletes — never append a new section alongside a stale one. Append-only editing bloats notes into contradictory context dumps that mislead every future reader, human or agent. A note must always read as the current state of knowledge; git history preserves every prior version for posterity, so deleting outdated content loses nothing. Appending is right only for genuinely additive structures — logs, journals, changelog-style records — where entries are events, not claims.
+
 ## Canonical Note Handling
 
 Notes tagged `workflow/canonical` are vault infrastructure. Agents must **not** modify them directly.

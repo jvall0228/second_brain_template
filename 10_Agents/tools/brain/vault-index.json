@@ -484,7 +484,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 14504,
+   "sizeBytes": 14823,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -7229,21 +7229,26 @@
     {
      "level": 2,
      "line": 26,
+     "text": "Update by Replacement, Not Accumulation"
+    },
+    {
+     "level": 2,
+     "line": 30,
      "text": "Canonical Note Handling"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 42,
      "text": "Self-Validation"
     },
     {
      "level": 2,
-     "line": 49,
+     "line": 53,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 53,
+     "line": 57,
      "text": "Related"
     }
    ],
@@ -7285,7 +7290,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 44,
+     "line": 48,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -7296,7 +7301,7 @@
      "display": null,
      "embed": false,
      "fragment": "Filename Convention",
-     "line": 45,
+     "line": 49,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Filename Convention]]",
      "resolved": "00_Meta/conventions.md",
@@ -7307,7 +7312,7 @@
      "display": "brain",
      "embed": false,
      "fragment": null,
-     "line": 47,
+     "line": 51,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -7318,7 +7323,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 59,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -7329,7 +7334,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 60,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -7340,7 +7345,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 61,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -7348,7 +7353,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2072,
+   "sizeBytes": 2692,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -8909,12 +8914,12 @@
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 36,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 2967,
+   "sizeBytes": 3271,
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -9083,7 +9088,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 2137,
+   "sizeBytes": 2276,
    "title": "Skill: Vault Maintenance",
    "updated": "2026-08-11"
   },

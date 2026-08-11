@@ -22,7 +22,7 @@ Keep the vault passing its own checks and its snapshots truthful.
    - Frontmatter/tag/filename errors on **non-canonical** notes → fix directly (bump `updated:`)
    - Errors on `workflow/canonical` notes → do **not** edit directly; propose the fix via an Inbox note tagged `workflow/needs-review` (see `10_Agents/docs/operating-rules.md`), unless the human has directed the change in this session
 3. **Investigate warnings** (ambiguous links, case mismatches): fix the link text to the unambiguous full path where intent is clear; otherwise list them for the human.
-4. **Scan for duplication:** notes sharing a subject (e.g. one "supersedes" another, or two reference notes covering the same tool/topic) violate the one-topic-one-note rule — propose a merge to the human with a suggested surviving note; never merge unprompted.
+4. **Scan for duplication:** notes sharing a subject (e.g. one "supersedes" another, or two reference notes covering the same tool/topic) violate the one-topic-one-note rule — propose a merge to the human with a suggested surviving note and which conflicting sections get replaced — a merge rewrites overlapping content into one coherent whole, never concatenates two notes. Never merge unprompted.
 5. **Refresh snapshots:**
    - `00_Meta/status.md` is deliberately non-canonical — update its snapshot/milestone table directly when reality moved.
    - Add a dated `00_Meta/changelog.md` entry **only** for structural changes (it's canonical: needs human direction).

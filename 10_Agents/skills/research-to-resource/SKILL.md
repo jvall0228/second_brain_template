@@ -29,6 +29,7 @@ Convert research output into reference material that stays useful after the sess
 
 - Invoked research writes to `06_Resources/`; incidental findings mid-task still go through `inbox-capture`.
 - Long raw dumps don't belong in the vault — distill; attach oversized source material under `08_Assets/` only if genuinely needed.
+- **Merging is replacement, not accumulation.** Rewrite or delete the passages the new research conflicts with or obsoletes — never append a fresh section beside a stale one. The note must read as one coherent current state; its size should track knowledge, not edit count. Git history is the archive.
 - **One topic, one note.** Notes are atomic: each covers exactly one subject, and each subject lives in exactly one note (sections for facets, wikilinks for relationships). Never let two notes share authority over the same facts — every reader and agent should find one place to look and one place to update.
 - If session constraints force a temporary parallel note (e.g. the target is awaiting review), merging it back is unfinished work — flag it, don't normalize it.
 
