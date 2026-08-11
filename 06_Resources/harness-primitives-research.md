@@ -5,13 +5,12 @@ tags:
   - topic/software
   - audience/human
   - audience/agent
-  - workflow/draft
 updated: 2026-08-11
 ---
 
 # Harness Primitives Research
 
-Grounded research (2026-08-11) on the extension surface of every harness in the [[00_Meta/prd]] §8.3 support table, plus the universal standards layer they build on. Produced for M6/M7 planning (see [[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]) by nine parallel research agents working from official documentation; load-bearing claims link their sources. Harness surfaces move fast — treat this as accurate as of the date above and re-verify before each adapter ships (per §8.3, wiring specifics are settled at build time). Unverifiable details are marked as gaps, not guessed.
+Grounded research (2026-08-11) on the extension surface of every harness in the [[00_Meta/prd]] §8.3 support table, plus the universal standards layer they build on. Produced for M6/M7 planning (see [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]) by nine parallel research agents working from official documentation; load-bearing claims link their sources. Harness surfaces move fast — treat this as accurate as of the date above and re-verify before each adapter ships (per §8.3, wiring specifics are settled at build time). Unverifiable details are marked as gaps, not guessed.
 
 ## Headline Findings
 
@@ -453,7 +452,7 @@ Headless CLI: `agent -p "…" --output-format text|json`, `--mode=plan|ask`, ses
 
 ### GitHub Copilot (P1)
 
-> **Superseded 2026-08-11** by [[02_Inbox/2026-08-11-copilot-harness-deep-dive]] — several claims below were corrected there (hooks run on the CLI and cloud agent, not just VS Code; symlinked skills fail in the CLI; the CLI has a real `@`-include mechanism; the surface is now branded "Copilot cloud agent").
+> **Superseded 2026-08-11** by [[06_Resources/copilot-harness-deep-dive]] — several claims below were corrected there (hooks run on the CLI and cloud agent, not just VS Code; symlinked skills fail in the CLI; the CLI has a real `@`-include mechanism; the surface is now branded "Copilot cloud agent").
 GitHub Copilot is GitHub/Microsoft's AI pair-programmer family: **Copilot Chat in VS Code** (agent mode in the editor), the **Copilot cloud agent** (the async agent formerly branded "coding agent," running in ephemeral [GitHub Actions environments](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent)), and the **[Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/overview)** terminal agent — plus code review, JetBrains/Visual Studio/Xcode/Eclipse IDE plugins, and github.com web chat; proprietary, subscription-based (Free/Pro/Pro+/Business/Enterprise).
 
 #### Context & memory files
@@ -594,5 +593,5 @@ Headless `muse exec "prompt"` (or `--prompt-file`) for scripts/CI, `--json` for 
 ## Related
 
 - [[00_Meta/prd]] — §8.3 support tiers this research grounds; §9.3 plugin-library design
-- [[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]] — consumes these findings (adapter manifests, install map)
+- [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]] — consumes these findings (adapter manifests, install map)
 - [[01_Profile/preferences]] — portable home for voice/tone (in lieu of output styles)

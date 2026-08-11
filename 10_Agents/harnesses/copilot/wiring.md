@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # Copilot Wiring
 
-Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [[02_Inbox/2026-08-11-copilot-harness-deep-dive|the Copilot deep-dive]] (sources linked there); topics the deep-dive did not re-verify cite [[02_Inbox/2026-08-11-harness-primitives-research#GitHub Copilot (P1)|the M6 research]]. Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
+Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [[06_Resources/copilot-harness-deep-dive|the Copilot deep-dive]] (sources linked there); topics the deep-dive did not re-verify cite [[06_Resources/harness-primitives-research#GitHub Copilot (P1)|the M6 research]]. Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
 
 ## Entrypoint loading
 

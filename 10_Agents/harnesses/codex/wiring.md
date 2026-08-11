@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # Codex Wiring
 
-Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [[02_Inbox/2026-08-11-harness-primitives-research#Codex|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [[06_Resources/harness-primitives-research#Codex|research]]); re-verify before relying on paths.
 
 ## Entrypoint loading
 

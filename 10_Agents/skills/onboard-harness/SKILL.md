@@ -54,4 +54,4 @@ Consult `10_Agents/harnesses/<harness>/wiring.md` when it exists — it is autho
 
 - `00_Meta/prd.md` §8.3 (support tiers), §19 M6 (the install decision)
 - `10_Agents/harnesses/<name>/wiring.md` — per-harness paths (shipped with the adapters)
-- `02_Inbox/2026-08-11-harness-primitives-research.md` — the research grounding the path map
+- `06_Resources/harness-primitives-research.md` — the research grounding the path map

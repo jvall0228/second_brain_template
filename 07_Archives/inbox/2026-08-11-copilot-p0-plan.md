@@ -5,13 +5,13 @@ tags:
   - topic/software
   - audience/human
   - audience/agent
-  - workflow/draft
+  - status/done
 updated: 2026-08-11
 ---
 
 # Copilot P0 Promotion Plan
 
-Owner directive (2026-08-11): "Add copilot support. Do research on the copilot harness and implement." Copilot has been a P1 adapter since M6.3; this plan brings it to first-class support, grounded in [[02_Inbox/2026-08-11-copilot-harness-deep-dive|the same-day deep-dive research]]. Standards-first discipline holds: the adapter carries only what a cross-harness standard cannot. The plan was adversarially reviewed before implementation (see the review log at the end); all accepted findings are folded in below.
+Owner directive (2026-08-11): "Add copilot support. Do research on the copilot harness and implement." Copilot has been a P1 adapter since M6.3; this plan brings it to first-class support, grounded in [[06_Resources/copilot-harness-deep-dive|the same-day deep-dive research]]. Standards-first discipline holds: the adapter carries only what a cross-harness standard cannot. The plan was adversarially reviewed before implementation (see the review log at the end); all accepted findings are folded in below.
 
 ## Scope decision
 
@@ -60,7 +60,7 @@ The install algorithm's step 1 claims the `~/.agents/skills/` symlinks cover Cop
   - §18: bullet recording the Copilot `agentStop` hook as a shipped enforcement layer (cloud agent; approval-gate caveat).
 - **`10_Agents/skills/recommended-automations/SKILL.md`** (canonical): move Copilot out of the "no built-in scheduler" bucket — gh-aw scheduled workflows / `gh agent-task` for cloud flows; cron + `copilot -p` locally.
 - **`10_Agents/harnesses/README.md`**: Copilot row → P0 tier with updated summary; grounding sentence notes Copilot facts now live in the deep-dive note.
-- **`02_Inbox/2026-08-11-harness-primitives-research.md`**: one-line supersession pointer at the top of its Copilot section (the [[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 plan]]'s Copilot line stays as-is — executed history).
+- **`06_Resources/harness-primitives-research.md`**: one-line supersession pointer at the top of its Copilot section (the [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 plan]]'s Copilot line stays as-is — executed history).
 - **`00_Meta/changelog.md`**: new entry "Copilot Promoted to P0".
 - No `00_Meta/status.md` change (milestone table; this is post-milestone work). No brain.py/spec/test changes (no `.md` semantics touched).
 - Implementation detail: run `python3 10_Agents/tools/brain/brain.py index` explicitly before committing (not relying on the pre-commit hook as a side effect), then `validate`.

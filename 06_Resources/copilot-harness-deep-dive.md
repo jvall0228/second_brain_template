@@ -5,13 +5,12 @@ tags:
   - topic/software
   - audience/human
   - audience/agent
-  - workflow/draft
 updated: 2026-08-11
 ---
 
 # Copilot Harness Deep Dive
 
-Focused re-verification (2026-08-11, later the same day as [[02_Inbox/2026-08-11-harness-primitives-research|the M6 harness research]]) of GitHub Copilot's agent surface, produced to ground the promotion of the Copilot adapter from P1 to first-class support. Five parallel research agents read the live GitHub and VS Code documentation pages directly (not summarization passes); load-bearing claims quote their sources. **This note supersedes the Copilot section of the M6 research note** — that section's five recorded gaps are resolved below, and several of its claims are corrected. Facts are accurate as of the date above; re-verify before relying on paths.
+Focused re-verification (2026-08-11, later the same day as [[06_Resources/harness-primitives-research|the M6 harness research]]) of GitHub Copilot's agent surface, produced to ground the promotion of the Copilot adapter from P1 to first-class support. Five parallel research agents read the live GitHub and VS Code documentation pages directly (not summarization passes); load-bearing claims quote their sources. **This note supersedes the Copilot section of the M6 research note** — that section's five recorded gaps are resolved below, and several of its claims are corrected. Facts are accurate as of the date above; re-verify before relying on paths.
 
 ## Headline corrections to the M6 baseline
 

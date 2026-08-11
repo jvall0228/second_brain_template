@@ -118,7 +118,7 @@
     "00_Meta/index.md",
     "00_Meta/prd.md",
     "00_Meta/status.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
     "AGENTS.md"
    ],
@@ -193,9 +193,9 @@
      "fragment": null,
      "line": 17,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|deep-dive research]]",
-     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
-     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "raw": "[[06_Resources/copilot-harness-deep-dive|deep-dive research]]",
+     "resolved": "06_Resources/copilot-harness-deep-dive.md",
+     "target": "06_Resources/copilot-harness-deep-dive",
      "warnings": []
     },
     {
@@ -375,7 +375,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 12185,
+   "sizeBytes": 12189,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -385,8 +385,8 @@
     "00_Meta/changelog.md",
     "00_Meta/index.md",
     "00_Meta/prd.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
     "06_Resources/example-resource.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "09_Templates/README.md",
     "10_Agents/README.md",
     "10_Agents/docs/operating-rules.md",
@@ -961,9 +961,9 @@
     "00_Meta/conventions.md",
     "00_Meta/index.md",
     "00_Meta/status.md",
-    "02_Inbox/2026-08-11-copilot-p0-plan.md",
-    "02_Inbox/2026-08-11-harness-primitives-research.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
     "10_Agents/harnesses/README.md",
     "10_Agents/skills/README.md",
@@ -1434,7 +1434,7 @@
     "00_Meta/changelog.md",
     "00_Meta/index.md",
     "00_Meta/prd.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md"
    ],
    "bodyTags": [],
@@ -1823,8 +1823,8 @@
    "backlinks": [
     "00_Meta/index.md",
     "01_Profile/README.md",
-    "02_Inbox/2026-08-11-harness-primitives-research.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "10_Agents/README.md",
     "AGENTS.md"
    ],
@@ -1974,1213 +1974,6 @@
    "sizeBytes": 683,
    "title": "Work",
    "updated": "2026-08-10"
-  },
-  "02_Inbox/2026-08-11-copilot-harness-deep-dive.md": {
-   "backlinks": [
-    "00_Meta/changelog.md",
-    "02_Inbox/2026-08-11-copilot-p0-plan.md",
-    "02_Inbox/2026-08-11-harness-primitives-research.md",
-    "10_Agents/harnesses/README.md",
-    "10_Agents/harnesses/copilot/wiring.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "tags": [
-     "type/reference",
-     "topic/software",
-     "audience/human",
-     "audience/agent",
-     "workflow/draft"
-    ],
-    "title": "Copilot Harness Deep Dive",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 12,
-     "text": "Copilot Harness Deep Dive"
-    },
-    {
-     "level": 2,
-     "line": 16,
-     "text": "Headline corrections to the M6 baseline"
-    },
-    {
-     "level": 2,
-     "line": 25,
-     "text": "Per-surface facts"
-    },
-    {
-     "level": 3,
-     "line": 27,
-     "text": "Instructions & entrypoints"
-    },
-    {
-     "level": 3,
-     "line": 33,
-     "text": "Skills"
-    },
-    {
-     "level": 3,
-     "line": 40,
-     "text": "Copilot CLI"
-    },
-    {
-     "level": 3,
-     "line": 48,
-     "text": "Cloud agent"
-    },
-    {
-     "level": 3,
-     "line": 59,
-     "text": "Hooks (cross-surface schema)"
-    },
-    {
-     "level": 3,
-     "line": 65,
-     "text": "Custom agents, plugins, MCP (VS Code)"
-    },
-    {
-     "level": 2,
-     "line": 71,
-     "text": "Wiring implications (what the adapter should do)"
-    },
-    {
-     "level": 2,
-     "line": 79,
-     "text": "Still unverified (consolidated)"
-    },
-    {
-     "level": 2,
-     "line": 94,
-     "text": "Sources"
-    }
-   ],
-   "links": [
-    {
-     "display": "the M6 harness research",
-     "embed": false,
-     "fragment": null,
-     "line": 14,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research|the M6 harness research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 19859,
-   "title": "Copilot Harness Deep Dive",
-   "updated": "2026-08-11"
-  },
-  "02_Inbox/2026-08-11-copilot-p0-plan.md": {
-   "backlinks": [],
-   "bodyTags": [],
-   "frontmatter": {
-    "tags": [
-     "type/plan",
-     "topic/software",
-     "audience/human",
-     "audience/agent",
-     "workflow/draft"
-    ],
-    "title": "Copilot P0 Promotion Plan",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 12,
-     "text": "Copilot P0 Promotion Plan"
-    },
-    {
-     "level": 2,
-     "line": 16,
-     "text": "Scope decision"
-    },
-    {
-     "level": 2,
-     "line": 24,
-     "text": "Deliverables"
-    },
-    {
-     "level": 3,
-     "line": 26,
-     "text": "D1 — Real repo config under `.github/` (zero-setup; outside the validated corpus)"
-    },
-    {
-     "level": 3,
-     "line": 40,
-     "text": "D2 — Adapter rewrite: `10_Agents/harnesses/copilot/wiring.md`"
-    },
-    {
-     "level": 3,
-     "line": 51,
-     "text": "D3 — onboard-harness correction (`10_Agents/skills/onboard-harness/SKILL.md`)"
-    },
-    {
-     "level": 3,
-     "line": 55,
-     "text": "D4 — Promotion + docs closeout"
-    },
-    {
-     "level": 2,
-     "line": 68,
-     "text": "Explicit non-goals"
-    },
-    {
-     "level": 2,
-     "line": 75,
-     "text": "Acceptance criteria"
-    },
-    {
-     "level": 2,
-     "line": 83,
-     "text": "Adversarial review log (2026-08-11)"
-    }
-   ],
-   "links": [
-    {
-     "display": "the same-day deep-dive research",
-     "embed": false,
-     "fragment": null,
-     "line": 14,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|the same-day deep-dive research]]",
-     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
-     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 22,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": "M5–M7 plan",
-     "embed": false,
-     "fragment": null,
-     "line": 63,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 plan]]",
-     "resolved": "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
-     "target": "02_Inbox/2026-08-11-m5-m7-implementation-plan",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 13104,
-   "title": "Copilot P0 Promotion Plan",
-   "updated": "2026-08-11"
-  },
-  "02_Inbox/2026-08-11-harness-primitives-research.md": {
-   "backlinks": [
-    "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
-    "10_Agents/harnesses/README.md",
-    "10_Agents/harnesses/claude-code/wiring.md",
-    "10_Agents/harnesses/codex/wiring.md",
-    "10_Agents/harnesses/copilot/wiring.md",
-    "10_Agents/harnesses/cursor/wiring.md",
-    "10_Agents/harnesses/muse-code/wiring.md",
-    "10_Agents/harnesses/opencode/wiring.md",
-    "10_Agents/harnesses/pi/wiring.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "tags": [
-     "type/reference",
-     "topic/software",
-     "audience/human",
-     "audience/agent",
-     "workflow/draft"
-    ],
-    "title": "Harness Primitives Research",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 12,
-     "text": "Harness Primitives Research"
-    },
-    {
-     "level": 2,
-     "line": 16,
-     "text": "Headline Findings"
-    },
-    {
-     "level": 2,
-     "line": 28,
-     "text": "Primitive Overlap Matrix"
-    },
-    {
-     "level": 2,
-     "line": 48,
-     "text": "Where the Overlaps Are"
-    },
-    {
-     "level": 2,
-     "line": 64,
-     "text": "Implications for the Standards-First Plan"
-    },
-    {
-     "level": 2,
-     "line": 77,
-     "text": "Full Specs"
-    },
-    {
-     "level": 3,
-     "line": 81,
-     "text": "Universal standards + protocols (P0)"
-    },
-    {
-     "level": 4,
-     "line": 84,
-     "text": "AGENTS.md — the entrypoint/context standard"
-    },
-    {
-     "level": 4,
-     "line": 90,
-     "text": "Agent Skills (SKILL.md) — the workflow-packaging standard"
-    },
-    {
-     "level": 4,
-     "line": 97,
-     "text": "MCP (Model Context Protocol) — the tool/context protocol"
-    },
-    {
-     "level": 4,
-     "line": 103,
-     "text": "Other live cross-harness conventions"
-    },
-    {
-     "level": 4,
-     "line": 108,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 115,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 133,
-     "text": "Claude Code (P0)"
-    },
-    {
-     "level": 4,
-     "line": 136,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 142,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 145,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 148,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 151,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 154,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 157,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 160,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 163,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 166,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 169,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 172,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 175,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 183,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 199,
-     "text": "Codex (P0)"
-    },
-    {
-     "level": 4,
-     "line": 202,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 205,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 208,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 211,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 214,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 217,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 220,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 223,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 226,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 229,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 232,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 235,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 238,
-     "text": "Ignore files"
-    },
-    {
-     "level": 4,
-     "line": 241,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 248,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 274,
-     "text": "opencode (P0)"
-    },
-    {
-     "level": 4,
-     "line": 277,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 280,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 283,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 286,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 289,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 292,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 295,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 298,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 301,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 304,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 307,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 310,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 313,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 321,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 330,
-     "text": "Pi (P0)"
-    },
-    {
-     "level": 4,
-     "line": 333,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 336,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 339,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 342,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 345,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 348,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 351,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 354,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 357,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 360,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 363,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 366,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 369,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 377,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 390,
-     "text": "Cursor (P1)"
-    },
-    {
-     "level": 4,
-     "line": 393,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 396,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 399,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 402,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 405,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 408,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 411,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 414,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 417,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 420,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 423,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 426,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 429,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 437,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 454,
-     "text": "GitHub Copilot (P1)"
-    },
-    {
-     "level": 4,
-     "line": 459,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 464,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 467,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 470,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 473,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 476,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 479,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 482,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 485,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 488,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 491,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 494,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 497,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 505,
-     "text": "Sources"
-    },
-    {
-     "level": 3,
-     "line": 533,
-     "text": "Muse Code (P1)"
-    },
-    {
-     "level": 4,
-     "line": 536,
-     "text": "Context & memory files"
-    },
-    {
-     "level": 4,
-     "line": 539,
-     "text": "Rules"
-    },
-    {
-     "level": 4,
-     "line": 542,
-     "text": "Skills"
-    },
-    {
-     "level": 4,
-     "line": 545,
-     "text": "Commands"
-    },
-    {
-     "level": 4,
-     "line": 548,
-     "text": "Subagents / custom agents"
-    },
-    {
-     "level": 4,
-     "line": 551,
-     "text": "Hooks"
-    },
-    {
-     "level": 4,
-     "line": 554,
-     "text": "Plugins"
-    },
-    {
-     "level": 4,
-     "line": 557,
-     "text": "Output styles / personas"
-    },
-    {
-     "level": 4,
-     "line": 560,
-     "text": "MCP"
-    },
-    {
-     "level": 4,
-     "line": 563,
-     "text": "Config & settings"
-    },
-    {
-     "level": 4,
-     "line": 566,
-     "text": "Permissions & sandboxing"
-    },
-    {
-     "level": 4,
-     "line": 569,
-     "text": "Automation & scheduling"
-    },
-    {
-     "level": 4,
-     "line": 572,
-     "text": "Vault wiring implications"
-    },
-    {
-     "level": 4,
-     "line": 580,
-     "text": "Sources"
-    },
-    {
-     "level": 2,
-     "line": 594,
-     "text": "Related"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 14,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": "M5–M7 Implementation Plan",
-     "embed": false,
-     "fragment": null,
-     "line": 14,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]",
-     "resolved": "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
-     "target": "02_Inbox/2026-08-11-m5-m7-implementation-plan",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 22,
-     "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 456,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive]]",
-     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
-     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 596,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": "M5–M7 Implementation Plan",
-     "embed": false,
-     "fragment": null,
-     "line": 597,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]",
-     "resolved": "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
-     "target": "02_Inbox/2026-08-11-m5-m7-implementation-plan",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 598,
-     "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 108617,
-   "title": "Harness Primitives Research",
-   "updated": "2026-08-11"
-  },
-  "02_Inbox/2026-08-11-m5-m7-implementation-plan.md": {
-   "backlinks": [
-    "02_Inbox/2026-08-11-copilot-p0-plan.md",
-    "02_Inbox/2026-08-11-harness-primitives-research.md"
-   ],
-   "bodyTags": [],
-   "frontmatter": {
-    "tags": [
-     "type/plan",
-     "audience/human",
-     "audience/agent",
-     "topic/software",
-     "workflow/draft",
-     "status/active"
-    ],
-    "title": "M5–M7 Implementation Plan",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 13,
-     "text": "M5–M7 Implementation Plan"
-    },
-    {
-     "level": 2,
-     "line": 17,
-     "text": "Decision Log (owner, 2026-08-11)"
-    },
-    {
-     "level": 2,
-     "line": 33,
-     "text": "M5 — Vault Index CLI (`brain`)"
-    },
-    {
-     "level": 3,
-     "line": 37,
-     "text": "Phase M5.0 — Parsing and link-resolution spec (prerequisite)"
-    },
-    {
-     "level": 3,
-     "line": 47,
-     "text": "Phase M5.1 — Indexer"
-    },
-    {
-     "level": 3,
-     "line": 52,
-     "text": "Phase M5.2 — Query commands"
-    },
-    {
-     "level": 3,
-     "line": 63,
-     "text": "Phase M5.3 — `validate`"
-    },
-    {
-     "level": 3,
-     "line": 67,
-     "text": "Phase M5.4 — Hook and CI"
-    },
-    {
-     "level": 3,
-     "line": 73,
-     "text": "Phase M5.5 — Tests, docs, closeout"
-    },
-    {
-     "level": 3,
-     "line": 79,
-     "text": "M5 acceptance criteria"
-    },
-    {
-     "level": 2,
-     "line": 86,
-     "text": "M6 — Agent Plugin Library (core)"
-    },
-    {
-     "level": 3,
-     "line": 90,
-     "text": "Phase M6.1 — Skills library (standards track)"
-    },
-    {
-     "level": 3,
-     "line": 119,
-     "text": "Phase M6.2 — P0 harness adapters"
-    },
-    {
-     "level": 3,
-     "line": 133,
-     "text": "Phase M6.3 — P1 second wave"
-    },
-    {
-     "level": 3,
-     "line": 137,
-     "text": "M6 acceptance criteria"
-    },
-    {
-     "level": 2,
-     "line": 144,
-     "text": "M7 — Environment Integration"
-    },
-    {
-     "level": 3,
-     "line": 148,
-     "text": "Phase M7.1 — `agent-orientation` skill"
-    },
-    {
-     "level": 3,
-     "line": 152,
-     "text": "Phase M7.2 — `recommended-automations` skill"
-    },
-    {
-     "level": 3,
-     "line": 156,
-     "text": "Phase M7.3 — `self-maintenance` skill"
-    },
-    {
-     "level": 3,
-     "line": 160,
-     "text": "M7 acceptance criteria"
-    },
-    {
-     "level": 2,
-     "line": 166,
-     "text": "Sequencing and dependencies"
-    },
-    {
-     "level": 2,
-     "line": 170,
-     "text": "Risks and mitigations"
-    },
-    {
-     "level": 2,
-     "line": 178,
-     "text": "Open items for the owner"
-    },
-    {
-     "level": 2,
-     "line": 185,
-     "text": "Related"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 15,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 39,
-     "placeholder": false,
-     "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
-     "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
-     "target": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 65,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 77,
-     "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 77,
-     "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
-     "warnings": []
-    },
-    {
-     "display": "the harness research",
-     "embed": false,
-     "fragment": null,
-     "line": 117,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research|the harness research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
-     "warnings": []
-    },
-    {
-     "display": "Harness Primitives Research (2026-08-11)",
-     "embed": false,
-     "fragment": null,
-     "line": 123,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research|Harness Primitives Research (2026-08-11)]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 131,
-     "placeholder": false,
-     "raw": "[[01_Profile/preferences]]",
-     "resolved": "01_Profile/preferences.md",
-     "target": "01_Profile/preferences",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 187,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 188,
-     "placeholder": false,
-     "raw": "[[00_Meta/status]]",
-     "resolved": "00_Meta/status.md",
-     "target": "00_Meta/status",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 189,
-     "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 190,
-     "placeholder": false,
-     "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
-     "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
-     "target": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules",
-     "warnings": []
-    },
-    {
-     "display": "Harness Primitives Research",
-     "embed": false,
-     "fragment": null,
-     "line": 191,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research|Harness Primitives Research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 17256,
-   "title": "M5–M7 Implementation Plan",
-   "updated": "2026-08-11"
   },
   "02_Inbox/2026-08-11-triage-report.md": {
    "backlinks": [],
@@ -5233,6 +4026,105 @@
    "title": "Resources",
    "updated": "2026-08-11"
   },
+  "06_Resources/copilot-harness-deep-dive.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
+    "10_Agents/harnesses/README.md",
+    "10_Agents/harnesses/copilot/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Copilot Harness Deep Dive",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Copilot Harness Deep Dive"
+    },
+    {
+     "level": 2,
+     "line": 15,
+     "text": "Headline corrections to the M6 baseline"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Per-surface facts"
+    },
+    {
+     "level": 3,
+     "line": 26,
+     "text": "Instructions & entrypoints"
+    },
+    {
+     "level": 3,
+     "line": 32,
+     "text": "Skills"
+    },
+    {
+     "level": 3,
+     "line": 39,
+     "text": "Copilot CLI"
+    },
+    {
+     "level": 3,
+     "line": 47,
+     "text": "Cloud agent"
+    },
+    {
+     "level": 3,
+     "line": 58,
+     "text": "Hooks (cross-surface schema)"
+    },
+    {
+     "level": 3,
+     "line": 64,
+     "text": "Custom agents, plugins, MCP (VS Code)"
+    },
+    {
+     "level": 2,
+     "line": 70,
+     "text": "Wiring implications (what the adapter should do)"
+    },
+    {
+     "level": 2,
+     "line": 78,
+     "text": "Still unverified (consolidated)"
+    },
+    {
+     "level": 2,
+     "line": 93,
+     "text": "Sources"
+    }
+   ],
+   "links": [
+    {
+     "display": "the M6 harness research",
+     "embed": false,
+     "fragment": null,
+     "line": 13,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|the M6 harness research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 19833,
+   "title": "Copilot Harness Deep Dive",
+   "updated": "2026-08-11"
+  },
   "06_Resources/example-resource.md": {
    "backlinks": [
     "00_Meta/index.md",
@@ -5294,6 +4186,716 @@
    "sizeBytes": 988,
    "title": "Example Resource",
    "updated": "2026-08-10"
+  },
+  "06_Resources/harness-primitives-research.md": {
+   "backlinks": [
+    "06_Resources/copilot-harness-deep-dive.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
+    "10_Agents/harnesses/README.md",
+    "10_Agents/harnesses/claude-code/wiring.md",
+    "10_Agents/harnesses/codex/wiring.md",
+    "10_Agents/harnesses/copilot/wiring.md",
+    "10_Agents/harnesses/cursor/wiring.md",
+    "10_Agents/harnesses/muse-code/wiring.md",
+    "10_Agents/harnesses/opencode/wiring.md",
+    "10_Agents/harnesses/pi/wiring.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/reference",
+     "topic/software",
+     "audience/human",
+     "audience/agent"
+    ],
+    "title": "Harness Primitives Research",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Harness Primitives Research"
+    },
+    {
+     "level": 2,
+     "line": 15,
+     "text": "Headline Findings"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Primitive Overlap Matrix"
+    },
+    {
+     "level": 2,
+     "line": 47,
+     "text": "Where the Overlaps Are"
+    },
+    {
+     "level": 2,
+     "line": 63,
+     "text": "Implications for the Standards-First Plan"
+    },
+    {
+     "level": 2,
+     "line": 76,
+     "text": "Full Specs"
+    },
+    {
+     "level": 3,
+     "line": 80,
+     "text": "Universal standards + protocols (P0)"
+    },
+    {
+     "level": 4,
+     "line": 83,
+     "text": "AGENTS.md — the entrypoint/context standard"
+    },
+    {
+     "level": 4,
+     "line": 89,
+     "text": "Agent Skills (SKILL.md) — the workflow-packaging standard"
+    },
+    {
+     "level": 4,
+     "line": 96,
+     "text": "MCP (Model Context Protocol) — the tool/context protocol"
+    },
+    {
+     "level": 4,
+     "line": 102,
+     "text": "Other live cross-harness conventions"
+    },
+    {
+     "level": 4,
+     "line": 107,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 114,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 132,
+     "text": "Claude Code (P0)"
+    },
+    {
+     "level": 4,
+     "line": 135,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 141,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 144,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 147,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 150,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 153,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 156,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 159,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 162,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 165,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 168,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 171,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 174,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 182,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 198,
+     "text": "Codex (P0)"
+    },
+    {
+     "level": 4,
+     "line": 201,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 204,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 207,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 210,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 213,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 216,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 219,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 222,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 225,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 228,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 231,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 234,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 237,
+     "text": "Ignore files"
+    },
+    {
+     "level": 4,
+     "line": 240,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 247,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 273,
+     "text": "opencode (P0)"
+    },
+    {
+     "level": 4,
+     "line": 276,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 279,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 282,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 285,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 288,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 291,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 294,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 297,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 300,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 303,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 306,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 309,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 312,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 320,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 329,
+     "text": "Pi (P0)"
+    },
+    {
+     "level": 4,
+     "line": 332,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 335,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 338,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 341,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 344,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 347,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 350,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 353,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 356,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 359,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 362,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 365,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 368,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 376,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 389,
+     "text": "Cursor (P1)"
+    },
+    {
+     "level": 4,
+     "line": 392,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 395,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 398,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 401,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 404,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 407,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 410,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 413,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 416,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 419,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 422,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 425,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 428,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 436,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 453,
+     "text": "GitHub Copilot (P1)"
+    },
+    {
+     "level": 4,
+     "line": 458,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 463,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 466,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 469,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 472,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 475,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 478,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 481,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 484,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 487,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 490,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 493,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 496,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 504,
+     "text": "Sources"
+    },
+    {
+     "level": 3,
+     "line": 532,
+     "text": "Muse Code (P1)"
+    },
+    {
+     "level": 4,
+     "line": 535,
+     "text": "Context & memory files"
+    },
+    {
+     "level": 4,
+     "line": 538,
+     "text": "Rules"
+    },
+    {
+     "level": 4,
+     "line": 541,
+     "text": "Skills"
+    },
+    {
+     "level": 4,
+     "line": 544,
+     "text": "Commands"
+    },
+    {
+     "level": 4,
+     "line": 547,
+     "text": "Subagents / custom agents"
+    },
+    {
+     "level": 4,
+     "line": 550,
+     "text": "Hooks"
+    },
+    {
+     "level": 4,
+     "line": 553,
+     "text": "Plugins"
+    },
+    {
+     "level": 4,
+     "line": 556,
+     "text": "Output styles / personas"
+    },
+    {
+     "level": 4,
+     "line": 559,
+     "text": "MCP"
+    },
+    {
+     "level": 4,
+     "line": 562,
+     "text": "Config & settings"
+    },
+    {
+     "level": 4,
+     "line": 565,
+     "text": "Permissions & sandboxing"
+    },
+    {
+     "level": 4,
+     "line": 568,
+     "text": "Automation & scheduling"
+    },
+    {
+     "level": 4,
+     "line": 571,
+     "text": "Vault wiring implications"
+    },
+    {
+     "level": 4,
+     "line": 579,
+     "text": "Sources"
+    },
+    {
+     "level": 2,
+     "line": 593,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 13,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "M5–M7 Implementation Plan",
+     "embed": false,
+     "fragment": null,
+     "line": 13,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[01_Profile/preferences]]",
+     "resolved": "01_Profile/preferences.md",
+     "target": "01_Profile/preferences",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 455,
+     "placeholder": false,
+     "raw": "[[06_Resources/copilot-harness-deep-dive]]",
+     "resolved": "06_Resources/copilot-harness-deep-dive.md",
+     "target": "06_Resources/copilot-harness-deep-dive",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 595,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "M5–M7 Implementation Plan",
+     "embed": false,
+     "fragment": null,
+     "line": 596,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 597,
+     "placeholder": false,
+     "raw": "[[01_Profile/preferences]]",
+     "resolved": "01_Profile/preferences.md",
+     "target": "01_Profile/preferences",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 108609,
+   "title": "Harness Primitives Research",
+   "updated": "2026-08-11"
   },
   "07_Archives/README.md": {
    "backlinks": [
@@ -5400,6 +5002,401 @@
    ],
    "sizeBytes": 1361,
    "title": "Archives",
+   "updated": "2026-08-11"
+  },
+  "07_Archives/inbox/2026-08-11-copilot-p0-plan.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/plan",
+     "topic/software",
+     "audience/human",
+     "audience/agent",
+     "status/done"
+    ],
+    "title": "Copilot P0 Promotion Plan",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Copilot P0 Promotion Plan"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Scope decision"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "text": "Deliverables"
+    },
+    {
+     "level": 3,
+     "line": 26,
+     "text": "D1 — Real repo config under `.github/` (zero-setup; outside the validated corpus)"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "D2 — Adapter rewrite: `10_Agents/harnesses/copilot/wiring.md`"
+    },
+    {
+     "level": 3,
+     "line": 51,
+     "text": "D3 — onboard-harness correction (`10_Agents/skills/onboard-harness/SKILL.md`)"
+    },
+    {
+     "level": 3,
+     "line": 55,
+     "text": "D4 — Promotion + docs closeout"
+    },
+    {
+     "level": 2,
+     "line": 68,
+     "text": "Explicit non-goals"
+    },
+    {
+     "level": 2,
+     "line": 75,
+     "text": "Acceptance criteria"
+    },
+    {
+     "level": 2,
+     "line": 83,
+     "text": "Adversarial review log (2026-08-11)"
+    }
+   ],
+   "links": [
+    {
+     "display": "the same-day deep-dive research",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[06_Resources/copilot-harness-deep-dive|the same-day deep-dive research]]",
+     "resolved": "06_Resources/copilot-harness-deep-dive.md",
+     "target": "06_Resources/copilot-harness-deep-dive",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 22,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "M5–M7 plan",
+     "embed": false,
+     "fragment": null,
+     "line": 63,
+     "placeholder": false,
+     "raw": "[[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 plan]]",
+     "resolved": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
+     "target": "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 13096,
+   "title": "Copilot P0 Promotion Plan",
+   "updated": "2026-08-11"
+  },
+  "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md": {
+   "backlinks": [
+    "06_Resources/harness-primitives-research.md",
+    "07_Archives/inbox/2026-08-11-copilot-p0-plan.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/plan",
+     "audience/human",
+     "audience/agent",
+     "topic/software",
+     "status/done"
+    ],
+    "title": "M5–M7 Implementation Plan",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "M5–M7 Implementation Plan"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Decision Log (owner, 2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 32,
+     "text": "M5 — Vault Index CLI (`brain`)"
+    },
+    {
+     "level": 3,
+     "line": 36,
+     "text": "Phase M5.0 — Parsing and link-resolution spec (prerequisite)"
+    },
+    {
+     "level": 3,
+     "line": 46,
+     "text": "Phase M5.1 — Indexer"
+    },
+    {
+     "level": 3,
+     "line": 51,
+     "text": "Phase M5.2 — Query commands"
+    },
+    {
+     "level": 3,
+     "line": 62,
+     "text": "Phase M5.3 — `validate`"
+    },
+    {
+     "level": 3,
+     "line": 66,
+     "text": "Phase M5.4 — Hook and CI"
+    },
+    {
+     "level": 3,
+     "line": 72,
+     "text": "Phase M5.5 — Tests, docs, closeout"
+    },
+    {
+     "level": 3,
+     "line": 78,
+     "text": "M5 acceptance criteria"
+    },
+    {
+     "level": 2,
+     "line": 85,
+     "text": "M6 — Agent Plugin Library (core)"
+    },
+    {
+     "level": 3,
+     "line": 89,
+     "text": "Phase M6.1 — Skills library (standards track)"
+    },
+    {
+     "level": 3,
+     "line": 118,
+     "text": "Phase M6.2 — P0 harness adapters"
+    },
+    {
+     "level": 3,
+     "line": 132,
+     "text": "Phase M6.3 — P1 second wave"
+    },
+    {
+     "level": 3,
+     "line": 136,
+     "text": "M6 acceptance criteria"
+    },
+    {
+     "level": 2,
+     "line": 143,
+     "text": "M7 — Environment Integration"
+    },
+    {
+     "level": 3,
+     "line": 147,
+     "text": "Phase M7.1 — `agent-orientation` skill"
+    },
+    {
+     "level": 3,
+     "line": 151,
+     "text": "Phase M7.2 — `recommended-automations` skill"
+    },
+    {
+     "level": 3,
+     "line": 155,
+     "text": "Phase M7.3 — `self-maintenance` skill"
+    },
+    {
+     "level": 3,
+     "line": 159,
+     "text": "M7 acceptance criteria"
+    },
+    {
+     "level": 2,
+     "line": 165,
+     "text": "Sequencing and dependencies"
+    },
+    {
+     "level": 2,
+     "line": 169,
+     "text": "Risks and mitigations"
+    },
+    {
+     "level": 2,
+     "line": 177,
+     "text": "Open items for the owner"
+    },
+    {
+     "level": 2,
+     "line": 184,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 38,
+     "placeholder": false,
+     "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
+     "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
+     "target": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 64,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[00_Meta/status]]",
+     "resolved": "00_Meta/status.md",
+     "target": "00_Meta/status",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[00_Meta/changelog]]",
+     "resolved": "00_Meta/changelog.md",
+     "target": "00_Meta/changelog",
+     "warnings": []
+    },
+    {
+     "display": "the harness research",
+     "embed": false,
+     "fragment": null,
+     "line": 116,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|the harness research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": "Harness Primitives Research (2026-08-11)",
+     "embed": false,
+     "fragment": null,
+     "line": 122,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|Harness Primitives Research (2026-08-11)]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 130,
+     "placeholder": false,
+     "raw": "[[01_Profile/preferences]]",
+     "resolved": "01_Profile/preferences.md",
+     "target": "01_Profile/preferences",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 186,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 187,
+     "placeholder": false,
+     "raw": "[[00_Meta/status]]",
+     "resolved": "00_Meta/status.md",
+     "target": "00_Meta/status",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 188,
+     "placeholder": false,
+     "raw": "[[00_Meta/changelog]]",
+     "resolved": "00_Meta/changelog.md",
+     "target": "00_Meta/changelog",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 189,
+     "placeholder": false,
+     "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
+     "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
+     "target": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules",
+     "warnings": []
+    },
+    {
+     "display": "Harness Primitives Research",
+     "embed": false,
+     "fragment": null,
+     "line": 190,
+     "placeholder": false,
+     "raw": "[[06_Resources/harness-primitives-research|Harness Primitives Research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 17214,
+   "title": "M5–M7 Implementation Plan",
    "updated": "2026-08-11"
   },
   "07_Archives/inbox/2026-08-11-prd-review.md": {
@@ -7344,9 +7341,9 @@
      "fragment": null,
      "line": 27,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research|the 2026-08-11 harness research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research|the 2026-08-11 harness research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     },
     {
@@ -7355,13 +7352,13 @@
      "fragment": null,
      "line": 27,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|the same-day Copilot deep-dive]]",
-     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
-     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "raw": "[[06_Resources/copilot-harness-deep-dive|the same-day Copilot deep-dive]]",
+     "resolved": "06_Resources/copilot-harness-deep-dive.md",
+     "target": "06_Resources/copilot-harness-deep-dive",
      "warnings": []
     }
    ],
-   "sizeBytes": 2205,
+   "sizeBytes": 2191,
    "title": "Harness Adapters",
    "updated": "2026-08-11"
   },
@@ -7426,13 +7423,13 @@
      "fragment": "Claude Code",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#Claude Code|research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#Claude Code|research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     }
    ],
-   "sizeBytes": 2733,
+   "sizeBytes": 2726,
    "title": "Claude Code Wiring",
    "updated": "2026-08-11"
   },
@@ -7497,13 +7494,13 @@
      "fragment": "Codex",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#Codex|research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#Codex|research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     }
    ],
-   "sizeBytes": 2816,
+   "sizeBytes": 2809,
    "title": "Codex Wiring",
    "updated": "2026-08-11"
   },
@@ -7576,9 +7573,9 @@
      "fragment": null,
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-copilot-harness-deep-dive|the Copilot deep-dive]]",
-     "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
-     "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
+     "raw": "[[06_Resources/copilot-harness-deep-dive|the Copilot deep-dive]]",
+     "resolved": "06_Resources/copilot-harness-deep-dive.md",
+     "target": "06_Resources/copilot-harness-deep-dive",
      "warnings": []
     },
     {
@@ -7587,9 +7584,9 @@
      "fragment": "GitHub Copilot (P1)",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#GitHub Copilot (P1)|the M6 research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P1)|the M6 research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     },
     {
@@ -7604,7 +7601,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9015,
+   "sizeBytes": 9001,
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
   },
@@ -7669,13 +7666,13 @@
      "fragment": "Cursor",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#Cursor|research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#Cursor|research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     }
    ],
-   "sizeBytes": 2067,
+   "sizeBytes": 2060,
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -7740,13 +7737,13 @@
      "fragment": "Muse Code",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#Muse Code|research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#Muse Code|research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     }
    ],
-   "sizeBytes": 1982,
+   "sizeBytes": 1975,
    "title": "Muse Code Wiring",
    "updated": "2026-08-11"
   },
@@ -7811,13 +7808,13 @@
      "fragment": "opencode",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#opencode|research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#opencode|research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     }
    ],
-   "sizeBytes": 2208,
+   "sizeBytes": 2201,
    "title": "opencode Wiring",
    "updated": "2026-08-11"
   },
@@ -7882,13 +7879,13 @@
      "fragment": "Pi",
      "line": 14,
      "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-harness-primitives-research#Pi|research]]",
-     "resolved": "02_Inbox/2026-08-11-harness-primitives-research.md",
-     "target": "02_Inbox/2026-08-11-harness-primitives-research",
+     "raw": "[[06_Resources/harness-primitives-research#Pi|research]]",
+     "resolved": "06_Resources/harness-primitives-research.md",
+     "target": "06_Resources/harness-primitives-research",
      "warnings": []
     }
    ],
-   "sizeBytes": 2335,
+   "sizeBytes": 2328,
    "title": "Pi Wiring",
    "updated": "2026-08-11"
   },
@@ -8325,7 +8322,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4875,
+   "sizeBytes": 4868,
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
@@ -8934,7 +8931,7 @@
   "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md": {
    "backlinks": [
     "00_Meta/prd.md",
-    "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
+    "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "10_Agents/README.md",
     "10_Agents/solutions/README.md",
     "10_Agents/solutions/obsidian-issues/README.md",

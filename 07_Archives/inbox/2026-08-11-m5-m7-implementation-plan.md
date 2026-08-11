@@ -5,8 +5,7 @@ tags:
   - audience/human
   - audience/agent
   - topic/software
-  - workflow/draft
-  - status/active
+  - status/done
 updated: 2026-08-11
 ---
 
@@ -114,13 +113,13 @@ Proposed initial set (nine — family scope is decided; the exact list is confir
 
 Installs are manifest-driven, idempotent (re-running is a no-op), and reversible (`uninstall` removes exactly what was installed). Symlinks are created **at install time on the adopter's machine, never committed to the repo** — the in-repo symlink approach was retired (PRD §8.2). Each harness adapter's wiring doc carries the primitive map: which categories that harness supports and the exact user-config discovery paths.
 
-Per [[02_Inbox/2026-08-11-harness-primitives-research|the harness research]], the skills map collapses nicely: one `~/.agents/skills/` link covers the six harnesses that scan the shared standard path, plus one `~/.claude/skills/` link for Claude Code — and the memory-file update targets `~/.claude/CLAUDE.md` for Claude Code while the six AGENTS.md-native harnesses need only their user-scope instruction file (or nothing, where user memory is config-driven; per-harness detail in the wiring docs).
+Per [[06_Resources/harness-primitives-research|the harness research]], the skills map collapses nicely: one `~/.agents/skills/` link covers the six harnesses that scan the shared standard path, plus one `~/.claude/skills/` link for Claude Code — and the memory-file update targets `~/.claude/CLAUDE.md` for Claude Code while the six AGENTS.md-native harnesses need only their user-scope instruction file (or nothing, where user memory is config-driven; per-harness detail in the wiring docs).
 
 ### Phase M6.2 — P0 harness adapters
 
 `10_Agents/harnesses/{claude-code,codex,opencode,pi}/`, each shipping a reference config and a wiring doc. Per §8.3, wiring specifics are settled at build time; every wiring doc must cover: entrypoint loading, the skills install path (user config), hook installation, and how the harness invokes `brain`. Adapters carry only what a standard cannot.
 
-**Grounding:** [[02_Inbox/2026-08-11-harness-primitives-research|Harness Primitives Research (2026-08-11)]] holds the full per-harness surface specs and the overlap matrix. Research-informed adapter manifests (re-verify at build time):
+**Grounding:** [[06_Resources/harness-primitives-research|Harness Primitives Research (2026-08-11)]] holds the full per-harness surface specs and the overlap matrix. Research-informed adapter manifests (re-verify at build time):
 
 - **Claude Code** — `CLAUDE.md` import (does not read `AGENTS.md` natively); `~/.claude/skills/` links (it does not scan the shared `.agents/skills/`); settings permission denies; `.mcp.json`. Optional nicety: an output style.
 - **Codex** — `config.toml` incl. `[mcp_servers]`; reads `AGENTS.md` natively but expands no imports/wikilinks and caps project docs at 32 KiB — the wiring doc addresses both.
@@ -188,4 +187,4 @@ M5 → M6 → M7, strictly: M6's maintenance and onboarding skills call `brain` 
 - [[00_Meta/status]] — milestone table
 - [[00_Meta/changelog]] — decision record
 - [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]] — M5.0 starting point
-- [[02_Inbox/2026-08-11-harness-primitives-research|Harness Primitives Research]] — grounded per-harness specs, overlap matrix, adapter manifests
+- [[06_Resources/harness-primitives-research|Harness Primitives Research]] — grounded per-harness specs, overlap matrix, adapter manifests

@@ -24,4 +24,4 @@ Every adapter ships a `wiring.md` (entrypoint loading, skills install paths, hoo
 | [[10_Agents/harnesses/cursor/wiring\|Cursor]] | P1 | native `AGENTS.md`; `.mdc` rules; only harness with a real ignore file |
 | [[10_Agents/harnesses/muse-code/wiring\|Muse Code]] | P1 | volatile (launched 2026-08-05); user-scope config only |
 
-Facts are grounded in [[02_Inbox/2026-08-11-harness-primitives-research|the 2026-08-11 harness research]] (sources linked there); Copilot facts live in [[02_Inbox/2026-08-11-copilot-harness-deep-dive|the same-day Copilot deep-dive]], which supersedes that note's Copilot section. Harness surfaces move fast — **re-verify a wiring doc against its sources before relying on it**, and bump `updated:` when you do.
+Facts are grounded in [[06_Resources/harness-primitives-research|the 2026-08-11 harness research]] (sources linked there); Copilot facts live in [[06_Resources/copilot-harness-deep-dive|the same-day Copilot deep-dive]], which supersedes that note's Copilot section. Harness surfaces move fast — **re-verify a wiring doc against its sources before relying on it**, and bump `updated:` when you do.
