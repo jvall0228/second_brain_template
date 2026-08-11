@@ -19,39 +19,48 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-TEMPLATE = ROOT / "09_Templates" / "template-daily-log.md"
-DAILY_DIR = ROOT / "03_Journal" / "periodic" / "daily"
+
+
+def render_note(root: Path, today: datetime.date) -> str:
+    """Instantiate the daily template for `today` with placeholders resolved."""
+    template = root / "09_Templates" / "template-daily-log.md"
+    daily_dir = root / "03_Journal" / "periodic" / "daily"
+    iso_year, iso_week, _ = today.isocalendar()
+    yesterday = today - datetime.timedelta(days=1)
+    weekly = f"03_Journal/periodic/weekly/{iso_year}-W{iso_week:02d}-review"
+    return (
+        template.read_text(encoding="utf-8")
+        .replace("{{date}}", today.isoformat())
+        # Unresolved wikilinks are brain-validate errors, so link related
+        # notes only once they exist; plain text otherwise.
+        .replace(
+            "[[{{RELATED_WEEKLY_REVIEW}}]]",
+            f"[[{weekly}]]" if (root / f"{weekly}.md").exists() else "not yet created",
+        )
+        .replace(
+            "[[{{PREVIOUS_DAILY_NOTE}}]]",
+            f"[[{yesterday.isoformat()}]]"
+            if (daily_dir / f"{yesterday.isoformat()}.md").exists()
+            else "none",
+        )
+    )
+
+
+def ensure_note(root: Path, today: datetime.date) -> tuple[Path, bool]:
+    """Create today's note if absent; return (path, created). Never overwrites."""
+    daily_dir = root / "03_Journal" / "periodic" / "daily"
+    target = daily_dir / f"{today.isoformat()}.md"
+    if target.exists():
+        return target, False
+    content = render_note(root, today)
+    daily_dir.mkdir(parents=True, exist_ok=True)
+    target.write_text(content, encoding="utf-8")
+    return target, True
 
 
 def main() -> int:
-    today = datetime.date.today()
-    target = DAILY_DIR / f"{today.isoformat()}.md"
-
-    if not target.exists():
-        iso_year, iso_week, _ = today.isocalendar()
-        yesterday = today - datetime.timedelta(days=1)
-        weekly = f"03_Journal/periodic/weekly/{iso_year}-W{iso_week:02d}-review"
-        content = (
-            TEMPLATE.read_text(encoding="utf-8")
-            .replace("{{date}}", today.isoformat())
-            # Unresolved wikilinks are brain-validate errors, so link related
-            # notes only once they exist; plain text otherwise.
-            .replace(
-                "[[{{RELATED_WEEKLY_REVIEW}}]]",
-                f"[[{weekly}]]" if (ROOT / f"{weekly}.md").exists() else "not yet created",
-            )
-            .replace(
-                "[[{{PREVIOUS_DAILY_NOTE}}]]",
-                f"[[{yesterday.isoformat()}]]"
-                if (DAILY_DIR / f"{yesterday.isoformat()}.md").exists()
-                else "none",
-            )
-        )
-        DAILY_DIR.mkdir(parents=True, exist_ok=True)
-        target.write_text(content, encoding="utf-8")
-        print(f"created {target.relative_to(ROOT)}")
-    else:
-        print(f"exists  {target.relative_to(ROOT)}")
+    target, created = ensure_note(ROOT, datetime.date.today())
+    print(f"{'created' if created else 'exists '} {target.relative_to(ROOT)}")
 
     code_cli = shutil.which("code")
     if code_cli:
