@@ -933,15 +933,17 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
         "freshness",
         "maintenance",
     }
-    unknown = sorted(set(data) - allowed)
-    if unknown:
+    keys_are_strings = all(type(key) is str for key in data)
+    unknown = set(data) - allowed if keys_are_strings else set()
+    if not keys_are_strings or unknown:
         findings.append(
             _manifest_finding(
                 "environment-schema",
                 "manifest has unknown keys (names suppressed at the privacy boundary)",
             )
         )
-    if data.get("schemaVersion") != ENVIRONMENT_SCHEMA_VERSION:
+    version = data.get("schemaVersion")
+    if type(version) is not int or version != ENVIRONMENT_SCHEMA_VERSION:
         findings.append(
             _manifest_finding(
                 "environment-schema-version",
@@ -956,7 +958,11 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
                 "slug must be kebab-case and equal its immediate directory name",
             )
         )
-    if data.get("class") not in ENVIRONMENT_CLASS_VALUES:
+    environment_class = data.get("class")
+    if (
+        type(environment_class) is not str
+        or environment_class not in ENVIRONMENT_CLASS_VALUES
+    ):
         findings.append(
             _manifest_finding(
                 "environment-class",
@@ -966,7 +972,7 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
     surfaces = data.get("surfaces")
     if (
         not isinstance(surfaces, list)
-        or not all(_valid_environment_slug(item) for item in surfaces)
+        or not all(type(item) is str and _valid_environment_slug(item) for item in surfaces)
         or len(set(surfaces)) != len(surfaces)
         or surfaces != sorted(surfaces)
     ):
@@ -978,7 +984,7 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
         )
     capabilities = data.get("capabilities")
     if not isinstance(capabilities, dict) or not all(
-        _valid_environment_slug(key) and isinstance(value, bool)
+        type(key) is str and _valid_environment_slug(key) and type(value) is bool
         for key, value in capabilities.items()
     ) or (isinstance(capabilities, dict) and list(capabilities) != sorted(capabilities)):
         findings.append(
@@ -1016,12 +1022,16 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
                     )
                 )
                 continue
-            key = (row.get("algorithm"), row.get("digest"), row.get("source"))
+            algorithm = row.get("algorithm")
+            digest = row.get("digest")
+            source = row.get("source")
             if (
-                key[0] != "sha256"
-                or not isinstance(key[1], str)
-                or not ENVIRONMENT_DIGEST_RE.fullmatch(key[1])
-                or key[2] != "machine-v1"
+                type(algorithm) is not str
+                or type(digest) is not str
+                or type(source) is not str
+                or algorithm != "sha256"
+                or not ENVIRONMENT_DIGEST_RE.fullmatch(digest)
+                or source != "machine-v1"
             ):
                 findings.append(
                     _manifest_finding(
@@ -1029,13 +1039,16 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
                         "fingerprints require a SHA-256 digest and a supported generic source",
                     )
                 )
-            elif key in seen:
+                continue
+            key = (algorithm, digest, source)
+            if key in seen:
                 findings.append(
                     _manifest_finding(
                         "environment-fingerprints", "duplicate fingerprint record"
                     )
                 )
-            seen.add(key)
+            else:
+                seen.add(key)
     freshness = data.get("freshness")
     if not isinstance(freshness, dict) or set(freshness) != {
         "checkedAt",
@@ -4822,6 +4835,152 @@ def cmd_install(root: Path, args) -> int:
         return 1
 
 
+def _migration_identity(info: os.stat_result) -> tuple[int, int, int]:
+    return (info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode))
+
+
+def _migration_source_files(source_dir: Path) -> list[str]:
+    """List regular files while binding every traversed source directory."""
+    try:
+        initial = os.lstat(source_dir)
+    except FileNotFoundError:
+        raise EnvironmentSelectionError("migration-source-not-found") from None
+    except OSError:
+        raise EnvironmentSelectionError("unsafe-migration-path") from None
+    if _link_like_stat(initial) or not stat.S_ISDIR(initial.st_mode):
+        raise EnvironmentSelectionError("unsafe-migration-path")
+    initial_identity = _migration_identity(initial)
+    rows: list[str] = []
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    directory = getattr(os, "O_DIRECTORY", 0)
+
+    if nofollow and directory and os.open in getattr(os, "supports_dir_fd", set()):
+        descriptors: list[int] = []
+
+        def walk_descriptor(parent: int, prefix: tuple[str, ...]) -> None:
+            try:
+                with os.scandir(parent) as iterator:
+                    entries = sorted(iterator, key=lambda entry: entry.name)
+            except OSError:
+                raise EnvironmentSelectionError("unsafe-migration-path") from None
+            for entry in entries:
+                name = entry.name
+                try:
+                    if entry.is_symlink():
+                        raise EnvironmentSelectionError("unsafe-migration-path")
+                    if entry.is_dir(follow_symlinks=False):
+                        child = os.open(
+                            name,
+                            os.O_RDONLY
+                            | directory
+                            | nofollow
+                            | getattr(os, "O_CLOEXEC", 0),
+                            dir_fd=parent,
+                        )
+                        descriptors.append(child)
+                        if not stat.S_ISDIR(os.fstat(child).st_mode):
+                            raise EnvironmentSelectionError("unsafe-migration-path")
+                        walk_descriptor(child, (*prefix, name))
+                        descriptors.pop()
+                        os.close(child)
+                        continue
+                    child = os.open(
+                        name,
+                        os.O_RDONLY | nofollow | getattr(os, "O_CLOEXEC", 0),
+                        dir_fd=parent,
+                    )
+                    try:
+                        if not stat.S_ISREG(os.fstat(child).st_mode):
+                            raise EnvironmentSelectionError("unsafe-migration-path")
+                    finally:
+                        os.close(child)
+                    rows.append("/".join((*prefix, name)))
+                except EnvironmentSelectionError:
+                    raise
+                except OSError:
+                    raise EnvironmentSelectionError("unsafe-migration-path") from None
+
+        try:
+            source_fd = os.open(
+                source_dir,
+                os.O_RDONLY
+                | directory
+                | nofollow
+                | getattr(os, "O_CLOEXEC", 0),
+            )
+            descriptors.append(source_fd)
+            if _migration_identity(os.fstat(source_fd)) != initial_identity:
+                raise EnvironmentSelectionError("unsafe-migration-path")
+            walk_descriptor(source_fd, ())
+        except EnvironmentSelectionError:
+            raise
+        except OSError:
+            raise EnvironmentSelectionError("unsafe-migration-path") from None
+        finally:
+            for descriptor in reversed(descriptors):
+                try:
+                    os.close(descriptor)
+                except OSError:
+                    pass
+    else:
+        # Portable fallback: compare each entry's identity at discovery, on
+        # entry, and again after traversal. Rows stay private until all checks
+        # pass, so a race yields only a stable refusal code.
+        snapshots: list[tuple[Path, tuple[int, int, int]]] = []
+
+        def walk_path(
+            directory_path: Path,
+            prefix: tuple[str, ...],
+            expected: tuple[int, int, int],
+        ) -> None:
+            try:
+                before = os.lstat(directory_path)
+                if (
+                    _link_like_stat(before)
+                    or not stat.S_ISDIR(before.st_mode)
+                    or _migration_identity(before) != expected
+                ):
+                    raise EnvironmentSelectionError("unsafe-migration-path")
+                names = sorted(os.listdir(directory_path))
+                for name in names:
+                    path = directory_path / name
+                    info = os.lstat(path)
+                    identity = _migration_identity(info)
+                    if _link_like_stat(info):
+                        raise EnvironmentSelectionError("unsafe-migration-path")
+                    if stat.S_ISDIR(info.st_mode):
+                        walk_path(path, (*prefix, name), identity)
+                    elif stat.S_ISREG(info.st_mode):
+                        snapshots.append((path, identity))
+                        rows.append("/".join((*prefix, name)))
+                    else:
+                        raise EnvironmentSelectionError("unsafe-migration-path")
+                after = os.lstat(directory_path)
+                if _link_like_stat(after) or _migration_identity(after) != expected:
+                    raise EnvironmentSelectionError("unsafe-migration-path")
+            except EnvironmentSelectionError:
+                raise
+            except OSError:
+                raise EnvironmentSelectionError("unsafe-migration-path") from None
+
+        walk_path(source_dir, (), initial_identity)
+        try:
+            for path, expected in snapshots:
+                info = os.lstat(path)
+                if _link_like_stat(info) or _migration_identity(info) != expected:
+                    raise EnvironmentSelectionError("unsafe-migration-path")
+        except OSError:
+            raise EnvironmentSelectionError("unsafe-migration-path") from None
+
+    try:
+        final = os.lstat(source_dir)
+    except OSError:
+        raise EnvironmentSelectionError("unsafe-migration-path") from None
+    if _link_like_stat(final) or _migration_identity(final) != initial_identity:
+        raise EnvironmentSelectionError("unsafe-migration-path")
+    return rows
+
+
 def _environment_migration_preview(root: Path, source: str, target: str) -> dict:
     if not _valid_environment_slug(source) or not _valid_environment_slug(target):
         raise EnvironmentSelectionError("invalid-migration-slug")
@@ -4829,31 +4988,22 @@ def _environment_migration_preview(root: Path, source: str, target: str) -> dict
         raise EnvironmentSelectionError("migration-slugs-equal")
     source_dir = _safe_environment_dir(root, source)
     target_dir = _safe_environment_dir(root, target)
-    if not source_dir.is_dir():
-        raise EnvironmentSelectionError("migration-source-not-found")
-    if (source_dir / ENVIRONMENT_MANIFEST_NAME).exists():
+    source_files = _migration_source_files(source_dir)
+    if ENVIRONMENT_MANIFEST_NAME in source_files:
         raise EnvironmentSelectionError("migration-source-already-registered")
     if target_dir.exists() or target_dir.is_symlink():
         raise EnvironmentSelectionError("migration-target-exists")
     rows: list[dict[str, str]] = []
-    for dirpath, dirnames, filenames in os.walk(source_dir, followlinks=False):
-        if any((Path(dirpath) / d).is_symlink() for d in dirnames):
-            raise EnvironmentSelectionError("unsafe-migration-path")
-        dirnames[:] = sorted(dirnames)
-        for filename in sorted(filenames):
-            path = Path(dirpath) / filename
-            if path.is_symlink():
-                raise EnvironmentSelectionError("unsafe-migration-path")
-            rel_inside = path.relative_to(source_dir)
-            destination = target_dir / rel_inside
-            if destination.exists() or destination.is_symlink():
-                raise EnvironmentSelectionError("migration-target-collision")
-            rows.append(
-                {
-                    "from": path.relative_to(root).as_posix(),
-                    "to": destination.relative_to(root).as_posix(),
-                }
-            )
+    for relative in source_files:
+        destination = target_dir / relative
+        if destination.exists() or destination.is_symlink():
+            raise EnvironmentSelectionError("migration-target-collision")
+        rows.append(
+            {
+                "from": f"{ENVIRONMENTS_RELPATH}/{source}/{relative}",
+                "to": f"{ENVIRONMENTS_RELPATH}/{target}/{relative}",
+            }
+        )
     return {
         "applySupported": False,
         "files": rows,

@@ -492,7 +492,10 @@ required. Raw hostname, username,
 home/repository path, credential, URL, and endpoint values never enter tracked
 data, output, logs, or errors. `freshness` dates are real and ordered. The
 maintenance record always points to the local inventory and requires owner
-review. Unknown keys or schema versions are errors.
+review. JSON field types are exact: schema version is integer `1` (never a
+boolean/float), and every fingerprint component is a string before duplicate
+or digest checks. Malformed values produce redacted findings rather than an
+exception. Unknown keys or schema versions are errors.
 
 ### 20.2 Clone-local state
 
@@ -541,7 +544,9 @@ capability values.
 - `brain env migrate <source> <target>` is preview-only. It enumerates exact
   vault-relative moves for an unregistered legacy directory, refuses symlinks,
   registered sources, invalid slugs, any existing target directory, and
-  collisions, and performs zero writes.
+  collisions, and performs zero writes. Traversal binds source directories and
+  regular files without following links; any identity change discards the
+  entire in-memory preview before a row can be emitted.
   The owner applies the reviewed move with version control, then creates the
   target manifest/landing note through orientation.
 

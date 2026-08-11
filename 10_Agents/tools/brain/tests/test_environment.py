@@ -305,6 +305,38 @@ class PrivacyAndDiagnosticsTests(unittest.TestCase):
         )
         self.assertNotIn("environment-fingerprints", json.dumps(findings))
 
+    def test_manifest_malformed_json_types_always_return_redacted_findings(self):
+        cases = []
+        for field in ("algorithm", "digest", "source"):
+            data = manifest("alpha", "a" * 64)
+            data["fingerprints"][0][field] = ["PRIVATE-TOKEN-SENTINEL"]
+            cases.append(data)
+        for version in (True, 1.0, "1"):
+            cases.append(manifest("alpha", "a" * 64, schemaVersion=version))
+        cases.append(manifest("alpha", "a" * 64, **{"class": []}))
+        mixed_key = manifest("alpha", "a" * 64)
+        mixed_key[7] = "PRIVATE-TOKEN-SENTINEL"
+        cases.append(mixed_key)
+
+        for data in cases:
+            with self.subTest(data_type=type(data.get("schemaVersion"))):
+                findings = brain.validate_environment_manifest(data, "alpha")
+                rendered = json.dumps(findings, sort_keys=True)
+                self.assertTrue(findings)
+                self.assertNotIn("PRIVATE-TOKEN-SENTINEL", rendered)
+
+    def test_manifest_loader_handles_unhashable_fingerprint_values_without_crash(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            write_environment(root, "alpha", "a" * 64)
+            path = root / "10_Agents/environments/alpha/environment.json"
+            data = manifest("alpha", "a" * 64)
+            data["fingerprints"][0]["algorithm"] = []
+            path.write_text(json.dumps(data), encoding="utf-8")
+            manifests, findings = brain.load_environment_manifests(root)
+            self.assertEqual(manifests, {})
+            self.assertIn("environment-fingerprints", json.dumps(findings))
+
     def test_detect_json_contains_hash_not_raw_machine_identity(self):
         with tempfile.TemporaryDirectory() as td, mock.patch.object(
             brain, "machine_fingerprints", return_value=local_fingerprint("d" * 64)
@@ -472,6 +504,45 @@ class MigrationTests(unittest.TestCase):
                 brain.EnvironmentSelectionError, "unsafe-migration-path"
             ):
                 brain._environment_migration_preview(root, "old-machine", "target")
+
+    @unittest.skipUnless(os.name == "posix", "descriptor no-follow check")
+    def test_preview_discards_rows_when_source_becomes_external_symlink(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "10_Agents/environments/old-machine"
+            source.mkdir(parents=True)
+            (source / "safe.md").write_text("safe", encoding="utf-8")
+            parked = root / "parked-source"
+            outside = root / "outside"
+            outside.mkdir()
+            secret_name = "EXTERNAL-PRIVATE-FILENAME-TOKEN.md"
+            (outside / secret_name).write_text("private", encoding="utf-8")
+            original_identity = brain._migration_identity
+            swapped = False
+
+            def swap_after_initial_identity(info):
+                nonlocal swapped
+                identity = original_identity(info)
+                if not swapped:
+                    swapped = True
+                    source.rename(parked)
+                    os.symlink(outside, source)
+                return identity
+
+            try:
+                with mock.patch.object(
+                    brain, "_migration_identity", side_effect=swap_after_initial_identity
+                ), self.assertRaises(brain.EnvironmentSelectionError) as raised:
+                    brain._environment_migration_preview(
+                        root, "old-machine", "target"
+                    )
+                self.assertEqual(raised.exception.code, "unsafe-migration-path")
+                self.assertNotIn(secret_name, str(raised.exception))
+            finally:
+                if source.is_symlink():
+                    source.unlink()
+                if parked.exists():
+                    parked.rename(source)
 
 
 if __name__ == "__main__":
