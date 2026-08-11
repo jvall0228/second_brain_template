@@ -14,3 +14,5 @@
 # fallback recipe.
 10_Agents/tools/brain/vault-index.json -text merge=regenerate
 .vscode/second-brain.code-snippets merge=regenerate
+.agents/skills/*/SKILL.md -text merge=regenerate
+.claude/skills/*/SKILL.md -text merge=regenerate

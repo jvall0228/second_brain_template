@@ -25,7 +25,7 @@ User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then p
 
 ## Skills
 
-Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/` — the shared standard path. `onboard-harness`'s `~/.agents/skills/<name>` symlinks cover Codex with no extra work. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects.
+Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/`. A clean clone includes generated text adapters in `.agents/skills/`; each mirrors the canonical `name`/`description` and points to `10_Agents/skills/<name>/SKILL.md`. No project symlinks or onboarding writes are needed. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects. Optional user-global mode retains the manifest-owned `~/.agents/skills/<name>` link/copy route after exact preview and approval.
 
 ## Hook installation
 

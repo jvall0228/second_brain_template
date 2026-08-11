@@ -20,7 +20,7 @@ Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and
 
 ## Skills
 
-Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. `onboard-harness` therefore symlinks each `10_Agents/skills/<name>/` folder into `~/.claude/skills/<name>`. Skills' extra vault frontmatter keys are ignored by the loader; `name`/`description` drive discovery.
+Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. A clean clone includes generated text adapters in `.claude/skills/`; each mirrors the canonical `name`/`description` and points to `10_Agents/skills/<name>/SKILL.md`. No project symlinks or onboarding writes are needed. Optional user-global mode retains the manifest-owned `~/.claude/skills/<name>` link/copy route after exact preview and approval.
 
 ## Hook installation
 

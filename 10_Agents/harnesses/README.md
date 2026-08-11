@@ -11,9 +11,30 @@ expires: 2026-11-11
 
 # Harness Adapters
 
-Per-harness adapters for the support tiers in [[00_Meta/prd]] §8.3. **Standards-first:** the entrypoint (`AGENTS.md`), the skills library (`10_Agents/skills/`, Agent Skills format), and the `brain` CLI work in any harness with no adapter — each directory here carries **only what a cross-harness standard cannot**: exact config paths, import syntax, caps, and trust gates.
+Per-harness adapters for the support tiers in [[00_Meta/prd]] §8.3. **Standards-first:** the entrypoint (`AGENTS.md`), canonical skills in `10_Agents/skills/`, generated repository discovery adapters, and the `brain` CLI carry portable behavior. Each directory here carries **only what a cross-harness standard cannot**: exact config paths, import syntax, caps, and trust gates.
 
-Every adapter ships a `wiring.md` (entrypoint loading, skills install paths, hook installation, how the harness invokes `brain`, harness-specific caveats) and reference config files to copy or merge. The [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] skill consumes these wiring docs for user-scope installs.
+Every adapter ships a `wiring.md` (entrypoint loading, skill discovery paths, hook installation, how the harness invokes `brain`, harness-specific caveats) and reference config files to copy or merge. The [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] skill verifies repository scope by default and gates optional user-global changes behind an exact preview and explicit apply approval.
+
+## Project skill compatibility
+
+`10_Agents/tools/skill_adapters/gen_skill_adapters.py` deterministically
+generates text adapters from canonical skill `name` and `description`; adapters
+point back to the canonical `SKILL.md` and never copy its workflow body or use
+symlinks. This table records **documented and repository-contract expectations as of
+2026-08-11**, not seven live host executions. The dated sources in each wiring
+document are the authority for host behavior. Where the Codex CLI is installed,
+the automated clean-clone smoke additionally inspects Codex's actual prompt
+input and proves it discovers the checked-in `.agents/skills/` adapters.
+
+| Harness | Documented project discovery | Contract expectation | Caveat / evidence |
+|---|---|---|---|
+| Claude Code | `.claude/skills/` | Checked-in adapters and `CLAUDE.md` import are present | Documented surface; see dated wiring sources |
+| Codex | `.agents/skills/` | Checked-in adapters and native `AGENTS.md` are present | Trusted project required; automated CLI smoke when installed |
+| opencode | `.agents/skills/`, `.claude/skills/` | Checked-in adapters and `AGENTS.md` are present | Project config may make bootstrap ordering more explicit; see wiring sources |
+| Pi | `.agents/skills/` | Checked-in adapters and `AGENTS.md` are present | Run `/trust`; headless runs silently omit untrusted project skills |
+| Cursor | `.agents/skills/`, `.claude/skills/` | Checked-in adapters and `AGENTS.md` are present | Workspace trust still applies; see wiring sources |
+| Copilot | `.agents/skills/`, `.claude/skills/` | Supported project adapter surfaces are checked in | Optional user scope uses copy/CLI registration; do not use symlinks |
+| Muse Code | `.agents/skills/` | Checked-in adapters and `AGENTS.md` are present on the documented surface | Volatile P1 surface; re-verify before relying on it |
 
 | Adapter | Tier | Wiring |
 |---------|------|--------|

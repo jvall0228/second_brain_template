@@ -20,7 +20,7 @@ opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over 
 
 ## Skills
 
-opencode scans `.opencode/skills/`, `.claude/skills/`, and the shared `.agents/skills/` — the `~/.agents/skills/<name>` symlinks from `onboard-harness` cover it with no extra work.
+opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/`. A clean clone includes generated text adapters in the latter two paths, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
 
 ## Hook installation
 

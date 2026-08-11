@@ -1,6 +1,6 @@
 ---
 name: onboard-harness
-description: Install this vault's agent primitives into a coding harness's user-level config — symlink-first — wire the harness to a shared second-brain registration, and install the harness's overlay (harness-native rules, hooks, config) where one ships. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code to use this vault everywhere, or to re-sync or uninstall a previous install.
+description: Verify this vault's repository-local agent skills and harness wiring, then optionally preview or apply an explicit user-global install. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code, or when checking, re-syncing, or uninstalling prior global wiring.
 title: "Skill: Onboard Harness"
 tags:
   - type/reference
@@ -14,18 +14,60 @@ expires: 2027-08-11
 
 **CODE stage:** Onboarding.
 
-Make the vault's skills and context available in **every session** of a harness, not just when working inside this repo. User scope, symlink-first, manifest-driven, idempotent, reversible.
+Make the vault work in the current repository first. A clean clone already
+contains generated text adapters under `.agents/skills/` and `.claude/skills/`;
+global availability outside this repository is a separate, optional operation.
 
 ## Inputs
 
-- **Harness**: which one to onboard (see the support tiers in `00_Meta/prd.md` §8.3).
-- **Vault path**: the absolute path of this vault's local clone (derive from the working directory; confirm with the user if ambiguous).
+- **Mode**: `project` (default), `global-preview`, `global-apply`, re-sync, or uninstall.
+- **Harness**: needed for global or harness-specific checks (see `00_Meta/prd.md` §8.3).
+- **Vault path**: derive the clone root without writing it into tracked files.
 
 Consult `10_Agents/harnesses/<harness>/wiring.md` when it exists — it is authoritative for that harness's exact paths and import syntax. The standards defaults below cover harnesses without a wiring doc.
 
-## Install algorithm
+## Project verification (default)
 
-1. **Skills (symlink-first).** Create symlinks from the harness's user-level skills discovery path back to the canonical folders:
+Project mode is read-only and is the default even when the owner merely says
+"set up this harness." It must make **zero writes outside the clone** and must
+not create a user manifest, registration, skill link/copy, or harness memory
+block.
+
+1. Run `python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py --check`.
+   Report missing, extra, symlinked, version-drifted, or metadata-mismatched
+   adapters; regenerate inside the repository only after normal repository
+   change approval.
+   Executable read-only check:
+   `python3 10_Agents/tools/skill_adapters/harness_setup.py project --harness <harness> --json`.
+2. Confirm the harness's project entrypoint and generated discovery path from
+   the compatibility table in `10_Agents/harnesses/README.md`. For Pi, also
+   explain that project skills stay hidden until the repository is trusted.
+3. Verify the repository-scoped hook/config described by the wiring doc. Offer
+   to arm this clone's git hook separately; do not treat user-global setup as
+   necessary for repository use.
+4. End with a project-verification result. Mention global availability only as
+   an optional follow-up for sessions started outside this repository.
+
+## User-global approval boundary
+
+Global mode is never inferred from project setup. It has two distinct passes:
+
+1. **`global-preview` (read-only):** resolve and display every exact external
+   path, command registration, link/copy, marker block, config merge, overlay,
+   and manifest entry that would change. Label foreign collisions, shared
+   ownership, and reversible actions. The preview makes zero writes, including
+   to a supplied fake home. Run the executable base preview:
+   `python3 10_Agents/tools/skill_adapters/harness_setup.py global-preview --harness <harness> --home <resolved-home> --json`;
+   include wiring-doc overlay/config actions before approval. It has no apply command.
+2. **`global-apply`:** only after the owner explicitly selects global mode and
+   approves that exact preview. Re-run preflight immediately before mutation;
+   if any target changed, discard the preview and present a new one. Consent to
+   project verification, onboarding generally, or an earlier different preview
+   is not consent to apply.
+
+## User-global apply algorithm
+
+1. **Skills (symlink-first).** Create only the links/copies approved in the exact global preview from the harness's user-level skills discovery path back to the canonical folders:
    - `~/.agents/skills/<skill-name>` → `<vault>/10_Agents/skills/<skill-name>` — the shared standard path scanned by Codex, opencode, Pi, Cursor, and Muse Code (one install covers all five).
    - `~/.claude/skills/<skill-name>` → same targets — Claude Code scans only its own directory.
    - **Copilot is the exception — no symlinks:** its CLI ignores symlinked skills and does not reliably discover `~/.agents/skills/`. Register the vault's real directory instead (`copilot skill add <vault>/10_Agents/skills`; uninstall via `copilot skill remove`), or copy skill folders into `~/.copilot/skills/` with hashes recorded for drift re-sync — see [[10_Agents/harnesses/copilot/wiring]].
@@ -83,8 +125,11 @@ After the core install, optionally install **recommended components** from the r
 
 ## Rules
 
+- Project verification and every preview are read-only outside the clone.
+- Global apply requires an explicit global-mode request plus approval of the
+  exact external-path preview; stale previews are invalid.
 - **Template portability invariant:** no adopter-specific filesystem path, username, home directory, repository location, machine identifier, or generated `registration_id` may be written into a tracked template file. Resolve machine-specific values only at install time; they may appear only in adopter-local configuration and the manifest.
-- Everything happens **at install time on the adopter's machine** — links are never committed to the repo (PRD §8.2 retired in-repo symlinks).
+- User-global links/copies happen only during approved global apply — links are never committed to the repo (PRD §8.2 retired in-repo symlinks). Project discovery uses committed generated text adapters.
 - No credentials or machine-specific paths ever get committed (PRD §16.2); the manifest and shared registration live in the home directory, not the vault.
 - A harness adapter should reference the stable shared registry rather than duplicate its contents or embed a vault path. Native include/import > documented config injection > plain-path instruction; never depend on undocumented automatic discovery of `~/.agents/second-brain/AGENTS.md`.
 - Report a summary at the end: created / already-correct / skipped-foreign / shared-managed / copied, the affected vault registry entry, and the harness instruction surfaces touched.

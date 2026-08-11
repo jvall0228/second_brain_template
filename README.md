@@ -54,12 +54,12 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/prd.md` §6.5), or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
 4. Skim [`00_Meta/conventions.md`](00_Meta/conventions.md) to learn the naming and tagging rules.
-5. **Install the pre-commit hook** so every commit keeps the vault index fresh and the conventions enforced, and **the merge driver** so the two committed generated files (the vault index and the VS Code snippets) never need hand-merging:
+5. **Install the pre-commit hook** so every commit keeps the vault index, VS Code snippets, and repository skill adapters fresh and the conventions enforced, and **the merge driver** so committed generated files never need hand-merging:
    ```
    git config core.hooksPath .githooks
    git config merge.regenerate.driver true
    ```
-   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild both files, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
+   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild the index, snippets, and adapters, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
 6. **Delete the seeded examples** once you've seen the pattern:
    - `04_Projects/example-project/`
    - `05_Areas/example-area/`

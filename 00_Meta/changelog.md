@@ -32,6 +32,12 @@ Notable structural changes to the vault. For individual file history, use `git l
 - Removed revision banners, addenda, resolved consideration logs, M0-only acceptance framing, and shipped-as-planned language. Historical release detail remains here and in Git rather than being duplicated in the PRD.
 - Updated [[00_Meta/status]] through M12, reconciled canonical-by-policy and generated-draft write lanes across the active agent rules, and added a PRD-specific edit-in-place rule to [[10_Agents/docs/operating-rules]].
 
+## [2026-08-11] add-skill-adapters | Clean-clone project discovery (#82)
+
+- Canonical skill `name`/`description` now generate versioned text adapters in `.agents/skills/` and `.claude/skills/`; adapters point back to the sole workflow body under `10_Agents/skills/` and never use symlinks.
+- The deterministic stdlib generator checks missing, extra, metadata drift, collisions, strict YAML string typing, and unsafe symlinked paths. Pre-commit snapshots and transactionally restores both generated working files and the exact Git index on any later failure/interruption; post-merge regenerates, while CI and fake-home tests enforce freshness and zero external writes in project/preview mode.
+- [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] now verifies project scope by default. User-global setup is optional and split into an exact read-only preview followed by separately approved apply; the harness matrix records per-host discovery and Pi's trust caveat.
+
 ## [2026-08-11] feature | Recommended components: agent-library registry + onboarder install (follow-up to #7)
 
 - **New registry `10_Agents/components/manifest.json`** (schema v1) is the machine-readable source of truth for installable **recommended components**, making third-party components a first-class part of the agent library without vendoring: six components across four kinds — `skill` (i-have-adhd, karpathy), `memory-block` (karpathy `CLAUDE.md` guidance), `overlay` (the Cursor/Copilot harness primitives surfaced as components), and `vault-config-preset` (a `work-fork` starting config applied via a new `merge-config` install). Documented in [[10_Agents/components/README]].

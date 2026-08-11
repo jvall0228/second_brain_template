@@ -20,7 +20,7 @@ Cursor reads **`AGENTS.md` natively** (IDE: root and nested levels; CLI also rea
 
 ## Skills
 
-Cursor supports Agent Skills and scans `.cursor/skills/`, the shared `.agents/skills/`, and Claude-compat paths — the `~/.agents/skills/<name>` symlinks cover it. Commands are deprecated in favor of skills; ship none.
+Cursor supports Agent Skills and scans `.cursor/skills/`, `.agents/skills/`, and Claude-compat paths. A clean clone includes generated text adapters in `.agents/skills/` and `.claude/skills/`, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Commands are deprecated in favor of skills; ship none.
 
 ## Hook installation
 

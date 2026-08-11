@@ -20,7 +20,7 @@ Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.
 
 ## Skills
 
-Muse scans the shared `.agents/skills/` (plus compat paths) — the `~/.agents/skills/<name>` symlinks cover it. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
+Muse scans `.agents/skills/` (plus compat paths). A clean clone includes generated text adapters there, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
 
 ## Hook installation
 
