@@ -7,7 +7,7 @@ references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
 Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context, config, report, tasks, embed
+          curate, context, config, report, tasks, embed, remote-safety
 """
 
 from __future__ import annotations
@@ -23,6 +23,7 @@ import sys
 import unicodedata
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 
 SCHEMA_VERSION = 1
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
@@ -84,10 +85,424 @@ BOOTSTRAP_BUDGETS = {
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
 
+# §19 Remote safety. These values are part of the stable JSON/reason-code
+# contract. Provider and git subprocess text never crosses the output boundary.
+REMOTE_SAFETY_SCHEMA_VERSION = 1
+REMOTE_SAFETY_GIT_TIMEOUT = 5
+REMOTE_SAFETY_PROVIDER_TIMEOUT = 10
+NO_PUSH_SENTINELS = frozenset({"disabled", "no_push", "no-push"})
+GITHUB_COMPONENT_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
+SCP_REMOTE_RE = re.compile(
+    r"^(?:[^@/\s]+@)?(?P<host>[A-Za-z0-9.-]+):(?P<path>[^?#\s]+)$"
+)
+
 # §16 Health-report defaults — overridable per fork via the `report` config
 # key (spec §15.3 / §16.4): report: → stale_days / inbox_days.
 REPORT_STALE_ACTIVE_DAYS = 30
 REPORT_INBOX_TRIAGE_DAYS = 14
+
+
+# ---------------------------------------------------------------------------
+# §19 Remote safety
+
+
+class MetadataProviderError(RuntimeError):
+    """A stable, already-redacted provider failure reason."""
+
+
+class RemoteSafetyError(RuntimeError):
+    """Raised before a personal-data connector when remote safety denies it."""
+
+    def __init__(self, result: dict, reason: str | None = None):
+        self.result = result
+        safe_reason = reason or result["state"]
+        codes = ",".join(result["reasonCodes"])
+        super().__init__(f"remote safety denied: {safe_reason} ({codes})")
+
+
+def normalize_push_url(url: str) -> dict:
+    """Normalize one push URL without exposing it through the public result.
+
+    The returned owner/repo/key fields are internal inputs to the provider.
+    Callers that render or serialize must pass the record through
+    ``public_remote_target``.
+    """
+    raw = url.strip()
+    base = {
+        "id": "target-redacted",
+        "provider": "unknown",
+        "summary": "<redacted>",
+        "key": None,
+        "owner": None,
+        "repo": None,
+    }
+    if raw.casefold() in NO_PUSH_SENTINELS:
+        return {**base, "disabled": True, "reasonCode": "push-disabled"}
+    if not raw or any(ch in raw for ch in "\r\n\0"):
+        return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+
+    host: str | None = None
+    path: str | None = None
+    transport: str | None = None
+    scp = SCP_REMOTE_RE.fullmatch(raw) if "://" not in raw else None
+    if scp:
+        host = scp.group("host")
+        path = scp.group("path")
+        transport = "ssh"
+    else:
+        try:
+            parsed = urlsplit(raw)
+            # Accessing .port validates malformed ports even though GitHub's
+            # default provider does not need the value.
+            port = parsed.port
+        except ValueError:
+            return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+        transport = parsed.scheme.casefold()
+        if not transport:
+            return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+        if transport not in {"https", "ssh"}:
+            return {
+                **base,
+                "disabled": False,
+                "reasonCode": "unsupported-push-transport",
+            }
+        if port is not None and port != {"https": 443, "ssh": 22}[transport]:
+            return {
+                **base,
+                "disabled": False,
+                "reasonCode": "nonstandard-push-port",
+            }
+        if parsed.query or parsed.fragment:
+            return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+        host = parsed.hostname
+        path = parsed.path
+
+    if not host or host.casefold() != "github.com":
+        return {**base, "disabled": False, "reasonCode": "unsupported-push-host"}
+    if not path or "%" in path:
+        return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+    parts = path.strip("/").split("/")
+    if len(parts) != 2:
+        return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+    owner, repo = parts
+    if repo.casefold().endswith(".git"):
+        repo = repo[:-4]
+    if (
+        not owner
+        or not repo
+        or owner in {".", ".."}
+        or repo in {".", ".."}
+        or not GITHUB_COMPONENT_RE.fullmatch(owner)
+        or not GITHUB_COMPONENT_RE.fullmatch(repo)
+    ):
+        return {**base, "disabled": False, "reasonCode": "malformed-push-url"}
+    key = f"github.com/{owner.casefold()}/{repo.casefold()}"
+    return {
+        "id": "target-redacted",
+        "provider": "github",
+        "summary": "github.com/<redacted>",
+        "key": key,
+        "owner": owner,
+        "repo": repo,
+        "disabled": False,
+        "reasonCode": None,
+    }
+
+
+def public_remote_target(target: dict) -> dict:
+    """Return the only remote-target shape permitted at output boundaries."""
+    row = {
+        "id": target["id"],
+        "provider": target["provider"],
+        "repository": target["summary"],
+    }
+    if "state" in target:
+        row["state"] = target["state"]
+    codes = target.get("reasonCodes")
+    if codes:
+        row["reasonCodes"] = sorted(set(codes))
+    elif target.get("reasonCode") and target["reasonCode"] != "push-disabled":
+        row["reasonCodes"] = [target["reasonCode"]]
+    else:
+        row["reasonCodes"] = []
+    return row
+
+
+def _safe_subprocess_env() -> dict[str, str]:
+    env = os.environ.copy()
+    # Prevent interactive auth and debug traces. Output is captured regardless,
+    # but removing debug toggles also avoids side-channel writes by child tools.
+    env["GH_PROMPT_DISABLED"] = "1"
+    env["GH_HOST"] = "github.com"
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    env.pop("GH_DEBUG", None)
+    env.pop("GH_FORCE_TTY", None)
+    env.pop("GIT_CURL_VERBOSE", None)
+    for key in list(env):
+        if key.startswith("GIT_TRACE") or key in {
+            "GIT_COMMON_DIR",
+            "GIT_DIR",
+            "GIT_INDEX_FILE",
+            "GIT_WORK_TREE",
+        }:
+            env.pop(key, None)
+    return env
+
+
+class GitHubMetadataProvider:
+    """Injectable GitHub repository-metadata boundary (§19.2)."""
+
+    def __init__(self, timeout: int = REMOTE_SAFETY_PROVIDER_TIMEOUT):
+        self.timeout = timeout
+
+    def __call__(self, owner: str, repo: str) -> dict:
+        try:
+            completed = subprocess.run(
+                [
+                    "gh",
+                    "repo",
+                    "view",
+                    f"{owner}/{repo}",
+                    "--json",
+                    "visibility,isPrivate,isTemplate,templateRepository",
+                ],
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=self.timeout,
+                env=_safe_subprocess_env(),
+            )
+        except FileNotFoundError:
+            raise MetadataProviderError("provider-unavailable") from None
+        except subprocess.TimeoutExpired:
+            raise MetadataProviderError("provider-timeout") from None
+        except (OSError, subprocess.CalledProcessError):
+            raise MetadataProviderError("provider-query-failed") from None
+        try:
+            value = json.loads(completed.stdout)
+        except (TypeError, json.JSONDecodeError):
+            raise MetadataProviderError("provider-response-invalid") from None
+        if not isinstance(value, dict):
+            raise MetadataProviderError("provider-response-invalid")
+        return value
+
+
+def _git_push_urls(root: Path) -> tuple[list[str], list[str]]:
+    """Return effective push URLs and stable discovery reason codes."""
+    command = ["git", "-C", str(root)]
+    kwargs = {
+        "stdin": subprocess.DEVNULL,
+        "capture_output": True,
+        "text": True,
+        "check": True,
+        "timeout": REMOTE_SAFETY_GIT_TIMEOUT,
+        "env": _safe_subprocess_env(),
+    }
+    try:
+        inside = subprocess.run(
+            command + ["rev-parse", "--is-inside-work-tree"], **kwargs
+        )
+    except FileNotFoundError:
+        return [], ["git-unavailable"]
+    except subprocess.TimeoutExpired:
+        return [], ["push-url-enumeration-failed"]
+    except (OSError, UnicodeError, subprocess.CalledProcessError):
+        return [], ["not-git-repository"]
+    if inside.stdout.strip() != "true":
+        return [], ["not-git-repository"]
+
+    try:
+        remote_result = subprocess.run(command + ["remote"], **kwargs)
+    except (OSError, UnicodeError, subprocess.SubprocessError):
+        return [], ["push-url-enumeration-failed"]
+    remotes = sorted(line for line in remote_result.stdout.splitlines() if line)
+    urls: list[str] = []
+    reasons: list[str] = []
+    for remote in remotes:
+        try:
+            result = subprocess.run(
+                command + ["remote", "get-url", "--push", "--all", remote],
+                **kwargs,
+            )
+        except (OSError, UnicodeError, subprocess.SubprocessError):
+            reasons.append("push-url-enumeration-failed")
+            continue
+        found = result.stdout.splitlines()
+        if not found:
+            reasons.append("push-url-enumeration-failed")
+        else:
+            urls.extend(found)
+    return urls, sorted(set(reasons))
+
+
+def _classify_github_metadata(metadata: dict) -> tuple[str, list[str]]:
+    required = {"visibility", "isPrivate", "isTemplate", "templateRepository"}
+    if not isinstance(metadata, dict) or not required.issubset(metadata):
+        return "unknown", ["provider-response-invalid"]
+    visibility = metadata["visibility"]
+    private = metadata["isPrivate"]
+    template = metadata["isTemplate"]
+    template_repository = metadata["templateRepository"]
+    if (
+        not isinstance(visibility, str)
+        or type(private) is not bool
+        or type(template) is not bool
+        or (template_repository is not None and not isinstance(template_repository, dict))
+    ):
+        return "unknown", ["provider-response-invalid"]
+    visibility = visibility.upper()
+    if template:
+        return "block", ["repository-template"]
+    if (visibility == "PRIVATE") != private:
+        return "unknown", ["provider-response-inconsistent"]
+    if private and visibility == "PRIVATE":
+        return "pass", ["repository-private"]
+    if visibility == "PUBLIC":
+        return "block", ["repository-public"]
+    if not private and visibility == "INTERNAL":
+        return "block", ["repository-not-private"]
+    return "unknown", ["provider-response-invalid"]
+
+
+def evaluate_remote_safety(
+    root: Path,
+    metadata_provider=None,
+    acknowledge_unknown: bool = False,
+) -> dict:
+    """Evaluate whether personal-data access is safe for this invocation."""
+    provider = metadata_provider or GitHubMetadataProvider()
+    urls, discovery_reasons = _git_push_urls(root)
+    normalized: list[dict] = []
+    for url in urls:
+        target = normalize_push_url(url)
+        if not target["disabled"]:
+            normalized.append(target)
+
+    # Deduplicate verified provider identities, while retaining every malformed
+    # or unsupported target as a distinct fail-closed finding.
+    unique: list[dict] = []
+    seen_provider_keys: set[str] = set()
+    for target in normalized:
+        # Provider keys are safe only inside this process. Unknown targets stay
+        # distinct so the evaluator truthfully accounts for every push URL;
+        # neither raw URLs nor hashes derived from credentials reach output.
+        if target["key"]:
+            if target["key"] in seen_provider_keys:
+                continue
+            seen_provider_keys.add(target["key"])
+        unique.append(target)
+    targets = sorted(
+        unique,
+        key=lambda target: (
+            target["key"] is None,
+            target["key"] or "",
+            target["reasonCode"] or "",
+        ),
+    )
+    for number, target in enumerate(targets, start=1):
+        target["id"] = f"target-{number:03d}"
+
+    evaluated: list[dict] = []
+    for target in targets:
+        if target["reasonCode"]:
+            evaluated.append(
+                {**target, "state": "unknown", "reasonCodes": [target["reasonCode"]]}
+            )
+            continue
+        try:
+            metadata = provider(target["owner"], target["repo"])
+            state, reasons = _classify_github_metadata(metadata)
+        except MetadataProviderError as exc:
+            code = str(exc)
+            if code not in {
+                "provider-query-failed",
+                "provider-response-invalid",
+                "provider-timeout",
+                "provider-unavailable",
+            }:
+                code = "provider-query-failed"
+            state, reasons = "unknown", [code]
+        except Exception:
+            # An injected provider is still an external boundary. Its exception
+            # text may contain a URL, token, or local identity and is never emitted.
+            state, reasons = "unknown", ["provider-query-failed"]
+        evaluated.append({**target, "state": state, "reasonCodes": reasons})
+
+    local_only = not evaluated and not discovery_reasons
+    all_reasons = set(discovery_reasons)
+    for target in evaluated:
+        all_reasons.update(target["reasonCodes"])
+    if local_only:
+        verified_state = "pass"
+        all_reasons.add("no-push-targets-local-only")
+    elif discovery_reasons or any(t["state"] == "unknown" for t in evaluated):
+        verified_state = "unknown"
+    elif any(t["state"] == "block" for t in evaluated):
+        verified_state = "block"
+    else:
+        verified_state = "pass"
+
+    # A verified block has priority over unknown discovery/provider failures and
+    # is never bypassable. Unknown acknowledgment is invocation-local only.
+    if any(t["state"] == "block" for t in evaluated):
+        verified_state = "block"
+    unknown_acknowledged = verified_state == "unknown" and acknowledge_unknown
+    state = "pass" if unknown_acknowledged else verified_state
+    if unknown_acknowledged:
+        all_reasons.add("unknown-acknowledged")
+    personal_data_allowed = state == "pass"
+    persistence_allowed = personal_data_allowed and not local_only
+    return {
+        "localOnly": local_only,
+        "persistenceAllowed": persistence_allowed,
+        "personalDataAllowed": personal_data_allowed,
+        "reasonCodes": sorted(all_reasons),
+        "schemaVersion": REMOTE_SAFETY_SCHEMA_VERSION,
+        "state": state,
+        "targets": [public_remote_target(t) for t in evaluated],
+        "unknownAcknowledged": unknown_acknowledged,
+        "verifiedState": verified_state,
+    }
+
+
+def require_remote_safety(
+    root: Path,
+    *,
+    metadata_provider=None,
+    acknowledge_unknown: bool = False,
+    persist: bool = False,
+) -> dict:
+    """Fail before personal-data access or an unsafe persistence attempt."""
+    result = evaluate_remote_safety(
+        root,
+        metadata_provider=metadata_provider,
+        acknowledge_unknown=acknowledge_unknown,
+    )
+    if not result["personalDataAllowed"]:
+        raise RemoteSafetyError(result)
+    if persist and not result["persistenceAllowed"]:
+        raise RemoteSafetyError(result, "persistence-not-allowed")
+    return result
+
+
+def guarded_personal_data_call(
+    root: Path,
+    connector,
+    *connector_args,
+    metadata_provider=None,
+    acknowledge_unknown: bool = False,
+    persist: bool = False,
+    **connector_kwargs,
+):
+    """Reference wrapper proving the guard runs before the connector call."""
+    require_remote_safety(
+        root,
+        metadata_provider=metadata_provider,
+        acknowledge_unknown=acknowledge_unknown,
+        persist=persist,
+    )
+    return connector(*connector_args, **connector_kwargs)
 
 # ---------------------------------------------------------------------------
 # §2 Corpus
@@ -2814,6 +3229,30 @@ def cmd_tasks(root: Path, args) -> int:
     return 0
 
 
+def cmd_remote_safety(root: Path, args) -> int:
+    result = evaluate_remote_safety(
+        root,
+        metadata_provider=GitHubMetadataProvider(),
+        acknowledge_unknown=args.acknowledge_unknown,
+    )
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=1, sort_keys=True))
+    else:
+        print(f"remote safety: {result['state'].upper()}")
+        print(f"verified state: {result['verifiedState']}")
+        print("reasons: " + ", ".join(result["reasonCodes"]))
+        print(f"push targets: {len(result['targets'])} (identities redacted)")
+        print(
+            "personal-data reads: "
+            + ("allowed" if result["personalDataAllowed"] else "blocked")
+        )
+        print(
+            "connector-result persistence: "
+            + ("allowed" if result["persistenceAllowed"] else "blocked")
+        )
+    return 0 if result["personalDataAllowed"] else 1
+
+
 def cmd_validate(root: Path, args) -> int:
     errors, warnings = run_validate(root, args.check_index)
     if args.json:
@@ -2924,6 +3363,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     mode.add_argument("--status", action="store_true", help="report sidecar coverage; no writes")
     p.add_argument("--model", default=None, help="--local: embedding model name override")
+    p = add(
+        "remote-safety",
+        help="fail-closed preflight before reading personal-data connectors",
+    )
+    p.add_argument(
+        "--acknowledge-unknown",
+        action="store_true",
+        help="allow unknown state for this invocation only (never overrides public/template)",
+    )
 
     args = parser.parse_args(argv)
     root = (args.vault or default_vault_root()).resolve()
@@ -2942,6 +3390,7 @@ def main(argv: list[str] | None = None) -> int:
         "report": cmd_report,
         "tasks": cmd_tasks,
         "embed": cmd_embed,
+        "remote-safety": cmd_remote_safety,
     }
     return handlers[args.command](root, args)
 

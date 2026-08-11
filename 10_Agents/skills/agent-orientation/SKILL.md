@@ -31,6 +31,24 @@ When a source needs access tooling, prefer in this order (PRD §19 M7, decision 
 
 **Credentials never enter the repo** (PRD §16.2): auth lives in local CLI sessions, keychains, or environment variables — a generated tool reads `$SOURCE_TOKEN`, it never contains one. Refuse to write any secret into a committed file.
 
+## Remote-safety boundary
+
+Keep capability inventory separate from data access. Detecting that a CLI or
+connector exists, inspecting its documented scopes, and recording the interface
+rung is safe. Immediately before the first email, calendar, contacts, chat, drive,
+task, transcript, or similar personal-data read, run `brain remote-safety --json`
+(long-form fallback: `python3 10_Agents/tools/brain/brain.py remote-safety --json`).
+
+- `block` or `unknown` means stop before calling the connector and before opening
+  any output file. An owner may use `--acknowledge-unknown` for the current
+  invocation only; public/non-private and template targets are never overrideable.
+- A no-push vault is local-only. Personal-data results may be inspected in memory,
+  but must not be written to the inventory, generated tooling, notes, or artifacts.
+- Every generated personal-data adapter uses the shared `require_remote_safety`
+  guard immediately before its request (or invokes the JSON command and proceeds
+  only when `personalDataAllowed` is true). Its tests use a connector spy and prove
+  zero calls for blocked/unknown and local-only persistence paths.
+
 ## Required output contract
 
 Orientation **must** produce one inventory note containing all of the following sections. Empty findings are recorded, not skipped.
@@ -129,6 +147,7 @@ session: <session-or-pr-ref>
 - Computer use (CUA): <available | none | unknown>
 - Browser: <headless | GUI | none>, auth state: <logged-in-as | none>
 - Permission envelope: <packages / provenance / egress / sandbox gates; unknown = ask owner>
+- Remote safety: <pass | block | unknown>, mode: <private-push | local-only>, checked without persisting personal data
 
 ## Owner decisions
 
@@ -137,16 +156,17 @@ session: <session-or-pr-ref>
 
 ## Steps
 
-1. **Detect the ecosystem first** (contract §3) — the productivity suite is the prior for most solution-inventory answers.
+1. **Detect the ecosystem first** (contract §3) — the productivity suite is the prior for most solution-inventory answers. This is capability inventory only; do not list account records or people.
 2. **Introspect the harness and environment** (contract §2 and §4): harness-provided tools and MCP servers/connectors, CLIs on PATH, schedulers (see `recommended-automations`), the wiring doc in `10_Agents/harnesses/<name>/wiring.md`, browser/CUA availability, and the permission envelope.
 3. **Fill the solution inventory** (contract §1) per category, ranking each entry on the ladder. Record "none" explicitly.
-4. **Interview the owner** for what can't be observed: which sources carry real context, per-source value, sensitivity (some sources shouldn't enter the vault at all — PRD §16.2), and desired freshness. Source priorities are the owner's call, decided here.
-5. **Write the inventory note** to `10_Agents/environments/<env-slug>/orientation-inventory.md` using the template above (`workflow/draft`; the self-guarding preamble is mandatory). If the environment directory doesn't exist yet, create it with the owner's chosen slug.
-6. **Generate the access layer for each adopted source:**
+4. **Run the remote-safety preflight** before any personal-data read, following the boundary above. Requesting permission from the owner does not replace this gate.
+5. **Interview the owner** for what can't be observed: which sources carry real context, per-source value, sensitivity (some sources shouldn't enter the vault at all — PRD §16.2), and desired freshness. Source priorities are the owner's call, decided here.
+6. **Write the inventory note** to `10_Agents/environments/<env-slug>/orientation-inventory.md` using the template above (`workflow/draft`; the self-guarding preamble is mandatory). If the environment directory doesn't exist yet, create it with the owner's chosen slug. In local-only mode, include capability facts and the safety state only—never connector-derived data.
+7. **Generate the access layer for each adopted source:**
    - **Tooling** under `10_Agents/tools/<source>/` — a script (stdlib-first, config via env vars) where the rung is a CLI or wrapped API; an access doc naming the exact harness tools where the rung is MCP/connector.
    - **A paired skill** at `10_Agents/skills/<source>-capture/SKILL.md` describing when and how to pull from the source and capture into the vault **via the `inbox-capture` rules**.
    - Both tagged `workflow/draft` (agent-generated; the owner promotes — PRD §9.3). Everything must pass `python3 10_Agents/tools/brain/brain.py validate`.
-7. **Hand off:** propose recurring flows to `recommended-automations` (it reads this environment's inventory note); register everything generated for `self-maintenance` audits (it probes the inventory's recorded sources on its cycle).
+8. **Hand off:** propose recurring flows to `recommended-automations` (it reads this environment's inventory note); register everything generated for `self-maintenance` audits (it probes the inventory's recorded sources on its cycle).
 
 ## References
 

@@ -69,6 +69,23 @@ Before writing any note, verify:
 
 **Never push upstream.** The fork pulls updates from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]], pull-only); agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. Generalizable improvements discovered in this fork are *suggested to the owner* as "worth upstreaming?" (in sync reports or [[10_Agents/skills/self-improve/SKILL|self-improve]] retrospectives) — the owner carries them upstream by hand if they choose.
 
+## Personal-data remote safety
+
+Capability inventory is safe: agents may identify installed CLIs/connectors and
+their declared scopes without reading account data. Immediately before any email,
+calendar, contacts, chat, drive, task, transcript, or similar personal-data read,
+run `python3 10_Agents/tools/brain/brain.py remote-safety --json` and use the shared
+guard in generated tooling (brain spec §19).
+
+- `block` and `unknown` stop before the connector and before opening an output file.
+- The owner may acknowledge `unknown` for the current invocation only with
+  `--acknowledge-unknown`; a verified public, non-private, or template push target
+  is never overrideable.
+- A no-push repository is local-only. Connector-derived data remains in memory and
+  is never written into the vault.
+- Raw remote URLs, provider errors, credentials, repository identities, and local
+  paths never enter output, logs, notes, or artifacts.
+
 ## Concurrency
 
 Multiple agents may work in this vault. Sync (pull) before writing when the environment allows, keep commits small, and never force-push. Merge conflicts are resolved by the human.

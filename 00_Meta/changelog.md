@@ -12,6 +12,20 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] safety | Fail-closed remote gate before personal-data access (#83)
+
+- Added the stdlib-only `brain remote-safety` evaluator and shared guard (spec
+  §19): it inspects every push URL, redacts repository identity and subprocess
+  errors, and verifies GitHub privacy/template metadata through an injectable
+  provider boundary.
+- Public/non-private and template targets block without override; unverifiable
+  targets block unless acknowledged for one invocation; no-push repositories are
+  local-only and cannot persist connector results. Orientation and owner
+  onboarding now apply the same boundary before personal-data reads.
+- Temporary-repository, fake-provider, connector-spy, URL-variant, redaction,
+  auth/timeout/subprocess, and contract tests cover the fail-closed paths without
+  making a real connector or metadata call.
+
 ## [2026-08-11] feature | Recommended components: agent-library registry + onboarder install (follow-up to #7)
 
 - **New registry `10_Agents/components/manifest.json`** (schema v1) is the machine-readable source of truth for installable **recommended components**, making third-party components a first-class part of the agent library without vendoring: six components across four kinds — `skill` (i-have-adhd, karpathy), `memory-block` (karpathy `CLAUDE.md` guidance), `overlay` (the Cursor/Copilot harness primitives surfaced as components), and `vault-config-preset` (a `work-fork` starting config applied via a new `merge-config` install). Documented in [[10_Agents/components/README]].
