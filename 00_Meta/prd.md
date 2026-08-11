@@ -332,8 +332,8 @@ Shipped as specified below (skill list confirmed by the owner at the M6 checkpoi
 2. **P0 adapters:** add `10_Agents/harnesses/` with reference configs and wiring docs for Claude Code, Codex, Opencode, and Pi. Adapters carry only what a standard cannot.
 3. **P1 second wave:** Cursor, Copilot, Muse Code.
 
-### M7: Environment Integration — **Not started**
-Depends on M6; ships as template content but completes in an adopter's environment (decision 2026-08-11):
+### M7: Environment Integration — **Done (2026-08-11, template scope)**
+Shipped as specified below. The template ships the three skills (`agent-orientation`, `recommended-automations`, `self-maintenance` — all canonical, all validating clean, each stating the preference ladder and the no-credentials rule inline); completion recurs in each adopter's environment by design. Verified by dry run in a test vault against a live environment: orientation produced an inventory note (six reachable sources, ladder rung per source) plus a generated source tool (`10_Agents/tools/calendar/access.md`) and paired draft capture skill, all passing `brain validate` including the skills contract. Depends on M6; ships as template content but completes in an adopter's environment (decision 2026-08-11):
 - **Agent orientation:** a skill that discovers the high-value context sources available to the adopter (e.g. Teams chats, meeting transcripts, calendars, email) and generates skills and tools/scripts to access them.
 - **Ingestion automations:** recommended recurring flows (email, calendar, chat) capturing into `02_Inbox/`.
 - **Self-maintenance:** a skill that maintains the generated skills and tools over time (audit, prune, update), proposing draft → promotion to the human.

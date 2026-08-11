@@ -144,36 +144,41 @@
     {
      "level": 2,
      "line": 15,
+     "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
+    },
+    {
+     "level": 2,
+     "line": 22,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 21,
+     "line": 28,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 27,
+     "line": 34,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 44,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 42,
+     "line": 49,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 48,
+     "line": 55,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 59,
+     "line": 66,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
@@ -182,7 +187,18 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 17,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 24,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -193,7 +209,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 31,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -204,7 +220,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 25,
+     "line": 32,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -215,7 +231,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 36,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -226,22 +242,11 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 46,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 45,
-     "placeholder": false,
-     "raw": "[[00_Meta/conventions]]",
-     "resolved": "00_Meta/conventions.md",
-     "target": "00_Meta/conventions",
      "warnings": []
     },
     {
@@ -250,6 +255,17 @@
      "fragment": null,
      "line": 52,
      "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 59,
+     "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
@@ -259,7 +275,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 53,
+     "line": 60,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -270,7 +286,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 53,
+     "line": 60,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -281,7 +297,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 64,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -289,7 +305,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9026,
+   "sizeBytes": 10247,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -1124,7 +1140,7 @@
     {
      "level": 3,
      "line": 335,
-     "text": "M7: Environment Integration — **Not started**"
+     "text": "M7: Environment Integration — **Done (2026-08-11, template scope)**"
     },
     {
      "level": 2,
@@ -1326,7 +1342,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 29624,
+   "sizeBytes": 30261,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -1401,7 +1417,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2010,
+   "sizeBytes": 2067,
    "title": "Status",
    "updated": "2026-08-11"
   },
@@ -6521,7 +6537,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1819,
+   "sizeBytes": 1901,
    "title": "Agents",
    "updated": "2026-08-11"
   },
@@ -7504,7 +7520,7 @@
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 34,
      "text": "Rules"
     }
    ],
@@ -7620,10 +7636,43 @@
      "warnings": []
     },
     {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 30,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 31,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL\\|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "self-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 32,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
+     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
+     "target": "10_Agents/skills/self-maintenance/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 33,
+     "line": 36,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -7631,8 +7680,52 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2590,
+   "sizeBytes": 3110,
    "title": "Agent Skills",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/agent-orientation/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Discover the high-value context sources available in this adopter's environment (chat, email, calendar, transcripts, task trackers) and generate the vault tooling to access them. Use once per new environment, or when the owner's toolchain changes.",
+    "name": "agent-orientation",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Agent Orientation",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Agent Orientation"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Integration preference ladder (apply at every step)"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 37,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 2970,
+   "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
   },
   "10_Agents/skills/daily-log/SKILL.md": {
@@ -7866,6 +7959,60 @@
    "title": "Skill: Periodic Review",
    "updated": "2026-08-11"
   },
+  "10_Agents/skills/recommended-automations/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Propose and wire recurring ingestion flows — email digests, calendar context, chat capture — into 02_Inbox/ using this harness's own scheduling mechanism. Use after agent-orientation has established which sources exist, or when the owner asks for recurring capture.",
+    "name": "recommended-automations",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Recommended Automations",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Recommended Automations"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Ground rules"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "text": "Recommended flows (adapt per owner)"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "Scheduling mechanism per harness"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 49,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 3059,
+   "title": "Skill: Recommended Automations",
+   "updated": "2026-08-11"
+  },
   "10_Agents/skills/research-to-resource/SKILL.md": {
    "backlinks": [
     "10_Agents/skills/README.md"
@@ -7908,6 +8055,50 @@
    "links": [],
    "sizeBytes": 2102,
    "title": "Skill: Research to Resource",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/self-maintenance/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Audit the agent-generated skills, tools, and automations over time — validate, prune dead sources, update for upstream changes, and propose promotions or archival to the owner. Use on a recurring cadence (monthly fits the review rhythm) or after any environment change.",
+    "name": "self-maintenance",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Self Maintenance",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Self Maintenance"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Scope"
+    },
+    {
+     "level": 2,
+     "line": 20,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 29,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 2460,
+   "title": "Skill: Self Maintenance",
    "updated": "2026-08-11"
   },
   "10_Agents/skills/solution-capture/SKILL.md": {
@@ -8569,6 +8760,94 @@
    "sizeBytes": 427,
    "title": "Vault Maintenance Solutions",
    "updated": "2026-08-10"
+  },
+  "10_Agents/solutions/vault-tooling/README.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/meta",
+     "audience/agent"
+    ],
+    "title": "Solutions: Vault Tooling",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "text": "Solutions: Vault Tooling"
+    }
+   ],
+   "links": [
+    {
+     "display": "Index Merge Conflicts",
+     "embed": false,
+     "fragment": null,
+     "line": 13,
+     "placeholder": false,
+     "raw": "[[10_Agents/solutions/vault-tooling/index-merge-conflicts|Index Merge Conflicts]]",
+     "resolved": "10_Agents/solutions/vault-tooling/index-merge-conflicts.md",
+     "target": "10_Agents/solutions/vault-tooling/index-merge-conflicts",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 376,
+   "title": "Solutions: Vault Tooling",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/solutions/vault-tooling/index-merge-conflicts.md": {
+   "backlinks": [
+    "10_Agents/solutions/vault-tooling/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/solution",
+     "audience/agent",
+     "topic/software"
+    ],
+    "title": "Index Merge Conflicts",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "Index Merge Conflicts"
+    },
+    {
+     "level": 2,
+     "line": 12,
+     "text": "Problem"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Symptoms"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "text": "Solution"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Prevention"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "Related"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 1521,
+   "title": "Index Merge Conflicts",
+   "updated": "2026-08-11"
   },
   "10_Agents/tools/README.md": {
    "backlinks": [

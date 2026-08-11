@@ -12,6 +12,13 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — M7: Environment Integration Shipped (template scope)
+
+- Three environment-integration skills joined `10_Agents/skills/` (canonical): `agent-orientation` (inventory the environment, interview the owner, generate per-source access tooling + draft capture skills), `recommended-automations` (recurring email/calendar/chat/transcript ingestion via each harness's scheduler, dry-run first), and `self-maintenance` (recurring audit of generated tooling: validate, probe sources, prune, propose draft → promotion). Each states the integration preference ladder (custom env tooling → first-party CLI → first-party MCP/connector) and the no-credentials rule (PRD §16.2) inline.
+- Acceptance verified by dry run in a test vault: orientation produced an inventory note and a generated calendar source tool + paired draft skill, all passing `brain validate`.
+- Also: new solutions category `vault-tooling/` with the index-merge-conflict recipe (regenerate, never hand-merge) — the M5 risk-mitigation note that had been deferred.
+- With M5–M7 complete, the [[00_Meta/prd]] §19 roadmap is fully shipped at template scope; M7's orientation/automation cycle recurs in each adopter's environment by design.
+
 ## 2026-08-11 — M6: Agent Plugin Library Shipped
 
 - **Nine skills** at `10_Agents/skills/` in the Agent Skills format (folder-per-skill `SKILL.md`, superset frontmatter — standard `name`/`description` plus the vault contract): `inbox-capture`, `triage-inbox`, `daily-log`, `periodic-review`, `vault-maintenance`, `link-repair`, `solution-capture`, `research-to-resource`, `onboard-harness`. Skill list confirmed by the owner; shipped skills are canonical. `brain validate` now enforces the Agent Skills contract for `skills/` dirs, and `SKILL.md` joined the filename-convention exceptions ([[00_Meta/conventions]], spec §10.2).

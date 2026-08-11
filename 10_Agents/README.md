@@ -18,7 +18,7 @@ Agent-facing documentation for working within this vault. Start with the bootstr
 
 ## Skills
 
-Nine harness-agnostic skills in the Agent Skills format (folder-per-skill `SKILL.md`), covering capture & triage, periodic reviews, vault maintenance, research → resource, and harness onboarding. See [[10_Agents/skills/README|Skills]] for the full table and the format contract.
+Twelve harness-agnostic skills in the Agent Skills format (folder-per-skill `SKILL.md`), covering capture & triage, periodic reviews, vault maintenance, research → resource, harness onboarding, and environment integration (orientation, ingestion automations, self-maintenance). See [[10_Agents/skills/README|Skills]] for the full table and the format contract.
 
 ## Tools
 
