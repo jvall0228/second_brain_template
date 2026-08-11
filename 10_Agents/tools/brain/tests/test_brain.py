@@ -350,6 +350,22 @@ class EmptyTagsTests(unittest.TestCase):
             any(f["path"] == "09_Templates/template-thing.md" for f in errors)
         )
 
+    def test_variants_dir_shares_placeholder_exemption(self):
+        # Spec §10.3: the 09_Templates/** exemption is recursive, so the
+        # issue #12 specialization sources under variants/ validate clean
+        # with the same placeholder frontmatter as the templates they mirror.
+        errors, _ = self.validate(
+            {
+                "09_Templates/variants/work-daily-log.md": (
+                    "---\ntitle: \"{{date}}\"\ntags:\n  - \"{{tag}}\"\n"
+                    "updated: \"{{date}}\"\n---\n"
+                )
+            }
+        )
+        self.assertFalse(
+            any(f["path"] == "09_Templates/variants/work-daily-log.md" for f in errors)
+        )
+
 
 class TaxonomyTests(unittest.TestCase):
     def test_fixture_table(self):

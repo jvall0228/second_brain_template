@@ -2764,6 +2764,7 @@
     "09_Templates/template-monthly-review.md",
     "09_Templates/template-quarterly-review.md",
     "09_Templates/template-weekly-review.md",
+    "09_Templates/variants/work-weekly-review.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/skills/periodic-review/SKILL.md",
     "AGENTS.md"
@@ -7988,6 +7989,7 @@
    "backlinks": [
     "00_Meta/index.md",
     "00_Meta/prd.md",
+    "09_Templates/variants/README.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -8015,11 +8017,16 @@
     {
      "level": 2,
      "line": 33,
+     "text": "Variants (`variants/`)"
+    },
+    {
+     "level": 2,
+     "line": 37,
      "text": "Placeholder Syntax"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 42,
      "text": "Related"
     }
    ],
@@ -8036,10 +8043,32 @@
      "warnings": []
     },
     {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 35,
+     "placeholder": false,
+     "raw": "[[09_Templates/variants/README]]",
+     "resolved": "09_Templates/variants/README.md",
+     "target": "09_Templates/variants/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 44,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -8050,7 +8079,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -8058,7 +8087,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1984,
+   "sizeBytes": 2446,
    "title": "Templates",
    "updated": "2026-08-11"
   },
@@ -8338,6 +8367,8 @@
    "backlinks": [
     "04_Projects/README.md",
     "04_Projects/example-project/decision-records/README.md",
+    "09_Templates/variants/work-daily-log.md",
+    "09_Templates/variants/work-weekly-review.md",
     "10_Agents/skills/express-packet/SKILL.md",
     "AGENTS.md"
    ],
@@ -9191,6 +9222,366 @@
    ],
    "sizeBytes": 227,
    "title": "{{ZETTEL_TITLE}}",
+   "updated": null
+  },
+  "09_Templates/variants/README.md": {
+   "backlinks": [
+    "09_Templates/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/meta",
+     "audience/agent",
+     "audience/human"
+    ],
+    "title": "Template Variants",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "Template Variants"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Contract: variants are not templates"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 12,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 30,
+     "placeholder": false,
+     "raw": "[[09_Templates/README]]",
+     "resolved": "09_Templates/README.md",
+     "target": "09_Templates/README",
+     "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 31,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2426,
+   "title": "Template Variants",
+   "updated": "2026-08-11"
+  },
+  "09_Templates/variants/work-daily-log.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/journal",
+     "workflow/draft",
+     "audience/human"
+    ],
+    "title": "{{date}}",
+    "updated": "{{date}}"
+   },
+   "frontmatterErrors": [
+    "invalid-updated"
+   ],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "{{date}}"
+    },
+    {
+     "level": 2,
+     "line": 12,
+     "text": "Related"
+    },
+    {
+     "level": 2,
+     "line": 17,
+     "text": "Preview"
+    },
+    {
+     "level": 3,
+     "line": 19,
+     "text": "Standup"
+    },
+    {
+     "level": 3,
+     "line": 25,
+     "text": "Goals"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "Schedule"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Review"
+    },
+    {
+     "level": 3,
+     "line": 53,
+     "text": "Activity Log"
+    },
+    {
+     "level": 3,
+     "line": 57,
+     "text": "Meeting Notes"
+    },
+    {
+     "level": 3,
+     "line": 64,
+     "text": "Blockers"
+    },
+    {
+     "level": 3,
+     "line": 70,
+     "text": "Decisions"
+    },
+    {
+     "level": 3,
+     "line": 76,
+     "text": "Backlog"
+    },
+    {
+     "level": 2,
+     "line": 82,
+     "text": "Reflection"
+    },
+    {
+     "level": 3,
+     "line": 93,
+     "text": "Thoughts"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": true,
+     "raw": "[[{{RELATED_WEEKLY_REVIEW}}]]",
+     "resolved": null,
+     "target": "{{RELATED_WEEKLY_REVIEW}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 15,
+     "placeholder": true,
+     "raw": "[[{{PREVIOUS_DAILY_NOTE}}]]",
+     "resolved": null,
+     "target": "{{PREVIOUS_DAILY_NOTE}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 72,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-decision-record]]",
+     "resolved": "09_Templates/template-decision-record.md",
+     "target": "09_Templates/template-decision-record",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 1579,
+   "title": "{{date}}",
+   "updated": null
+  },
+  "09_Templates/variants/work-weekly-review.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/journal",
+     "workflow/draft",
+     "audience/human"
+    ],
+    "title": "{{WEEK_ID}} Review",
+    "updated": "{{date}}"
+   },
+   "frontmatterErrors": [
+    "invalid-updated"
+   ],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "text": "{{WEEK_ID}} Review"
+    },
+    {
+     "level": 2,
+     "line": 12,
+     "text": "Related"
+    },
+    {
+     "level": 2,
+     "line": 17,
+     "text": "Get Clear"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "text": "Get Current — Projects"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Get Current — Areas"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Preview"
+    },
+    {
+     "level": 3,
+     "line": 32,
+     "text": "Goals"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "Schedule"
+    },
+    {
+     "level": 2,
+     "line": 52,
+     "text": "Review"
+    },
+    {
+     "level": 3,
+     "line": 54,
+     "text": "Activity Log"
+    },
+    {
+     "level": 3,
+     "line": 58,
+     "text": "Summary"
+    },
+    {
+     "level": 3,
+     "line": 62,
+     "text": "Wins"
+    },
+    {
+     "level": 3,
+     "line": 68,
+     "text": "Blockers & Risks"
+    },
+    {
+     "level": 3,
+     "line": 74,
+     "text": "Decisions Log"
+    },
+    {
+     "level": 3,
+     "line": 80,
+     "text": "Backlog"
+    },
+    {
+     "level": 3,
+     "line": 86,
+     "text": "Alignment"
+    },
+    {
+     "level": 2,
+     "line": 92,
+     "text": "Reflection"
+    },
+    {
+     "level": 3,
+     "line": 105,
+     "text": "Thoughts"
+    },
+    {
+     "level": 2,
+     "line": 109,
+     "text": "Next Week Focus"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": true,
+     "raw": "[[{{RELATED_MONTHLY_REVIEW}}]]",
+     "resolved": null,
+     "target": "{{RELATED_MONTHLY_REVIEW}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 15,
+     "placeholder": true,
+     "raw": "[[{{RELATED_DAILY_NOTE}}]]",
+     "resolved": null,
+     "target": "{{RELATED_DAILY_NOTE}}",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 76,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-decision-record]]",
+     "resolved": "09_Templates/template-decision-record.md",
+     "target": "09_Templates/template-decision-record",
+     "warnings": []
+    },
+    {
+     "display": "Now page",
+     "embed": false,
+     "fragment": null,
+     "line": 88,
+     "placeholder": false,
+     "raw": "[[01_Profile/now|Now page]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2105,
+   "title": "{{WEEK_ID}} Review",
    "updated": null
   },
   "10_Agents/README.md": {
@@ -11718,7 +12109,10 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
+    "09_Templates/README.md",
+    "09_Templates/variants/README.md",
     "10_Agents/skills/README.md",
+    "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -11768,12 +12162,12 @@
     },
     {
      "level": 2,
-     "line": 67,
+     "line": 71,
      "text": "Orchestration rules"
     },
     {
      "level": 2,
-     "line": 71,
+     "line": 75,
      "text": "Exit criteria (\"onboarded\")"
     }
    ],
@@ -11856,10 +12250,21 @@
      "warnings": []
     },
     {
+     "display": "09_Templates/variants/",
+     "embed": false,
+     "fragment": null,
+     "line": 59,
+     "placeholder": false,
+     "raw": "[[09_Templates/variants/README|09_Templates/variants/]]",
+     "resolved": "09_Templates/variants/README.md",
+     "target": "09_Templates/variants/README",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 62,
      "placeholder": false,
      "raw": "[[09_Templates/template-project]]",
      "resolved": "09_Templates/template-project.md",
@@ -11870,7 +12275,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 62,
      "placeholder": false,
      "raw": "[[09_Templates/template-area]]",
      "resolved": "09_Templates/template-area.md",
@@ -11881,7 +12286,7 @@
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -11892,7 +12297,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -11903,7 +12308,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 59,
+     "line": 63,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -11914,7 +12319,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 60,
+     "line": 64,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -11925,7 +12330,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 65,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -11936,7 +12341,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 65,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -11944,7 +12349,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8068,
+   "sizeBytes": 9367,
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
   },
@@ -13678,9 +14083,20 @@
      "resolved": "06_Resources/vscode-editor-support.md",
      "target": "06_Resources/vscode-editor-support",
      "warnings": []
+    },
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 350,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
     }
    ],
-   "sizeBytes": 42036,
+   "sizeBytes": 42814,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

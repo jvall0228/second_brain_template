@@ -56,6 +56,34 @@ class RenderTests(unittest.TestCase):
             with mock.patch.object(gen_snippets, "TEMPLATES_DIR", self._fixture_dir(tmp)):
                 self.assertEqual(gen_snippets.render(), gen_snippets.render())
 
+    def test_variants_dir_excluded_from_snippets(self):
+        # Issue #12: 09_Templates/variants/ holds specialization SOURCE
+        # material outside the resolve-by-name contract — the top-level
+        # template-*.md glob must never pick it up, even for files that
+        # match the template-*.md pattern inside variants/.
+        with tempfile.TemporaryDirectory() as tmp:
+            d = self._fixture_dir(tmp)
+            variants = d / "variants"
+            variants.mkdir()
+            (variants / "work-daily-log.md").write_text("# {{date}}\n", encoding="utf-8")
+            (variants / "template-sneaky.md").write_text("# {{date}}\n", encoding="utf-8")
+            with mock.patch.object(gen_snippets, "TEMPLATES_DIR", d):
+                snippets = gen_snippets.build_snippets()
+        self.assertEqual(
+            sorted(s["prefix"] for s in snippets.values()),
+            ["sb-alpha", "sb-beta", "sb-frontmatter"],
+        )
+
+    def test_repo_variants_absent_from_committed_snippets(self):
+        # The real repo ships variants/ (issue #12); pin that none of its
+        # files reached the committed snippet surface.
+        variants = gen_snippets.TEMPLATES_DIR / "variants"
+        self.assertTrue(variants.is_dir())
+        committed = gen_snippets.OUT_PATH.read_text(encoding="utf-8")
+        for path in variants.glob("*.md"):
+            self.assertNotIn(f"09_Templates/variants/{path.name}", committed)
+            self.assertNotIn(f"sb-{path.stem}", committed)
+
     def test_render_covers_every_template_plus_frontmatter(self):
         with tempfile.TemporaryDirectory() as tmp:
             with mock.patch.object(gen_snippets, "TEMPLATES_DIR", self._fixture_dir(tmp)):
