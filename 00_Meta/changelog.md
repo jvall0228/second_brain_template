@@ -12,6 +12,12 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)
+
+- New canonical skill [[10_Agents/skills/distill-note/SKILL|distill-note]]: reshape an existing note into an atomic evergreen zettel — declarative-claim title, standalone summary layer, wired links, supersede-by-replacement — invoked by triage for `type/zettel` items and by the Journal→Resources graduation path.
+- [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]] rewritten once with the full pipeline, in order: **atomize** multi-topic captures before classifying (capture stays zero-friction), **extract action items** into project tasks, classify, **propagate** — propose edits to the existing notes each capture extends/corrects/contradicts, alongside the filing — and hand zettels to distill-note. The report gains action-item and propagation columns; everything still gates on human approval.
+- [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] gains the matching propagation step: a source is fully ingested only when every note it touches reflects it.
+
 ## 2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)
 
 - Fourteenth library skill, [[10_Agents/skills/vault-answer/SKILL|vault-answer]] (canonical, owner-authorized via the ops implementation plan): retrieval discipline for "what do I know about X?" — brain search → index → grep, wikilink citations on every vault claim, explicit separation of vault knowledge from model knowledge, capture offers for substantive synthesized answers, and research-to-resource offers when the vault comes up empty.

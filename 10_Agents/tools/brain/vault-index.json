@@ -143,65 +143,103 @@
     {
      "level": 2,
      "line": 15,
+     "text": "2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)"
+    },
+    {
+     "level": 2,
+     "line": 21,
      "text": "2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)"
     },
     {
      "level": 2,
-     "line": 24,
+     "line": 30,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 30,
+     "line": 36,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 43,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 50,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 50,
+     "line": 56,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 56,
+     "line": 62,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 72,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 71,
+     "line": 77,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 77,
+     "line": 83,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 88,
+     "line": 94,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
    "links": [
     {
-     "display": "vault-answer",
+     "display": "distill-note",
      "embed": false,
      "fragment": null,
      "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-answer",
+     "embed": false,
+     "fragment": null,
+     "line": 23,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -212,7 +250,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 27,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -223,7 +261,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 27,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -234,7 +272,7 @@
      "display": "the harness research's Copilot section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 22,
+     "line": 28,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -245,7 +283,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -256,7 +294,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -267,7 +305,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -278,7 +316,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -289,7 +327,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 33,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -300,7 +338,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 33,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -311,7 +349,7 @@
      "display": "that section",
      "embed": false,
      "fragment": "GitHub Copilot (P0)",
-     "line": 32,
+     "line": 38,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research#GitHub Copilot (P0)|that section]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -322,7 +360,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 33,
+     "line": 39,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -333,7 +371,7 @@
      "display": "the wiring doc",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 40,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -344,7 +382,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 40,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -355,7 +393,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 40,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -366,7 +404,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 35,
+     "line": 41,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -377,7 +415,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 42,
+     "line": 48,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -388,7 +426,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 46,
+     "line": 52,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -399,7 +437,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 53,
+     "line": 59,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -410,7 +448,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 54,
+     "line": 60,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -421,18 +459,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 58,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 68,
+     "line": 64,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -445,6 +472,17 @@
      "fragment": null,
      "line": 74,
      "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 80,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -454,7 +492,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 81,
+     "line": 87,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -465,7 +503,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 88,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -476,7 +514,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 88,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -487,7 +525,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 86,
+     "line": 92,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -495,7 +533,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 15805,
+   "sizeBytes": 16863,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -2283,7 +2321,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 9780,
+   "sizeBytes": 9777,
    "title": "Implementation Plan: CODE Operations & Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
@@ -7255,6 +7293,7 @@
    "backlinks": [
     "03_Journal/ideas/README.md",
     "06_Resources/README.md",
+    "10_Agents/skills/distill-note/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -7569,6 +7608,7 @@
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
     "10_Agents/README.md",
     "10_Agents/docs/README.md",
+    "10_Agents/skills/distill-note/SKILL.md",
     "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
@@ -8535,7 +8575,7 @@
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 37,
      "text": "Rules"
     }
    ],
@@ -8574,10 +8614,21 @@
      "warnings": []
     },
     {
-     "display": "daily-log",
+     "display": "distill-note",
      "embed": false,
      "fragment": null,
      "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/distill-note/SKILL\\|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 24,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -8588,7 +8639,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 24,
+     "line": 25,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -8599,7 +8650,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 26,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -8610,7 +8661,7 @@
      "display": "link-repair",
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 27,
      "placeholder": false,
      "raw": "[[10_Agents/skills/link-repair/SKILL\\|link-repair]]",
      "resolved": "10_Agents/skills/link-repair/SKILL.md",
@@ -8621,7 +8672,7 @@
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 28,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL\\|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -8632,7 +8683,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 28,
+     "line": 29,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL\\|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -8643,7 +8694,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 30,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL\\|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -8654,7 +8705,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 31,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -8665,7 +8716,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 32,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL\\|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -8676,7 +8727,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 33,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -8687,7 +8738,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 33,
+     "line": 34,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL\\|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -8698,7 +8749,7 @@
      "display": "self-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 35,
      "placeholder": false,
      "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
      "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
@@ -8709,7 +8760,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 38,
+     "line": 39,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -8717,7 +8768,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3514,
+   "sizeBytes": 3719,
    "title": "Agent Skills",
    "updated": "2026-08-11"
   },
@@ -8811,6 +8862,119 @@
    "links": [],
    "sizeBytes": 1707,
    "title": "Skill: Daily Log",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/distill-note/SKILL.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/triage-inbox/SKILL.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Reshape an existing vault note into an atomic evergreen zettel — extract the core claim, add a summary layer, wire links, supersede the original by replacement. Use when triage classifies a note type/zettel, or when graduating a Journal idea into Resources.",
+    "name": "distill-note",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Distill Note",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Distill Note"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 37,
+     "text": "References"
+    }
+   ],
+   "links": [
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "template-zettel",
+     "embed": false,
+     "fragment": null,
+     "line": 20,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-zettel|template-zettel]]",
+     "resolved": "09_Templates/template-zettel.md",
+     "target": "09_Templates/template-zettel",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 39,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-zettel]]",
+     "resolved": "09_Templates/template-zettel.md",
+     "target": "09_Templates/template-zettel",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 40,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 42,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 3188,
+   "title": "Skill: Distill Note",
    "updated": "2026-08-11"
   },
   "10_Agents/skills/inbox-capture/SKILL.md": {
@@ -9301,6 +9465,7 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/distill-note/SKILL.md",
     "10_Agents/skills/vault-answer/SKILL.md"
    ],
    "bodyTags": [],
@@ -9329,17 +9494,17 @@
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 29,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 37,
      "text": "References"
     }
    ],
    "links": [],
-   "sizeBytes": 3271,
+   "sizeBytes": 3579,
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
   },
@@ -9429,13 +9594,15 @@
   },
   "10_Agents/skills/triage-inbox/SKILL.md": {
    "backlinks": [
+    "00_Meta/changelog.md",
     "07_Archives/inbox/2026-08-11-triage-report.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/distill-note/SKILL.md",
     "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
-    "description": "Classify the notes sitting in 02_Inbox/ and propose a PARA destination for each, for human review. Use when asked to triage, clean up, or process the Inbox — the skill proposes moves but never performs them.",
+    "description": "Process the 02_Inbox/ queue for human review — split multi-topic captures, extract action items, classify each note to a PARA destination, and propose updates to the existing notes each capture touches. Use when asked to triage, clean up, or process the Inbox — the skill proposes; the human approves.",
     "name": "triage-inbox",
     "tags": [
      "type/reference",
@@ -9459,12 +9626,35 @@
     },
     {
      "level": 2,
-     "line": 30,
+     "line": 34,
      "text": "References"
     }
    ],
-   "links": [],
-   "sizeBytes": 1842,
+   "links": [
+    {
+     "display": "distill-note",
+     "embed": false,
+     "fragment": null,
+     "line": 29,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "distill-note",
+     "embed": false,
+     "fragment": null,
+     "line": 38,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
+     "resolved": "10_Agents/skills/distill-note/SKILL.md",
+     "target": "10_Agents/skills/distill-note/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 3346,
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
   },

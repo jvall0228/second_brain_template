@@ -19,7 +19,8 @@ Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for 
 | Skill | Family | Does |
 |-------|--------|------|
 | [[10_Agents/skills/inbox-capture/SKILL\|inbox-capture]] | Capture & triage | Write a new `02_Inbox/` note with correct frontmatter, filename, and collision handling |
-| [[10_Agents/skills/triage-inbox/SKILL\|triage-inbox]] | Capture & triage | Classify Inbox notes and propose PARA destinations for human review |
+| [[10_Agents/skills/triage-inbox/SKILL\|triage-inbox]] | Capture & triage | Process the Inbox for review: atomize, extract action items, classify, propose propagation edits |
+| [[10_Agents/skills/distill-note/SKILL\|distill-note]] | Capture & triage | Reshape a note into an atomic zettel: core claim, summary layer, links, supersede by replacement |
 | [[10_Agents/skills/daily-log/SKILL\|daily-log]] | Periodic reviews | Create or update today's daily log from the template |
 | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] | Periodic reviews | Weekly/monthly/quarterly/yearly reviews — cadence is a parameter |
 | [[10_Agents/skills/vault-maintenance/SKILL\|vault-maintenance]] | Vault maintenance | Run `brain validate`, fix findings, keep status/changelog current |
