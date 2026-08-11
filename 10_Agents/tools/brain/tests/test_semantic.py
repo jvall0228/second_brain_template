@@ -1,4 +1,4 @@
-"""Tests for semantic search (spec §17, issue #8 QMD): sidecar round-trip,
+"""Tests for semantic search (spec §18, issue #8 QMD): sidecar round-trip,
 hash staleness, hybrid-ranking determinism, keyword degradation, the
 `embed --stdin-json` contract, and restricted/private containment.
 
@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import brain  # noqa: E402
 
-try:  # the one sanctioned optional dependency (spec §17.3)
+try:  # the one sanctioned optional dependency (spec §18.3)
     import sentence_transformers  # noqa: F401
 
     HAVE_LOCAL_MODEL = True
@@ -70,7 +70,7 @@ def ingest(root: Path, vectors: dict[str, list[float]], model: str = "toy") -> t
 
 
 class StoreRoundTripTests(unittest.TestCase):
-    """§17.1/§17.2: sidecar write/read identity and best-effort loading."""
+    """§18.1/§18.2: sidecar write/read identity and best-effort loading."""
 
     def test_save_then_load_round_trips(self):
         with tempfile.TemporaryDirectory() as td:
@@ -124,7 +124,7 @@ class StoreRoundTripTests(unittest.TestCase):
             self.assertNotIn(brain.EMBED_RELPATH, assets)
 
     def test_hash_is_over_normalized_text(self):
-        # §17.1: CRLF and LF copies of a note hash identically (§3).
+        # §18.1: CRLF and LF copies of a note hash identically (§3).
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             (root / "lf.md").write_bytes(b"---\ntitle: X\n---\nbody\n")
@@ -137,7 +137,7 @@ class StoreRoundTripTests(unittest.TestCase):
 
 
 class EmbedStdinJsonTests(unittest.TestCase):
-    """§17.3: the --stdin-json ingestion contract."""
+    """§18.3: the --stdin-json ingestion contract."""
 
     def test_happy_path_writes_hashed_entries(self):
         with tempfile.TemporaryDirectory() as td:
@@ -230,7 +230,7 @@ class EmbedStdinJsonTests(unittest.TestCase):
 
 
 class StalenessTests(unittest.TestCase):
-    """§17.2: hash mismatch excludes the entry from semantic ranking."""
+    """§18.2: hash mismatch excludes the entry from semantic ranking."""
 
     def test_edited_note_goes_stale(self):
         with tempfile.TemporaryDirectory() as td:
@@ -269,7 +269,7 @@ class StalenessTests(unittest.TestCase):
 
 
 class SemanticRankingTests(unittest.TestCase):
-    """§17.4: exact hybrid scores, ordering, and determinism."""
+    """§18.4: exact hybrid scores, ordering, and determinism."""
 
     def search(self, root: Path, query: str, qvec: list[float]) -> tuple[int, str, str]:
         return run(
@@ -287,7 +287,7 @@ class SemanticRankingTests(unittest.TestCase):
             # alpha:  sem = (1+1)/2 = 1.0, kw hit -> 0.7*1 + 0.3 = 1.0 (rank 1)
             # beta:   sem = (0+1)/2 = 0.5, no kw -> 0.35
             # secret: restricted, no vector, but its body mentions gardening —
-            #         keyword component only (§17.1), 0.3.
+            #         keyword component only (§18.1), 0.3.
             self.assertEqual(
                 [(r["path"], r["score"]) for r in rows],
                 [("alpha.md", 1.0), ("beta.md", 0.35), ("secret.md", 0.3)],
@@ -342,7 +342,7 @@ class SemanticRankingTests(unittest.TestCase):
 
 
 class DegradationTests(unittest.TestCase):
-    """§17.4: --semantic never hard-fails on a vectorless vault."""
+    """§18.4: --semantic never hard-fails on a vectorless vault."""
 
     def test_no_sidecar_matches_plain_search_output(self):
         with tempfile.TemporaryDirectory() as td:
@@ -359,7 +359,7 @@ class DegradationTests(unittest.TestCase):
             self.assertEqual(sem_out, plain_out)
 
     def test_query_vector_flag_still_degrades_on_empty_store(self):
-        # Degradation is checked before stdin is consumed (spec §17.4).
+        # Degradation is checked before stdin is consumed (spec §18.4).
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(Path(td), base_files())
             code, _out, err = run(
@@ -381,7 +381,7 @@ class DegradationTests(unittest.TestCase):
 
 
 class RestrictedContainmentTests(unittest.TestCase):
-    """§17.1: restricted/private notes never enter or rank via the sidecar."""
+    """§18.1: restricted/private notes never enter or rank via the sidecar."""
 
     def test_embed_skips_restricted_with_notice(self):
         with tempfile.TemporaryDirectory() as td:
