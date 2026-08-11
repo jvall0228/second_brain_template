@@ -1,0 +1,41 @@
+{
+  "overlay_version": 1,
+  "harness": "cursor",
+  "description": "Cursor-native primitives layered on top of the universal skills/entrypoint: a glob-scoped .mdc rule for Inbox conventions and the .cursorignore privacy-exclusion template generated from restricted-tagged paths.",
+  "standards_gap": "Glob-scoped .cursor/rules/*.mdc activation and .cursorignore access exclusion are Cursor-only mechanisms; AGENTS.md and the Agent Skills standard cannot express per-directory rule scoping or enforce the restricted/private privacy marking.",
+  "artifacts": [
+    {
+      "id": "inbox-rule",
+      "kind": "cursor-rule",
+      "source": "rules/inbox-conventions.mdc",
+      "source_root": "overlay",
+      "install": {
+        "method": "copy",
+        "target": "<vault>/.cursor/rules/second-brain-inbox.mdc",
+        "scope": "project"
+      },
+      "reverse": {
+        "method": "delete"
+      },
+      "notes": "Copy verbatim. An existing foreign file at the target is never overwritten - report and skip. Idempotent: re-copy only when the manifest-recorded hash drifts."
+    },
+    {
+      "id": "cursorignore-privacy",
+      "kind": "ignore-file",
+      "source": "cursorignore-template.txt",
+      "source_root": "overlay",
+      "install": {
+        "method": "generate",
+        "target": "<vault>/.cursorignore",
+        "scope": "project",
+        "generator": "python3 10_Agents/tools/brain/brain.py list --tag restricted/private",
+        "generator_semantics": "Seed the target from the template if absent, then append one line per path printed by the generator command. Re-run whenever notes gain or lose the restricted/private tag; the file does not regenerate itself."
+      },
+      "reverse": {
+        "method": "delete",
+        "condition": "only when the machine manifest records this overlay as the file's creator; a pre-existing user .cursorignore is user-owned"
+      },
+      "notes": "See the Restricted content section of ../wiring.md - the wiring doc is authoritative for the generation step."
+    }
+  ]
+}
