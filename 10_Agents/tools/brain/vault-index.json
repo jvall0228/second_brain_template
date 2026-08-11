@@ -3182,6 +3182,65 @@
    "title": "M5–M7 Implementation Plan",
    "updated": "2026-08-11"
   },
+  "02_Inbox/2026-08-11-triage-report.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/log",
+     "audience/human",
+     "audience/agent",
+     "workflow/draft",
+     "status/active"
+    ],
+    "title": "Inbox Triage Report — 2026-08-11",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Inbox Triage Report — 2026-08-11"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Proposals"
+    },
+    {
+     "level": 2,
+     "line": 25,
+     "text": "Rationale"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "Open questions"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "On approval"
+    }
+   ],
+   "links": [
+    {
+     "display": "the triage skill",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|the triage skill]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 3396,
+   "title": "Inbox Triage Report — 2026-08-11",
+   "updated": "2026-08-11"
+  },
   "02_Inbox/README.md": {
    "backlinks": [
     "00_Meta/conventions.md",
@@ -8499,6 +8558,7 @@
   },
   "10_Agents/skills/triage-inbox/SKILL.md": {
    "backlinks": [
+    "02_Inbox/2026-08-11-triage-report.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],
