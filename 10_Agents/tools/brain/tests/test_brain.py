@@ -474,6 +474,80 @@ class ValidateTests(unittest.TestCase):
         self.assertFalse(brain.PERIODIC_RE.match("2026-W1-review.md"))
 
 
+class ProvenanceTests(unittest.TestCase):
+    """Spec §10.2 missing-author (issue #18): warn on an agent-tagged
+    02_Inbox/ draft with no author: field; never an error."""
+
+    AGENT_DRAFT = (
+        "---\ntitle: x\ntags:\n  - audience/agent\n  - workflow/draft\n"
+        "  - type/note\nupdated: 2026-08-11\n{extra}---\nbody\n"
+    )
+
+    def validate(self, files):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    **files,
+                },
+            )
+            return brain.run_validate(root, check_index=False)
+
+    def missing_author(self, findings, path):
+        return any(
+            f["rule"] == "missing-author" and f["path"] == path for f in findings
+        )
+
+    def test_agent_inbox_draft_without_author_warns(self):
+        path = "02_Inbox/2026-08-11-capture.md"
+        errors, warnings = self.validate({path: self.AGENT_DRAFT.format(extra="")})
+        self.assertTrue(self.missing_author(warnings, path))
+        # Warning-mapped, never an error.
+        self.assertFalse(any(f["rule"] == "missing-author" for f in errors))
+        self.assertFalse(any(f["path"] == path for f in errors))
+
+    def test_author_present_no_warning(self):
+        path = "02_Inbox/2026-08-11-capture.md"
+        _, warnings = self.validate(
+            {path: self.AGENT_DRAFT.format(extra="author: claude-code\n")}
+        )
+        self.assertFalse(self.missing_author(warnings, path))
+
+    def test_null_author_still_warns(self):
+        path = "02_Inbox/2026-08-11-capture.md"
+        _, warnings = self.validate({path: self.AGENT_DRAFT.format(extra="author:\n")})
+        self.assertTrue(self.missing_author(warnings, path))
+
+    def test_human_note_exempt(self):
+        # No audience/agent + workflow/draft pair → absence means human-authored.
+        path = "02_Inbox/2026-08-11-human-note.md"
+        content = (
+            "---\ntitle: x\ntags:\n  - audience/human\n  - type/note\n"
+            "updated: 2026-08-11\n---\nbody\n"
+        )
+        _, warnings = self.validate({path: content})
+        self.assertFalse(self.missing_author(warnings, path))
+
+    def test_agent_draft_outside_inbox_exempt(self):
+        path = "06_Resources/agent-draft.md"
+        _, warnings = self.validate({path: self.AGENT_DRAFT.format(extra="")})
+        self.assertFalse(self.missing_author(warnings, path))
+
+    def test_template_exempt(self):
+        # §10.3 pattern: templates are never flagged — placeholder frontmatter
+        # (and living outside 02_Inbox/) satisfies the rule by construction.
+        path = "09_Templates/template-capture.md"
+        content = (
+            "---\ntitle: \"{{title}}\"\ntags:\n  - audience/agent\n"
+            "  - workflow/draft\n  - type/note\nupdated: \"{{date}}\"\n"
+            "author: \"{{author}}\"\n---\nbody\n"
+        )
+        errors, warnings = self.validate({path: content})
+        self.assertFalse(self.missing_author(warnings, path))
+        self.assertFalse(any(f["path"] == path for f in errors))
+
+
 def note(body: str = "", **fm_extra) -> str:
     fm = {"title": "x", "updated": "2026-08-01", **fm_extra}
     lines = ["---", f'title: {fm["title"]}', "tags:", "  - type/note"]

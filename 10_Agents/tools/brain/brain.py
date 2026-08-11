@@ -555,6 +555,33 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
     return {"assets": assets, "notes": records, "schemaVersion": SCHEMA_VERSION}
 
 
+# §8.3 restricted-note reduction (issue #17). Frontmatter tags only —
+# bodyTags are informal (§10.2 posture) and never trigger restriction.
+RESTRICTED_TAG = "restricted/private"
+
+
+def note_frontmatter_tags(rec: dict) -> list[str]:
+    tags = rec["frontmatter"].get("tags")
+    return tags if isinstance(tags, list) else ([tags] if isinstance(tags, str) else [])
+
+
+def is_restricted(rec: dict) -> bool:
+    return RESTRICTED_TAG in note_frontmatter_tags(rec)
+
+
+def reduce_restricted(index: dict) -> dict:
+    """§8.3: reduce restricted notes for the COMMITTED index — keep
+    path/title/frontmatter(tags)/updated/sizeBytes/frontmatterErrors/links/
+    backlinks, empty the body-derived fields (headings, bodyTags) the index
+    would otherwise re-leak. Emptied, never omitted: the §8.1 shape holds,
+    so no schemaVersion bump. In-memory query indexes stay unreduced (§8.3)."""
+    for rec in index["notes"].values():
+        if is_restricted(rec):
+            rec["headings"] = []
+            rec["bodyTags"] = []
+    return index
+
+
 def serialize(index: dict) -> bytes:
     return (json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True) + "\n").encode(
         "utf-8"
@@ -1064,6 +1091,10 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                 "collides case-insensitively with " + ", ".join(group[1:]),
             )
 
+    # §8.3/§10.2 restricted containment: notes tagged restricted/private
+    # (frontmatter tags only — bodyTags never trigger restriction).
+    restricted_paths = {p for p, r in index["notes"].items() if is_restricted(r)}
+
     for rel in notes:
         rec = index["notes"][rel]
         template = is_template(rel)
@@ -1135,6 +1166,24 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                             "unknown-tag-value",
                             f"tag {tag!r} is not in the conventions value list",
                         )
+                # §10.2 missing-author (issue #18 provenance): an Inbox note
+                # tagged as agent-authored draft should say which harness wrote
+                # it. Warning only — absence elsewhere means pre-convention or
+                # human-authored. Template placeholders satisfy per §10.3, and
+                # `09_Templates/` never sits under `02_Inbox/` anyway.
+                if (
+                    rel.startswith("02_Inbox/")
+                    and not template
+                    and "audience/agent" in tags
+                    and "workflow/draft" in tags
+                    and not fm.get("author")
+                ):
+                    warn(
+                        rel,
+                        "missing-author",
+                        "agent-authored Inbox note has no author: field "
+                        "(see conventions § Provenance)",
+                    )
 
         for link in rec["links"]:
             if link["placeholder"]:
@@ -1146,6 +1195,17 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                     message += " (title matches: " + ", ".join(hints) + ")"
                 err(rel, "unresolved-link", message, link["line"])
             else:
+                if link["resolved"] in restricted_paths and rel not in restricted_paths:
+                    # §10.2 restricted-link (issue #17): context bleed —
+                    # restricted -> restricted links stay clean.
+                    warn(
+                        rel,
+                        "restricted-link",
+                        f"{link['raw']} links a restricted/private note "
+                        f"({link['resolved']}) from a non-restricted one — "
+                        "never quote or summarize its content here",
+                        link["line"],
+                    )
                 for w in link["warnings"]:
                     if w == "ambiguous":
                         warn(rel, "ambiguous-link", f"{link['raw']} is ambiguous; resolved to {link['resolved']}", link["line"])
@@ -1206,7 +1266,7 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
 
     if check_index:
         tnotes, tassets = index_corpus(root)
-        fresh = serialize(build_index(root, tnotes, tassets))
+        fresh = serialize(reduce_restricted(build_index(root, tnotes, tassets)))
         index_path = root / INDEX_RELPATH
         if not index_path.exists() or index_path.read_bytes() != fresh:
             err(INDEX_RELPATH, "stale-index", "stale index — run `brain index`")
@@ -1426,7 +1486,7 @@ def emit(payload, as_json: bool, human_lines):
 
 def cmd_index(root: Path, args) -> int:
     notes, assets = index_corpus(root)
-    data = serialize(build_index(root, notes, assets))
+    data = serialize(reduce_restricted(build_index(root, notes, assets)))
     path = root / INDEX_RELPATH
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(data)
