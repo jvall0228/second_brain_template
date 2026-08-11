@@ -190,6 +190,130 @@ class IndexTests(unittest.TestCase):
             self.assertEqual(index["notes"]["ok.md"]["sizeBytes"], len("---\ntitle: x\n---\nhi\n"))
 
 
+class UnreadableNoteTests(unittest.TestCase):
+    """Spec §3 read failure: OSError on a note is a finding, never a crash."""
+
+    def broken_symlink_vault(self, td: Path) -> Path:
+        root = make_vault(
+            td,
+            {
+                "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                "ok.md": note(),
+                "02_Inbox/README.md": note(),
+            },
+        )
+        os.symlink("../missing.md", root / "02_Inbox" / "dangling.md")
+        return root
+
+    def test_broken_symlink_indexed_as_not_readable(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.broken_symlink_vault(Path(td))
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            rec = index["notes"]["02_Inbox/dangling.md"]
+            self.assertEqual(rec["frontmatterErrors"], ["not-readable"])
+            self.assertEqual(rec["sizeBytes"], 0)
+            self.assertEqual(rec["frontmatter"], {})
+            self.assertEqual(rec["links"], [])
+
+    def test_broken_symlink_validate_reports_finding(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.broken_symlink_vault(Path(td))
+            errors, _ = brain.run_validate(root, check_index=False)
+            rules = {f["rule"] for f in errors if f["path"] == "02_Inbox/dangling.md"}
+            self.assertIn("not-readable", rules)
+            self.assertNotIn("missing-frontmatter", rules)
+
+    def test_broken_symlink_commands_do_not_crash(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.broken_symlink_vault(Path(td))
+            for argv in (
+                ["index"],
+                ["list"],
+                ["search", "x"],
+                ["recent", "5"],
+                ["curate"],
+                ["validate"],
+            ):
+                out, err_s = io.StringIO(), io.StringIO()
+                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err_s):
+                    code = brain.main([*argv, "--vault", str(root)])
+                expected = {1} if argv == ["validate"] else {0}
+                self.assertIn(code, expected, f"{argv} exited {code}")
+
+    @unittest.skipIf(os.geteuid() == 0, "root ignores file modes")
+    def test_permission_denied_is_not_readable(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "locked.md": note(),
+                },
+            )
+            locked = root / "locked.md"
+            os.chmod(locked, 0o000)
+            try:
+                notes, assets = brain.walk_corpus(root)
+                index = brain.build_index(root, notes, assets)
+                self.assertEqual(
+                    index["notes"]["locked.md"]["frontmatterErrors"], ["not-readable"]
+                )
+                errors, _ = brain.run_validate(root, check_index=False)
+                self.assertTrue(
+                    any(
+                        f["rule"] == "not-readable" and f["path"] == "locked.md"
+                        for f in errors
+                    )
+                )
+            finally:
+                os.chmod(locked, 0o644)
+
+
+class EmptyTagsTests(unittest.TestCase):
+    """Spec §10.2: `tags: []` fails missing-tags like an absent/null key."""
+
+    def validate(self, files):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    **files,
+                },
+            )
+            return brain.run_validate(root, check_index=False)
+
+    def test_empty_flow_list_is_missing_tags(self):
+        errors, _ = self.validate(
+            {"no-tags.md": "---\ntitle: x\ntags: []\nupdated: 2026-08-11\n---\n"}
+        )
+        self.assertTrue(
+            any(f["rule"] == "missing-tags" and f["path"] == "no-tags.md" for f in errors)
+        )
+
+    def test_null_tags_still_missing(self):
+        errors, _ = self.validate(
+            {"null-tags.md": "---\ntitle: x\ntags:\nupdated: 2026-08-11\n---\n"}
+        )
+        self.assertTrue(
+            any(f["rule"] == "missing-tags" and f["path"] == "null-tags.md" for f in errors)
+        )
+
+    def test_template_placeholder_tags_stay_exempt(self):
+        errors, _ = self.validate(
+            {
+                "09_Templates/template-thing.md": (
+                    "---\ntitle: \"{{title}}\"\ntags:\n  - \"{{tag}}\"\n"
+                    "updated: \"{{date}}\"\n---\n"
+                )
+            }
+        )
+        self.assertFalse(
+            any(f["path"] == "09_Templates/template-thing.md" for f in errors)
+        )
+
+
 class TaxonomyTests(unittest.TestCase):
     def test_fixture_table(self):
         tax = brain.load_taxonomy(FIXTURE)
