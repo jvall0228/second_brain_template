@@ -34,6 +34,7 @@ Use **kebab-case** by default for filenames: `my-note-title.md`.
 
 Allowed exceptions:
 - Entrypoints: `AGENTS.md`, `CLAUDE.md`, `README.md` (uppercase by convention). These may appear at the vault root or at any directory level (e.g., `04_Projects/example-project/README.md`).
+- Skill manifests: `SKILL.md` inside `10_Agents/skills/<skill-name>/` (the Agent Skills format requires this exact name).
 - Periodic review filenames may use ISO week/quarter tokens:
   - `YYYY-W##-review.md` (weekly)
   - `YYYY-Q#-review.md` (quarterly)

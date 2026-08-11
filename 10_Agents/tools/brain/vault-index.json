@@ -315,42 +315,42 @@
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 42,
      "text": "Locale & Output Defaults"
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 46,
      "text": "Frontmatter Requirements"
     },
     {
      "level": 3,
-     "line": 58,
+     "line": 59,
      "text": "Template Placeholder Exception"
     },
     {
      "level": 3,
-     "line": 62,
+     "line": 63,
      "text": "Adapter File Exception"
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 67,
      "text": "Tag Namespaces"
     },
     {
      "level": 2,
-     "line": 80,
+     "line": 81,
      "text": "Agent Write Rules"
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 91,
      "text": "Change Control"
     },
     {
      "level": 2,
-     "line": 102,
+     "line": 103,
      "text": "Recency"
     }
    ],
@@ -359,7 +359,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 43,
+     "line": 44,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -370,7 +370,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 64,
+     "line": 65,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -381,7 +381,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 68,
+     "line": 69,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -392,7 +392,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 68,
+     "line": 69,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -403,7 +403,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 84,
+     "line": 85,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -414,7 +414,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 88,
+     "line": 89,
      "placeholder": false,
      "raw": "[[02_Inbox/README]]",
      "resolved": "02_Inbox/README.md",
@@ -425,7 +425,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 100,
+     "line": 101,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -436,7 +436,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 106,
+     "line": 107,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -444,7 +444,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4913,
+   "sizeBytes": 5035,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -855,6 +855,7 @@
     "02_Inbox/2026-08-11-harness-primitives-research.md",
     "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
+    "10_Agents/skills/README.md",
     "10_Agents/tools/README.md",
     "10_Agents/tools/brain/spec.md"
    ],
@@ -6336,16 +6337,21 @@
     {
      "level": 2,
      "line": 19,
-     "text": "Tools"
+     "text": "Skills"
     },
     {
      "level": 2,
      "line": 23,
+     "text": "Tools"
+    },
+    {
+     "level": 2,
+     "line": 27,
      "text": "Solutions"
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 35,
      "text": "Related"
     }
    ],
@@ -6384,10 +6390,21 @@
      "warnings": []
     },
     {
-     "display": "brain",
+     "display": "Skills",
      "embed": false,
      "fragment": null,
      "line": 21,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README|Skills]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": "brain",
+     "embed": false,
+     "fragment": null,
+     "line": 25,
      "placeholder": false,
      "raw": "[[10_Agents/tools/brain/README|brain]]",
      "resolved": "10_Agents/tools/brain/README.md",
@@ -6398,7 +6415,7 @@
      "display": "Tools",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 25,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README|Tools]]",
      "resolved": "10_Agents/tools/README.md",
@@ -6409,7 +6426,7 @@
      "display": "Solutions",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 29,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/README|Solutions]]",
      "resolved": "10_Agents/solutions/README.md",
@@ -6420,7 +6437,7 @@
      "display": "Wikilink Resolution Rules",
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 33,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules|Wikilink Resolution Rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -6431,7 +6448,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 33,
+     "line": 37,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -6442,7 +6459,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 38,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -6453,7 +6470,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 35,
+     "line": 39,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -6464,7 +6481,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 36,
+     "line": 40,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -6472,7 +6489,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1526,
+   "sizeBytes": 1819,
    "title": "Agents",
    "updated": "2026-08-11"
   },
@@ -6790,6 +6807,562 @@
    ],
    "sizeBytes": 1855,
    "title": "Task Patterns",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/README.md": {
+   "backlinks": [
+    "10_Agents/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/meta",
+     "audience/agent",
+     "audience/human",
+     "workflow/canonical"
+    ],
+    "title": "Agent Skills",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Agent Skills"
+    },
+    {
+     "level": 2,
+     "line": 17,
+     "text": "Shipped skills"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "Rules"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 15,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "inbox-capture",
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/inbox-capture/SKILL\\|inbox-capture]]",
+     "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
+     "target": "10_Agents/skills/inbox-capture/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 22,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL\\|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "vault-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 25,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
+     "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
+     "target": "10_Agents/skills/vault-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "link-repair",
+     "embed": false,
+     "fragment": null,
+     "line": 26,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/link-repair/SKILL\\|link-repair]]",
+     "resolved": "10_Agents/skills/link-repair/SKILL.md",
+     "target": "10_Agents/skills/link-repair/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "solution-capture",
+     "embed": false,
+     "fragment": null,
+     "line": 27,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/solution-capture/SKILL\\|solution-capture]]",
+     "resolved": "10_Agents/skills/solution-capture/SKILL.md",
+     "target": "10_Agents/skills/solution-capture/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "research-to-resource",
+     "embed": false,
+     "fragment": null,
+     "line": 28,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/research-to-resource/SKILL\\|research-to-resource]]",
+     "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
+     "target": "10_Agents/skills/research-to-resource/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 29,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 33,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2590,
+   "title": "Agent Skills",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/daily-log/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Create or update today's daily journal log from the vault template. Use when asked to start the day, log something to today, or append to the daily note — invocation itself directs the write to 03_Journal/periodic/daily/.",
+    "name": "daily-log",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Daily Log",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Daily Log"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 23,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 1707,
+   "title": "Skill: Daily Log",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/inbox-capture/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Capture new content into the vault's Inbox as a correctly formatted note. Use whenever you produce output for the vault and no explicit destination was given — the Inbox-first rule makes 02_Inbox/ the default landing zone.",
+    "name": "inbox-capture",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Inbox Capture",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Inbox Capture"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 35,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 40,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 1989,
+   "title": "Skill: Inbox Capture",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/link-repair/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Find and fix broken or fragile wikilinks using the brain index's resolution data and repair hints. Use when validate reports unresolved links, after files move or rename, or on request.",
+    "name": "link-repair",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Link Repair",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Link Repair"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 31,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 2134,
+   "title": "Skill: Link Repair",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/onboard-harness/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Install this vault's agent primitives into a coding harness's user-level config — symlink-first — and wire the harness's memory file to import the vault entrypoint. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code to use this vault everywhere, or to re-sync or uninstall a previous install.",
+    "name": "onboard-harness",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Onboard Harness",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Onboard Harness"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Inputs"
+    },
+    {
+     "level": 2,
+     "line": 23,
+     "text": "Install algorithm"
+    },
+    {
+     "level": 2,
+     "line": 41,
+     "text": "Re-run and uninstall"
+    },
+    {
+     "level": 2,
+     "line": 46,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 52,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 4453,
+   "title": "Skill: Onboard Harness",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/periodic-review/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Run a weekly, monthly, quarterly, or yearly review from the matching vault template, pre-filled from what actually happened. Use when asked for any cadence of review; the cadence is a parameter, not a separate skill.",
+    "name": "periodic-review",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Periodic Review",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Periodic Review"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Cadence map"
+    },
+    {
+     "level": 2,
+     "line": 25,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 2104,
+   "title": "Skill: Periodic Review",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/research-to-resource/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Turn a research task into a durable reference note in 06_Resources/ (or an atomic zettel) with explicit provenance. Use when asked to research a topic for the vault — invocation directs the write to 06_Resources/.",
+    "name": "research-to-resource",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Research to Resource",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Research to Resource"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 2102,
+   "title": "Skill: Research to Resource",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/solution-capture/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Record a solved problem in the 10_Agents/solutions/ knowledge base so no agent re-derives it. Use immediately after solving anything non-obvious that could recur — this is a standing carve-out from the Inbox-first rule.",
+    "name": "solution-capture",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Solution Capture",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Solution Capture"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 42,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 1856,
+   "title": "Skill: Solution Capture",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/triage-inbox/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Classify the notes sitting in 02_Inbox/ and propose a PARA destination for each, for human review. Use when asked to triage, clean up, or process the Inbox — the skill proposes moves but never performs them.",
+    "name": "triage-inbox",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Triage Inbox",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Triage Inbox"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 1842,
+   "title": "Skill: Triage Inbox",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/vault-maintenance/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Run the vault's health checks, fix what they find, and keep the status and changelog snapshots current. Use for \"check the vault\", \"clean up\", or as a recurring hygiene pass.",
+    "name": "vault-maintenance",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/canonical"
+    ],
+    "title": "Skill: Vault Maintenance",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Vault Maintenance"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Rules"
+    },
+    {
+     "level": 2,
+     "line": 35,
+     "text": "References"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 1873,
+   "title": "Skill: Vault Maintenance",
    "updated": "2026-08-11"
   },
   "10_Agents/solutions/README.md": {
@@ -7631,27 +8204,27 @@
     },
     {
      "level": 3,
-     "line": 233,
+     "line": 235,
      "text": "10.3 Exemptions"
     },
     {
      "level": 3,
-     "line": 238,
+     "line": 240,
      "text": "10.4 Output and exit codes"
     },
     {
      "level": 2,
-     "line": 244,
+     "line": 246,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 255,
+     "line": 257,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 268,
+     "line": 270,
      "text": "13. Future considerations (out of M5 scope)"
     }
    ],
@@ -7712,7 +8285,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 25807,
+   "sizeBytes": 26357,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },

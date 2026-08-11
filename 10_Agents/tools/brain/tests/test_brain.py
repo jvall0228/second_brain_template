@@ -249,6 +249,39 @@ class ValidateTests(unittest.TestCase):
                 any(f["path"] == "A-note.md" and f["rule"] == "filename-convention" for f in errors)
             )
 
+    def test_skills_contract(self):
+        conventions = (FIXTURE / "00_Meta/conventions.md").read_text()
+        good = (
+            "---\nname: good-skill\ndescription: Does a thing well.\n"
+            'title: "Skill: Good"\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n\n# Good\n'
+        )
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": conventions,
+                    "10_Agents/skills/good-skill/SKILL.md": good,
+                    "10_Agents/skills/bad-name/SKILL.md": good,
+                    "10_Agents/skills/no-desc/SKILL.md": (
+                        "---\nname: no-desc\ntitle: \"Skill: X\"\ntags:\n  - type/note\n"
+                        "updated: 2026-08-11\n---\n\n# X\n"
+                    ),
+                    "10_Agents/skills/empty-dir/notes.md": (
+                        "---\ntitle: x\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n"
+                    ),
+                    "SKILL.md": good,
+                },
+            )
+            errors, _ = brain.run_validate(root, check_index=False)
+            rules = {(f["rule"], f["path"]) for f in errors}
+            self.assertIn(("skill-name-mismatch", "10_Agents/skills/bad-name/SKILL.md"), rules)
+            self.assertIn(("skill-missing-description", "10_Agents/skills/no-desc/SKILL.md"), rules)
+            self.assertIn(("skill-missing", "10_Agents/skills/empty-dir/"), rules)
+            # SKILL.md outside 10_Agents/skills/ is a filename violation; inside it is exempt.
+            self.assertIn(("filename-convention", "SKILL.md"), rules)
+            self.assertNotIn(("filename-convention", "10_Agents/skills/good-skill/SKILL.md"), rules)
+            self.assertFalse(any(f["path"].startswith("10_Agents/skills/good-skill") for f in errors))
+
     def test_filename_rules(self):
         self.assertTrue(brain.NOTE_NAME_RE.match("2025-01-15.md"))
         self.assertTrue(brain.NOTE_NAME_RE.match("2024-01-review.md"))

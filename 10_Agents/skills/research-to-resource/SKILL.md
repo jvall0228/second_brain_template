@@ -1,0 +1,36 @@
+---
+name: research-to-resource
+description: Turn a research task into a durable reference note in 06_Resources/ (or an atomic zettel) with explicit provenance. Use when asked to research a topic for the vault — invocation directs the write to 06_Resources/.
+title: "Skill: Research to Resource"
+tags:
+  - type/reference
+  - audience/agent
+  - workflow/canonical
+updated: 2026-08-11
+---
+
+# Research to Resource
+
+Convert research output into reference material that stays useful after the session ends.
+
+## Steps
+
+1. **Check for an existing home:** `python3 10_Agents/tools/brain/brain.py search <topic>` — extend an existing resource note (bump `updated:`) rather than fragmenting the topic across duplicates.
+2. **Pick the shape:**
+   - Broad reference on a topic → `06_Resources/<kebab-topic>.md` from `09_Templates/template-resource.md`, tagged `type/resource`
+   - One atomic, evergreen claim → `06_Resources/<kebab-claim>.md` from `09_Templates/template-zettel.md`, tagged `type/zettel`
+   - Option comparison → `09_Templates/template-comparison.md`
+3. **Write with provenance.** Every non-obvious claim carries its source; end the note with a `## Sources` section listing URLs/titles **with retrieval dates** — research decays, and the date tells future readers how stale it might be. Distinguish verified facts from your inference.
+4. **Frontmatter:** real `title`, `updated:` today, `topic/*` tags for the subject, and `workflow/draft` — research stays draft until the human reviews it.
+5. **Link it in:** wikilink related notes both ways where the related note is non-canonical (full paths across directories).
+6. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
+
+## Rules
+
+- Invoked research writes to `06_Resources/`; incidental findings mid-task still go through `inbox-capture`.
+- Long raw dumps don't belong in the vault — distill; attach oversized source material under `08_Assets/` only if genuinely needed.
+
+## References
+
+- `09_Templates/README.md` — template selection
+- `06_Resources/README.md` — what belongs in Resources

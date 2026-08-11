@@ -16,6 +16,10 @@ Agent-facing documentation for working within this vault. Start with the bootstr
 - [[10_Agents/docs/task-patterns|Task Patterns]] — Write rules, allowed destinations, example output
 - [[10_Agents/docs/operating-rules|Operating Rules]] — Behavior expectations and self-modification protocol
 
+## Skills
+
+Nine harness-agnostic skills in the Agent Skills format (folder-per-skill `SKILL.md`), covering capture & triage, periodic reviews, vault maintenance, research → resource, and harness onboarding. See [[10_Agents/skills/README|Skills]] for the full table and the format contract.
+
 ## Tools
 
 - [[10_Agents/tools/brain/README|brain]] — the vault index CLI: structured queries (`list`, `search`, `links`, `tags`, `show`, `recent`) plus `validate`; the committed `vault-index.json` it maintains is readable without running anything. See [[10_Agents/tools/README|Tools]] for the directory rules.

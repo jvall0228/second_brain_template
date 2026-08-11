@@ -537,6 +537,7 @@ NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*\.md$")
 PERIODIC_RE = re.compile(r"^\d{4}-(W\d{2}|Q\d)-review\.md$")
 NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md"}
 FM_WARNING_RULES = {"tags-not-a-list"}
+SKILLS_PREFIX = "10_Agents/skills/"
 
 
 def is_template(rel: str) -> bool:
@@ -593,6 +594,7 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
             NOTE_NAME_RE.match(name)
             or name in NAME_EXCEPTIONS
             or PERIODIC_RE.match(name)
+            or (name == "SKILL.md" and rel.startswith(SKILLS_PREFIX))
         ):
             err(rel, "filename-convention", f"filename {name!r} is not kebab-case")
 
@@ -657,6 +659,26 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                         warn(rel, "ambiguous-link", f"{link['raw']} is ambiguous; resolved to {link['resolved']}", link["line"])
                     elif w == "case-mismatch":
                         warn(rel, "case-mismatch", f"{link['raw']} differs in case from {link['resolved']}", link["line"])
+
+    skill_dirs: dict[str, list[str]] = {}
+    for rel in notes:
+        if rel.startswith(SKILLS_PREFIX) and "/" in rel[len(SKILLS_PREFIX) :]:
+            skill_dirs.setdefault(rel[len(SKILLS_PREFIX) :].split("/", 1)[0], []).append(rel)
+    for dirname in sorted(skill_dirs):
+        skill_md = f"{SKILLS_PREFIX}{dirname}/SKILL.md"
+        if skill_md not in index["notes"]:
+            err(f"{SKILLS_PREFIX}{dirname}/", "skill-missing", "skill directory has no SKILL.md")
+            continue
+        fm = index["notes"][skill_md]["frontmatter"]
+        if fm.get("name") != dirname:
+            err(
+                skill_md,
+                "skill-name-mismatch",
+                f"frontmatter name {fm.get('name')!r} != directory name {dirname!r}",
+            )
+        description = fm.get("description")
+        if not (isinstance(description, str) and description.strip()):
+            err(skill_md, "skill-missing-description", "frontmatter lacks a description string")
 
     if check_index:
         tnotes, tassets = index_corpus(root)
