@@ -481,7 +481,10 @@ this exact version-1 shape:
 Surfaces are sorted unique kebab-case identifiers. Capabilities map sorted
 non-secret kebab-case names to booleans; identity, path, endpoint, and
 credential-shaped names are forbidden. Fingerprints are SHA-256 evidence over
-high-entropy OS machine identifiers consumed inside the hash boundary. A
+high-entropy, platform-native OS machine identifiers consumed inside the hash
+boundary; malformed, nil, weak, and placeholder identifiers are rejected
+before hashing. The list may be empty when the OS supplies no acceptable
+identifier; that environment remains selectable explicitly or by selector. A
 hostname/username fallback is forbidden because hashing low-entropy identity is
 dictionary-identifiable; when no high-entropy ID is available, automatic
 fingerprint matching is unavailable and explicit/selector selection is
@@ -501,6 +504,11 @@ delivery state. Selectors/manifests may not be symlinks; directories must be
 immediate children of their declared roots. Inputs are length- and grammar-
 bounded before use.
 
+Environment files are re-confined when opened, not merely when discovered.
+Every child component and the final file must remain a non-link/reparse-point
+path inside the vault; an identity change or race fails closed before content
+can reach a result.
+
 ### 20.3 Selection
 
 Selection precedence is `--env <slug>` > `SECOND_BRAIN_ENV` > the selector > a
@@ -514,7 +522,10 @@ vault with zero registered manifests is `unconfigured` and shared-only.
 All content-query consumers use the selected corpus: shared paths plus
 `10_Agents/environments/<selected>/`, never another environment. This includes
 list/search/links/tags/show/recent, report/curate/tasks, semantic embedding, and
-validation. The committed index deliberately contains shared tracked content
+current-scoped maintenance. Generic `brain validate` is intentionally
+environment-neutral for CI and foreign clones: it validates every manifest
+envelope, validates shared content, and does not select or read any environment
+note body. The committed index deliberately contains shared tracked content
 only, so its bytes do not vary by clone; selected environment notes remain
 available through live commands. `brain env list` is the sole all-environment
 diagnostic and emits only slug, registered/selected status, and freshness. It
@@ -529,7 +540,8 @@ capability values.
   matching fails, so an owner can diagnose the selector safely.
 - `brain env migrate <source> <target>` is preview-only. It enumerates exact
   vault-relative moves for an unregistered legacy directory, refuses symlinks,
-  registered sources, invalid slugs, and collisions, and performs zero writes.
+  registered sources, invalid slugs, any existing target directory, and
+  collisions, and performs zero writes.
   The owner applies the reviewed move with version control, then creates the
   target manifest/landing note through orientation.
 

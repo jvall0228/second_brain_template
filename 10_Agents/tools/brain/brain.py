@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tempfile
 import unicodedata
+import uuid
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -636,6 +637,149 @@ def _valid_environment_slug(value: object) -> bool:
     return isinstance(value, str) and bool(ENVIRONMENT_SLUG_RE.fullmatch(value))
 
 
+def _link_like_stat(info: os.stat_result) -> bool:
+    """True for POSIX symlinks and Windows reparse-point path redirects."""
+    reparse = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    attributes = getattr(info, "st_file_attributes", 0)
+    return stat.S_ISLNK(info.st_mode) or bool(attributes & reparse)
+
+
+def _read_nofollow_bytes(
+    root: Path, relative: str, *, max_bytes: int | None = None
+) -> bytes:
+    """Read a regular vault file without following any child path redirect.
+
+    On POSIX this walks from an open vault-directory descriptor using openat
+    plus O_NOFOLLOW. The portable fallback snapshots every component, opens
+    the final file, verifies its identity before reading, and rechecks the
+    component chain afterward. Any race discards the bytes and fails closed.
+    """
+    parts = Path(relative).parts
+    if (
+        not parts
+        or Path(relative).is_absolute()
+        or any(part in {"", ".", ".."} for part in parts)
+    ):
+        raise OSError("unsafe vault-relative read")
+
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    directory = getattr(os, "O_DIRECTORY", 0)
+    cloexec = getattr(os, "O_CLOEXEC", 0)
+    if nofollow and directory and os.open in getattr(os, "supports_dir_fd", set()):
+        descriptors: list[int] = []
+        try:
+            current = os.open(root, os.O_RDONLY | directory | cloexec)
+            descriptors.append(current)
+            for part in parts[:-1]:
+                current = os.open(
+                    part,
+                    os.O_RDONLY | directory | nofollow | cloexec,
+                    dir_fd=current,
+                )
+                descriptors.append(current)
+                if not stat.S_ISDIR(os.fstat(current).st_mode):
+                    raise OSError("unsafe vault-relative read")
+            final = os.open(
+                parts[-1], os.O_RDONLY | nofollow | cloexec, dir_fd=current
+            )
+            descriptors.append(final)
+            info = os.fstat(final)
+            if not stat.S_ISREG(info.st_mode):
+                raise OSError("unsafe vault-relative read")
+            chunks: list[bytes] = []
+            total = 0
+            while True:
+                chunk = os.read(final, 64 * 1024)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if max_bytes is not None and total > max_bytes:
+                    raise OSError("vault file exceeds safe read limit")
+                chunks.append(chunk)
+            return b"".join(chunks)
+        finally:
+            for descriptor in reversed(descriptors):
+                try:
+                    os.close(descriptor)
+                except OSError:
+                    pass
+
+    # Windows and restricted Python builds: compare the pre-open lstat chain
+    # to both the opened descriptor and a post-read lstat chain. Content is
+    # not consumed until the final descriptor matches the expected file.
+    paths: list[Path] = []
+    snapshots: list[tuple[int, int, int]] = []
+    current_path = root
+    for index, part in enumerate(parts):
+        current_path = current_path / part
+        info = os.lstat(current_path)
+        if _link_like_stat(info):
+            raise OSError("unsafe vault-relative read")
+        if index < len(parts) - 1 and not stat.S_ISDIR(info.st_mode):
+            raise OSError("unsafe vault-relative read")
+        paths.append(current_path)
+        snapshots.append((info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode)))
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | cloexec
+    descriptor = os.open(paths[-1], flags)
+    try:
+        opened = os.fstat(descriptor)
+        expected = snapshots[-1]
+        actual = (opened.st_dev, opened.st_ino, stat.S_IFMT(opened.st_mode))
+        if actual != expected or not stat.S_ISREG(opened.st_mode):
+            raise OSError("vault path changed during read")
+        chunks = []
+        total = 0
+        while True:
+            chunk = os.read(descriptor, 64 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if max_bytes is not None and total > max_bytes:
+                raise OSError("vault file exceeds safe read limit")
+            chunks.append(chunk)
+    finally:
+        os.close(descriptor)
+    for path, expected in zip(paths, snapshots):
+        info = os.lstat(path)
+        actual = (info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode))
+        if _link_like_stat(info) or actual != expected:
+            raise OSError("vault path changed during read")
+    return b"".join(chunks)
+
+
+def _environment_slug_for_path(relative: str) -> str | None:
+    prefix = ENVIRONMENTS_RELPATH + "/"
+    if not relative.startswith(prefix):
+        return None
+    remainder = relative[len(prefix) :]
+    if "/" not in remainder:
+        return None
+    return remainder.split("/", 1)[0]
+
+
+def _read_vault_bytes(
+    root: Path,
+    relative: str,
+    *,
+    enforce_environment: bool = True,
+    max_bytes: int | None = None,
+) -> bytes:
+    """Read a vault file, enforcing selected-environment confinement at open."""
+    slug = _environment_slug_for_path(relative)
+    if slug is None:
+        return (root / relative).read_bytes()
+    if not _valid_environment_slug(slug):
+        raise OSError("unsafe environment path")
+    if enforce_environment:
+        try:
+            selected = _environment_for_corpus(root)
+        except EnvironmentSelectionError:
+            raise OSError("current environment cannot be selected safely") from None
+        if slug != selected:
+            raise OSError("environment path is outside the selected corpus")
+    return _read_nofollow_bytes(root, relative, max_bytes=max_bytes)
+
+
 def _has_symlink_component(root: Path, relative: str) -> bool:
     current = root
     for part in Path(relative).parts:
@@ -662,6 +806,41 @@ def _safe_environment_dir(root: Path, slug: str) -> Path:
     return candidate
 
 
+def _strong_native_identifier(value: bytes | str, *, uuid_shape: bool) -> bytes | None:
+    """Normalize only platform-native, non-placeholder 128-bit identifiers."""
+    try:
+        text = value.decode("ascii") if isinstance(value, bytes) else value
+    except UnicodeError:
+        return None
+    text = text.strip().lower()
+    if uuid_shape:
+        if not re.fullmatch(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{32}",
+            text,
+        ):
+            return None
+        try:
+            compact = uuid.UUID(text).hex
+        except ValueError:
+            return None
+    else:
+        if not re.fullmatch(r"[0-9a-f]{32}", text):
+            return None
+        compact = text
+    placeholders = {
+        "0" * 32,
+        "f" * 32,
+        "0123456789abcdef" * 2,
+        "fedcba9876543210" * 2,
+        "deadbeef" * 4,
+    }
+    # A valid machine identifier is 128 bits of opaque OS-generated material.
+    # Very low symbol diversity is a fail-closed placeholder/weak-ID signal.
+    if compact in placeholders or len(set(compact)) < 8:
+        return None
+    return compact.encode("ascii")
+
+
 def machine_fingerprints() -> list[dict[str, str]]:
     """Return stable SHA-256 evidence; raw identity never leaves this function."""
     material: bytes | None = None
@@ -674,8 +853,9 @@ def machine_fingerprints() -> list[dict[str, str]]:
                 raw = candidate.read_bytes().strip()
             except OSError:
                 continue
-            if raw and len(raw) <= 4096:
-                material = b"linux-machine-id-v1\0" + raw
+            normalized = _strong_native_identifier(raw, uuid_shape=False)
+            if normalized is not None:
+                material = b"linux-machine-id-v1\0" + normalized
                 break
     elif sys.platform == "darwin":
         try:
@@ -690,8 +870,13 @@ def machine_fingerprints() -> list[dict[str, str]]:
                 rb'"IOPlatformUUID"\s*=\s*"([0-9A-Fa-f-]{32,40})"',
                 proc.stdout[:128 * 1024],
             )
-            if proc.returncode == 0 and match:
-                material = b"darwin-platform-uuid-v1\0" + match.group(1).lower()
+            normalized = (
+                _strong_native_identifier(match.group(1), uuid_shape=True)
+                if match
+                else None
+            )
+            if proc.returncode == 0 and normalized is not None:
+                material = b"darwin-platform-uuid-v1\0" + normalized
         except (OSError, subprocess.SubprocessError):
             pass
     elif os.name == "nt":
@@ -705,8 +890,13 @@ def machine_fingerprints() -> list[dict[str, str]]:
                 winreg.KEY_READ | getattr(winreg, "KEY_WOW64_64KEY", 0),
             ) as key:
                 raw, _kind = winreg.QueryValueEx(key, "MachineGuid")
-            if isinstance(raw, str) and 16 <= len(raw) <= 128:
-                material = b"windows-machine-guid-v1\0" + raw.encode("utf-8")
+            normalized = (
+                _strong_native_identifier(raw, uuid_shape=True)
+                if isinstance(raw, str)
+                else None
+            )
+            if normalized is not None:
+                material = b"windows-machine-guid-v1\0" + normalized
         except (ImportError, OSError):
             pass
     if material is None:
@@ -804,10 +994,10 @@ def validate_environment_manifest(data: object, expected_slug: str) -> list[dict
             )
         )
     fingerprints = data.get("fingerprints")
-    if not isinstance(fingerprints, list) or not fingerprints:
+    if not isinstance(fingerprints, list):
         findings.append(
             _manifest_finding(
-                "environment-fingerprints", "fingerprints must be a non-empty list"
+                "environment-fingerprints", "fingerprints must be a list"
             )
         )
     else:
@@ -908,13 +1098,20 @@ def load_environment_manifests(root: Path) -> tuple[dict[str, dict], list[dict]]
         entries = sorted(os.scandir(base), key=lambda item: item.name)
     except OSError:
         return manifests, findings
+    invalid_ordinal = 0
     for entry in entries:
         if entry.name.startswith(".") or entry.name == "README.md":
             continue
+        valid_entry_name = _valid_environment_slug(entry.name)
+        if not valid_entry_name:
+            invalid_ordinal += 1
+        diagnostic_name = (
+            entry.name if valid_entry_name else f"<invalid-entry-{invalid_ordinal:03d}>"
+        )
         if entry.is_symlink():
             findings.append(
                 {
-                    "path": f"{ENVIRONMENTS_RELPATH}/{entry.name}/",
+                    "path": f"{ENVIRONMENTS_RELPATH}/{diagnostic_name}/",
                     **_manifest_finding(
                         "environment-unsafe-path",
                         "environment entries must not be symlinks",
@@ -925,7 +1122,7 @@ def load_environment_manifests(root: Path) -> tuple[dict[str, dict], list[dict]]
         if not entry.is_dir(follow_symlinks=False):
             continue
         slug = entry.name
-        rel = f"{ENVIRONMENTS_RELPATH}/{slug}/{ENVIRONMENT_MANIFEST_NAME}"
+        rel = f"{ENVIRONMENTS_RELPATH}/{diagnostic_name}/{ENVIRONMENT_MANIFEST_NAME}"
         if not _valid_environment_slug(slug):
             findings.append(
                 {
@@ -948,9 +1145,9 @@ def load_environment_manifests(root: Path) -> tuple[dict[str, dict], list[dict]]
             )
             continue
         try:
-            raw = manifest_path.read_bytes()
-            if len(raw) > 64 * 1024:
-                raise ValueError("oversized")
+            raw = _read_vault_bytes(
+                root, rel, enforce_environment=False, max_bytes=64 * 1024
+            )
             data = json.loads(raw.decode("utf-8"))
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
             findings.append(
@@ -993,7 +1190,7 @@ def _read_environment_selector(root: Path) -> str | None:
     if selector.is_symlink():
         raise EnvironmentSelectionError("unsafe-selector")
     try:
-        raw = selector.read_bytes()
+        raw = _read_nofollow_bytes(root, ENVIRONMENT_SELECTOR_RELPATH, max_bytes=128)
     except OSError:
         raise EnvironmentSelectionError("selector-unreadable") from None
     if len(raw) > 128 or b"\0" in raw:
@@ -1026,8 +1223,11 @@ def select_environment(
             raise EnvironmentSelectionError("explicit-not-found")
         return {"slug": requested, "source": "cli", "state": "selected"}
 
-    variable = env.get("SECOND_BRAIN_ENV")
-    if variable and variable != "current":
+    if "SECOND_BRAIN_ENV" in env:
+        variable = env["SECOND_BRAIN_ENV"]
+    else:
+        variable = None
+    if variable is not None and variable != "current":
         if not _valid_environment_slug(variable):
             raise EnvironmentSelectionError("invalid-environment-variable")
         if variable not in manifests:
@@ -1182,7 +1382,7 @@ def index_corpus(root: Path) -> tuple[list[str], list[str]]:
 
 def load_text(root: Path, rel: str) -> tuple[str | None, int]:
     """(normalized text or None on decode failure, sizeBytes)."""
-    raw = (root / rel).read_bytes()
+    raw = _read_vault_bytes(root, rel)
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
@@ -2302,7 +2502,7 @@ def scan_secrets(root: Path, paths: list[str]) -> list[dict]:
     findings: list[dict] = []
     for rel in sorted(paths):
         try:
-            raw = (root / rel).read_bytes()
+            raw = _read_vault_bytes(root, rel)
         except OSError:
             continue
         if b"\0" in raw[:8192]:
@@ -2373,19 +2573,11 @@ def run_validate(
             finding["rule"],
             finding["message"],
         )
-    selected_environment: str | None = None
-    if not environment_findings:
-        try:
-            selected_environment = select_environment(
-                root, requested=requested_environment
-            )["slug"]
-        except EnvironmentSelectionError as exc:
-            err(
-                f"{ENVIRONMENTS_RELPATH}/",
-                "environment-selection",
-                f"current environment cannot be selected ({exc.code})",
-            )
-    notes, assets = walk_corpus(root, selected_environment=selected_environment)
+    # Validation is the CI-safe all-clone diagnostic: validate every tracked
+    # manifest envelope, but never require this machine to match one and never
+    # read a foreign environment's note bodies. Current-scoped query and
+    # maintenance commands still fail closed in main() before corpus access.
+    notes, assets = walk_corpus(root, selected_environment=None)
     index = build_index(root, notes, assets)
     taxonomy = load_taxonomy(root)
     if taxonomy is None:
@@ -4272,6 +4464,8 @@ def _environment_migration_preview(root: Path, source: str, target: str) -> dict
         raise EnvironmentSelectionError("migration-source-not-found")
     if (source_dir / ENVIRONMENT_MANIFEST_NAME).exists():
         raise EnvironmentSelectionError("migration-source-already-registered")
+    if target_dir.exists() or target_dir.is_symlink():
+        raise EnvironmentSelectionError("migration-target-exists")
     rows: list[dict[str, str]] = []
     for dirpath, dirnames, filenames in os.walk(source_dir, followlinks=False):
         if any((Path(dirpath) / d).is_symlink() for d in dirnames):

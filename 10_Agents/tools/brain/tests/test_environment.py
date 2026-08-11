@@ -85,6 +85,7 @@ class SelectionTests(unittest.TestCase):
 
     def test_higher_precedence_invalid_value_never_falls_back(self):
         cases = [
+            ({"SECOND_BRAIN_ENV": ""}, "invalid-environment-variable"),
             ({"SECOND_BRAIN_ENV": "../alpha"}, "invalid-environment-variable"),
             ({"SECOND_BRAIN_ENV": "missing"}, "environment-variable-not-found"),
         ]
@@ -93,6 +94,18 @@ class SelectionTests(unittest.TestCase):
                 brain.EnvironmentSelectionError, code
             ):
                 self.select(environ=environ)
+
+    def test_selector_only_environment_may_have_no_fingerprint(self):
+        alpha_path = self.root / "10_Agents/environments/alpha/environment.json"
+        alpha_path.write_text(
+            json.dumps(manifest("alpha", "a" * 64, fingerprints=[])),
+            encoding="utf-8",
+        )
+        selector = self.root / ".second-brain/environment"
+        selector.parent.mkdir()
+        selector.write_text("alpha\n", encoding="utf-8")
+        self.assertEqual(self.select(digest="c" * 64)["slug"], "alpha")
+        self.assertEqual(self.select(requested="alpha", digest="c" * 64)["slug"], "alpha")
 
     def test_no_match_and_ambiguous_match_fail_closed(self):
         with self.assertRaisesRegex(brain.EnvironmentSelectionError, "no-fingerprint-match"):
@@ -144,6 +157,28 @@ class IsolationTests(unittest.TestCase):
             self.assertNotIn("10_Agents/environments/beta/README.md", notes)
             self.assertIn("10_Agents/environments/alpha/environment.json", assets)
             self.assertNotIn("10_Agents/environments/beta/environment.json", assets)
+
+    @unittest.skipUnless(os.name == "posix", "openat no-follow check")
+    def test_selected_note_replaced_by_symlink_after_discovery_is_never_read(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "vault"
+            write_environment(root, "alpha", "a" * 64)
+            local = root / ".second-brain"
+            local.mkdir()
+            (local / "environment").write_text("alpha\n", encoding="utf-8")
+            note = root / "10_Agents/environments/alpha/private-note.md"
+            note.write_text("safe-before-discovery", encoding="utf-8")
+            outside = Path(td) / "outside-secret.md"
+            outside.write_text("EXTERNAL-SECRET-SENTINEL", encoding="utf-8")
+            notes, assets = brain.walk_corpus(root)
+            note.unlink()
+            os.symlink(outside, note)
+            index = brain.build_index(root, notes, assets)
+            rendered = json.dumps(index, sort_keys=True)
+            self.assertNotIn("EXTERNAL-SECRET-SENTINEL", rendered)
+            self.assertIn("not-readable", rendered)
+            hits = brain.keyword_hits(root, index, "EXTERNAL-SECRET-SENTINEL", [])
+            self.assertEqual(hits, [])
 
     def test_two_sibling_forks_use_their_own_selectors(self):
         with tempfile.TemporaryDirectory() as td:
@@ -232,6 +267,14 @@ class PrivacyAndDiagnosticsTests(unittest.TestCase):
         with mock.patch.object(brain.sys, "platform", "unsupported-os"):
             self.assertEqual(brain.machine_fingerprints(), [])
 
+    def test_linux_fingerprint_rejects_malformed_nil_and_placeholder_ids(self):
+        weak = [b"x", b"0" * 32, b"f" * 32, b"deadbeef" * 4]
+        for raw in weak:
+            with self.subTest(raw=raw), mock.patch.object(
+                brain.sys, "platform", "linux"
+            ), mock.patch.object(brain.Path, "read_bytes", return_value=raw):
+                self.assertEqual(brain.machine_fingerprints(), [])
+
     def test_macos_fingerprint_uses_pinned_system_ioreg(self):
         completed = mock.Mock(
             returncode=0,
@@ -255,6 +298,12 @@ class PrivacyAndDiagnosticsTests(unittest.TestCase):
         self.assertIn("environment-schema", rendered)
         self.assertNotIn("rawHostname", rendered)
         self.assertNotIn("must-not-be-echoed", rendered)
+
+    def test_manifest_allows_empty_fingerprint_list_for_explicit_selection(self):
+        findings = brain.validate_environment_manifest(
+            manifest("alpha", "a" * 64, fingerprints=[]), "alpha"
+        )
+        self.assertNotIn("environment-fingerprints", json.dumps(findings))
 
     def test_detect_json_contains_hash_not_raw_machine_identity(self):
         with tempfile.TemporaryDirectory() as td, mock.patch.object(
@@ -296,6 +345,36 @@ class PrivacyAndDiagnosticsTests(unittest.TestCase):
             manifests, findings = brain.load_environment_manifests(root)
             self.assertEqual(manifests, {})
             self.assertEqual(findings[0]["rule"], "environment-unsafe-path")
+
+    def test_invalid_environment_directory_name_is_redacted_from_diagnostics(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            secret_name = "alice@example.com-TOKEN-abc123"
+            directory = root / "10_Agents/environments" / secret_name
+            directory.mkdir(parents=True)
+            (directory / "environment.json").write_text("{}", encoding="utf-8")
+            manifests, findings = brain.load_environment_manifests(root)
+            rendered = json.dumps({"manifests": manifests, "findings": findings})
+            self.assertNotIn(secret_name, rendered)
+            self.assertIn("<invalid-entry-001>", rendered)
+            stream = io.StringIO()
+            with contextlib.redirect_stdout(stream):
+                code = brain.main(["env", "list", "--json", "--vault", str(root)])
+            self.assertEqual(code, 1)
+            self.assertNotIn(secret_name, stream.getvalue())
+
+
+class ValidationTests(unittest.TestCase):
+    def test_validation_is_neutral_when_only_foreign_manifest_is_tracked(self):
+        with tempfile.TemporaryDirectory() as td, mock.patch.object(
+            brain, "machine_fingerprints", return_value=[]
+        ):
+            root = Path(td)
+            write_environment(root, "foreign-machine", "a" * 64)
+            errors, _warnings = brain.run_validate(root, check_index=False)
+            rules = {row["rule"] for row in errors}
+            self.assertNotIn("environment-selection", rules)
+            self.assertNotIn("environment-fingerprints", rules)
 
 
 class MigrationTests(unittest.TestCase):
@@ -353,6 +432,31 @@ class MigrationTests(unittest.TestCase):
             (root / "outside").write_text("private", encoding="utf-8")
             os.symlink(root / "outside", old / "inventory.md")
             with self.assertRaisesRegex(brain.EnvironmentSelectionError, "unsafe-migration-path"):
+                brain._environment_migration_preview(root, "old-machine", "target")
+
+    def test_preview_refuses_any_existing_target_directory(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "10_Agents/environments/old-machine"
+            source.mkdir(parents=True)
+            (source / "orientation-inventory.md").write_text("legacy", encoding="utf-8")
+            target = root / "10_Agents/environments/target"
+            target.mkdir()
+            with self.assertRaisesRegex(
+                brain.EnvironmentSelectionError, "migration-target-exists"
+            ):
+                brain._environment_migration_preview(root, "old-machine", "target")
+
+    def test_preview_refuses_registered_target_directory(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            source = root / "10_Agents/environments/old-machine"
+            source.mkdir(parents=True)
+            (source / "orientation-inventory.md").write_text("legacy", encoding="utf-8")
+            write_environment(root, "target", "a" * 64)
+            with self.assertRaisesRegex(
+                brain.EnvironmentSelectionError, "migration-target-exists"
+            ):
                 brain._environment_migration_preview(root, "old-machine", "target")
 
     @unittest.skipUnless(os.name == "posix", "symlink check")
