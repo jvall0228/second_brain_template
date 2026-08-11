@@ -13481,23 +13481,28 @@
      "text": "10.4 Output and exit codes"
     },
     {
-     "level": 2,
+     "level": 3,
      "line": 255,
+     "text": "10.5 Secret scanning"
+    },
+    {
+     "level": 2,
+     "line": 280,
      "text": "11. Divergences from Obsidian and known limitations"
     },
     {
      "level": 2,
-     "line": 266,
+     "line": 291,
      "text": "12. Decisions this spec makes beyond the plan (review focus)"
     },
     {
      "level": 2,
-     "line": 279,
+     "line": 304,
      "text": "13. Future considerations (out of M5 scope)"
     },
     {
      "level": 2,
-     "line": 286,
+     "line": 311,
      "text": "14. Curation signals (ops plan Phase 4)"
     }
    ],
@@ -13583,7 +13588,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 288,
+     "line": 313,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13591,7 +13596,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 31697,
+   "sizeBytes": 35325,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },
