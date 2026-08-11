@@ -50,6 +50,14 @@
       "problemMatcher": []
     },
     {
+      "label": "Brain: Tasks (open)",
+      "detail": "Open checkbox tasks across the vault, due-date first (spec §17)",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py tasks --open",
+      "windows": { "command": "python 10_Agents/tools/brain/brain.py tasks --open" },
+      "problemMatcher": []
+    },
+    {
       "label": "Daily Note: Open Today",
       "detail": "Create today's note from 09_Templates/template-daily-log.md if missing, then open it",
       "type": "shell",

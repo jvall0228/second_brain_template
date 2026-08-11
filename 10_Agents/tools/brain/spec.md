@@ -20,7 +20,7 @@ Design inspiration is Obsidian's MetadataCache; the starting point is [[10_Agent
 
 **Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([[00_Meta/prd]] §6.5) — and `brain` is the compatibility keystone between them:
 - The **link-resolution model (§6) tracks Obsidian's**: a link that resolves differently in `brain` than in Obsidian is a bug in one of them, and every intentional divergence must be recorded in §11.
-- The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, `report`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
+- The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, `report`, `tasks`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
 - Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [[10_Agents/docs/operating-rules]] (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
 
 Normative language: **must** = required behavior; **records an error/warning** = the finding is stored in the index or produced by `validate` (§10), never silently dropped.
@@ -184,6 +184,10 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
      "target": "AGENTS", "warnings": []}
    ],
    "sizeBytes": 12345,
+   "tasks": [
+    {"due": "2026-08-15", "line": 40, "malformed": [], "priority": "high",
+     "status": "open", "text": "call dentist"}
+   ],
    "title": "PRD",
    "updated": "2026-08-11"
   }
@@ -192,7 +196,7 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
 }
 ```
 
-Field meanings are as defined in §3–§7. Every field is always present (empty lists/`null` rather than omitted keys) so the shape is predictable for consumers reading the JSON directly — the committed index is the primary discovery mechanism per PRD §9.4, usable without running Python.
+Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is always present (empty lists/`null` rather than omitted keys) so the shape is predictable for consumers reading the JSON directly — the committed index is the primary discovery mechanism per PRD §9.4, usable without running Python.
 
 `schemaVersion` bumps on any breaking change to this shape; consumers must check it.
 
@@ -212,7 +216,7 @@ The committed index must be a **pure function of tracked file contents** — a f
 A note whose **frontmatter tags** contain `restricted/private` (bodyTags are informal and never trigger this, matching §10.2's posture) is **reduced** in the committed index rather than excluded — decided 2026-08-11 per the accepted triage recommendation on issue #17. The committed index is the vault's most-copied artifact (PRD §9.4); without reduction it would re-leak the very content the tag marks.
 
 - **Kept:** path (the `notes` key), `title`, `frontmatter` (including `tags` — consumers must be able to see *why* the record is reduced), `updated`, `sizeBytes`, `frontmatterErrors`, `links`, and `backlinks`. Links and backlinks stay so restricted notes remain discoverable and the §10.2 containment check has structure to work with — but only their **structure**: on a reduced record each link's `display` and `fragment` are nulled and `raw` is rewritten to the canonical `[[target]]` / `![[target]]` form, so alias text and verbatim body markup (which are body prose) never reach the committed index.
-- **Dropped (emptied/nulled, not omitted — §8.1's every-field-present shape holds, so no `schemaVersion` bump):** `headings: []` and `bodyTags: []` — the body-derived fields the index would otherwise publish — plus the link-record prose fields above.
+- **Dropped (emptied/nulled, not omitted — §8.1's every-field-present shape holds, so no `schemaVersion` bump):** `headings: []`, `bodyTags: []`, and `tasks: []` (issue #28: task text and metadata are body prose) — the body-derived fields the index would otherwise publish — plus the link-record prose fields above.
 - The reduction applies to the **committed index only**: `brain index` output and the `validate --check-index` rebuild (both serialize the reduced form, so the byte-compare stays consistent). Query commands (§9) keep the full in-memory record — they run against the local working tree, where the note body sits right beside them; reducing them would cost the owner `search`/`show` utility while protecting nothing.
 - This is a **sanctioned, tag-driven exception** to the spirit of the §15.1 config/index invariant: index output varies with note *content* (the tag), never with `00_Meta/config.yaml`. The committed index remains a pure function of tracked file contents (§8.2).
 - Honest framing (conventions § restricted/private): reduction is leak resistance, not access control — the note body is still in the repo, readable by anything that reads files.
@@ -234,6 +238,7 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 - **`curate`** — the §14 re-review signals as one report: expired, missing `expires:`, expires beyond the one-year cap, oversized, stale (days-old weighted by backlink count, sorted worst-first), orphans, unreferenced `08_Assets/` files; `--check-urls` additionally probes source URLs over the network (opt-in only; never runs pre-commit). JSON: one sorted array per signal.
 - **`context`** — each bootstrap doc's byte size against its §14 budget, plus the total; missing docs report `null`. JSON: `{docs, totalBudget, totalBytes}`.
 - **`report`** — §16: the five-section vault-health synthesis (stale-active, orphans, Inbox aging, tag drift, unresolved links); `--since YYYY-MM-DD` scopes the two change-attributable sections per §16.3. Thresholds come from the `report` config key (§15.3) with built-in defaults.
+- **`tasks`** — §17.3: checkbox tasks across the vault, filterable by `--open`, `--due <date|today>`, `--overdue`, `--project PREFIX`.
 
 ## 10. Validate semantics
 
@@ -249,7 +254,7 @@ Tag namespace membership is read **at runtime** from the authoritative table in 
 
 **Agent Skills contract (`10_Agents/skills/`, added at M6 per the implementation plan):** every skill directory (a direct child of `10_Agents/skills/` containing notes) must hold a `SKILL.md` whose frontmatter carries — in addition to the vault contract — an Agent Skills `name` equal to the directory name (`skill-name-mismatch`) and a non-empty `description` string (`skill-missing-description`); a skill directory without a `SKILL.md` is `skill-missing`. All three are errors.
 
-**Warnings** (exit 2 if no errors): `ambiguous` links; `case-mismatch` links; `tags-not-a-list`; `duplicate-key`; `restricted-link` — a note **without** `restricted/private` in its frontmatter tags links to or embeds a resolved note **with** it (context bleed, issue #17: the linking note's prose tends to carry a summary of what it links; restricted → restricted links are clean). Advisory by design — a warning, never an error, because linking restricted content can be legitimate; the duty not to quote/summarize it lives in [[10_Agents/docs/operating-rules]]. `missing-author` — a `02_Inbox/` note whose frontmatter tags include **both** `audience/agent` and `workflow/draft` but whose frontmatter has no non-empty `author:` value (issue #18 provenance; field semantics — harness-level `author:`, optional `session:` reference — are defined in [[00_Meta/conventions]] § Provenance; templates are exempt per the §10.3 placeholder pattern, a placeholder `author:` value counting as present); a `title-match:` hint accompanies its unresolved-link error message. With the §14 curation gate on: `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget`, and `bootstrap-budget-total`. `invalid-expires` (an `expires:` value that is not a real `YYYY-MM-DD`) is an **error**, with the same template-placeholder exemption as `invalid-updated`.
+**Warnings** (exit 2 if no errors): `ambiguous` links; `case-mismatch` links; `tags-not-a-list`; `duplicate-key`; `restricted-link` — a note **without** `restricted/private` in its frontmatter tags links to or embeds a resolved note **with** it (context bleed, issue #17: the linking note's prose tends to carry a summary of what it links; restricted → restricted links are clean). Advisory by design — a warning, never an error, because linking restricted content can be legitimate; the duty not to quote/summarize it lives in [[10_Agents/docs/operating-rules]]. `missing-author` — a `02_Inbox/` note whose frontmatter tags include **both** `audience/agent` and `workflow/draft` but whose frontmatter has no non-empty `author:` value (issue #18 provenance; field semantics — harness-level `author:`, optional `session:` reference — are defined in [[00_Meta/conventions]] § Provenance; templates are exempt per the §10.3 placeholder pattern, a placeholder `author:` value counting as present); a `title-match:` hint accompanies its unresolved-link error message. `task-invalid-date` — a date-bearing task emoji whose value is missing or not a real `YYYY-MM-DD` date (§17.2; tasks are informal body content, matching the `bodyTags` posture, so this never blocks a commit; a template task whose text contains `{{` is exempt per the §10.3 placeholder pattern). With the §14 curation gate on: `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget`, and `bootstrap-budget-total`. `invalid-expires` (an `expires:` value that is not a real `YYYY-MM-DD`) is an **error**, with the same template-placeholder exemption as `invalid-updated`.
 
 **`--check-index`:** re-serialize the index corpus per §8.2 and byte-compare against the committed `vault-index.json`; a mismatch or missing file is an error ("stale index — run `brain index`").
 
@@ -364,17 +369,18 @@ Top-level keys are registered here so later issues cannot collide:
 | `provenance` | reserved (#18) | — |
 | `report` | **implemented** (#16) | Health-report thresholds (§16.4): a one-level nested mapping under `report:` whose subkeys are `stale_days` (stale-active threshold, default `30`) and `inbox_days` (Inbox triage-debt threshold, default `14`). Values are non-negative-integer scalars (digits only — §4.3 stores strings; `report_thresholds(config)` converts). A `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `brain report` only — never by `index`, and it moves no `validate` severity. |
 | `sync` | reserved (#26) | — |
+| `tasks` | **implemented** (#28) | Task-module settings (§17.4): a one-level nested mapping under `tasks:` whose sole subkey is `carry_over` (`on` \| `off`, default `on`) — whether daily-note instantiation carries yesterday's unchecked tasks into the new note's Backlog section (§17.5). `tasks_carry_over(config)` converts; a `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `daily_note.py` only — never by `index`, and it moves no `validate` severity. |
 | `template_version` | reserved (#6) | — |
 
 Reserved keys parse and are **tolerated silently** whatever their shape. **Unknown** keys (neither implemented nor reserved) are tolerated too — forward compatibility — at the cost of a validate **warning** (`config-unknown-key`), never an error.
 
 ### 15.4 Validate semantics
 
-All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` or `context` not a scalar, `report` not a nested mapping, or a known `report` subkey whose value is not a digits-only non-negative integer; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key` (an unknown top-level key, or an unknown subkey under `report`, reported dotted as `report.<key>`); `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust` or `context` value outside its documented pair).
+All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` or `context` not a scalar, `report` or `tasks` not a nested mapping, a known `report` subkey whose value is not a digits-only non-negative integer, or a known `tasks` subkey whose value is not a scalar; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key` (an unknown top-level key, or an unknown subkey under `report` or `tasks`, reported dotted as `report.<key>` / `tasks.<key>`); `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust`, `context`, or `tasks.carry_over` value outside its documented pair).
 
 ### 15.5 `config` command
 
-`brain config` (§9 conventions: `--json`, exit 0) prints the **effective** configuration: presence, the raw parsed map, the merged write-exception prefixes (defaults first), the effective `extension_trust`, the effective `context`, the reserved-key list, and any findings. It is the non-Python surface of the reader API for harness tasks and scripts.
+`brain config` (§9 conventions: `--json`, exit 0) prints the **effective** configuration: presence, the raw parsed map, the merged write-exception prefixes (defaults first), the effective `extension_trust`, the effective `context`, the effective task carry-over toggle (§17.4), the reserved-key list, and any findings. It is the non-Python surface of the reader API for harness tasks and scripts.
 
 ## 16. Health report (`brain report`) — issue #16
 
@@ -401,3 +407,45 @@ Review-period scoping. `--since` restricts **exactly two** sections — **tag dr
 ### 16.4 Thresholds
 
 `stale_days` and `inbox_days` are read from the `report` config key (grammar and defaults in §15.3) via `report_thresholds(config)`; with no config file, both stay at their built-in defaults (`REPORT_STALE_ACTIVE_DAYS = 30`, `REPORT_INBOX_TRIAGE_DAYS = 14` — module constants beside the §14 tunables). Per §15.1 the config never influences `index` output, and the report is synthesis-only: nothing here feeds back into `validate` severities.
+
+## 17. Task tracking (`brain tasks`) — issue #28
+
+Markdown-native checkbox tasks, adopted 2026-08-11 per the accepted triage recommendation on issue #28: **Obsidian Tasks emoji grammar is the canonical inline metadata**, so Obsidian users get the native plugin experience with zero vault changes while `brain` answers the same queries on every other surface. The conventions entry ([[00_Meta/conventions]] § Tasks) carries the human-facing emoji ↔ meaning table and the location rule: tasks live where their context lives (any note); there is no central task file.
+
+### 17.1 Recognition
+
+A task is a list-item checkbox line in the note body: optional leading whitespace (nested subtasks index like any other), a bullet (`-`, `*`, or `+`), one space, `[c]` where `c` is exactly one character, one space, then non-empty text. `c` = space → `status: "open"`; any other character (`x`, `X`, Obsidian custom statuses like `-` or `/`) → `status: "done"`. A bracket pair with no text after it is not a task. The §5.2 exclusion zones apply: detection runs on the **masked** line, so checkboxes inside fenced code blocks or inline code spans never index; the task text is then taken from the **raw** line at the matched offset (masking preserves length), so inline code *within* a real task's text survives verbatim. Blockquoted checkboxes (`> - [ ]`) and ordered-list checkboxes (`1. [ ]`) are not recognized (out of grammar, mirroring Obsidian Tasks' default).
+
+Extraction happens in the same `extract_body` line walk as links, headings, and body tags — **no additional parsing pass** — and each note record carries the results as the `tasks` array (document order). The field addition is purely additive to §8.1 (every field still always present), so `schemaVersion` stays 1.
+
+### 17.2 Task record and emoji metadata
+
+Each task record: `{due, line, malformed, priority, status, text}` — every field always present.
+
+- `line` — 1-based source line (§3). `status` — `"open"` | `"done"` (§17.1).
+- **Emoji tokens** are parsed out of the checkbox text and stripped from `text` (whitespace then collapsed to single spaces). Date-bearing emoji — 📅 due, ⏳ scheduled, 🛫 start, ✅ done, ➕ created — take an optionally-space-separated `YYYY-MM-DD` token; ⏫/🔼/🔽 set `priority` `high`/`medium`/`low`; 🔁 takes free text running to the next recognized emoji or end of line. A trailing emoji variation selector (U+FE0F) is tolerated. For a repeated field the **last** occurrence wins (mirroring §4.2's duplicate-key posture).
+- **Indexed fields:** only `due` (`"YYYY-MM-DD"` or `null`) and `priority` (`"high"` | `"medium"` | `"low"` | `null`) — the queryable subset. Scheduled/start/done/created dates and recurrence rules are recognized and stripped from `text` but not stored (future consumers re-read the source line, which `line` pins).
+- **Malformed metadata:** a date-bearing emoji whose value is date-*shaped* but not a real calendar date has the token consumed; a missing or non-date-shaped value leaves the text in place. Either way the task **still indexes** with the affected field at its null/default and the field's name appended to `malformed` (sorted, de-duplicated) — and `validate` surfaces each entry as the `task-invalid-date` **warning** (§10.2). Parsing is best-effort, never fatal (§4's posture); 🔁 takes free text and can never be malformed.
+
+Restricted notes (§8.3): `tasks` is emptied to `[]` in the committed index — task text and metadata are body prose.
+
+### 17.3 `tasks` command
+
+`brain tasks` (§9 conventions: in-memory index, `--json`, exit 0; `1` for a malformed `--due` value) lists every task in the working corpus. Filters, ANDed:
+
+- `--open` — `status == "open"` only.
+- `--due <YYYY-MM-DD|today>` — tasks **with** a due date on or **before** the given date (`today` resolves to the current date); a task with no due date never matches.
+- `--overdue` — open tasks whose due date is **strictly before** today (due today is not overdue).
+- `--project PREFIX` — note-path prefix match (e.g. `04_Projects/example-project/`).
+
+**Ordering (deterministic):** due date ascending with `null` due dates last, then path (code-point order), then line. JSON: an array of task records each extended with `path`. Human output: `path:line  [ ]|[x] text` plus a parenthesized suffix listing due date, priority, and malformed fields when present. The VS Code surface runs `tasks --open` via the "Brain: Tasks (open)" task (§6.5 parity).
+
+### 17.4 Config: `tasks.carry_over`
+
+The `tasks` config key (§15.3) holds the module's settings; its sole subkey `carry_over` (`on` | `off`, default **on**) gates §17.5's daily-note carry-over. `tasks_carry_over(config)` is the reader (malformed → default; `check_config` reports per §15.4), and `brain config` prints the effective value. Per §15.1 the config never influences `index` output.
+
+### 17.5 Surfacing: daily-note carry-over
+
+`daily_note.py` (the VS Code daily-note task), when **creating** today's note and the §17.4 toggle is on, copies **yesterday's unchecked task lines** — open checkboxes per §17.1, including nested ones, indentation preserved, fenced-code/inline-code exclusions applied via the shared `brain` parser — verbatim into the end of the new note's `### Backlog` section (before the section's trailing blank lines; if the instantiated template has no such heading, the section is appended). "Yesterday" is calendar yesterday (`today − 1 day`), so month, ISO-week, and year boundaries need no special casing; a missing, unreadable, or task-free yesterday note simply carries nothing. Existing notes are never rewritten — carry-over runs only at instantiation. The weekly-review template instead carries a prompt line pointing at `brain tasks --open` / `--overdue` (live query beats a stale snapshot at week granularity).
+
+**Deferred surfacing (explicitly out of scope here):** VS Code task *views* and web-UI views (#27), notification/overdue digests (#21), external-tracker mirroring (#26 directionality).
