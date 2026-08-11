@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - topic/software
-  - workflow/draft
+  - workflow/canonical
 updated: 2026-08-11
 ---
 
@@ -13,7 +13,7 @@ updated: 2026-08-11
 
 ## 1. Scope and status
 
-This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, index-schema, and command-semantics rules that `brain.py` implements. [[00_Meta/prd]] §19 M5 requires these rules to be specified in a spec note before implementation; the implementation plan's Phase M5.0 additionally requires this note to be **reviewed by the owner and promoted to canonical before the Indexer phase (M5.1) starts**. Until promotion it is `workflow/draft`.
+This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, index-schema, and command-semantics rules that `brain.py` implements. [[00_Meta/prd]] §19 M5 requires these rules to be specified in a spec note before implementation; the implementation plan's Phase M5.0 additionally required owner review before the Indexer phase (M5.1). **Reviewed and promoted to canonical by the owner on 2026-08-11** — changes now follow §6.3 change control.
 
 Design inspiration is Obsidian's MetadataCache; the starting point is [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]. Where this spec deliberately diverges from Obsidian or from the implementation plan, the divergence is listed in §11 and §12.
 
