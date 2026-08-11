@@ -142,15 +142,14 @@ Support is tiered by priority. "Supported" means the entrypoint loads in that ha
 | P0 | Codex (CLI, web, and desktop app) | Reads `AGENTS.md` natively |
 | P0 | Opencode | Reads `AGENTS.md` natively |
 | P0 | Pi | Reads `AGENTS.md` natively |
+| P0 | Universal standards + protocols | The `AGENTS.md` convention (§8.1) is already the entrypoint's foundation |
 | P1 | Cursor | To specify at M6 |
 | P1 | Copilot | To specify at M6 |
 | P1 | Muse Code | To specify at M6 |
-| P2 | Universal standards + protocols | — (see below) |
 
 Tier meanings:
-- **P0 — must support:** the first wave of M6 adapters; the vault is not considered harness-complete without all four.
+- **P0 — must support:** the first wave of M6 adapters, plus the standards track. "Universal standards + protocols" is not a harness: it is first-class investment in cross-harness standards (the `AGENTS.md` convention itself, MCP, portable skill definitions) so that any harness not listed here bootstraps correctly with no bespoke adapter. The vault is not harness-complete without all five rows.
 - **P1 — should support:** second wave, after P0 ships.
-- **P2 — everything else via standards:** not a harness. Rather than enumerating more adapters, invest in cross-harness standards and protocols (the `AGENTS.md` convention itself, MCP, portable skill definitions) so unlisted harnesses bootstrap correctly with no bespoke adapter.
 
 ## 9. Agent library directory (`10_Agents/`)
 ### 9.1 Shipped structure
@@ -322,7 +321,8 @@ Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 ### M6: Agent Plugin Library — **Not started**
 - Populate `10_Agents/skills/` (universal skill definitions) and `10_Agents/tools/` (migrate `brain` here).
 - Add `10_Agents/harnesses/` with reference configs and wiring docs for every P0 harness (§8.3): Claude Code, Codex, Opencode, Pi.
-- Second wave: P1 harnesses (Cursor, Copilot, Muse Code). The P2 tier is served by the universal primitives and cross-harness standards themselves, not by per-harness adapters.
+- P0's standards track: keep the universal primitives (skills, tools) harness-agnostic and aligned with cross-harness standards (the `AGENTS.md` convention, MCP) so harnesses outside the list need no adapter.
+- Second wave: P1 harnesses (Cursor, Copilot, Muse Code).
 
 ## 20. Acceptance criteria (M0, objective)
 - All eleven number-prefixed directories exist.

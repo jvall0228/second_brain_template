@@ -14,8 +14,8 @@ Notable structural changes to the vault. For individual file history, use `git l
 
 ## 2026-08-11 — Harness Support Tiers
 
-- Recorded the target harness support list in [[00_Meta/prd]] §8.3: **P0** — Claude Code (CLI, web, desktop app), Codex (CLI, web, desktop app), Opencode, Pi; **P1** — Cursor, Copilot, Muse Code; **P2** — universal standards + protocols in place of further bespoke adapters.
-- Rescoped milestone M6 accordingly: harness adapters for all four P0 harnesses (was "at least one harness (Claude Code)"), with P1 as a second wave.
+- Recorded the target harness support list in [[00_Meta/prd]] §8.3: **P0** — Claude Code (CLI, web, desktop app), Codex (CLI, web, desktop app), Opencode, Pi, plus universal standards + protocols as a first-class standards track (unlisted harnesses bootstrap via the `AGENTS.md` convention, MCP, and portable skills with no bespoke adapter); **P1** — Cursor, Copilot, Muse Code.
+- Rescoped milestone M6 accordingly: harness adapters for all four P0 harnesses and the standards track (was "at least one harness (Claude Code)"), with P1 as a second wave.
 
 ## 2026-08-11 — AGENTS.md Becomes the Entrypoint
 
