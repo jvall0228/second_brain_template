@@ -711,7 +711,9 @@ def tag_matches(tag_filter: str, tags: set[str]) -> bool:
 
 
 def resolve_note_arg(index: dict, arg: str) -> str | None:
-    target = nfc(arg.strip())
+    # Index paths are /-separated (spec §2); accept OS-native separators from
+    # callers like the VS Code ${relativeFile} task on Windows.
+    target = nfc(arg.strip()).replace("\\", "/")
     if target.endswith(".md"):
         target = target[:-3]
     notes = sorted(index["notes"])

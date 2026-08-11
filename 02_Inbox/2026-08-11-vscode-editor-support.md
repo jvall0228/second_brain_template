@@ -105,6 +105,22 @@ Sources:
 
 **Spec-parity mechanism (owner follow-up):** two layers. (a) *Automated:* the snippet surface regenerates from templates on every commit — template changes cannot leave VS Code behind. (b) *Procedural:* a new **editor-surface parity** checklist item in [[10_Agents/docs/operating-rules]] requires any structural/navigation/template change (e.g. a future "homepage" note) to update `.obsidian/`, `.vscode/`, and the §6.5 mapping in the same change. Obsidian-side note for the homepage example: core Obsidian cannot auto-open a note, so a homepage would be a convention there (pinned/first link in [[00_Meta/index]]) but an actual auto-open in VS Code.
 
+## Verification and adversarial review (2026-08-11)
+
+Machine verification: brain's 22-test suite passes; snippet generation is deterministic (`--check` clean on re-run) and valid JSON; the instantiated daily note passes `brain validate`; all `.vscode/*.json` files parse as JSONC; the full hook chain ran on every commit. An adversarial review over the whole branch diff produced five findings. **Fixed on this branch:**
+
+1. CI now runs `gen_snippets.py --check` (`.github/workflows/validate.yml`) — previously a hookless clone could commit a template change and CI would pass with stale snippets, breaking the §6.5 no-drift guarantee.
+2. `brain` note arguments now accept backslash paths (`resolve_note_arg` normalizes `\` → `/`, regression-tested) — the "Links for Current Note" task passes `${relativeFile}` OS-natively and failed on every note on Windows.
+3. Every task gained a `windows` command variant (`python` vs `python3`; the homepage task avoids `||`, a parse error in Windows PowerShell 5.1).
+
+**Out of scope for this branch — pre-existing issues recorded for follow-up:**
+
+- `brain` crashes with a traceback on an unreadable note (e.g. broken symlink) instead of recording a per-note error — turns the hook/CI failure message misleading.
+- `tags: []` (explicitly empty list) passes `brain validate`; the missing-tags check only fires when the key is absent.
+- The Claude Code reference hook (`10_Agents/harnesses/claude-code/settings-example.json`) ends `brain validate || true`, so edit-time findings never reach the agent (needs exit 2 + stderr semantics).
+
+**Remaining human verification (gates merge):** the §6.5 acceptance pass in a real VS Code window — extension prompt, `sb-` snippets, task menu, image paste, folder-open homepage.
+
 ## Process notes
 
 - Requirements were brainstormed first and the trust policy set by the owner before this configuration was finalized; an earlier draft of this branch shipped the Tier 2 community set (Foam et al.) and was reworked to strict first-party on owner direction.

@@ -331,6 +331,9 @@ class CliTests(unittest.TestCase):
         self.assertEqual(json.loads(out)["type"]["note"], 6)
         code, out = self.run_cli("show", "01_Notes/alpha.md", "--json")
         self.assertEqual(json.loads(out)["title"], "Alpha")
+        # Windows callers (VS Code ${relativeFile}) pass backslash paths.
+        code, out = self.run_cli("show", "01_Notes\\alpha.md", "--json")
+        self.assertEqual(json.loads(out)["title"], "Alpha")
         # A fresh checkout flattens every fixture mtime, so pin the ordering
         # `recent` is expected to report instead of inheriting clone timestamps.
         now = time.time()
