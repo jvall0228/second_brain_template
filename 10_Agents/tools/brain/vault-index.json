@@ -1183,6 +1183,7 @@
     "10_Agents/skills/express-packet/SKILL.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/skills/research-to-resource/SKILL.md",
+    "10_Agents/skills/self-improve/SKILL.md",
     "10_Agents/skills/triage-inbox/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
@@ -1989,6 +1990,7 @@
     "10_Agents/harnesses/README.md",
     "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/self-improve/SKILL.md",
     "10_Agents/skills/sync-upstream/SKILL.md",
     "10_Agents/tools/README.md",
     "10_Agents/tools/brain/spec.md",
@@ -10257,7 +10259,7 @@
     },
     {
      "level": 2,
-     "line": 19,
+     "line": 20,
      "text": "Related"
     }
    ],
@@ -10285,10 +10287,32 @@
      "warnings": []
     },
     {
+     "display": "Rejected Proposals",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals|Rejected Proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": "self-improve",
+     "embed": false,
+     "fragment": null,
+     "line": 18,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-improve/SKILL|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
+     "warnings": []
+    },
+    {
      "display": "Agents",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 22,
      "placeholder": false,
      "raw": "[[10_Agents/README|Agents]]",
      "resolved": "10_Agents/README.md",
@@ -10296,7 +10320,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 366,
+   "sizeBytes": 522,
    "tasks": [],
    "title": "Agent Docs",
    "updated": "2026-08-11"
@@ -10310,9 +10334,11 @@
     "06_Resources/vscode-editor-support.md",
     "10_Agents/README.md",
     "10_Agents/docs/README.md",
+    "10_Agents/docs/rejected-proposals.md",
     "10_Agents/skills/curate/SKILL.md",
     "10_Agents/skills/distill-note/SKILL.md",
     "10_Agents/skills/merge-notes/SKILL.md",
+    "10_Agents/skills/self-improve/SKILL.md",
     "10_Agents/skills/vault-answer/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "10_Agents/tools/vscode/README.md",
@@ -10369,16 +10395,21 @@
     {
      "level": 2,
      "line": 68,
-     "text": "Concurrency"
+     "text": "Upstream Boundary"
     },
     {
      "level": 2,
      "line": 72,
+     "text": "Concurrency"
+    },
+    {
+     "level": 2,
+     "line": 76,
      "text": "Session-End Flush"
     },
     {
      "level": 2,
-     "line": 82,
+     "line": 86,
      "text": "Related"
     }
    ],
@@ -10483,10 +10514,32 @@
      "warnings": []
     },
     {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 70,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "self-improve",
+     "embed": false,
+     "fragment": null,
+     "line": 70,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-improve/SKILL|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
+     "warnings": []
+    },
+    {
      "display": "solution-capture",
      "embed": false,
      "fragment": null,
-     "line": 76,
+     "line": 80,
      "placeholder": false,
      "raw": "[[10_Agents/skills/solution-capture/SKILL|solution-capture]]",
      "resolved": "10_Agents/skills/solution-capture/SKILL.md",
@@ -10497,7 +10550,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 77,
+     "line": 81,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -10508,7 +10561,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 84,
+     "line": 88,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -10519,7 +10572,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 89,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -10530,7 +10583,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 86,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -10538,7 +10591,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5544,
+   "sizeBytes": 6080,
    "tasks": [
     {
      "due": null,
@@ -10614,6 +10667,76 @@
     }
    ],
    "title": "Operating Rules",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/docs/rejected-proposals.md": {
+   "backlinks": [
+    "10_Agents/docs/README.md",
+    "10_Agents/skills/self-improve/SKILL.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "claude-code",
+    "expires": "2027-08-11",
+    "session": "https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73",
+    "tags": [
+     "type/log",
+     "audience/agent"
+    ],
+    "title": "Rejected Proposals",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Rejected Proposals"
+    },
+    {
+     "level": 2,
+     "line": 21,
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "display": "self-improve",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-improve/SKILL|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "self-improve",
+     "embed": false,
+     "fragment": null,
+     "line": 23,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-improve/SKILL|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 1147,
+   "tasks": [],
+   "title": "Rejected Proposals",
    "updated": "2026-08-11"
   },
   "10_Agents/docs/task-patterns.md": {
@@ -11768,6 +11891,7 @@
     "10_Agents/skills/README.md",
     "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/skills/recommended-automations/SKILL.md",
+    "10_Agents/skills/self-improve/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -11826,22 +11950,22 @@
     },
     {
      "level": 3,
-     "line": 72,
+     "line": 73,
      "text": "Onboarding & environment"
     },
     {
      "level": 2,
-     "line": 80,
+     "line": 81,
      "text": "Recommended community skills"
     },
     {
      "level": 2,
-     "line": 84,
+     "line": 85,
      "text": "The Rhythm (cadence table)"
     },
     {
      "level": 2,
-     "line": 98,
+     "line": 99,
      "text": "Rules"
     }
    ],
@@ -12045,10 +12169,21 @@
      "warnings": []
     },
     {
+     "display": "self-improve",
+     "embed": false,
+     "fragment": null,
+     "line": 71,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-improve/SKILL\\|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
+     "warnings": []
+    },
+    {
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 76,
+     "line": 77,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL\\|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -12059,7 +12194,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 77,
+     "line": 78,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -12070,7 +12205,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 78,
+     "line": 79,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -12081,7 +12216,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 83,
      "placeholder": false,
      "raw": "[[06_Resources/recommended-skills]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -12092,7 +12227,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 83,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -12103,7 +12238,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 86,
+     "line": 87,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -12114,7 +12249,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 86,
+     "line": 87,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -12125,7 +12260,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 86,
+     "line": 87,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -12136,7 +12271,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 90,
+     "line": 91,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -12147,7 +12282,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 91,
+     "line": 92,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL\\|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -12158,7 +12293,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 91,
+     "line": 92,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -12169,7 +12304,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 92,
+     "line": 93,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -12180,7 +12315,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 92,
+     "line": 93,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -12191,28 +12326,6 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 92,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
-     "resolved": "10_Agents/skills/curate/SKILL.md",
-     "target": "10_Agents/skills/curate/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "periodic-review",
-     "embed": false,
-     "fragment": null,
-     "line": 93,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
-     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
-     "target": "10_Agents/skills/periodic-review/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "curate",
-     "embed": false,
-     "fragment": null,
      "line": 93,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
@@ -12221,14 +12334,14 @@
      "warnings": []
     },
     {
-     "display": "self-maintenance",
+     "display": "self-improve",
      "embed": false,
      "fragment": null,
      "line": 93,
      "placeholder": false,
-     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
-     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
-     "target": "10_Agents/skills/self-maintenance/SKILL",
+     "raw": "[[10_Agents/skills/self-improve/SKILL\\|self-improve]]",
+     "resolved": "10_Agents/skills/self-improve/SKILL.md",
+     "target": "10_Agents/skills/self-improve/SKILL",
      "warnings": []
     },
     {
@@ -12243,10 +12356,43 @@
      "warnings": []
     },
     {
+     "display": "curate",
+     "embed": false,
+     "fragment": null,
+     "line": 94,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
+     "resolved": "10_Agents/skills/curate/SKILL.md",
+     "target": "10_Agents/skills/curate/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "self-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 94,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
+     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
+     "target": "10_Agents/skills/self-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 95,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 97,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -12257,7 +12403,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 97,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -12268,7 +12414,7 @@
      "display": "express-packet",
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 97,
      "placeholder": false,
      "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
      "resolved": "10_Agents/skills/express-packet/SKILL.md",
@@ -12279,7 +12425,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 97,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -12290,7 +12436,7 @@
      "display": "sync-upstream",
      "embed": false,
      "fragment": null,
-     "line": 96,
+     "line": 97,
      "placeholder": false,
      "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
      "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
@@ -12301,7 +12447,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 100,
+     "line": 101,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -12309,7 +12455,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 7601,
+   "sizeBytes": 7998,
    "tasks": [],
    "title": "Agent Skills",
    "updated": "2026-08-11"
@@ -13585,7 +13731,8 @@
     "10_Agents/environments/README.md",
     "10_Agents/harnesses/copilot/wiring.md",
     "10_Agents/skills/README.md",
-    "10_Agents/skills/onboard-owner/SKILL.md"
+    "10_Agents/skills/onboard-owner/SKILL.md",
+    "10_Agents/skills/self-improve/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -13624,17 +13771,17 @@
     },
     {
      "level": 2,
-     "line": 51,
+     "line": 52,
      "text": "Scheduling mechanism per harness"
     },
     {
      "level": 2,
-     "line": 63,
+     "line": 64,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 70,
+     "line": 71,
      "text": "References"
     }
    ],
@@ -13654,7 +13801,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 65,
+     "line": 66,
      "placeholder": false,
      "raw": "[[10_Agents/environments/README]]",
      "resolved": "10_Agents/environments/README.md",
@@ -13665,7 +13812,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 72,
+     "line": 73,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -13673,7 +13820,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5971,
+   "sizeBytes": 6173,
    "tasks": [],
    "title": "Skill: Recommended Automations",
    "updated": "2026-08-11"
@@ -13739,6 +13886,284 @@
    "sizeBytes": 4291,
    "tasks": [],
    "title": "Skill: Research to Resource",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/self-improve/SKILL.md": {
+   "backlinks": [
+    "10_Agents/docs/README.md",
+    "10_Agents/docs/operating-rules.md",
+    "10_Agents/docs/rejected-proposals.md",
+    "10_Agents/skills/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Run the vault's self-improving loop - observe friction in real usage (brain report trends, git history, triage outcomes, solution notes), propose single-topic spec/convention/skill changes as PRs or Inbox proposal notes with evidence and rollback, record owner rejections so they are never re-proposed, and recur as the monthly spec retrospective. Use when asked to run a spec retrospective or to propose improvements from observed usage. Propose-only - the owner decides; never push upstream.",
+    "expires": "2027-08-11",
+    "name": "self-improve",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/draft"
+    ],
+    "title": "Skill: Self-Improve",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 13,
+     "text": "Self-Improve"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Ground rules (guardrails)"
+    },
+    {
+     "level": 2,
+     "line": 28,
+     "text": "Observe"
+    },
+    {
+     "level": 2,
+     "line": 39,
+     "text": "Propose"
+    },
+    {
+     "level": 2,
+     "line": 54,
+     "text": "Owner review"
+    },
+    {
+     "level": 2,
+     "line": 62,
+     "text": "Record rejections"
+    },
+    {
+     "level": 2,
+     "line": 68,
+     "text": "Recur"
+    },
+    {
+     "level": 2,
+     "line": 74,
+     "text": "Worked example (dry-run cycle)"
+    },
+    {
+     "level": 2,
+     "line": 118,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 128,
+     "text": "References"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 25,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 52,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 64,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 70,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/README]]",
+     "resolved": "10_Agents/skills/README.md",
+     "target": "10_Agents/skills/README",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 70,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 78,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 114,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 120,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 125,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 131,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 132,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/rejected-proposals]]",
+     "resolved": "10_Agents/docs/rejected-proposals.md",
+     "target": "10_Agents/docs/rejected-proposals",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 133,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 134,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 137,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 12752,
+   "tasks": [],
+   "title": "Skill: Self-Improve",
    "updated": "2026-08-11"
   },
   "10_Agents/skills/self-maintenance/SKILL.md": {
@@ -13844,7 +14269,9 @@
   },
   "10_Agents/skills/sync-upstream/SKILL.md": {
    "backlinks": [
+    "10_Agents/docs/operating-rules.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/self-improve/SKILL.md",
     "10_Agents/skills/sync-upstream/SKILL.md",
     "10_Agents/tools/brain/spec.md"
    ],

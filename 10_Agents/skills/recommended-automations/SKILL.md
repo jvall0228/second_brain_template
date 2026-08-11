@@ -47,6 +47,7 @@ Turn recurring vault operations into scheduled flows the owner doesn't have to r
 | Maintenance — vault-maintenance | monthly | fixes committed, findings reported |
 | Curation — curate (no `--check-urls` unattended by default) | monthly/quarterly | curate report in the Inbox |
 | Tooling audit — self-maintenance | quarterly | audit report |
+| Spec retrospective — self-improve (Observe + drafted proposals only; owner review always waits for a human) | monthly | retrospective report + proposal notes in the Inbox, `workflow/needs-review` |
 
 ## Scheduling mechanism per harness
 

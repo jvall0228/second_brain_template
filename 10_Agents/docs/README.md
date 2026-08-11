@@ -15,6 +15,7 @@ Behavioral documentation for AI agents operating in this vault.
 
 - [[10_Agents/docs/operating-rules|Operating Rules]]
 - [[10_Agents/docs/task-patterns|Task Patterns]]
+- [[10_Agents/docs/rejected-proposals|Rejected Proposals]] — the [[10_Agents/skills/self-improve/SKILL|self-improve]] loop's append-only rejection memory
 
 ## Related
 
