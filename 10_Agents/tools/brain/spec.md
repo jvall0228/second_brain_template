@@ -223,7 +223,7 @@ A note whose **frontmatter tags** contain `restricted/private` (bodyTags are inf
 
 ## 9. CLI command semantics
 
-Invocation: `python 10_Agents/tools/brain/brain.py <command> [args]`, or directly as `./10_Agents/tools/brain/brain.py <command>` — the file is executable with a `#!/usr/bin/env python3` shebang (a shell alias is documented in the tool README at M5.5; a PATH install remains deferred, issue #4). Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4.
+Invocation: `brain <command> [args]`. A clean checkout can use the root resolver (`./brain` on POSIX, `brain.cmd` on Windows); the universal long-form fallback is `python3 10_Agents/tools/brain/brain.py <command> [args]`. Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4. Resolver-specific failures use §21.1.
 
 Where a command takes a `<note>` argument, it accepts a vault-relative path or a bare name; the argument gets §5.1 target normalization (one trailing `.md` stripped — so `brain show 00_Meta/prd.md` works) and then the §6 ladder.
 
@@ -539,6 +539,64 @@ personal-data tools must resolve the current environment first. Sync treats all
 environment directories and `.second-brain/` as owner-local: non-current
 contents are neither read nor serialized, and overlays are never proposed for
 commit.
+
+## 21. Portable `brain` resolver and installer
+
+### 21.1 Repository launchers
+
+The tracked root `brain` is a POSIX `sh` resolver; `brain.cmd` is its Windows
+`cmd.exe` counterpart. They are location-independent copies: neither embeds the
+checkout that supplied it. Resolution precedence is one CLI `--vault PATH` (or
+`--vault=PATH`) > `BRAIN_VAULT` > the nearest ancestor of the physical CWD that
+contains both a regular `AGENTS.md` and
+`10_Agents/tools/brain/brain.py`. Missing values, repeated CLI overrides,
+invalid roots, symlinked markers/tools, and no ancestor match are rejected
+without printing the candidate path. A higher-precedence invalid input never
+falls through. This gives nested vaults nearest-root behavior and keeps sibling
+forks isolated.
+
+After resolution, the launcher invokes that checkout's Python 3 tool with the
+original argument vector. It does not capture or transform stdout/stderr and
+returns the exact child exit status. POSIX requires `python3` and returns 127
+when it is unavailable. Windows prefers `py -3`, then `python3`, then `python`,
+and forwards `%ERRORLEVEL%`. Paths containing spaces and Unicode are quoted;
+the launchers never evaluate arguments, source shell files, honor a `PYTHON`
+override, or modify the environment.
+
+### 21.2 Managed PATH installation
+
+`brain install` is preview-only by default. It selects the first existing,
+absolute, non-symlinked, writable directory in `PATH`; `--target DIRECTORY`
+selects another existing writable directory explicitly. It never creates a PATH
+directory or edits shell/profile/registry configuration. `--apply` copies the
+platform launcher atomically. `--doctor` is read-only. `--uninstall` previews;
+`--uninstall --apply` removes only the recognized managed launcher.
+
+Ownership lives in a version-1 external manifest: POSIX defaults to
+`$XDG_STATE_HOME/second-brain/brain-install.json` or
+`~/.local/state/second-brain/brain-install.json`; Windows defaults under
+`%LOCALAPPDATA%\second-brain`. `--state-file` or `BRAIN_INSTALL_STATE` may
+override it with an absolute path. The manifest is outside the vault and stores
+one artifact per platform: absolute target, platform, and installed SHA-256.
+Install output previews the exact target and manifest paths. Unknown schemas,
+foreign shapes, symlinked state/targets, targets inside the vault, stale hashes,
+and a requested target different from the recorded target are refusals.
+
+An absent target or a byte-identical current launcher is safe to record. A
+different target is replaceable only when its digest matches this manifest's
+recorded digest. Apply uses same-directory temporary files and `os.replace`; if
+manifest update fails after a target mutation, the old target is restored (or
+the new target removed). Uninstall likewise refuses drift and restores a removed
+target if manifest cleanup fails. Preview, doctor, and refused operations make
+zero writes. Tests use fake PATH/state/home directories exclusively.
+
+### 21.3 Host capability boundary
+
+The current official Codex plugin manifest schema does not document a `bin` or
+executable-export field. This repository therefore does not invent plugin
+metadata; project and managed PATH launchers are the supported surfaces. Revisit
+plugin exposure only after an official host schema documents it and an
+end-to-end compatibility test passes.
 
 ## 18. Semantic search (QMD — issue #8)
 

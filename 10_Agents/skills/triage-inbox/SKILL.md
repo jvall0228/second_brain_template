@@ -18,7 +18,7 @@ Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the s
 
 ## Steps
 
-1. **List the queue:** `python3 10_Agents/tools/brain/brain.py list --dir 02_Inbox --json` (skip `02_Inbox/README.md`).
+1. **List the queue:** `brain list --dir 02_Inbox --json` (skip `02_Inbox/README.md`).
 2. **Atomize first.** A capture holding several unrelated topics gets split into one-topic notes *before* classification — each with its own frontmatter, the original emptied into its pieces. Split pieces keep the original's provenance fields (`00_Meta/conventions.md` § Provenance): `author:` (harness identifier) and `session:` (session URL / PR / task reference) tell the reviewer at a glance which agent produced a capture and from what task — use them to judge trust and filter the queue; absence means human-authored or pre-convention. Splitting notes still inside the Inbox is within triage's write authority. (Capture stays zero-friction; the split belongs here, never at capture time.)
 3. **Extract action items.** An actionable commitment found inside a capture → propose adding it to the matching project note's tasks, or propose a new project if none fits. The capture still files normally — the action item is copied out, not a reclassification.
 4. **Classify each note:**
@@ -33,7 +33,7 @@ Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the s
 7. **Hand zettels to [[10_Agents/skills/distill-note/SKILL|distill-note]].** Anything classified `type/zettel` gets reshaped by that skill (atomic claim, summary layer, links) before filing — procedure detail lives there, not here.
 8. **Write a triage report** as a new Inbox note (use `inbox-capture`; slug `triage-report`): one table row per note — path, one-line summary, proposed destination, proposed filename (kebab-case), tag changes (e.g. drop `workflow/draft` on filing), action items found, propagation edits proposed, open questions.
 9. **Present the report** to the human. Apply moves and propagation edits only after explicit approval, updating each edited note's `updated:` date and re-checking its wikilinks (cross-directory links need full paths — see `10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md`). Propagation edits to `workflow/canonical` notes follow canonical change control even after triage approval.
-10. After any approved changes: `python3 10_Agents/tools/brain/brain.py validate` and commit.
+10. After any approved changes: `brain validate` and commit.
 
 ## References
 

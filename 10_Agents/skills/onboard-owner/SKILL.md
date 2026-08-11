@@ -46,7 +46,7 @@ The SKILL sets tone, not a script — improvise the words, hold the principles:
 
 ## Write policy during onboarding
 
-Everything written **during the live onboarding conversation** goes directly to its real home — `01_Profile/`, `03_Journal/people/` (confirmed people notes, stage 4), `04_Projects/`, `05_Areas/` — not through the Inbox. The owner approving each answer in the moment *is* the human review the Inbox-first rule exists to provide. This exception is scoped to this skill's live session only; outside it, normal Inbox-first rules apply. Every note you write must carry valid frontmatter and pass `python3 10_Agents/tools/brain/brain.py validate`.
+Everything written **during the live onboarding conversation** goes directly to its real home — `01_Profile/`, `03_Journal/people/` (confirmed people notes, stage 4), `04_Projects/`, `05_Areas/` — not through the Inbox. The owner approving each answer in the moment *is* the human review the Inbox-first rule exists to provide. This exception is scoped to this skill's live session only; outside it, normal Inbox-first rules apply. Every note you write must carry valid frontmatter and pass `brain validate`.
 
 ## Remote-safety boundary
 

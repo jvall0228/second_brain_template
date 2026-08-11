@@ -67,7 +67,7 @@ Before writing any note, verify:
 - [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, or live user-invoked `agent-orientation` inventory plus paired draft bundle)
 - [ ] A generated orientation bundle is still draft: its inventory, skill, and tool documentation say `workflow/draft`, and no non-note file is treated as canonical-by-policy before owner promotion
 - [ ] **Restricted containment** ([[00_Meta/conventions#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
-- [ ] Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])
+- [ ] Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [[10_Agents/tools/brain/README|brain]])
 - [ ] **Editor-surface parity** ([[00_Meta/prd]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
 
 ## Upstream Boundary
@@ -79,7 +79,7 @@ Before writing any note, verify:
 Capability inventory is safe: agents may identify installed CLIs/connectors and
 their declared scopes without reading account data. Immediately before any email,
 calendar, contacts, chat, drive, task, transcript, or similar personal-data read,
-run `python3 10_Agents/tools/brain/brain.py remote-safety --json` and use the shared
+run `brain remote-safety --json` and use the shared
 guard in generated tooling (brain spec §19). Add `--persist` for any capture or
 other flow that will write connector-derived data; require both a zero exit status
 and `operationAllowed: true` at a process boundary.

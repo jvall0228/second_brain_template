@@ -19,7 +19,7 @@ Retrieval discipline for questions the vault should answer. The vault is the sou
 ## Steps
 
 1. **Search the vault, in order** — stop as soon as you have enough to answer:
-   1. `python3 10_Agents/tools/brain/brain.py search "<term>"` — title and full-text hits (try synonyms and abbreviations too).
+   1. `brain search "<term>"` — title and full-text hits (try synonyms and abbreviations too).
    2. [[00_Meta/index]] and the relevant directory READMEs — where a topic *should* live, even if search missed it.
    3. `grep` across the vault — phrasings the index search didn't catch.
 2. **Read the notes you found.** Answer from note content, never from search snippets or filenames alone.

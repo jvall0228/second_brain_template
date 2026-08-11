@@ -40,7 +40,7 @@ Upstream version signaling (accepted design, issue #6): the fork records the ups
    git remote add upstream https://github.com/<template-owner>/second_brain_template.git
    ```
 2. **Fetch tags:** `git fetch upstream --tags` (fetch only — see ground rules).
-3. **Read the fork's recorded version:** `python3 10_Agents/tools/brain/brain.py config --json` → `templateVersion`. If unset, the fork predates version signaling: propose an initial baseline in the report (the newest upstream tag whose tree the fork already contains, or a full first-sync review) rather than guessing.
+3. **Read the fork's recorded version:** `brain config --json` → `templateVersion`. If unset, the fork predates version signaling: propose an initial baseline in the report (the newest upstream tag whose tree the fork already contains, or a full first-sync review) rather than guessing.
 4. **Compare against upstream release tags** (`git tag -l 'template-v*'` on the upstream remote, version-sorted). The pending work is the tag-to-tag diff from the recorded version to the newest release — semantic release units, not raw commit soup: `git diff --name-status <recorded-tag>..<newest-tag>`.
 5. **Edge cases:**
    - **Upstream has no tags** (it predates its own release duty): fall back to `00_Meta/VERSION` in the upstream tree if upstream ships one (the accepted design's stopgap the config key absorbs); if neither exists, diff against `upstream/main` and say so in the report — the sync still works, it just loses release granularity.
@@ -119,9 +119,9 @@ Only after the dry-run report is approved:
 
 Where a new upstream convention applies to existing fork content (a new frontmatter field, tag namespace, validate rule):
 
-1. Run the mechanical regeneration steps: `python3 10_Agents/tools/brain/brain.py index` and `python3 10_Agents/tools/vscode/gen_snippets.py` (the pre-commit hook does both, but run them explicitly so the diff is reviewable).
+1. Run the mechanical regeneration steps: `brain index` and `python3 10_Agents/tools/vscode/gen_snippets.py` (the pre-commit hook does both, but run them explicitly so the diff is reviewable).
 2. Generate the mechanical fixes for fork content the new convention now covers — **owner-content files still are not edited**; convention gaps in owner content become a checklist in the report instead.
-3. **Prove with `python3 10_Agents/tools/brain/brain.py validate` — 0 errors** before committing; run the test suite (`python3 10_Agents/tools/run_tests.py`).
+3. **Prove with `brain validate` — 0 errors** before committing; run the test suite (`python3 10_Agents/tools/run_tests.py`).
 4. Document the backfill pass (what was regenerated, what was fixed, what remains for the owner) as a section of the sync report.
 
 ## Report

@@ -155,7 +155,7 @@ For expanded agent guidance, see [[10_Agents/README]].
 
 ## Bootstrap Context Budgets
 
-The bootstrap docs ([[AGENTS]], [[01_Profile/now]], [[01_Profile/preferences]], [[01_Profile/defaults]], this file, [[00_Meta/index]]) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `python3 10_Agents/tools/brain/brain.py context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
+The bootstrap docs ([[AGENTS]], [[01_Profile/now]], [[01_Profile/preferences]], [[01_Profile/defaults]], this file, [[00_Meta/index]]) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `brain context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
 
 ## Operating Rhythm
 

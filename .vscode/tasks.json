@@ -7,62 +7,62 @@
     {
       "label": "Brain: Validate Vault",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py validate",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py validate" },
+      "command": "\"${workspaceFolder}/brain\" validate",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" validate" },
       "group": { "kind": "test", "isDefault": true },
       "problemMatcher": []
     },
     {
       "label": "Brain: Rebuild Index",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py index",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py index" },
+      "command": "\"${workspaceFolder}/brain\" index",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" index" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Links for Current Note",
       "detail": "Outgoing links, backlinks, and unresolved targets — the backlinks-panel substitute",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py links \"${relativeFile}\"",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py links \"${relativeFile}\"" },
+      "command": "\"${workspaceFolder}/brain\" links \"${relativeFile}\"",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" links \"${relativeFile}\"" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Search Vault",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py search \"${input:brainQuery}\"",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py search \"${input:brainQuery}\"" },
+      "command": "\"${workspaceFolder}/brain\" search \"${input:brainQuery}\"",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" search \"${input:brainQuery}\"" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Semantic Search",
       "detail": "Relevance-ranked notes via the embeddings sidecar (spec \u00a718); degrades to keyword search when no vectors exist",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"" },
+      "command": "\"${workspaceFolder}/brain\" search --semantic \"${input:brainSemanticQuery}\"",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" search --semantic \"${input:brainSemanticQuery}\"" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Recent Notes",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py recent",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py recent" },
+      "command": "\"${workspaceFolder}/brain\" recent",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" recent" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Health Report",
       "detail": "Stale-active notes, orphans, Inbox aging, tag drift, and unresolved links (spec §16)",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py report",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py report" },
+      "command": "\"${workspaceFolder}/brain\" report",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" report" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Tasks (open)",
       "detail": "Open checkbox tasks across the vault, due-date first (spec §17)",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py tasks --open",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py tasks --open" },
+      "command": "\"${workspaceFolder}/brain\" tasks --open",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" tasks --open" },
       "problemMatcher": []
     },
     {

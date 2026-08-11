@@ -100,4 +100,4 @@ Ad hoc, not scheduled: capture and retrieval ([[10_Agents/skills/inbox-capture/S
 
 - Template-shipped skills are canonical ([[00_Meta/prd]] §9.3): changes need human approval.
 - Agent-generated skills may be added here directly, tagged `workflow/draft` until the human promotes them; they must pass `brain validate` (which checks `name` = folder name and a non-empty `description`).
-- Skills reference vault files by path and invoke `brain` via `python3 10_Agents/tools/brain/brain.py …` so they work in any harness.
+- Skills reference vault files by path and invoke `brain …`. A clean checkout uses `./brain` (POSIX) or `brain.cmd` (Windows); the universal fallback is `python3 10_Agents/tools/brain/brain.py …`. Managed installation is optional and preview-first (`brain install`).

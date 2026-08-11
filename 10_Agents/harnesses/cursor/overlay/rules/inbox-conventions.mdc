@@ -7,4 +7,4 @@ alwaysApply: false
 New Inbox notes are named YYYY-MM-DD-descriptive-slug.md, carry frontmatter
 with title, tags (including audience/agent and workflow/draft), and updated,
 and are never moved out of 02_Inbox without human approval. Run
-`python3 10_Agents/tools/brain/brain.py validate` before committing.
+`brain validate` before committing.

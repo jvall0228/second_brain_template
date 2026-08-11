@@ -183,7 +183,7 @@ session: <session-or-pr-ref>
 7. **Generate the access layer for each adopted source:**
    - **Tooling** under `10_Agents/tools/<source>/` — a script (stdlib-first, config via env vars) where the rung is a CLI or wrapped API; an access doc naming the exact harness tools where the rung is MCP/connector.
    - **A paired skill** at `10_Agents/skills/<source>-capture/SKILL.md` describing when and how to pull from the source and capture into the vault **via the `inbox-capture` rules**.
-   - The inventory, capture skill, and any Markdown tool documentation are tagged `workflow/draft` (agent-generated; the owner promotes — PRD §§6.2 and 11). Non-note scripts/config inherit the paired documentation's draft state; placement under `10_Agents/` does not make them canonical-by-policy. Everything must pass `python3 10_Agents/tools/brain/brain.py validate`.
+   - The inventory, capture skill, and any Markdown tool documentation are tagged `workflow/draft` (agent-generated; the owner promotes — PRD §§6.2 and 11). Non-note scripts/config inherit the paired documentation's draft state; placement under `10_Agents/` does not make them canonical-by-policy. Everything must pass `brain validate`.
 8. **Hand off:** propose recurring flows to `recommended-automations` (it reads this environment's inventory note); register everything generated for `self-maintenance` audits (it probes the inventory's recorded sources on its cycle).
 
 ## References

@@ -18,10 +18,10 @@ Keep the vault passing its own checks and its snapshots truthful.
 
 ## Steps
 
-1. **Open with the health report:** `python3 10_Agents/tools/brain/brain.py report` — stale-active notes, disconnected orphans, Inbox triage debt, tag drift, and the unresolved-link count in one pass. It sets the agenda for the steps below; the tag-drift section (single-use and near-duplicate tags) is a direct input to the duplication scan in step 5.
-2. **Run the full check:** `python3 10_Agents/tools/brain/brain.py validate --check-index`.
+1. **Open with the health report:** `brain report` — stale-active notes, disconnected orphans, Inbox triage debt, tag drift, and the unresolved-link count in one pass. It sets the agenda for the steps below; the tag-drift section (single-use and near-duplicate tags) is a direct input to the duplication scan in step 5.
+2. **Run the full check:** `brain validate --check-index`.
 3. **Fix errors by class:**
-   - Stale index → `python3 10_Agents/tools/brain/brain.py index`
+   - Stale index → `brain index`
    - Unresolved links → use the `link-repair` skill
    - Frontmatter/tag/filename errors on **non-canonical** notes → fix directly (bump `updated:`)
    - Errors on `workflow/canonical` notes → do **not** edit directly; propose the fix via an Inbox note tagged `workflow/needs-review` (see `10_Agents/docs/operating-rules.md`), unless the human has directed the change in this session

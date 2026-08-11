@@ -17,14 +17,20 @@ Zero-dependency CLI (Python 3.10+, stdlib only) that indexes every note in the v
 ## Invocation
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> [options]
+brain <command> [options]
 ```
 
-Convenient shell alias (add to your shell profile, adjusting the path):
+From a clean checkout, use the repository resolver:
 
-```sh
-alias brain='python3 "$(git rev-parse --show-toplevel)/10_Agents/tools/brain/brain.py"'
+```text
+./brain <command> [options]       # POSIX
+brain.cmd <command> [options]    # Windows
 ```
+
+Universal long-form fallback: `python3 10_Agents/tools/brain/brain.py <command>
+[options]`. `brain install` previews a managed PATH copy; add `--apply` only
+after reviewing its exact target and external ownership manifest. It never
+edits shell startup files.
 
 Every command accepts `--json` for machine-readable output, `--vault PATH` to override vault-root autodetection, and `--env current|SLUG` for environment selection. Where a command takes a `<note>`, both bare names (`prd`) and vault paths (`00_Meta/prd.md`) work.
 
@@ -48,6 +54,7 @@ Every command accepts `--json` for machine-readable output, `--vault PATH` to ov
 | `embed` | Maintain the gitignored semantic-search embeddings sidecar (`vault-embeddings.json`, spec §18): `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional `sentence-transformers` model, `--status` reports coverage. Restricted/private notes never enter the sidecar |
 | `remote-safety` | Redacted, fail-closed preflight before personal-data connector reads (spec §19). Verifies every push target is private and non-template; `--acknowledge-unknown` is invocation-only and never bypasses public/template. Add `--persist` for capture/write flows: no-push repositories are local-only, so that requested operation is blocked before the connector |
 | `env detect\|list\|migrate` | Detect current hashed identity, list metadata-only environment records, or preview an exact legacy-directory migration (spec §20). Selection is `--env` > `SECOND_BRAIN_ENV` > ignored selector > unique fingerprint and fails closed on ambiguity/no match |
+| `install` | Preview managed PATH installation (spec §21). `--apply` writes; `--doctor` diagnoses; `--uninstall` previews removal and combines with `--apply` to remove only a recognized artifact. `--target` and `--state-file` are explicit path overrides |
 
 ## The committed index
 

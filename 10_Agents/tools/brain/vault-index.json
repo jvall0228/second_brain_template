@@ -21,7 +21,9 @@
   "10_Agents/tools/skill_adapters/harness_setup.py",
   "10_Agents/tools/skill_adapters/hook_transaction.py",
   "10_Agents/tools/vscode/daily_note.py",
-  "10_Agents/tools/vscode/gen_snippets.py"
+  "10_Agents/tools/vscode/gen_snippets.py",
+  "brain",
+  "brain.cmd"
  ],
  "notes": {
   "00_Meta/README.md": {
@@ -1702,7 +1704,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 11259,
+   "sizeBytes": 11226,
    "tasks": [],
    "title": "Conventions",
    "updated": "2026-08-11"
@@ -12951,7 +12953,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8443,
+   "sizeBytes": 8384,
    "tasks": [
     {
      "due": null,
@@ -13023,7 +13025,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])"
+     "text": "Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [[10_Agents/tools/brain/README|brain]])"
     },
     {
      "due": null,
@@ -13651,7 +13653,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5535,
+   "sizeBytes": 5436,
    "tasks": [],
    "title": "Claude Code Wiring",
    "updated": "2026-08-11"
@@ -13735,7 +13737,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3987,
+   "sizeBytes": 3888,
    "tasks": [],
    "title": "Codex Wiring",
    "updated": "2026-08-11"
@@ -13860,7 +13862,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 11116,
+   "sizeBytes": 10973,
    "tasks": [],
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
@@ -13995,7 +13997,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5332,
+   "sizeBytes": 5200,
    "tasks": [],
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
@@ -14079,7 +14081,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3396,
+   "sizeBytes": 3297,
    "tasks": [],
    "title": "Muse Code Wiring",
    "updated": "2026-08-11"
@@ -14163,7 +14165,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3335,
+   "sizeBytes": 3236,
    "tasks": [],
    "title": "opencode Wiring",
    "updated": "2026-08-11"
@@ -14247,7 +14249,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3471,
+   "sizeBytes": 3372,
    "tasks": [],
    "title": "Pi Wiring",
    "updated": "2026-08-11"
@@ -14840,7 +14842,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8236,
+   "sizeBytes": 8371,
    "tasks": [],
    "title": "Agent Skills",
    "updated": "2026-08-11"
@@ -14971,7 +14973,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 13703,
+   "sizeBytes": 13670,
    "tasks": [],
    "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
@@ -15097,7 +15099,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3634,
+   "sizeBytes": 3601,
    "tasks": [],
    "title": "Skill: Curate",
    "updated": "2026-08-11"
@@ -15146,7 +15148,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 1753,
+   "sizeBytes": 1720,
    "tasks": [],
    "title": "Skill: Daily Log",
    "updated": "2026-08-11"
@@ -15261,7 +15263,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3414,
+   "sizeBytes": 3348,
    "tasks": [],
    "title": "Skill: Distill Note",
    "updated": "2026-08-11"
@@ -15458,7 +15460,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 2405,
+   "sizeBytes": 2372,
    "tasks": [],
    "title": "Skill: Inbox Capture",
    "updated": "2026-08-11"
@@ -15505,7 +15507,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 2198,
+   "sizeBytes": 2165,
    "tasks": [],
    "title": "Skill: Link Repair",
    "updated": "2026-08-11"
@@ -15610,7 +15612,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3708,
+   "sizeBytes": 3642,
    "tasks": [],
    "title": "Skill: Merge Notes",
    "updated": "2026-08-11"
@@ -16129,7 +16131,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 20898,
+   "sizeBytes": 20865,
    "tasks": [],
    "title": "Skill: Onboard Owner",
    "updated": "2026-08-11"
@@ -16210,7 +16212,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3581,
+   "sizeBytes": 3482,
    "tasks": [],
    "title": "Skill: Periodic Review",
    "updated": "2026-08-11"
@@ -16363,7 +16365,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4291,
+   "sizeBytes": 4225,
    "tasks": [],
    "title": "Skill: Research to Resource",
    "updated": "2026-08-11"
@@ -16663,7 +16665,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 13051,
+   "sizeBytes": 13018,
    "tasks": [],
    "title": "Skill: Self-Improve",
    "updated": "2026-08-11"
@@ -16710,7 +16712,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 3034,
+   "sizeBytes": 3001,
    "tasks": [],
    "title": "Skill: Self Maintenance",
    "updated": "2026-08-11"
@@ -16752,7 +16754,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 2204,
+   "sizeBytes": 2171,
    "tasks": [],
    "title": "Skill: Solution Capture",
    "updated": "2026-08-11"
@@ -16883,7 +16885,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 13160,
+   "sizeBytes": 13061,
    "tasks": [],
    "title": "Skill: Sync Upstream",
    "updated": "2026-08-11"
@@ -16962,7 +16964,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4204,
+   "sizeBytes": 4138,
    "tasks": [],
    "title": "Skill: Triage Inbox",
    "updated": "2026-08-11"
@@ -17110,7 +17112,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3198,
+   "sizeBytes": 3165,
    "tasks": [],
    "title": "Skill: Vault Answer",
    "updated": "2026-08-11"
@@ -17182,7 +17184,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3011,
+   "sizeBytes": 2912,
    "tasks": [],
    "title": "Skill: Vault Maintenance",
    "updated": "2026-08-11"
@@ -17976,17 +17978,17 @@
     },
     {
      "level": 2,
-     "line": 31,
+     "line": 37,
      "text": "Commands"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 59,
      "text": "The committed index"
     },
     {
      "level": 2,
-     "line": 56,
+     "line": 63,
      "text": "Tests"
     }
    ],
@@ -18006,7 +18008,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 62,
+     "line": 69,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -18014,7 +18016,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5118,
+   "sizeBytes": 5582,
    "tasks": [],
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
@@ -18346,51 +18348,71 @@
     {
      "level": 2,
      "line": 543,
+     "text": "21. Portable `brain` resolver and installer"
+    },
+    {
+     "level": 3,
+     "line": 545,
+     "text": "21.1 Repository launchers"
+    },
+    {
+     "level": 3,
+     "line": 566,
+     "text": "21.2 Managed PATH installation"
+    },
+    {
+     "level": 3,
+     "line": 593,
+     "text": "21.3 Host capability boundary"
+    },
+    {
+     "level": 2,
+     "line": 601,
      "text": "18. Semantic search (QMD — issue #8)"
     },
     {
      "level": 3,
-     "line": 547,
+     "line": 605,
      "text": "18.1 Embeddings sidecar"
     },
     {
      "level": 3,
-     "line": 567,
+     "line": 625,
      "text": "18.2 Staleness and store loading"
     },
     {
      "level": 3,
-     "line": 572,
+     "line": 630,
      "text": "18.3 `brain embed`"
     },
     {
      "level": 3,
-     "line": 581,
+     "line": 639,
      "text": "18.4 `brain search --semantic <query>`"
     },
     {
      "level": 3,
-     "line": 590,
+     "line": 648,
      "text": "18.5 Determinism and invariants"
     },
     {
      "level": 2,
-     "line": 596,
+     "line": 654,
      "text": "19. Remote safety (`brain remote-safety`) — issue #83"
     },
     {
      "level": 3,
-     "line": 604,
+     "line": 662,
      "text": "19.1 Push-target discovery and normalization"
     },
     {
      "level": 3,
-     "line": 628,
+     "line": 686,
      "text": "19.2 Provider boundary and decisions"
     },
     {
      "level": 3,
-     "line": 654,
+     "line": 712,
      "text": "19.3 Output, exit status, and shared guard"
     }
    ],
@@ -18550,7 +18572,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 82052,
+   "sizeBytes": 85349,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
@@ -19233,7 +19255,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 7776,
+   "sizeBytes": 7788,
    "tasks": [],
    "title": "Agents",
    "updated": "2026-08-11"
@@ -19321,7 +19343,7 @@
     }
    ],
    "links": [],
-   "sizeBytes": 8664,
+   "sizeBytes": 8602,
    "tasks": [],
    "title": "Second Brain Template",
    "updated": "2026-08-11"

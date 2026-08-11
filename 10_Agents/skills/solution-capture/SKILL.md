@@ -43,7 +43,7 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
    ```
    The provenance fields (`00_Meta/conventions.md` § Provenance) are expected on agent-written notes: `author:` is your harness identifier (`claude-code`, `copilot`, …); `session:` is the session URL / PR / task reference — omit it when none exists.
 4. **Keep it evergreen:** facts and commands, no session narrative. If a solution supersedes an old note, update that note (bump `updated:`) instead of writing a duplicate.
-5. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
+5. **Validate and commit:** `brain validate`, then commit.
 
 ## References
 

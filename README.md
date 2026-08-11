@@ -90,8 +90,8 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 The vault ships a zero-dependency CLI, [`brain`](10_Agents/tools/brain/spec.md), that indexes every note and enforces the conventions (Python 3.10+, stdlib only):
 
 ```
-python3 10_Agents/tools/brain/brain.py validate   # frontmatter, tags, filenames, wikilinks
-python3 10_Agents/tools/brain/brain.py search <q> # plus: list, links, tags, show, recent
+./brain validate   # frontmatter, tags, filenames, wikilinks
+./brain search <q> # plus: list, links, tags, show, recent
 ```
 
 The committed index at `10_Agents/tools/brain/vault-index.json` gives agents structured vault access without running anything. The pre-commit hook (step 5 above) regenerates it on every commit and blocks commits that break the conventions; a GitHub Actions workflow re-checks both on push as a backstop.

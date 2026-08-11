@@ -1,0 +1,89 @@
+#!/bin/sh
+# Portable second-brain resolver. Keep this file POSIX sh: installed copies
+# must run before any repository-specific Python code is located.
+
+set -f
+
+brain_error() {
+    printf '%s\n' "brain: $1" >&2
+    exit "${2:-2}"
+}
+
+brain_cli_vault=
+brain_vault_count=0
+brain_need_vault=0
+brain_scan_options=1
+for brain_arg do
+    if [ "$brain_need_vault" -eq 1 ]; then
+        [ -n "$brain_arg" ] || brain_error "--vault requires a non-empty path"
+        brain_cli_vault=$brain_arg
+        brain_vault_count=$((brain_vault_count + 1))
+        brain_need_vault=0
+        continue
+    fi
+    if [ "$brain_scan_options" -eq 0 ]; then
+        continue
+    fi
+    case $brain_arg in
+        --)
+            brain_scan_options=0
+            ;;
+        --vault)
+            brain_need_vault=1
+            ;;
+        --vault=*)
+            brain_value=${brain_arg#--vault=}
+            [ -n "$brain_value" ] || brain_error "--vault requires a non-empty path"
+            brain_cli_vault=$brain_value
+            brain_vault_count=$((brain_vault_count + 1))
+            ;;
+    esac
+done
+[ "$brain_need_vault" -eq 0 ] || brain_error "--vault requires a path"
+[ "$brain_vault_count" -le 1 ] || brain_error "multiple --vault options are ambiguous"
+
+if [ "$brain_vault_count" -eq 1 ]; then
+    brain_candidate=$brain_cli_vault
+elif [ "${BRAIN_VAULT+x}" = x ]; then
+    [ -n "$BRAIN_VAULT" ] || brain_error "BRAIN_VAULT is set but empty"
+    brain_candidate=$BRAIN_VAULT
+else
+    brain_candidate=$(pwd -P) || brain_error "cannot resolve the current directory"
+    while :; do
+        if [ -f "$brain_candidate/AGENTS.md" ] \
+            && [ ! -L "$brain_candidate/AGENTS.md" ] \
+            && [ -f "$brain_candidate/10_Agents/tools/brain/brain.py" ] \
+            && [ ! -L "$brain_candidate/10_Agents/tools/brain/brain.py" ]; then
+            break
+        fi
+        brain_parent=${brain_candidate%/*}
+        [ -n "$brain_parent" ] || brain_parent=/
+        [ "$brain_parent" != "$brain_candidate" ] \
+            || brain_error "no vault found from the current directory upward" 1
+        brain_candidate=$brain_parent
+    done
+fi
+
+case $brain_candidate in
+    /*) ;;
+    *) brain_candidate=$(pwd -P)/$brain_candidate ;;
+esac
+[ ! -L "$brain_candidate" ] || brain_error "vault root must not be a symlink"
+[ -d "$brain_candidate" ] || brain_error "vault root is not a directory"
+brain_root=$(CDPATH= cd -P "$brain_candidate" 2>/dev/null && pwd -P) \
+    || brain_error "vault root cannot be resolved"
+brain_tool=$brain_root/10_Agents/tools/brain/brain.py
+[ -f "$brain_root/AGENTS.md" ] && [ ! -L "$brain_root/AGENTS.md" ] \
+    || brain_error "vault root is missing a regular AGENTS.md"
+[ -d "$brain_root/10_Agents" ] && [ ! -L "$brain_root/10_Agents" ] \
+    || brain_error "vault tool path contains an unsafe component"
+[ -d "$brain_root/10_Agents/tools" ] && [ ! -L "$brain_root/10_Agents/tools" ] \
+    || brain_error "vault tool path contains an unsafe component"
+[ -d "$brain_root/10_Agents/tools/brain" ] \
+    && [ ! -L "$brain_root/10_Agents/tools/brain" ] \
+    || brain_error "vault tool path contains an unsafe component"
+[ -f "$brain_tool" ] && [ ! -L "$brain_tool" ] \
+    || brain_error "vault root is missing a regular brain.py"
+
+command -v python3 >/dev/null 2>&1 || brain_error "python3 is unavailable" 127
+exec python3 "$brain_tool" "$@"

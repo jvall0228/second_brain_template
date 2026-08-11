@@ -18,8 +18,10 @@ import json
 import math
 import os
 import re
+import stat
 import subprocess
 import sys
+import tempfile
 import unicodedata
 from datetime import date
 from pathlib import Path
@@ -128,6 +130,11 @@ class EnvironmentSelectionError(RuntimeError):
 
 _ENVIRONMENT_UNSET = object()
 _ACTIVE_ENVIRONMENT: object | str | None = _ENVIRONMENT_UNSET
+
+# §21 Portable resolver installation. The manifest is deliberately outside
+# the repository and records only artifacts this installer may later replace.
+INSTALL_MANIFEST_SCHEMA_VERSION = 1
+INSTALL_MANIFEST_ENV = "BRAIN_INSTALL_STATE"
 
 
 # ---------------------------------------------------------------------------
@@ -3852,6 +3859,408 @@ def cmd_tasks(root: Path, args) -> int:
     return 0
 
 
+class InstallError(RuntimeError):
+    """Stable installer refusal safe to render at the CLI boundary."""
+
+
+def _install_platform() -> tuple[str, str]:
+    return ("windows", "brain.cmd") if os.name == "nt" else ("posix", "brain")
+
+
+def _installer_source(root: Path, filename: str) -> Path:
+    source = root / filename
+    if source.is_symlink() or not source.is_file():
+        raise InstallError("repository launcher is missing or unsafe")
+    return source
+
+
+def _external_digest(path: Path) -> str | None:
+    try:
+        if path.is_symlink():
+            return None
+        info = path.stat()
+        if not stat.S_ISREG(info.st_mode) or info.st_size > 1024 * 1024:
+            return None
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            while True:
+                chunk = handle.read(64 * 1024)
+                if not chunk:
+                    break
+                digest.update(chunk)
+        return digest.hexdigest()
+    except OSError:
+        return None
+
+
+def _outside_vault(root: Path, path: Path, label: str) -> Path:
+    if not path.is_absolute():
+        raise InstallError(f"{label} must be an absolute path")
+    if path.is_symlink() or path.parent.is_symlink():
+        raise InstallError(f"{label} must not be a symlink")
+    resolved = path.resolve(strict=False)
+    try:
+        resolved.relative_to(root.resolve())
+    except ValueError:
+        return resolved
+    raise InstallError(f"{label} must be outside the vault")
+
+
+def _install_state_path(root: Path, args, environ: dict[str, str]) -> Path:
+    supplied = getattr(args, "state_file", None)
+    if supplied is not None:
+        raw = str(supplied)
+    elif INSTALL_MANIFEST_ENV in environ:
+        raw = environ[INSTALL_MANIFEST_ENV]
+        if not raw:
+            raise InstallError(f"{INSTALL_MANIFEST_ENV} is set but empty")
+    elif os.name == "nt":
+        local = environ.get("LOCALAPPDATA")
+        if not local:
+            raise InstallError("LOCALAPPDATA is unavailable; pass --state-file")
+        raw = str(Path(local) / "second-brain" / "brain-install.json")
+    else:
+        state_home = environ.get("XDG_STATE_HOME")
+        if state_home:
+            raw = str(Path(state_home) / "second-brain" / "brain-install.json")
+        else:
+            raw = str(Path.home() / ".local/state/second-brain/brain-install.json")
+    if any(ch in raw for ch in "\0\r\n"):
+        raise InstallError("state-file path contains forbidden control characters")
+    return _outside_vault(root, Path(raw).expanduser(), "state file")
+
+
+def _empty_install_manifest() -> dict:
+    return {"artifacts": [], "schemaVersion": INSTALL_MANIFEST_SCHEMA_VERSION}
+
+
+def _load_install_manifest(path: Path) -> tuple[dict, bool]:
+    if not path.exists() and not path.is_symlink():
+        return _empty_install_manifest(), False
+    if path.is_symlink() or not path.is_file():
+        raise InstallError("install manifest is not a regular file")
+    try:
+        if os.name != "nt" and stat.S_IMODE(path.stat().st_mode) & 0o077:
+            raise InstallError("install manifest permissions are not private")
+        raw = path.read_bytes()
+        if len(raw) > 64 * 1024:
+            raise ValueError("oversized")
+        data = json.loads(raw.decode("utf-8"))
+    except InstallError:
+        raise
+    except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+        raise InstallError("install manifest is unreadable or invalid") from None
+    if not isinstance(data, dict) or set(data) != {"artifacts", "schemaVersion"}:
+        raise InstallError("install manifest has an unsupported shape")
+    if data.get("schemaVersion") != INSTALL_MANIFEST_SCHEMA_VERSION:
+        raise InstallError("install manifest schema version is unsupported")
+    artifacts = data.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise InstallError("install manifest artifacts must be a list")
+    seen_platforms: set[str] = set()
+    for row in artifacts:
+        if not isinstance(row, dict) or set(row) != {
+            "installedDigest",
+            "platform",
+            "target",
+        }:
+            raise InstallError("install manifest contains an invalid artifact")
+        if (
+            row.get("platform") not in {"posix", "windows"}
+            or row["platform"] in seen_platforms
+            or not isinstance(row.get("target"), str)
+            or not Path(row["target"]).is_absolute()
+            or any(ch in row["target"] for ch in "\0\r\n")
+            or not isinstance(row.get("installedDigest"), str)
+            or not ENVIRONMENT_DIGEST_RE.fullmatch(row["installedDigest"])
+        ):
+            raise InstallError("install manifest contains an invalid artifact")
+        seen_platforms.add(row["platform"])
+    return data, True
+
+
+def _path_install_directory(
+    root: Path, environ: dict[str, str], explicit: Path | None
+) -> Path:
+    candidates: list[Path] = []
+    if explicit is not None:
+        raw_candidates = [str(explicit)]
+    else:
+        raw_candidates = environ.get("PATH", "").split(os.pathsep)
+    seen: set[str] = set()
+    for raw in raw_candidates:
+        if not raw or any(ch in raw for ch in "\0\r\n"):
+            continue
+        candidate = Path(raw).expanduser()
+        if not candidate.is_absolute() or candidate.is_symlink():
+            continue
+        resolved = candidate.resolve(strict=False)
+        key = os.path.normcase(str(resolved))
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            info = resolved.stat()
+            resolved.relative_to(root.resolve())
+            inside = True
+        except ValueError:
+            inside = False
+        except OSError:
+            continue
+        if inside or not stat.S_ISDIR(info.st_mode):
+            continue
+        if os.name != "nt" and info.st_mode & 0o022:
+            continue
+        if info.st_mode & 0o222 and os.access(resolved, os.W_OK | os.X_OK):
+            candidates.append(resolved)
+    if not candidates:
+        if explicit is not None:
+            raise InstallError("target directory is not an existing writable PATH directory")
+        raise InstallError(
+            "no existing writable PATH directory found; pass --target after choosing one"
+        )
+    return candidates[0]
+
+
+def _atomic_external_write(path: Path, data: bytes, mode: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".brain-install-", dir=path.parent)
+    temporary_path = Path(temporary)
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(data)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.chmod(temporary_path, mode)
+        os.replace(temporary_path, path)
+    finally:
+        try:
+            temporary_path.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def _manifest_bytes(manifest: dict) -> bytes:
+    return (
+        json.dumps(manifest, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
+    ).encode("utf-8")
+
+
+def _target_state(target: Path, source_digest: str, artifact: dict | None) -> str:
+    if not target.exists() and not target.is_symlink():
+        return "absent"
+    digest = _external_digest(target)
+    if digest is None:
+        return "foreign"
+    if digest == source_digest:
+        return "current"
+    if artifact is not None and digest == artifact["installedDigest"]:
+        return "managed-upgrade"
+    return "foreign"
+
+
+def _manifest_is_unchanged(path: Path, present: bool, snapshot: bytes | None) -> bool:
+    if not present:
+        return not path.exists() and not path.is_symlink()
+    try:
+        return not path.is_symlink() and path.read_bytes() == snapshot
+    except OSError:
+        return False
+
+
+def _restore_external(path: Path, prior: tuple[bytes, int] | None) -> None:
+    if prior is None:
+        try:
+            path.unlink()
+        except FileNotFoundError:
+            pass
+        return
+    _atomic_external_write(path, prior[0], prior[1])
+
+
+def cmd_install(root: Path, args) -> int:
+    """§21: preview/apply/doctor/uninstall the resolver outside the vault."""
+    environ = os.environ
+    try:
+        platform_name, filename = _install_platform()
+        source = _installer_source(root, filename)
+        source_bytes = source.read_bytes()
+        source_digest = hashlib.sha256(source_bytes).hexdigest()
+        source_mode = stat.S_IMODE(source.stat().st_mode)
+        state_file = _install_state_path(root, args, environ)
+        manifest, manifest_present = _load_install_manifest(state_file)
+        manifest_snapshot = state_file.read_bytes() if manifest_present else None
+        artifact = next(
+            (row for row in manifest["artifacts"] if row["platform"] == platform_name),
+            None,
+        )
+        explicit_target = getattr(args, "target", None)
+        if artifact is not None:
+            if Path(artifact["target"]).name != filename:
+                raise InstallError("managed target has an invalid launcher filename")
+            recorded_target = _outside_vault(
+                root, Path(artifact["target"]), "recorded target"
+            )
+            if explicit_target is not None:
+                requested_dir = _path_install_directory(root, environ, explicit_target)
+                if requested_dir / filename != recorded_target:
+                    raise InstallError(
+                        "--target differs from the managed target; uninstall first"
+                    )
+            target = recorded_target
+        else:
+            target_dir = _path_install_directory(root, environ, explicit_target)
+            target = _outside_vault(root, target_dir / filename, "target")
+
+        state = _target_state(target, source_digest, artifact)
+        on_path = any(
+            raw
+            and Path(raw).is_absolute()
+            and Path(raw).resolve(strict=False) == target.parent
+            for raw in environ.get("PATH", "").split(os.pathsep)
+        )
+        mode = (
+            "doctor"
+            if args.doctor
+            else "uninstall"
+            if args.uninstall
+            else "install"
+        )
+        payload = {
+            "actions": [],
+            "manifestPresent": manifest_present,
+            "mode": mode,
+            "onPath": on_path,
+            "stateFile": str(state_file),
+            "status": state,
+            "target": str(target),
+            "writesPerformed": False,
+        }
+
+        if args.doctor:
+            if args.apply:
+                raise InstallError("--doctor cannot be combined with --apply")
+            payload["actions"] = ["none (diagnostic only)"]
+            healthy = artifact is not None and state == "current" and on_path
+            lines = [
+                f"brain install doctor: {'healthy' if healthy else 'attention required'}",
+                f"target: {target}",
+                f"manifest: {state_file}",
+                f"status: {state}",
+                f"target directory on PATH: {'yes' if on_path else 'no'}",
+            ]
+            emit(payload, args.json, lines)
+            return 0 if healthy else 1
+
+        if args.uninstall:
+            if artifact is None:
+                raise InstallError("no managed launcher is recorded for this platform")
+            if state not in {"current", "managed-upgrade", "absent"}:
+                raise InstallError("installed launcher has drifted; refusing to remove it")
+            payload["actions"] = [
+                f"remove {target}" if state != "absent" else "target already absent",
+                f"remove this platform record from {state_file}",
+            ]
+            if not args.apply:
+                emit(
+                    payload,
+                    args.json,
+                    ["brain uninstall preview:", *(f"  {a}" for a in payload["actions"]), "writes performed: no"],
+                )
+                return 0
+            if not _manifest_is_unchanged(
+                state_file, manifest_present, manifest_snapshot
+            ):
+                raise InstallError("install manifest changed after preview; retry")
+            prior = None
+            if state != "absent":
+                if _target_state(target, source_digest, artifact) != state:
+                    raise InstallError("installed launcher changed after preview; retry")
+                prior = (target.read_bytes(), stat.S_IMODE(target.stat().st_mode))
+                target.unlink()
+            remaining = [
+                row for row in manifest["artifacts"] if row["platform"] != platform_name
+            ]
+            updated = {
+                "artifacts": remaining,
+                "schemaVersion": INSTALL_MANIFEST_SCHEMA_VERSION,
+            }
+            try:
+                if not _manifest_is_unchanged(
+                    state_file, manifest_present, manifest_snapshot
+                ):
+                    raise OSError("manifest changed")
+                if remaining:
+                    _atomic_external_write(state_file, _manifest_bytes(updated), 0o600)
+                else:
+                    state_file.unlink()
+            except OSError:
+                if prior is not None:
+                    _restore_external(target, prior)
+                raise InstallError("uninstall could not update its manifest; target restored") from None
+            payload["writesPerformed"] = True
+            emit(payload, args.json, [f"removed managed launcher: {target}"])
+            return 0
+
+        if state == "foreign":
+            raise InstallError("target exists but is not a recognized managed launcher")
+        payload["actions"] = [
+            f"install resolver at {target}",
+            f"record reversible ownership in {state_file}",
+        ]
+        if not args.apply:
+            emit(
+                payload,
+                args.json,
+                ["brain install preview:", *(f"  {a}" for a in payload["actions"]), "writes performed: no"],
+            )
+            return 0
+
+        prior = None
+        changed_target = state != "current"
+        if not _manifest_is_unchanged(
+            state_file, manifest_present, manifest_snapshot
+        ):
+            raise InstallError("install manifest changed after preview; retry")
+        if changed_target:
+            if _target_state(target, source_digest, artifact) != state:
+                raise InstallError("target changed after preview; retry")
+            if state == "managed-upgrade":
+                prior = (target.read_bytes(), stat.S_IMODE(target.stat().st_mode))
+            _atomic_external_write(target, source_bytes, source_mode)
+        updated_artifact = {
+            "installedDigest": source_digest,
+            "platform": platform_name,
+            "target": str(target),
+        }
+        updated_artifacts = [
+            row for row in manifest["artifacts"] if row["platform"] != platform_name
+        ] + [updated_artifact]
+        updated_artifacts.sort(key=lambda row: row["platform"])
+        updated = {
+            "artifacts": updated_artifacts,
+            "schemaVersion": INSTALL_MANIFEST_SCHEMA_VERSION,
+        }
+        try:
+            if not _manifest_is_unchanged(
+                state_file, manifest_present, manifest_snapshot
+            ):
+                raise OSError("manifest changed")
+            _atomic_external_write(state_file, _manifest_bytes(updated), 0o600)
+        except OSError:
+            if changed_target:
+                _restore_external(target, prior)
+            raise InstallError("install could not write its manifest; target restored") from None
+        payload["status"] = "current"
+        payload["writesPerformed"] = True
+        emit(payload, args.json, [f"installed managed launcher: {target}"])
+        return 0
+    except (InstallError, OSError) as exc:
+        message = str(exc) if isinstance(exc, InstallError) else "external filesystem operation failed"
+        print(f"error: brain install refused ({message})", file=sys.stderr)
+        return 1
+
+
 def _environment_migration_preview(root: Path, source: str, target: str) -> dict:
     if not _valid_environment_slug(source) or not _valid_environment_slug(target):
         raise EnvironmentSelectionError("invalid-migration-slug")
@@ -4166,6 +4575,36 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="require connector-result persistence to be safe for this invocation",
     )
+    p = add(
+        "install",
+        help="preview/apply/doctor/uninstall the portable resolver on PATH",
+    )
+    p.add_argument(
+        "--apply",
+        action="store_true",
+        help="perform the previewed install or uninstall writes",
+    )
+    operation = p.add_mutually_exclusive_group()
+    operation.add_argument("--doctor", action="store_true", help="diagnose installation")
+    operation.add_argument(
+        "--uninstall",
+        action="store_true",
+        help="preview removing the managed launcher (combine with --apply to write)",
+    )
+    p.add_argument(
+        "--target",
+        type=Path,
+        default=None,
+        metavar="DIRECTORY",
+        help="existing writable install directory (default: first safe PATH directory)",
+    )
+    p.add_argument(
+        "--state-file",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="external ownership-manifest path override",
+    )
 
     env_parser = sub.add_parser(
         "env", help="detect, list, or preview migration of environment identity"
@@ -4214,11 +4653,20 @@ def main(argv: list[str] | None = None) -> int:
         "tasks": cmd_tasks,
         "embed": cmd_embed,
         "remote-safety": cmd_remote_safety,
+        "install": cmd_install,
         "env": cmd_env,
     }
     previous_environment = _ACTIVE_ENVIRONMENT
     try:
-        if args.command not in {"env", "validate", "index", "context", "config", "remote-safety"}:
+        if args.command not in {
+            "env",
+            "validate",
+            "index",
+            "context",
+            "config",
+            "remote-safety",
+            "install",
+        }:
             try:
                 selection = select_environment(
                     root, requested=getattr(args, "requested_env", None)

@@ -21,7 +21,7 @@ Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone â
 1. **Check for today's file.** If it exists, append to it rather than recreating; bump `updated:` if the date rolled over an edit.
 2. **If missing, instantiate** `09_Templates/template-daily-log.md`: replace every `{{...}}` placeholder, set `title`, `updated`, and real tags (keep the template's suggested set including `workflow/draft`), and fill the related-links placeholders â€” yesterday's log by bare filename (same directory), the current weekly review by full path.
 3. **Add the content** under the appropriate section (log entries, tasks, notes). Keep entries terse and timestamped where useful.
-4. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
+4. **Validate and commit:** `brain validate`, then commit.
 
 ## Rules
 

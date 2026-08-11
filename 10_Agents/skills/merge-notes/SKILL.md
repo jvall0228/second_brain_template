@@ -21,7 +21,7 @@ Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-ma
 1. **Confirm the approval** names the survivor and the loser(s). No approval, no merge.
 2. **Read every involved note in full** before touching any of them.
 3. **Rewrite the survivor:** fold the losers' content in by replacement — conflicting or overlapping sections are rewritten into one current claim, never concatenated side by side or left under "supersedes" banners. The result must read as a single coherent note; git history is the archive for what was dropped.
-4. **Retarget inbound links:** `python3 10_Agents/tools/brain/brain.py links <loser> --json` lists each loser's backlinks; point every one at the survivor (or its matching section anchor), preserving display text.
+4. **Retarget inbound links:** `brain links <loser> --json` lists each loser's backlinks; point every one at the survivor (or its matching section anchor), preserving display text.
 5. **Archive the losers** to the matching `07_Archives/` subdirectory with `status/done` — their content now lives in the survivor.
 6. **Finish:** bump `updated:` on every edited note, reindex, `validate --check-index` to zero errors, commit stating what merged into what.
 
@@ -35,7 +35,7 @@ Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-ma
 
 ## Rename / move — the safe procedure
 
-1. **Before moving:** `python3 10_Agents/tools/brain/brain.py links <path>` — capture the backlink list first.
+1. **Before moving:** `brain links <path>` — capture the backlink list first.
 2. `git mv` the file (preserves history); update its `title:` if the name changed; bump `updated:`.
 3. **Retarget every backlink** to the new path — cross-directory links need full paths (`[[06_Resources/new-name|Display]]`).
 4. Reindex and `validate --check-index` — the index catches any straggler links — then commit the move and retargets as one change.

@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 10_Agents/tools/brain/brain.py *)",
+      "Bash(brain *)",
       "Bash(python3 -m unittest *)"
     ],
     "deny": [

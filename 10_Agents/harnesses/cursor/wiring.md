@@ -29,10 +29,10 @@ Cursor supports Agent Skills and scans `.cursor/skills/`, `.agents/skills/`, and
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 
@@ -47,7 +47,7 @@ python3 10_Agents/tools/brain/brain.py <command> --json
 The vault's privacy marking is the `restricted/private` tag ([[00_Meta/conventions#Tag Namespaces]], issue #17) — advisory everywhere except mechanically-enforced surfaces, and Cursor is the one harness where real enforcement exists. Generate `.cursorignore` entries from the restricted-tagged paths:
 
 ```
-python3 10_Agents/tools/brain/brain.py list --tag restricted/private
+brain list --tag restricted/private
 ```
 
 Rewrite the managed block between the `# BEGIN second-brain restricted/private (generated)` and `# END` markers in the vault-root `.cursorignore` wholesale with one line per printed path (create the file from `overlay/cursorignore-template.txt` if absent; owner lines outside the markers are never touched). Rewriting the whole block is what makes the sync idempotent and lets a note that *loses* the tag drop back out. This is a documented manual step — run it during `onboard-harness` and re-run it whenever notes gain or lose the tag; nothing regenerates the file for you, so a stale `.cursorignore` silently under-excludes. Only path-listed notes are excluded: Cursor knows nothing about tags, so the tag alone protects nothing here until its path lands in the file.
