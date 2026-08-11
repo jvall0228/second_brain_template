@@ -1,0 +1,30 @@
+# Vault config — read by `brain` (10_Agents/tools/brain/brain.py).
+# Contract: 10_Agents/tools/brain/spec.md §15. Optional by design: with this
+# file absent (or, as shipped, all comments) every behavior stays at its
+# built-in default. Inspect the effective result with `brain config`.
+#
+# Grammar is the bounded YAML subset only (no pyyaml, no full YAML):
+# scalars, flat lists, and one level of nested mapping. Unknown keys are
+# tolerated (validate warns); malformed lines are per-file validate errors.
+#
+# Change control: not a note (no frontmatter), but treat it like the
+# canonical meta docs beside it — changes go through PRD §6.3 review,
+# the CLAUDE.md precedent.
+#
+# ---------------------------------------------------------------------------
+# Implemented keys — uncomment to override:
+#
+# write_exceptions:        # extra directories agents may write to, beyond
+#   - 06_Resources/        # the Inbox-first defaults (02_Inbox/, 02_Outbox/,
+#                          # 10_Agents/solutions/). Vault-relative dirs only.
+#
+# extension_trust: relaxed # VS Code extension trust policy (PRD §6.5):
+#                          # first-party (default) | relaxed. `relaxed`
+#                          # records that this fork admits community
+#                          # extensions (e.g. Foam) — see
+#                          # 06_Resources/vscode-editor-support.md.
+#
+# ---------------------------------------------------------------------------
+# Reserved keys (parsed and tolerated, not yet implemented — claimed by
+# open issues): context, environments, modules, provenance, report, sync,
+# template_version.

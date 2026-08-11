@@ -5,7 +5,8 @@
   // including Foam, the usual Obsidian-parity pick — are documented but
   // deliberately not shipped. Rationale, tier model, and the .obsidian
   // feature mapping: 06_Resources/vscode-editor-support.md
-  // (PRD §6.5).
+  // (PRD §6.5). Fork override: set `extension_trust: relaxed` in
+  // 00_Meta/config.yaml (brain spec §15) to record a relaxed policy.
   "recommendations": [
     // Microsoft — Live Preview: renders HTML files (e.g. exports in
     // 08_Assets/) in an embedded, auto-refreshing browser panel.
