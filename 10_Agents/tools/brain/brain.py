@@ -578,12 +578,20 @@ def reduce_restricted(index: dict) -> dict:
     """§8.3: reduce restricted notes for the COMMITTED index — keep
     path/title/frontmatter(tags)/updated/sizeBytes/frontmatterErrors/links/
     backlinks, empty the body-derived fields (headings, bodyTags) the index
-    would otherwise re-leak. Emptied, never omitted: the §8.1 shape holds,
-    so no schemaVersion bump. In-memory query indexes stay unreduced (§8.3)."""
+    would otherwise re-leak, and strip body prose from link records
+    (display alias text, fragments, verbatim raw markup) — only the
+    structural target/resolution survives. Emptied/nulled, never omitted:
+    the §8.1 shape holds, so no schemaVersion bump. In-memory query indexes
+    stay unreduced (§8.3)."""
     for rec in index["notes"].values():
         if is_restricted(rec):
             rec["headings"] = []
             rec["bodyTags"] = []
+            for link in rec.get("links", []):
+                link["display"] = None
+                link["fragment"] = None
+                target = link.get("target") or ""
+                link["raw"] = ("![[%s]]" if link.get("embed") else "[[%s]]") % target
     return index
 
 
@@ -827,10 +835,15 @@ def write_exception_prefixes(config: dict) -> tuple[str, ...]:
         if not isinstance(entry, str):
             continue
         p = nfc(entry.strip()).replace("\\", "/")
-        if not p or p.startswith(("/", "../")) or ".." in p.split("/") or ":" in p:
+        if not p or p.startswith("/") or ".." in p.split("/") or ":" in p:
             continue
-        p = p.removeprefix("./").rstrip("/") + "/"
-        if p != "/" and p not in prefixes:
+        p = p.removeprefix("./").rstrip("/")
+        if p in ("", "."):
+            # Effectively-empty entry ('.', './') — dropped here, reported
+            # by check_config as config-bad-write-exception (same rule).
+            continue
+        p += "/"
+        if p not in prefixes:
             prefixes.append(p)
     return tuple(prefixes)
 
@@ -840,6 +853,12 @@ def agent_write_allowed(rel: str, config: dict) -> bool:
     Inbox-first rule plus configured exceptions. The enforcement point for
     harness write-gates; with no config it is exactly current policy."""
     rel = nfc(rel.strip()).replace("\\", "/").removeprefix("./")
+    # Fail closed on traversal and non-vault-relative shapes: a prefix match
+    # means nothing if the path can climb back out of the allowed directory.
+    if rel.startswith("/") or ":" in rel.split("/", 1)[0]:
+        return False
+    if any(part in ("..", ".") for part in rel.split("/")):
+        return False
     return rel.startswith(write_exception_prefixes(config))
 
 
@@ -916,17 +935,22 @@ def check_config(
         else:
             for entry in raw:
                 p = nfc(entry.strip()).replace("\\", "/") if isinstance(entry, str) else ""
-                if not p or p.startswith(("/", "../")) or ".." in p.split("/") or ":" in p:
+                # Normalize BEFORE judging, mirroring write_exception_prefixes,
+                # so an entry that normalizes to nothing ('.', './') is
+                # reported instead of silently granting nothing (§15.4).
+                bad = not p or p.startswith("/") or ".." in p.split("/") or ":" in p
+                p = p.removeprefix("./").rstrip("/")
+                if bad or p in ("", "."):
                     errors.append(
                         _cfg_finding(
                             None,
                             "config-bad-write-exception",
                             f"write_exceptions entry {entry!r} is not a "
-                            "vault-relative directory path",
+                            "vault-relative directory path (the vault root "
+                            "itself cannot be granted)",
                         )
                     )
                     continue
-                p = p.removeprefix("./").rstrip("/")
                 if not (root / p).is_dir():
                     warnings.append(
                         _cfg_finding(
@@ -1470,7 +1494,8 @@ def context_report(root: Path) -> dict:
 # §16 Health report
 
 INBOX_PREFIX = "02_Inbox/"
-INBOX_DATE_PREFIX_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})")
+# Boundary lookahead: '2026-08-1234-note.md' must NOT parse as 2026-08-12.
+INBOX_DATE_PREFIX_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?=[-.]|$)")
 REPORT_BUCKET_LABELS = ("0-7d", "8-30d", "31-90d", "90+d", "unknown")
 REPORT_ORPHAN_EXEMPT_BASENAMES = frozenset({"AGENTS.md", "CLAUDE.md", "README.md"})
 REPORT_ORPHAN_EXEMPT_PREFIXES = ("07_Archives/", "09_Templates/")

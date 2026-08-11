@@ -108,8 +108,12 @@ class LoadConfigTests(unittest.TestCase):
         root = brain.default_vault_root()
         config, findings = brain.load_config(root)
         self.assertEqual(findings, [])
-        # Shipped template is all comments: absence-equivalent defaults.
-        self.assertEqual(config, {})
+        # A fork may legitimately set documented keys (e.g. onboard-owner
+        # records `context:`) — require only that whatever is set is clean
+        # and among the known keys.
+        self.assertLessEqual(
+            set(config), brain.CONFIG_IMPLEMENTED_KEYS | brain.CONFIG_RESERVED_KEYS
+        )
         errors, warnings = brain.check_config(root, config, findings)
         self.assertEqual((errors, warnings), ([], []))
 
@@ -136,6 +140,37 @@ class WriteExceptionTests(unittest.TestCase):
         self.assertTrue(brain.agent_write_allowed("06_Resources/new.md", config))
         self.assertTrue(brain.agent_write_allowed("06_Resources\\new.md", config))
         self.assertFalse(brain.agent_write_allowed("05_Areas/new.md", config))
+
+    def test_traversal_in_checked_path_fails_closed(self):
+        # The checked rel is untrusted input: a prefix match must not
+        # authorize climbing back out of the allowed directory.
+        for rel in [
+            "02_Inbox/../01_Profile/secrets.md",
+            "02_Inbox\\..\\x.md",
+            "02_Inbox/./../00_Meta/config.yaml",
+            "02_Inbox/../../outside.md",
+            "/02_Inbox/abs.md",
+            "C:/02_Inbox/win.md",
+            "02_Inbox/./nested/../x.md",
+        ]:
+            self.assertFalse(brain.agent_write_allowed(rel, {}), rel)
+        # Plain nested paths under an allowed prefix still pass.
+        self.assertTrue(brain.agent_write_allowed("02_Inbox/sub/note.md", {}))
+
+    def test_effectively_empty_entries_are_reported(self):
+        # '.', './' grant nothing — enforcement drops them AND validate
+        # reports them (they must not validate clean as silent no-ops).
+        for entry in [".", "./", ".//"]:
+            config = {"write_exceptions": [entry]}
+            self.assertEqual(
+                brain.write_exception_prefixes(config),
+                brain.AGENT_WRITE_DEFAULT_PREFIXES,
+                entry,
+            )
+            errors, _ = brain.check_config(Path("."), config, [])
+            self.assertTrue(
+                any(e["rule"] == "config-bad-write-exception" for e in errors), entry
+            )
 
     def test_malformed_entries_ignored_by_enforcement(self):
         config = {"write_exceptions": ["/etc", "../up", "a/../b", "C:/x", ""]}

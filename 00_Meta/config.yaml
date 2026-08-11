@@ -4,34 +4,47 @@
 # built-in default. Inspect the effective result with `brain config`.
 #
 # Grammar is the bounded YAML subset only (no pyyaml, no full YAML):
-# scalars, flat lists, and one level of nested mapping. Unknown keys are
-# tolerated (validate warns); malformed lines are per-file validate errors.
+# scalars, flat lists, and one level of nested mapping. Comments are
+# FULL-LINE only — a trailing "# ..." after a value is not a comment, it
+# becomes part of the value. Unknown keys are tolerated (validate warns);
+# malformed lines are per-file validate errors.
 #
 # Change control: not a note (no frontmatter), but treat it like the
 # canonical meta docs beside it — changes go through PRD §6.3 review,
 # the CLAUDE.md precedent.
 #
 # ---------------------------------------------------------------------------
-# Implemented keys — uncomment to override:
+# Implemented keys — uncomment an example line to override (keep the
+# explanation lines commented; only the bare key/value lines are grammar).
 #
-# write_exceptions:        # extra directories agents may write to, beyond
-#   - 06_Resources/        # the Inbox-first defaults (02_Inbox/, 02_Outbox/,
-#                          # 10_Agents/solutions/). Vault-relative dirs only.
+# Extra directories agents may write to, beyond the Inbox-first defaults
+# (02_Inbox/, 02_Outbox/, 10_Agents/solutions/). Vault-relative dirs only.
 #
-# extension_trust: relaxed # VS Code extension trust policy (PRD §6.5):
-#                          # first-party (default) | relaxed. `relaxed`
-#                          # records that this fork admits community
-#                          # extensions (e.g. Foam) — see
-#                          # 06_Resources/vscode-editor-support.md.
+# write_exceptions:
+#   - 06_Resources/
 #
-# context: work            # Fork context (issue #12): personal (default) |
-#                          # work. Recorded by onboard-owner's specialization
-#                          # step, which rewrites the periodic templates in
-#                          # place from 09_Templates/variants/ for a work
-#                          # fork. A record, not a switch — brain parses and
-#                          # reports it but drives no behavior from it.
+# VS Code extension trust policy (PRD §6.5): first-party (default) |
+# relaxed. `relaxed` records that this fork admits community extensions
+# (e.g. Foam) — see 06_Resources/vscode-editor-support.md.
+#
+# extension_trust: relaxed
+#
+# Fork context (issue #12): personal (default) | work. Recorded by
+# onboard-owner's specialization step, which rewrites the periodic
+# templates in place from 09_Templates/variants/ for a work fork.
+# A record, not a switch — brain parses and reports it but drives no
+# behavior from it.
+#
+# context: work
+#
+# Health-report thresholds (spec §16.4), integers in days:
+# stale_days — status/active notes older than this are stale (default 30);
+# inbox_days — Inbox notes older than this count as triage debt (default 14).
+#
+# report:
+#   stale_days: 30
+#   inbox_days: 14
 #
 # ---------------------------------------------------------------------------
 # Reserved keys (parsed and tolerated, not yet implemented — claimed by
-# open issues): environments, modules, provenance, report, sync,
-# template_version.
+# open issues): environments, modules, provenance, sync, template_version.
