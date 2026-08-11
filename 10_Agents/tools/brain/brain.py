@@ -7,7 +7,7 @@ references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
 Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context
+          curate, context, config
 """
 
 from __future__ import annotations
@@ -607,6 +607,291 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 
 
 # ---------------------------------------------------------------------------
+# §15 Vault config (00_Meta/config.yaml) — issue #2.
+#
+# Module-internal section, deliberately self-contained: the planned `shared`
+# module (#31) seeds from here. Public surface for later consumers
+# (M9.2–M9.5: #12 context, #16 report, #15 environments, #26 sync, …):
+#
+#   load_config(root)              -> (config map, findings)   — never raises
+#   parse_config(text)             -> (config map, findings)
+#   check_config(root, config, findings) -> (errors, warnings) — validate rows
+#   write_exception_prefixes(config) -> tuple of dir prefixes agents may write
+#   agent_write_allowed(rel, config) -> bool  (Inbox-first + exceptions)
+#   extension_trust(config)        -> policy string (default "first-party")
+#
+# The config is OPTIONAL: an absent file (or empty/all-comment file) yields
+# ({}, []) and every behavior stays at its built-in default. Malformed
+# content becomes per-file validate findings on CONFIG_RELPATH — never a
+# crash, and never a behavior change beyond ignoring the malformed part.
+
+CONFIG_RELPATH = "00_Meta/config.yaml"
+CONFIG_IMPLEMENTED_KEYS = frozenset({"extension_trust", "write_exceptions"})
+# Named-but-unimplemented keys reserved for the issues that claimed them
+# (#12 context, #15 environments, #32 modules, #18 provenance, #16 report,
+# #26 sync, #6 template_version). Parsed and tolerated with no finding, so
+# a forward-looking config never fails an older brain.
+CONFIG_RESERVED_KEYS = frozenset(
+    {
+        "context",
+        "environments",
+        "modules",
+        "provenance",
+        "report",
+        "sync",
+        "template_version",
+    }
+)
+# Inbox-first defaults (PRD §6.2 / AGENTS.md): always writable, config only
+# ever ADDS to this set. Session-scoped carve-outs (onboard-owner interviews,
+# agent-generated skills/tools) are policy prose, not path constants.
+AGENT_WRITE_DEFAULT_PREFIXES = ("02_Inbox/", "02_Outbox/", "10_Agents/solutions/")
+DEFAULT_EXTENSION_TRUST = "first-party"
+EXTENSION_TRUST_VALUES = frozenset({"first-party", "relaxed"})
+
+CONFIG_KEY_RE = re.compile(r"^( *)([A-Za-z0-9_-]+):(?:$|\s+(.*)$|\s+$)")
+
+
+def _cfg_finding(line: int | None, rule: str, message: str) -> dict:
+    return {"line": line, "message": message, "rule": rule}
+
+
+def parse_config(text: str) -> tuple[dict, list[dict]]:
+    """Parse the bounded YAML subset (§15.2): scalars, flat lists, one level
+    of nested mapping. Best-effort — malformed lines become findings and are
+    skipped; parsing never raises."""
+    config: dict = {}
+    findings: list[dict] = []
+    open_key: str | None = None  # top-level key that may still take a block
+    open_kind: str | None = None  # None (undecided) | "list" | "map"
+    nested_indent = 0
+    for lineno, raw in enumerate(text.split("\n"), start=1):
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        km = CONFIG_KEY_RE.match(raw)
+        if km:
+            indent, key, value = len(km.group(1)), km.group(2), (km.group(3) or "").strip()
+            if indent == 0:
+                open_key, open_kind = None, None
+                if key in config:
+                    findings.append(
+                        _cfg_finding(
+                            lineno, "config-duplicate-key", f"duplicate key {key!r} (last wins)"
+                        )
+                    )
+                if not value:
+                    config[key] = None
+                    open_key = key
+                elif value.startswith("["):
+                    if value.endswith("]") and "[" not in value[1:-1] and "]" not in value[1:-1]:
+                        config[key] = split_flow(value[1:-1])
+                    else:
+                        findings.append(
+                            _cfg_finding(
+                                lineno,
+                                "config-unsupported",
+                                f"unparseable flow list for key {key!r}",
+                            )
+                        )
+                else:
+                    config[key] = scalar(value)
+                continue
+            # Indented key line: one nested mapping level under open_key.
+            if open_key is None or open_kind == "list":
+                findings.append(
+                    _cfg_finding(
+                        lineno, "config-unsupported", "indented key with no open mapping"
+                    )
+                )
+                continue
+            if open_kind is None:
+                open_kind = "map"
+                nested_indent = indent
+                config[open_key] = {}
+            elif indent > nested_indent:
+                findings.append(
+                    _cfg_finding(
+                        lineno,
+                        "config-nesting-too-deep",
+                        "mappings nest at most one level (§15.2)",
+                    )
+                )
+                continue
+            mapping = config[open_key]
+            if key in mapping:
+                findings.append(
+                    _cfg_finding(
+                        lineno,
+                        "config-duplicate-key",
+                        f"duplicate nested key {open_key}.{key} (last wins)",
+                    )
+                )
+            if not value:
+                mapping[key] = None
+            elif value.startswith("["):
+                if value.endswith("]") and "[" not in value[1:-1] and "]" not in value[1:-1]:
+                    mapping[key] = split_flow(value[1:-1])
+                else:
+                    findings.append(
+                        _cfg_finding(
+                            lineno,
+                            "config-unsupported",
+                            f"unparseable flow list for key {open_key}.{key}",
+                        )
+                    )
+            else:
+                mapping[key] = scalar(value)
+            continue
+        lm = LIST_ITEM_RE.match(raw)
+        if lm:
+            if open_key is None or open_kind == "map":
+                findings.append(
+                    _cfg_finding(
+                        lineno, "config-list-item-without-key", "list item with no open list"
+                    )
+                )
+                continue
+            if open_kind is None:
+                open_kind = "list"
+                config[open_key] = []
+            config[open_key].append(scalar(lm.group(1)))
+            continue
+        findings.append(
+            _cfg_finding(
+                lineno, "config-unsupported", "line outside the bounded YAML subset (§15.2)"
+            )
+        )
+    return config, findings
+
+
+def load_config(root: Path) -> tuple[dict, list[dict]]:
+    """Effective raw config for a vault. Absent file -> ({}, []) — the
+    defaults; unreadable/undecodable file -> ({}, [finding]). Never raises."""
+    path = root / CONFIG_RELPATH
+    if not path.exists():
+        return {}, []
+    try:
+        text, _ = load_text(root, CONFIG_RELPATH)
+    except OSError:
+        return {}, [_cfg_finding(None, "config-not-readable", "config file cannot be read")]
+    if text is None:
+        return {}, [_cfg_finding(None, "config-not-utf8", "config file is not UTF-8")]
+    return parse_config(text)
+
+
+def write_exception_prefixes(config: dict) -> tuple[str, ...]:
+    """Directory prefixes agents may write to: the Inbox-first defaults plus
+    any well-formed `write_exceptions` entries (normalized to a trailing /).
+    Malformed entries are ignored here — check_config reports them."""
+    prefixes = list(AGENT_WRITE_DEFAULT_PREFIXES)
+    extras = config.get("write_exceptions")
+    for entry in extras if isinstance(extras, list) else []:
+        if not isinstance(entry, str):
+            continue
+        p = nfc(entry.strip()).replace("\\", "/")
+        if not p or p.startswith(("/", "../")) or ".." in p.split("/") or ":" in p:
+            continue
+        p = p.removeprefix("./").rstrip("/") + "/"
+        if p != "/" and p not in prefixes:
+            prefixes.append(p)
+    return tuple(prefixes)
+
+
+def agent_write_allowed(rel: str, config: dict) -> bool:
+    """Whether an agent may write vault-relative path `rel` under the
+    Inbox-first rule plus configured exceptions. The enforcement point for
+    harness write-gates; with no config it is exactly current policy."""
+    rel = nfc(rel.strip()).replace("\\", "/").removeprefix("./")
+    return rel.startswith(write_exception_prefixes(config))
+
+
+def extension_trust(config: dict) -> str:
+    """Effective VS Code extension trust policy (PRD §6.5): the configured
+    scalar, or the strict template default when absent/malformed."""
+    value = config.get("extension_trust")
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return DEFAULT_EXTENSION_TRUST
+
+
+def check_config(
+    root: Path, config: dict, findings: list[dict]
+) -> tuple[list[dict], list[dict]]:
+    """Semantic checks over a parsed config (§15.4). Returns (errors,
+    warnings) as validate-shaped findings minus the path (the caller stamps
+    CONFIG_RELPATH). Parse findings are errors except duplicate-key."""
+    errors: list[dict] = []
+    warnings: list[dict] = []
+    for f in findings:
+        (warnings if f["rule"] == "config-duplicate-key" else errors).append(f)
+    for key in sorted(config):
+        if key in CONFIG_IMPLEMENTED_KEYS or key in CONFIG_RESERVED_KEYS:
+            continue
+        warnings.append(
+            _cfg_finding(
+                None,
+                "config-unknown-key",
+                f"unknown key {key!r} is ignored (forward compatibility)",
+            )
+        )
+    if "write_exceptions" in config:
+        raw = config["write_exceptions"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, list):
+            errors.append(
+                _cfg_finding(
+                    None,
+                    "config-invalid-value",
+                    "write_exceptions must be a list of directory paths",
+                )
+            )
+        else:
+            for entry in raw:
+                p = nfc(entry.strip()).replace("\\", "/") if isinstance(entry, str) else ""
+                if not p or p.startswith(("/", "../")) or ".." in p.split("/") or ":" in p:
+                    errors.append(
+                        _cfg_finding(
+                            None,
+                            "config-bad-write-exception",
+                            f"write_exceptions entry {entry!r} is not a "
+                            "vault-relative directory path",
+                        )
+                    )
+                    continue
+                p = p.removeprefix("./").rstrip("/")
+                if not (root / p).is_dir():
+                    warnings.append(
+                        _cfg_finding(
+                            None,
+                            "config-missing-directory",
+                            f"write_exceptions entry {entry!r} names no existing directory",
+                        )
+                    )
+    if "extension_trust" in config:
+        raw = config["extension_trust"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, str):
+            errors.append(
+                _cfg_finding(
+                    None, "config-invalid-value", "extension_trust must be a scalar string"
+                )
+            )
+        elif raw.strip() not in EXTENSION_TRUST_VALUES:
+            warnings.append(
+                _cfg_finding(
+                    None,
+                    "config-unknown-value",
+                    f"extension_trust {raw!r} is not a documented policy "
+                    "(first-party | relaxed)",
+                )
+            )
+    return errors, warnings
+
+
+# ---------------------------------------------------------------------------
 # §10.5 Secret scanning
 
 # Inline allowlist: an HTML comment containing this token on the SAME line
@@ -721,6 +1006,17 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
             "conventions-table-unreadable",
             "cannot read the authoritative Tag Namespaces table",
         )
+
+    # §15 vault config: parse + semantic findings land on the config file
+    # itself (per-file, never a crash); write_exception_prefixes(config) is
+    # where the Inbox-first write-destination policy is materialized for
+    # enforcement (harness write-gates call agent_write_allowed).
+    config, cfg_findings = load_config(root)
+    cfg_errors, cfg_warnings = check_config(root, config, cfg_findings)
+    for f in cfg_errors:
+        err(CONFIG_RELPATH, f["rule"], f["message"], f["line"])
+    for f in cfg_warnings:
+        warn(CONFIG_RELPATH, f["rule"], f["message"], f["line"])
 
     errors.extend(scan_secrets(root, notes + assets))
 
@@ -1311,6 +1607,34 @@ def cmd_context(root: Path, args) -> int:
     return 0
 
 
+def cmd_config(root: Path, args) -> int:
+    """§15: effective vault config — defaults merged, findings included."""
+    config, findings = load_config(root)
+    cfg_errors, cfg_warnings = check_config(root, config, findings)
+    payload = {
+        "errors": cfg_errors,
+        "extensionTrust": extension_trust(config),
+        "path": CONFIG_RELPATH,
+        "present": (root / CONFIG_RELPATH).exists(),
+        "raw": config,
+        "reservedKeys": sorted(CONFIG_RESERVED_KEYS),
+        "warnings": cfg_warnings,
+        "writeExceptions": list(write_exception_prefixes(config)),
+    }
+    lines = [
+        f"config: {CONFIG_RELPATH} ({'present' if payload['present'] else 'absent — defaults'})",
+        "write exceptions (agent-writable prefixes):",
+        *(f"  {p}" for p in payload["writeExceptions"]),
+        f"extension trust: {payload['extensionTrust']}",
+    ]
+    for f in cfg_errors:
+        lines.append(f"ERROR {f['rule']}: {f['message']}")
+    for f in cfg_warnings:
+        lines.append(f"WARN {f['rule']}: {f['message']}")
+    emit(payload, args.json, lines)
+    return 0
+
+
 def cmd_validate(root: Path, args) -> int:
     errors, warnings = run_validate(root, args.check_index)
     if args.json:
@@ -1369,6 +1693,7 @@ def main(argv: list[str] | None = None) -> int:
     p = add("curate", help="re-review signals: expired, missing/over-cap expires, oversized, stale, orphans, unreferenced assets")
     p.add_argument("--check-urls", action="store_true", help="also probe source URLs over the network (never pre-commit)")
     add("context", help="bootstrap docs' sizes against their context budgets")
+    add("config", help="effective vault config (00_Meta/config.yaml merged over defaults)")
 
     args = parser.parse_args(argv)
     root = (args.vault or default_vault_root()).resolve()
@@ -1383,6 +1708,7 @@ def main(argv: list[str] | None = None) -> int:
         "validate": cmd_validate,
         "curate": cmd_curate,
         "context": cmd_context,
+        "config": cmd_config,
     }
     return handlers[args.command](root, args)
 

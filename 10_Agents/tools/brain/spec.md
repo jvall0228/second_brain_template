@@ -321,3 +321,46 @@ Detection lives in `brain`; the judgment lives in the `curate` skill; findings n
 - **dead URLs** — `--check-urls` only: HEAD each distinct `http(s)` URL (10s timeout); 403/405 responses are HEAD-hostile hosts, not dead links. Network access makes this opt-in forever: never run by `validate`, the pre-commit hook, or CI.
 
 `validate` surfaces only the free, offline, low-noise subset as warnings — `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget[-total]` — gated behind `VALIDATE_CURATION_WARNINGS` (flipped on with the one-time backfill). Warnings never block commits (§10.4); expired/stale/orphan findings stay report-only because they demand judgment, not mechanical fixes.
+
+## 15. Vault config (`00_Meta/config.yaml`) — issue #2
+
+A structured, machine-readable home for per-fork policy overrides, read by `brain` and (through it) by both editor surfaces. Decided 2026-08-11 per the accepted triage recommendation on issue #2.
+
+### 15.1 Location, optionality, change control
+
+- The config lives at **`00_Meta/config.yaml`** — vault-level policy beside the other canonical meta docs, visible to Obsidian and the note corpus (a root dotfile would hide it). It is an asset in the §2 corpus (secret-scanned, indexed path-only); it never carries frontmatter and is exempt from note checks by not being a note.
+- The file is **optional, and absence changes nothing**: no file, an empty file, or an all-comment file (the shipped template) all yield the empty config, and every behavior stays at its built-in default. Adding the file must never be required for a working vault.
+- **Change control:** like `CLAUDE.md` (PRD §8.2), the file cannot carry `workflow/canonical` — treat it as §6.3 change-controlled anyway, like the meta docs it sits beside.
+- The config **never influences `index` output**: the committed index stays a pure function of tracked content (§8.2) with config-independent semantics. Config is consumed by `validate`, by the `config` command, and by future consumers via the reader API.
+
+### 15.2 Grammar bounds
+
+The config grammar is the **same bounded YAML subset** the frontmatter parser targets (§4), extended by exactly one construct — **one level of nested mapping** (a zero-indent key with an empty value followed by uniformly-indented `key: value` lines). Full grammar: blank lines; full-line `#` comments; zero-indent scalar entries and flow lists (§4.3–4.4 semantics: strings always, quote-stripping, no escapes, no type coercion); block lists of scalars under a top-level key; nested mappings whose values are scalars or flow lists. **No pyyaml, ever** — `brain` stays stdlib-only, and the parser is `parse_config` in `brain.py` (the config section there is the planned seed of #31's `shared` module).
+
+Out-of-subset content is **best-effort, never fatal**: each offending line becomes a finding (`config-unsupported`, `config-nesting-too-deep` for a second mapping level, `config-list-item-without-key`, `config-duplicate-key`) and is skipped; the rest of the file still parses. `load_config` returns `({}, [finding])` for an unreadable (`config-not-readable`) or non-UTF-8 (`config-not-utf8`) file and `({}, [])` for an absent one — it never raises.
+
+### 15.3 Key registry
+
+Top-level keys are registered here so later issues cannot collide:
+
+| Key | Status | Meaning |
+|-----|--------|---------|
+| `write_exceptions` | **implemented** | List of vault-relative directory paths agents may write to **in addition to** the Inbox-first defaults (`02_Inbox/`, `02_Outbox/`, `10_Agents/solutions/` — `AGENT_WRITE_DEFAULT_PREFIXES`). Config only ever widens the set; entries are normalized to a trailing `/`. The enforcement point is `agent_write_allowed(rel, config)`, for harness write-gates and skills; session-scoped carve-outs (onboard-owner, agent-generated skills/tools per PRD §6.2) remain policy prose, not paths. |
+| `extension_trust` | **implemented** | VS Code extension trust policy (PRD §6.5): `first-party` (default) or `relaxed`. A documented override consumed by the editor docs ([[06_Resources/vscode-editor-support]]) — `brain` exposes the effective value via `extension_trust(config)` and `brain config`; it drives no `brain` behavior itself. |
+| `context` | reserved (#12) | — |
+| `environments` | reserved (#15) | — |
+| `modules` | reserved (#32) | — |
+| `provenance` | reserved (#18) | — |
+| `report` | reserved (#16) | validate/curate thresholds |
+| `sync` | reserved (#26) | — |
+| `template_version` | reserved (#6) | — |
+
+Reserved keys parse and are **tolerated silently** whatever their shape. **Unknown** keys (neither implemented nor reserved) are tolerated too — forward compatibility — at the cost of a validate **warning** (`config-unknown-key`), never an error.
+
+### 15.4 Validate semantics
+
+All config findings land **on `00_Meta/config.yaml`** as per-file findings in the normal §10.4 shape. **Errors:** every §15.2 parse finding except `config-duplicate-key`; `config-not-readable` / `config-not-utf8`; `config-invalid-value` (an implemented key with the wrong shape — `write_exceptions` not a list, `extension_trust` not a scalar; an explicit `null` equals absent and is clean); `config-bad-write-exception` (an entry that is not a vault-relative path: empty, absolute, drive-lettered, or containing `..`). **Warnings:** `config-duplicate-key` (last wins, mirroring §4.2); `config-unknown-key`; `config-missing-directory` (a well-formed `write_exceptions` entry naming no existing directory — legal, since a fork may configure ahead of creating it); `config-unknown-value` (an `extension_trust` value outside the documented pair).
+
+### 15.5 `config` command
+
+`brain config` (§9 conventions: `--json`, exit 0) prints the **effective** configuration: presence, the raw parsed map, the merged write-exception prefixes (defaults first), the effective `extension_trust`, the reserved-key list, and any findings. It is the non-Python surface of the reader API for harness tasks and scripts.
