@@ -673,7 +673,7 @@ def machine_fingerprints() -> list[dict[str, str]]:
     elif sys.platform == "darwin":
         try:
             proc = subprocess.run(
-                ["ioreg", "-rd1", "-c", "IOPlatformExpertDevice"],
+                ["/usr/sbin/ioreg", "-rd1", "-c", "IOPlatformExpertDevice"],
                 capture_output=True,
                 check=False,
                 env=_safe_subprocess_env(),

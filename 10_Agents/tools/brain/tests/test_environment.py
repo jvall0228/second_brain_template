@@ -232,6 +232,19 @@ class PrivacyAndDiagnosticsTests(unittest.TestCase):
         with mock.patch.object(brain.sys, "platform", "unsupported-os"):
             self.assertEqual(brain.machine_fingerprints(), [])
 
+    def test_macos_fingerprint_uses_pinned_system_ioreg(self):
+        completed = mock.Mock(
+            returncode=0,
+            stdout=b'"IOPlatformUUID" = "12345678-1234-1234-1234-123456789ABC"',
+        )
+        with mock.patch.object(brain.sys, "platform", "darwin"), mock.patch.object(
+            brain.subprocess, "run", return_value=completed
+        ) as run:
+            rows = brain.machine_fingerprints()
+        self.assertEqual(run.call_args.args[0][0], "/usr/sbin/ioreg")
+        self.assertEqual(rows[0]["source"], "machine-v1")
+        self.assertEqual(len(rows[0]["digest"]), 64)
+
     def test_manifest_rejects_private_shaped_capability_key_and_unknown_key(self):
         data = manifest("alpha", "a" * 64)
         data["capabilities"] = {"webhook-url": True}
