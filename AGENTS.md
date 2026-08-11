@@ -12,21 +12,21 @@ expires: 2027-08-11
 
 A personal knowledge management vault designed for both human and AI agent use. It serves as a single source of truth for context, preferences, projects, and reference material — structured so that any agent can bootstrap itself and produce useful output without prior conversation history.
 
-## Bootstrap Sequence (Context Routing)
+## Bootstrap Sequence (Must-Read Order)
 
-**Start with this file only.** It is the context router, not an instruction to preload the whole vault. Load the smallest additional context set that materially helps with the current task:
+**Minimum bootstrap** (required for all agents):
 
-1. **[[AGENTS]]** — You are here. Repo purpose, structure, routing, and write rules. Always read this when entering the second brain.
-2. **[[01_Profile/now]]** — Read when current focus, active projects, priorities, or key dates matter.
-3. **[[01_Profile/preferences]]** — Read when communication style, output format, recurring preferences, or owner-specific constraints matter.
-4. **[[00_Meta/conventions]]** — Read before writing or restructuring vault content, or when naming, tagging, directory layout, or change-control rules matter.
+1. **[[AGENTS]]** — You are here. Repo purpose, structure, and rules.
+2. **[[01_Profile/now]]** — Current focus, active projects, key dates.
+3. **[[01_Profile/preferences]]** — Communication style, output format, and constraints.
+4. **[[00_Meta/conventions]]** — Naming, tagging, directory layout, and change-control rules.
 
-For broader navigation or defaults, load these only when needed:
+After reading all four, the agent has enough context to begin work.
 
-5. **[[00_Meta/index]]** — Read when locating relevant vault content or navigating beyond a known note/path.
-6. **[[01_Profile/defaults]]** — Read when timezone, locale, units, or default tags affect the task.
+**Complete bootstrap** (required when creating structured notes or navigating beyond Inbox):
 
-Do **not** bulk-read Projects, Areas, Resources, Journal, or Profile merely because they exist. Search or navigate to the smallest relevant note set. If the task does not benefit from owner-specific context, the user-level harness registration should not send the agent into this vault at all.
+5. **[[00_Meta/index]]** — Global map of content.
+6. **[[01_Profile/defaults]]** — Timezone, locale, units, default tags.
 
 ## Where Agents Write
 
