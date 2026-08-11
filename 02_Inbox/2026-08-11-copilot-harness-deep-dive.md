@@ -71,9 +71,9 @@ Focused re-verification (2026-08-11, later the same day as [[02_Inbox/2026-08-11
 ## Wiring implications (what the adapter should do)
 
 - Ship a **real** `.github/copilot-instructions.md` (thin bootstrap pointer) — it is the only channel reaching github.com Chat, Eclipse, and Visual Studio, and it costs nothing elsewhere (instructions combine; dot-paths are outside the vault's validated corpus).
-- Ship a **real** `.github/hooks/` agent hook: `agentStop` → run `brain validate`, return `decision: block` with the error output when validation fails. This closes the cloud-agent enforcement gap (git pre-commit likely bypassed, CI gated behind human approval) and hardens CLI sessions for free. Fail-open on timeout is acceptable — CI remains the backstop.
+- Ship a **real** `.github/hooks/` agent hook: `agentStop` → run `brain validate`, return `decision: block` with the error output when validation fails **in the cloud agent only** (locally a half-edited note is normal state and pre-commit is the gate). This closes the cloud-agent enforcement gap (git pre-commit likely bypassed, CI gated behind human approval). Needs a repeat-block guard — `block` forces another turn and nothing in the schema stops a loop until the 59-minute cap. Fail-open on timeout is acceptable — CI remains the backstop.
 - Do **not** ship `copilot-setup-steps.yml` (nothing to install — stdlib-only was the point), `.github/instructions/` files (AGENTS.md already reaches every agent surface that path-specific files reach), prompt files (legacy), or custom agents (skills are the unit).
-- Fix onboard-harness's Copilot story: register the vault's real `10_Agents/skills/` directory (`copilot skill add` / `chat.agentSkillsLocations`) instead of relying on `~/.agents/skills/` symlinks; user-scope memory pointer goes in `~/.copilot/copilot-instructions.md` as **plain text** (absolute/`~/` `@`-references are not loaded).
+- Fix onboard-harness's Copilot story: register the vault's real `10_Agents/skills/` directory (`copilot skill add`, reversible via `copilot skill remove`) or **copy** skill folders into `~/.copilot/skills/` instead of relying on `~/.agents/skills/` symlinks (`chat.agentSkillsLocations` is documented for *project* locations — user-scope use unverified); user-scope memory pointer goes in `~/.copilot/copilot-instructions.md` as **plain text** (absolute/`~/` `@`-references are not loaded).
 - Document the CI approval gate, Agents secrets, the firewall, and `--allow-tool` semantics in the wiring doc.
 
 ## Still unverified (consolidated)
@@ -86,6 +86,10 @@ Focused re-verification (2026-08-11, later the same day as [[02_Inbox/2026-08-11
 - AGENTS.md-vs-CLAUDE.md tiebreak when both exist (docs define none; instructions combine); VS Code defaults for `chat.useAgentsMdFile`/`chat.useClaudeMdFile`.
 - JetBrains path-specific support (GitHub's two pages contradict each other).
 - Whether untrusted CLI directories skip instructions/skills/hook loading (trust is documented as a file-access gate only).
+- Where `copilot skill add` persists its registration (no documented storage location; removal is via `copilot skill remove` / `/skills remove`).
+- When `agentStop` fires in an interactive CLI session (every turn end vs session end — inferred from the event name only).
+- Whether `disableAllHooks` in a user-scope hooks file disables repo-shipped hooks, or only entries in its own file.
+- Whether `chat.agentSkillsLocations` set in VS Code *user* settings loads out-of-workspace absolute paths in every session (documented for project skill locations).
 
 ## Sources
 

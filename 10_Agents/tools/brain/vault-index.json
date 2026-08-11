@@ -891,6 +891,7 @@
     "00_Meta/conventions.md",
     "00_Meta/index.md",
     "00_Meta/status.md",
+    "02_Inbox/2026-08-11-copilot-p0-plan.md",
     "02_Inbox/2026-08-11-harness-primitives-research.md",
     "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
@@ -1968,7 +1969,7 @@
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 94,
      "text": "Sources"
     }
    ],
@@ -1985,7 +1986,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 18956,
+   "sizeBytes": 19859,
    "title": "Copilot Harness Deep Dive",
    "updated": "2026-08-11"
   },
@@ -1994,7 +1995,7 @@
    "bodyTags": [],
    "frontmatter": {
     "tags": [
-     "type/log",
+     "type/plan",
      "topic/software",
      "audience/human",
      "audience/agent",
@@ -2017,43 +2018,43 @@
     },
     {
      "level": 2,
-     "line": 22,
+     "line": 24,
      "text": "Deliverables"
     },
     {
      "level": 3,
-     "line": 24,
+     "line": 26,
      "text": "D1 — Real repo config under `.github/` (zero-setup; outside the validated corpus)"
     },
     {
      "level": 3,
-     "line": 32,
+     "line": 40,
      "text": "D2 — Adapter rewrite: `10_Agents/harnesses/copilot/wiring.md`"
     },
     {
      "level": 3,
-     "line": 43,
+     "line": 51,
      "text": "D3 — onboard-harness correction (`10_Agents/skills/onboard-harness/SKILL.md`)"
     },
     {
      "level": 3,
-     "line": 47,
-     "text": "D4 — Promotion + docs"
+     "line": 55,
+     "text": "D4 — Promotion + docs closeout"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 68,
      "text": "Explicit non-goals"
     },
     {
      "level": 2,
-     "line": 61,
+     "line": 75,
      "text": "Acceptance criteria"
     },
     {
      "level": 2,
-     "line": 69,
-     "text": "Risks / notes for review"
+     "line": 83,
+     "text": "Adversarial review log (2026-08-11)"
     }
    ],
    "links": [
@@ -2067,9 +2068,31 @@
      "resolved": "02_Inbox/2026-08-11-copilot-harness-deep-dive.md",
      "target": "02_Inbox/2026-08-11-copilot-harness-deep-dive",
      "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 22,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "M5–M7 plan",
+     "embed": false,
+     "fragment": null,
+     "line": 63,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 plan]]",
+     "resolved": "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
+     "target": "02_Inbox/2026-08-11-m5-m7-implementation-plan",
+     "warnings": []
     }
    ],
-   "sizeBytes": 8408,
+   "sizeBytes": 13104,
    "title": "Copilot P0 Promotion Plan",
    "updated": "2026-08-11"
   },
@@ -2775,6 +2798,7 @@
   },
   "02_Inbox/2026-08-11-m5-m7-implementation-plan.md": {
    "backlinks": [
+    "02_Inbox/2026-08-11-copilot-p0-plan.md",
     "02_Inbox/2026-08-11-harness-primitives-research.md"
    ],
    "bodyTags": [],
