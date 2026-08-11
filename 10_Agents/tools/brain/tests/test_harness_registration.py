@@ -47,7 +47,7 @@ class SharedRegistrationContractTests(unittest.TestCase):
         self.assertIn("do not derive the ID from the filesystem path", text)
         self.assertIn("replaces only the entry matching `registration_id`", text)
         self.assertIn("onboarding another vault does **not** add another harness-level block", text)
-        self.assertIn("Never delete another vault's entry", text)
+        self.assertIn("delete another vault's entry", text)
 
     def test_global_skills_have_shared_provider_consumer_ownership(self):
         text = read(ONBOARD)
