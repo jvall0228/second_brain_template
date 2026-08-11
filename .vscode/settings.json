@@ -2,8 +2,7 @@
   // VS Code counterpart to .obsidian/ — workspace settings that make this repo
   // behave like a knowledge vault using built-in capabilities only (strict
   // first-party trust policy; see extensions.json). Rationale + feature
-  // mapping: 02_Inbox/2026-08-11-vscode-editor-support.md (PRD §6.5 once
-  // triaged).
+  // mapping: 06_Resources/vscode-editor-support.md (PRD §6.5).
 
   // --- Editing feel (matches Obsidian's editor defaults) ---
   "files.autoSave": "onFocusChange",

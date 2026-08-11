@@ -88,7 +88,7 @@ Obsidian remains the primary human UI (§2), but the vault must stay usable when
 - **Accepted gaps** (no first-party equivalent): wikilink click-through, backlinks panel, graph view, tag pane, mermaid in preview, `.canvas`. Mitigations run through the `brain` tasks above and harness skills; `brain validate` remains the authoritative convention check.
 - **Acceptance criteria:** a fresh clone opened in VS Code prompts exactly the three recommended extensions; pasting an image into a note files it under `08_Assets/`; `Run Task` lists the brain, daily-note, and homepage tasks and they succeed with only `python3` on PATH (homepage additionally needs the `code` CLI); typing `sb-` in a markdown file offers the frontmatter and template snippets; a template edit followed by a commit updates the snippet file automatically; an editing session produces no unintended diffs; `brain validate` passes throughout.
 
-Requirements, trust policy detail, candidate evaluations, and the full `.obsidian` → `.vscode` mapping: `02_Inbox/2026-08-11-vscode-editor-support.md` (path updates on triage).
+Requirements, trust policy detail, candidate evaluations, and the full `.obsidian` → `.vscode` mapping: [[06_Resources/vscode-editor-support]].
 
 ## 7. Information architecture (top-level, number-prefixed)
 Top-level directories (must exist; number prefixes required for ordering):
@@ -314,7 +314,8 @@ This vault is a personal context layer read in full by every connected agent ser
 
 ## 18. Validation and enforcement
 - **Current (shipped at M5, 2026-08-11):** `brain validate` checks frontmatter fields, tag namespaces against the [[00_Meta/conventions]] table (read at runtime — conventions stays the single source), filename conventions, and wikilink resolution; exit codes 0 clean / 1 errors / 2 warnings.
-- **Automated enforcement (shipped at M5):** the versioned pre-commit hook `.githooks/pre-commit` (installed via `git config core.hooksPath .githooks`) regenerates the committed vault index and runs `brain validate`, blocking commits on errors; `.github/workflows/validate.yml` re-runs validation and index freshness on push as the backstop for clones without the hook. This resolved the former §21 open consideration.
+- **Automated enforcement (shipped at M5):** the versioned pre-commit hook `.githooks/pre-commit` (installed via `git config core.hooksPath .githooks`) regenerates the committed vault index and runs `brain validate`, blocking commits on errors; `.github/workflows/validate.yml` is the backstop for clones without the hook. This resolved the former §21 open consideration.
+- **CI is self-healing (decision 2026-08-11):** rather than failing on a stale index, the workflow regenerates the committed generated files (vault index, VS Code snippets), runs the full validation suite (content errors still fail the run), and on push events **auto-commits the regenerated files back to the branch** — so hook-less environments (web-UI edits, agents without the hook) converge to a fresh committed index instead of failing on every push. Loop-safe (the auto-commit's own run finds nothing to regenerate) and race-safe (a lost push is skipped; the winning push's run heals the new tip). Motivating incident: an external agent session pushing note edits with no hook produced eight consecutive stale-index failures on 2026-08-11.
 - **Copilot cloud agent (added 2026-08-11):** the agent hook `.github/hooks/vault-validate.json` blocks the Copilot cloud agent from finishing a session while `brain validate --check-index` reports errors (cloud-only, repeat-block-guarded, fail-open on timeout) — covering the one surface whose commits bypass git hooks and whose PR workflows are approval-gated by default. See [[10_Agents/harnesses/copilot/wiring]].
 - The self-validation checklist in [[10_Agents/docs/operating-rules]] remains the agent-side first line of defense and now ends with running `brain validate`.
 
@@ -371,5 +372,6 @@ Shipped as specified below. The template ships the three skills (`agent-orientat
 ## 21. Open considerations (document-only, not blockers)
 - Whether to adopt a `restricted/*` tag namespace (interim handling: §16.2).
 - Whether/when to activate the expanded write ladder (§6.2 roadmap) and register `workflow/agent-writable`.
+- Whether to ship a structured vault-config file (YAML/JSON) letting adopters override the VS Code extension trust policy and similar per-fork settings (§6.5).
 
 **Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped in 1.x, retired 2026-08-11 for the `@AGENTS.md` import adapter (§8.2); Zettelkasten home → `06_Resources/` (§7); automated enforcement → adopted as pre-commit hook + CI backstop (§18, 2026-08-11); vault MCP server → out of scope, the `brain` CLI is the vault's programmatic interface (§19 M7, 2026-08-11).
