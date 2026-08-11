@@ -97,7 +97,7 @@ Tags use **slash-delimited namespaces**. **This table is the authoritative tag t
 | `status/*` | Actionability | `active`, `someday`, `done` |
 | `restricted/*` | Privacy marking | `private` |
 
-Notes tagged `workflow/canonical` are foundational vault docs. They require a PR or explicit human approval to modify.
+Notes tagged `workflow/canonical` require a PR or explicit human approval to modify.
 
 ### restricted/private
 
@@ -109,10 +109,10 @@ Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by de
 
 **Standing exceptions:**
 
-- Agents may append solution notes to `10_Agents/solutions/` (see [[10_Agents/README]]) with required frontmatter including `type/solution`.
+- Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [[10_Agents/README]]) and environment inventory notes to `10_Agents/environments/<env-slug>/` (agent-orientation output; see its README).
 - A live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
 
-**Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`. Before writing, check whether the file already exists; on collision, append a numeric suffix (`-2`). Never overwrite another agent's note.
+**Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`; check first, on collision append a numeric suffix (`-2`), never overwrite another agent's note.
 
 See [[02_Inbox/README]] for Inbox-specific guidance.
 
