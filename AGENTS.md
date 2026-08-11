@@ -42,6 +42,8 @@ Standing exceptions:
 
 See [[02_Inbox/README]] for triage instructions.
 
+**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `python3 10_Agents/tools/brain/brain.py index` before each commit. CI self-heals stragglers, but don't rely on it.
+
 ## Tagging Rules (Summary)
 
 Tags live in YAML frontmatter under `tags:` as a list. Use **slash-delimited namespaces**:
