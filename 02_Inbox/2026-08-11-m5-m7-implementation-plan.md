@@ -28,6 +28,7 @@ Execution plan for the remaining [[00_Meta/prd]] milestones, based on requiremen
 | 8 | Environment-dependent work becomes a new milestone M7: orientation, ingestion automations, self-maintenance | §19 M7 |
 | 9 | External-source access preference ladder: (1) environment-specific custom tooling (CLI or MCP) → (2) first-party CLI → (3) first-party MCP/connector | §19 M7 |
 | 10 | Vault MCP server: permanently out of scope — the CLI is the vault's programmatic interface | §19 M7, §21 |
+| 11 | Onboarding installs **symlink-first**: harness discovery paths symlink back to the canonical `10_Agents/` primitives each harness supports; merge for shared config files; copy fallback where symlinks are unavailable | §19 M6 |
 
 ## M5 — Vault Index CLI (`brain`)
 
@@ -102,7 +103,14 @@ Proposed initial set (nine — family scope is decided; the exact list is confir
 | `link-repair` | Vault maintenance | Find and fix broken wikilinks per the solutions note |
 | `solution-capture` | Vault maintenance | Record a solved problem in `10_Agents/solutions/` in the standard format |
 | `research-to-resource` | Research → resource | Turn a research task into a `06_Resources/` note or zettel with provenance |
-| `onboard-harness` | Onboarding | Install the skills library into the user config of a supported harness; install the pre-commit hook |
+| `onboard-harness` | Onboarding | Install the vault's primitives into a supported harness's config, symlink-first (see install strategy below); install the pre-commit hook |
+
+**Install strategy (decision 2026-08-11) — symlink-first.** For every primitive the target harness supports (per its adapter's primitive map), `onboard-harness` creates **symlinks** from the harness's discovery paths (its skills/commands/agents directories, project or user scope as the harness dictates) back to the canonical folders under `10_Agents/` — one source of truth, edits propagate instantly, no copy drift. Two deliberate exceptions:
+
+- **Merge, don't link,** where a primitive lives inside a shared config file the user also owns (settings JSON/TOML, hook registrations, MCP entries) — symlinking whole files would clobber user config, so the skill edits those files additively and idempotently.
+- **Copy as fallback** where symlinks aren't available (e.g. Windows without Developer Mode), recording a manifest so later runs detect drift and offer re-sync.
+
+Installs are manifest-driven, idempotent (re-running is a no-op), and reversible (`uninstall` removes exactly what was installed). Symlinks are created **at install time on the adopter's machine, never committed to the repo** — the in-repo symlink approach was retired (PRD §8.2). Each harness adapter's wiring doc carries the primitive map: which categories that harness supports and the exact discovery paths (being confirmed by the harness-primitives research).
 
 ### Phase M6.2 — P0 harness adapters
 
@@ -115,7 +123,7 @@ Proposed initial set (nine — family scope is decided; the exact list is confir
 ### M6 acceptance criteria
 
 - Every shipped skill passes `brain validate` and conforms to the Agent Skills format.
-- `onboard-harness` installs the library end-to-end into at least Claude Code's user config.
+- `onboard-harness` installs the library end-to-end into at least Claude Code's config via symlinks; re-running is a no-op, and uninstall removes exactly what was installed.
 - All four P0 adapter directories ship a reference config plus wiring doc.
 - A harness outside the support list can still use the vault with no adapter (the standards floor holds).
 
