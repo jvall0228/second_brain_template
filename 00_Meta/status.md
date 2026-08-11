@@ -36,7 +36,7 @@ Per the roadmap in [[00_Meta/prd]] §19:
 | M3 | Templates + agent docs (incl. solutions library) | Done |
 | M4 | Navigation integrity | Done |
 | M5 | `brain` vault-index CLI | Not started |
-| M6 | Agent plugin library (skills/tools/harnesses) | Not started |
+| M6 | Agent plugin library (standards-first: skills/tools, then harness adapters) | Not started |
 
 ## Getting-Started Checklist
 
