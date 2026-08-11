@@ -75,6 +75,8 @@ List events and activities informally from memory.
 
 What goals and tasks need to carry over to next week?
 
+Open tasks: `brain tasks --open` · overdue: `brain tasks --overdue`
+
 -
 
 ### Status

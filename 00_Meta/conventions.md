@@ -103,6 +103,17 @@ Notes tagged `workflow/canonical` require a PR or explicit human approval to mod
 
 `restricted/private` marks content that must not spread beyond its note. **Not access control** ([[00_Meta/prd]] §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published), the `restricted-link` warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
 
+## Tasks
+
+Checkbox tasks (`- [ ]` open, `- [x]` done) live **where their context lives** — any note; no central task file. Inline metadata is Obsidian Tasks emoji, queryable everywhere via `brain tasks` (spec §17):
+
+| Emoji | Meaning |
+|-------|---------|
+| 📅 | due date (`📅 2026-08-15`) |
+| ⏳ / 🛫 / ✅ | scheduled / start / done date |
+| ⏫ / 🔼 / 🔽 | priority high / medium / low |
+| 🔁 | recurrence (free text) |
+
 ## Agent Write Rules
 
 Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
