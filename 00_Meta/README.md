@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-02-21
+updated: 2026-08-11
 ---
 
 # Meta
@@ -21,4 +21,4 @@ Vault-level conventions, navigation, and structural documentation. Files here go
 
 ## Related
 
-- [[CONTEXT]] — Vault entrypoint (symlinked as CLAUDE.md and AGENTS.md)
+- [[AGENTS]] — Vault entrypoint (`CLAUDE.md` imports it via `@AGENTS.md` for Claude Code)

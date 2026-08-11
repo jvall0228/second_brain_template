@@ -9,11 +9,11 @@ updated: 2026-08-11
 
 # Operating Rules
 
-Behavior expectations for agents working in this vault. These supplement — not duplicate — the rules in [[CONTEXT]] and [[00_Meta/conventions]].
+Behavior expectations for agents working in this vault. These supplement — not duplicate — the rules in [[AGENTS]] and [[00_Meta/conventions]].
 
 ## Bootstrap Before Working
 
-Always read the bootstrap sequence before producing output. See [[CONTEXT#Bootstrap Sequence (Must-Read Order)]].
+Always read the bootstrap sequence before producing output. See [[AGENTS#Bootstrap Sequence (Must-Read Order)]].
 
 ## Read Before Write
 
@@ -51,6 +51,6 @@ Multiple agents may work in this vault. Sync (pull) before writing when the envi
 
 ## Related
 
-- [[CONTEXT]] — Vault entrypoint
+- [[AGENTS]] — Vault entrypoint
 - [[00_Meta/conventions]] — Full convention reference
 - [[10_Agents/docs/task-patterns]] — Write rules and examples

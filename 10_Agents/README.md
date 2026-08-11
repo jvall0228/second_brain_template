@@ -4,12 +4,12 @@ tags:
   - type/meta
   - audience/agent
   - workflow/canonical
-updated: 2026-08-10
+updated: 2026-08-11
 ---
 
 # Agents
 
-Agent-facing documentation for working within this vault. Start with the bootstrap sequence in [[CONTEXT]], then return here for expanded guidance.
+Agent-facing documentation for working within this vault. Start with the bootstrap sequence in [[AGENTS]], then return here for expanded guidance.
 
 ## Docs
 
@@ -26,7 +26,7 @@ One example is included to show the format:
 
 ## Related
 
-- [[CONTEXT]] — Vault entrypoint and bootstrap sequence
+- [[AGENTS]] — Vault entrypoint and bootstrap sequence
 - [[00_Meta/conventions]] — Naming, tagging, and change control
 - [[01_Profile/preferences]] — Communication style and constraints
 - [[01_Profile/defaults]] — Timezone, locale, output defaults

@@ -33,7 +33,7 @@ A Git-synced, Markdown-first repository that acts as the canonical "personal con
 
 ## 4. Users / Personas
 - **Human (Owner):** browses and edits in Obsidian; reviews agent changes via Git/PRs.
-- **Agents (Multiple models/tools):** bootstrap from `CONTEXT.md`, perform tasks, and write outputs following repo conventions.
+- **Agents (Multiple models/tools):** bootstrap from `AGENTS.md`, perform tasks, and write outputs following repo conventions.
 - **Future contributor (optional):** another human consuming the same repo conventions.
 
 ## 5. Template phase
@@ -45,14 +45,14 @@ The §11.1 "real content" requirements and the M0 success criterion (§19) apply
 
 ## 6. Key workflows
 ### 6.1 Universal agent bootstrap (must-read sequence)
-This order is **contractual** and is listed first in `CONTEXT.md`:
+This order is **contractual** and is listed first in `AGENTS.md`:
 
-1. `CONTEXT.md` (entrypoint / scope / how to use this repo)
+1. `AGENTS.md` (entrypoint / scope / how to use this repo)
 2. `01_Profile/now.md` (what's happening right now)
 3. `01_Profile/preferences.md` (how to behave / format outputs)
 4. `00_Meta/conventions.md` (how to write and where to write)
 
-`CONTEXT.md` additionally defines a **complete bootstrap** tier — `00_Meta/index.md` and `01_Profile/defaults.md` — required before creating structured notes or navigating beyond the Inbox. The four-item sequence above is the contractual minimum; the second tier extends it and does not replace it.
+`AGENTS.md` additionally defines a **complete bootstrap** tier — `00_Meta/index.md` and `01_Profile/defaults.md` — required before creating structured notes or navigating beyond the Inbox. The four-item sequence above is the contractual minimum; the second tier extends it and does not replace it.
 
 > **Planned (M5 — not yet built):** a `brain` CLI for querying a vault index. Until it ships, agents navigate via [[00_Meta/index]] and directory READMEs.
 
@@ -92,14 +92,14 @@ Top-level directories (must exist; number prefixes required for ordering):
 **Placement rule:** Journal is subjective (your perspective and experience); Resources are objective (shareable without personal context). **Zettelkasten home:** evergreen atomic notes live in `06_Resources/` with `type/zettel`; subjective sparks start in `03_Journal/ideas/` and graduate to Resources when refined.
 
 **Filename convention:** kebab-case (Git-friendly, agent-predictable), with two exceptions defined in [[00_Meta/conventions]]:
-- Uppercase entrypoints (`CONTEXT.md`, `AGENTS.md`, `CLAUDE.md`, `README.md`) at any directory level.
+- Uppercase entrypoints (`AGENTS.md`, `CLAUDE.md`, `README.md`) at any directory level.
 - ISO periodic tokens for reviews (`YYYY-W##-review.md`, `YYYY-Q#-review.md`).
 
 Paths are case-sensitive; this document uses the literal shipped paths throughout.
 
-## 8. Universal agent entrypoint and aliases
+## 8. Universal agent entrypoint
 ### 8.1 Required root file
-- `CONTEXT.md` at repository root.
+- `AGENTS.md` at repository root — the standard agent entrypoint, following the cross-harness `AGENTS.md` convention.
 
 Required content sections:
 - What this repo is and why it exists
@@ -113,7 +113,7 @@ Required content sections:
 Recommended frontmatter:
 ```yaml
 ---
-title: "Context"
+title: "Agents"
 tags:
   - audience/agent
   - type/meta
@@ -122,10 +122,16 @@ updated: 2026-08-11
 ---
 ```
 
-### 8.2 Required alias files
-At repo root, `AGENTS.md` and `CLAUDE.md` must resolve to `CONTEXT.md` — either as one-line stub files (the portable default) or as symlinks (an accepted optimization where the platform supports them).
+### 8.2 Claude Code adapter file
+`CLAUDE.md` at repo root is a regular file whose body imports the entrypoint via Claude Code's memory-import syntax:
 
-**Decision (2026-08-10):** the shipped template uses **symlinks**. Adopters on platforms where symlinks are unreliable (e.g. some Windows/Git configurations) should replace them with one-line stub files.
+```markdown
+@AGENTS.md
+```
+
+Claude Code auto-loads `CLAUDE.md` and the `@AGENTS.md` line injects the entrypoint's contents; harnesses that read `AGENTS.md` natively never touch `CLAUDE.md`. The import syntax is Claude-specific, so `CLAUDE.md` also carries a one-line pointer for tooling that doesn't expand `@` imports.
+
+**Decision history:** the vault originally used `CONTEXT.md` as the entrypoint with `AGENTS.md`/`CLAUDE.md` as aliases (stub files, later symlinks). On 2026-08-11 `CONTEXT.md` was retired: its content moved to `AGENTS.md` (now the real file) and `CLAUDE.md` became the `@`-import adapter above — no symlinks remain, which also removes the old platform-portability caveat.
 
 ## 9. Agent library directory (`10_Agents/`)
 ### 9.1 Shipped structure
@@ -191,18 +197,18 @@ Tags signal **intent and handling, not access control**. Agents should assume al
 
 Canonical notes are read-only for agents except via the change-control process in §6.3.
 
-**Current canonical set:** `CONTEXT.md` (and its aliases), `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `01_Profile/now.md`, `01_Profile/preferences.md`, `01_Profile/defaults.md`, `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`.
+**Current canonical set:** `AGENTS.md`, `CLAUDE.md`, `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `01_Profile/now.md`, `01_Profile/preferences.md`, `01_Profile/defaults.md`, `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`.
 
 **Deliberately not canonical:** `00_Meta/status.md` is a living snapshot that agents may update directly (e.g. milestone status); this is recorded in the note itself.
 
 ### 11.1 Real-content files (must exist and be meaningful in an adopter's fork — see §5)
-- `CONTEXT.md`
+- `AGENTS.md`
 - `01_Profile/now.md`
 - `01_Profile/preferences.md`
 - `00_Meta/conventions.md`
 
 ### 11.2 Structural requirements
-- `AGENTS.md`, `CLAUDE.md` (aliases per §8.2)
+- `CLAUDE.md` (Claude Code adapter per §8.2)
 - `02_Inbox/README.md` (triage instructions)
 - Section READMEs for every top-level directory
 
@@ -225,7 +231,7 @@ See [[09_Templates/README]] for the selection guide.
 ## 13. Functional requirements
 - Scaffold the full directory structure with number prefixes.
 - Create the real-content files (§11.1) — shipped as fill-in shells per §5.
-- Provide root aliases (`AGENTS.md`, `CLAUDE.md`) resolving to `CONTEXT.md`.
+- Provide `CLAUDE.md` importing `AGENTS.md` via the `@AGENTS.md` memory-import line (§8.2).
 - Create `02_Inbox/README.md` with triage guidance.
 - Ensure the repo is usable as an Obsidian vault from day one.
 - `10_Agents/docs/task-patterns.md` defines:
@@ -300,11 +306,11 @@ Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 
 ## 20. Acceptance criteria (M0, objective)
 - All eleven number-prefixed directories exist.
-- `CONTEXT.md` exists at root, lists the §6.1 four-item order first, and names `02_Inbox/` as the default write location.
-- `AGENTS.md` and `CLAUDE.md` resolve to `CONTEXT.md` content (stub or symlink).
+- `AGENTS.md` exists at root, lists the §6.1 four-item order first, and names `02_Inbox/` as the default write location.
+- `CLAUDE.md` exists at root and its body contains the `@AGENTS.md` import line.
 - Every markdown note passes the §10.1 frontmatter check (`title`, `tags`, `updated`; slash-delimited tags) — scriptable, template placeholders exempt.
 - An agent-authored note with required frontmatter exists in `02_Inbox/` (the M0 success criterion).
-- Zero unresolved wikilinks from `CONTEXT.md`, `00_Meta/index.md`, and section READMEs (template placeholders exempt).
+- Zero unresolved wikilinks from `AGENTS.md`, `00_Meta/index.md`, and section READMEs (template placeholders exempt).
 - Canonical notes carry `workflow/canonical`, and the change-control table in [[00_Meta/conventions]] covers them (Git-native collaboration goal).
 - Each framework has a concrete home: PARA (`04_`–`07_`), Bullet Journal (`03_Journal/periodic/` + review templates), Zettelkasten (`06_Resources/` + `template-zettel`).
 

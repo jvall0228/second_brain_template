@@ -33,7 +33,7 @@ Top-level directories use **numeric prefixes** for deterministic sort order. Eac
 Use **kebab-case** by default for filenames: `my-note-title.md`.
 
 Allowed exceptions:
-- Entrypoints: `CONTEXT.md`, `AGENTS.md`, `CLAUDE.md`, `README.md` (uppercase by convention). These may appear at the vault root or at any directory level (e.g., `04_Projects/example-project/CONTEXT.md`).
+- Entrypoints: `AGENTS.md`, `CLAUDE.md`, `README.md` (uppercase by convention). These may appear at the vault root or at any directory level (e.g., `04_Projects/example-project/README.md`).
 - Periodic review filenames may use ISO week/quarter tokens:
   - `YYYY-W##-review.md` (weekly)
   - `YYYY-Q#-review.md` (quarterly)
@@ -61,7 +61,7 @@ Files in `09_Templates/` may use placeholder tokens such as `{{date}}`, `{{title
 
 ## Tag Namespaces
 
-Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/prd]] and [[CONTEXT]]) summarize it. Current namespaces:
+Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/prd]] and [[AGENTS]]) summarize it. Current namespaces:
 
 | Namespace | Purpose | Values |
 |-----------|---------|--------|

@@ -19,7 +19,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 ## How it works
 
 - **You** open this repo as an Obsidian vault (or edit the Markdown directly) to capture, organize, and review notes.
-- **Agents** read a [bootstrap sequence](CONTEXT.md) to learn who you are, what you're working on, and how to behave — then write output to `02_Inbox/` for you to triage.
+- **Agents** read a [bootstrap sequence](AGENTS.md) to learn who you are, what you're working on, and how to behave — then write output to `02_Inbox/` for you to triage.
 - **Git** tracks every change, making agent contributions auditable and reversible.
 
 ## Adopt this template
@@ -67,7 +67,7 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 
 | Audience | Start here |
 |----------|------------|
-| Agents   | [CONTEXT.md](CONTEXT.md) (also aliased as `AGENTS.md` and `CLAUDE.md`) |
+| Agents   | [AGENTS.md](AGENTS.md) (Claude Code loads `CLAUDE.md`, which imports it via `@AGENTS.md`) |
 | Humans   | This file, then open as an Obsidian vault |
 
 ## Frameworks

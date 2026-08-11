@@ -11,7 +11,7 @@ updated: 2026-08-11
 # Vault Index (Map of Content)
 
 ## Core Context (Agent Bootstrap)
-- [[CONTEXT]] — Entrypoint, structure, rules
+- [[AGENTS]] — Entrypoint, structure, rules
 - [[01_Profile/now]] — Current focus
 - [[01_Profile/preferences]] — Communication style
 - [[01_Profile/defaults]] — Timezone, locale, defaults

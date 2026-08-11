@@ -19,7 +19,7 @@ updated: 2026-08-11
 ## Snapshot
 
 - Full PARA + journal structure in place (`00_` through `10_`); every directory has a README.
-- Bootstrap and canonical navigation docs are present (`CONTEXT`, `now`, `preferences`, `conventions`, `index`, `defaults`).
+- Bootstrap and canonical navigation docs are present (`AGENTS`, `now`, `preferences`, `conventions`, `index`, `defaults`).
 - All note templates and agent operating docs are wired in.
 - Profile notes are blank templates — fill them in before pointing agents at the vault.
 - One example note is seeded per section; delete them once you've seen the pattern.
