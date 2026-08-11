@@ -3500,6 +3500,75 @@
    "title": "Implementation plan: M8–M12 (all non-deferred issues)",
    "updated": "2026-08-11"
   },
+  "02_Inbox/2026-08-11-onboard-owner-template-feedback.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "cursor",
+    "session": "onboarding-2026-08-11",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/note",
+     "workflow/draft",
+     "topic/onboarding",
+     "topic/template"
+    ],
+    "title": "Onboard-owner template feedback — 2026-08-11 dry run",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 15,
+     "text": "Onboard-owner template feedback — 2026-08-11 dry run"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Feedback"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Context from the run (for triage)"
+    },
+    {
+     "level": 2,
+     "line": 36,
+     "text": "Suggested triage"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-owner",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 33,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-owner/SKILL]]",
+     "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
+     "target": "10_Agents/skills/onboard-owner/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2298,
+   "tasks": [],
+   "title": "Onboard-owner template feedback — 2026-08-11 dry run",
+   "updated": "2026-08-11"
+  },
   "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
    "backlinks": [
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
@@ -14008,6 +14077,7 @@
    "backlinks": [
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
+    "02_Inbox/2026-08-11-onboard-owner-template-feedback.md",
     "09_Templates/README.md",
     "09_Templates/variants/README.md",
     "10_Agents/components/README.md",
@@ -17399,51 +17469,56 @@
     {
      "level": 2,
      "line": 16,
+     "text": "Open with an AI agent"
+    },
+    {
+     "level": 2,
+     "line": 39,
      "text": "Why"
     },
     {
      "level": 2,
-     "line": 20,
+     "line": 43,
      "text": "How it works"
     },
     {
      "level": 2,
-     "line": 26,
+     "line": 49,
      "text": "Adopt this template"
     },
     {
      "level": 2,
-     "line": 54,
+     "line": 77,
      "text": "Validation and the vault index"
     },
     {
      "level": 2,
-     "line": 65,
+     "line": 88,
      "text": "Personal vs work"
     },
     {
      "level": 2,
-     "line": 74,
+     "line": 97,
      "text": "Structure"
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 113,
      "text": "Entrypoints"
     },
     {
      "level": 2,
-     "line": 97,
+     "line": 120,
      "text": "Frameworks"
     },
     {
      "level": 2,
-     "line": 103,
+     "line": 126,
      "text": "Agent rules (summary)"
     }
    ],
    "links": [],
-   "sizeBytes": 6877,
+   "sizeBytes": 8398,
    "tasks": [],
    "title": "Second Brain Template",
    "updated": "2026-08-11"
