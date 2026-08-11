@@ -24,7 +24,16 @@ Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) —
 
 ## Hook installation
 
-**Automatic since 2026-08-11:** the repo ships `.claude/settings.json` with a `SessionStart` hook that runs `git config core.hooksPath .githooks` in every Claude Code session (local, web, cloud containers) — fresh clones arm the pre-commit hook with zero manual setup, closing the stale-index CI failure mode that hook-less agent sessions produce. The pre-commit hook itself runs unchanged (Claude Code commits via Bash). Optional native enhancement: a `PostToolUse` hook on `Write|Edit` in settings can run `brain validate` at edit time instead of commit time; see `settings-example.json` (and issue #11 — the example's current `|| true` form never surfaces findings).
+**Automatic since 2026-08-11:** the repo ships `.claude/settings.json` with a `SessionStart` hook that runs `git config core.hooksPath .githooks` in every Claude Code session (local, web, cloud containers) — fresh clones arm the pre-commit hook with zero manual setup, closing the stale-index CI failure mode that hook-less agent sessions produce. The pre-commit hook itself runs unchanged (Claude Code commits via Bash). Optional native enhancement: a `PostToolUse` hook on `Write|Edit` in settings can run `brain validate` at edit time instead of commit time; see `settings-example.json`, which calls the `validate-hook.sh` shim so findings actually reach the agent (see the exit-code contract below; fixed under issue #11).
+
+## Edit-time validation exit codes
+
+Claude Code's `PostToolUse` hook contract and `brain validate`'s exit-code contract ([[10_Agents/tools/brain/spec|spec]] §10.4) do **not** line up, and wiring one directly to the other silently breaks edit-time validation:
+
+- **Claude Code hooks:** exit `0` = success; exit `2` = *blocking error* — STDERR is fed back to the agent; any **other** exit code is non-blocking and the output never reaches the agent.
+- **`brain validate`:** exit `0` = clean; exit `1` = errors; exit `2` = warnings only.
+
+So a raw `brain validate` in a hook inverts the semantics: errors (exit 1) vanish, and warnings (exit 2) would block. The historical `|| true` form (issue #11) was worse still — it forced exit 0 unconditionally, making the hook a no-op. The shim `validate-hook.sh` translates between the contracts: brain exit 0 or 2 → hook exit 0 (warnings never block, matching the pre-commit hook's policy); brain exit 1 (or any unexpected failure) → findings re-emitted on STDERR and hook exit 2, so the agent sees them and fixes the note immediately. **Future harness adapters that wire `brain validate` into an edit-time hook must map exit codes to that harness's own hook contract the same way — never call it bare, and never append `|| true`.**
 
 ## Invoking brain
 

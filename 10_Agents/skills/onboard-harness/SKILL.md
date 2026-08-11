@@ -60,7 +60,7 @@ Consult `10_Agents/harnesses/<harness>/wiring.md` when it exists — it is autho
    ```
    The exact surface and syntax are harness-specific and come from its wiring doc. Everything outside the markers is the user's own content: never touch it. Re-running replaces exactly one harness-level managed block; if duplicate harness blocks are found, collapse them to one canonical block. Because all adopted vaults share the registry, onboarding another vault does **not** add another harness-level block.
 5. **Shared config files: merge, never link.** Where a primitive lives inside a config file the user also owns (settings JSON/TOML, MCP server registrations, hook registrations), edit additively and idempotently per the wiring doc — symlinking whole files would clobber user config.
-6. **Pre-commit hook.** In the vault clone: `git config core.hooksPath .githooks`.
+6. **Pre-commit hook.** In the vault clone: `git config core.hooksPath .githooks`. Also install the generated-file merge driver in the same clone: `git config merge.regenerate.driver true` (keeps ours on conflicts in the committed generated files; the hooks regenerate them — see `.gitattributes`).
 7. **Manifest.** Record every action in `~/.agents/second-brain-manifest.json`: stable `registration_id`, vault path, vault label, shared registration path, harness, and each created link / copy (with hash) / memory-file block / merged config entry / registered skills location. Model the manifest as multiple vault entries plus shared resources (harness adapters and globally installed skills) with provider/consumer ownership so onboarding or removing one vault cannot overwrite or delete another vault's state. Idempotence and uninstall both read this file.
 
 ## Re-run and uninstall

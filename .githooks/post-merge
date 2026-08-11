@@ -1,0 +1,25 @@
+#!/bin/sh
+# Post-merge hook (issue #25): regenerate the two committed generated files
+# after any merge, closing the stale window left by the merge=regenerate
+# driver (which keeps "ours" and defers correctness to regeneration).
+# Best-effort — a merge has already succeeded, so this hook never fails it;
+# on any problem it warns and exits 0 (the pre-commit hook and CI freshness
+# checks remain the enforcement backstop). Install once per clone:
+#
+#   git config core.hooksPath .githooks
+#
+root="$(git rev-parse --show-toplevel)" || exit 0
+brain="$root/10_Agents/tools/brain/brain.py"
+snippets="$root/10_Agents/tools/vscode/gen_snippets.py"
+
+if [ -f "$brain" ]; then
+    python3 "$brain" index >/dev/null 2>&1 ||
+        echo "post-merge: warning — brain index failed; run: python3 10_Agents/tools/brain/brain.py index" >&2
+fi
+
+if [ -f "$snippets" ]; then
+    python3 "$snippets" >/dev/null 2>&1 ||
+        echo "post-merge: warning — snippet generation failed; run: python3 10_Agents/tools/vscode/gen_snippets.py" >&2
+fi
+
+exit 0

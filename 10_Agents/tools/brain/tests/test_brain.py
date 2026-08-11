@@ -190,6 +190,130 @@ class IndexTests(unittest.TestCase):
             self.assertEqual(index["notes"]["ok.md"]["sizeBytes"], len("---\ntitle: x\n---\nhi\n"))
 
 
+class UnreadableNoteTests(unittest.TestCase):
+    """Spec §3 read failure: OSError on a note is a finding, never a crash."""
+
+    def broken_symlink_vault(self, td: Path) -> Path:
+        root = make_vault(
+            td,
+            {
+                "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                "ok.md": note(),
+                "02_Inbox/README.md": note(),
+            },
+        )
+        os.symlink("../missing.md", root / "02_Inbox" / "dangling.md")
+        return root
+
+    def test_broken_symlink_indexed_as_not_readable(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.broken_symlink_vault(Path(td))
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            rec = index["notes"]["02_Inbox/dangling.md"]
+            self.assertEqual(rec["frontmatterErrors"], ["not-readable"])
+            self.assertEqual(rec["sizeBytes"], 0)
+            self.assertEqual(rec["frontmatter"], {})
+            self.assertEqual(rec["links"], [])
+
+    def test_broken_symlink_validate_reports_finding(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.broken_symlink_vault(Path(td))
+            errors, _ = brain.run_validate(root, check_index=False)
+            rules = {f["rule"] for f in errors if f["path"] == "02_Inbox/dangling.md"}
+            self.assertIn("not-readable", rules)
+            self.assertNotIn("missing-frontmatter", rules)
+
+    def test_broken_symlink_commands_do_not_crash(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = self.broken_symlink_vault(Path(td))
+            for argv in (
+                ["index"],
+                ["list"],
+                ["search", "x"],
+                ["recent", "5"],
+                ["curate"],
+                ["validate"],
+            ):
+                out, err_s = io.StringIO(), io.StringIO()
+                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err_s):
+                    code = brain.main([*argv, "--vault", str(root)])
+                expected = {1} if argv == ["validate"] else {0}
+                self.assertIn(code, expected, f"{argv} exited {code}")
+
+    @unittest.skipIf(os.geteuid() == 0, "root ignores file modes")
+    def test_permission_denied_is_not_readable(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "locked.md": note(),
+                },
+            )
+            locked = root / "locked.md"
+            os.chmod(locked, 0o000)
+            try:
+                notes, assets = brain.walk_corpus(root)
+                index = brain.build_index(root, notes, assets)
+                self.assertEqual(
+                    index["notes"]["locked.md"]["frontmatterErrors"], ["not-readable"]
+                )
+                errors, _ = brain.run_validate(root, check_index=False)
+                self.assertTrue(
+                    any(
+                        f["rule"] == "not-readable" and f["path"] == "locked.md"
+                        for f in errors
+                    )
+                )
+            finally:
+                os.chmod(locked, 0o644)
+
+
+class EmptyTagsTests(unittest.TestCase):
+    """Spec §10.2: `tags: []` fails missing-tags like an absent/null key."""
+
+    def validate(self, files):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    **files,
+                },
+            )
+            return brain.run_validate(root, check_index=False)
+
+    def test_empty_flow_list_is_missing_tags(self):
+        errors, _ = self.validate(
+            {"no-tags.md": "---\ntitle: x\ntags: []\nupdated: 2026-08-11\n---\n"}
+        )
+        self.assertTrue(
+            any(f["rule"] == "missing-tags" and f["path"] == "no-tags.md" for f in errors)
+        )
+
+    def test_null_tags_still_missing(self):
+        errors, _ = self.validate(
+            {"null-tags.md": "---\ntitle: x\ntags:\nupdated: 2026-08-11\n---\n"}
+        )
+        self.assertTrue(
+            any(f["rule"] == "missing-tags" and f["path"] == "null-tags.md" for f in errors)
+        )
+
+    def test_template_placeholder_tags_stay_exempt(self):
+        errors, _ = self.validate(
+            {
+                "09_Templates/template-thing.md": (
+                    "---\ntitle: \"{{title}}\"\ntags:\n  - \"{{tag}}\"\n"
+                    "updated: \"{{date}}\"\n---\n"
+                )
+            }
+        )
+        self.assertFalse(
+            any(f["path"] == "09_Templates/template-thing.md" for f in errors)
+        )
+
+
 class TaxonomyTests(unittest.TestCase):
     def test_fixture_table(self):
         tax = brain.load_taxonomy(FIXTURE)
@@ -568,6 +692,122 @@ class CliTests(unittest.TestCase):
         self.assertEqual(rows[0]["path"], "01_Notes/alpha.md")
         code, _ = self.run_cli("show", "no-such-note")
         self.assertEqual(code, 1)
+
+
+class SecretScanTests(unittest.TestCase):
+    """Spec §10.5. Fake secrets are assembled at runtime by concatenation so
+    no committed file — not even this excluded test tree — carries one."""
+
+    # Assembled fakes (all are documentation-safe example shapes).
+    FAKE_AWS = "AKIA" + "IOSFODNN7EXAMPLE"
+    FAKE_GH = "ghp_" + "a1B2c3D4e5F6g7H8i9J0" + "k1L2m3N4o5P6"
+    FAKE_SLACK = "xoxb-" + "123456789012-abcdefABCDEF"
+    FAKE_PEM = "-----BEGIN RSA " + "PRIVATE KEY" + "-----"
+    FAKE_GENERIC = 'api_key: "' + "s3cretvalue12345" + '"'
+    FAKE_ENTROPY = 'blob = "' + "Ab1" * 14 + '"'
+
+    @classmethod
+    def setUpClass(cls):
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+
+    def scan(self, files: dict):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td), {"00_Meta/conventions.md": self.CONVENTIONS, **files}
+            )
+            errors, _ = brain.run_validate(root, check_index=False)
+        return [f for f in errors if f["rule"].startswith("secret-")]
+
+    def test_each_rule_positive(self):
+        body = "\n".join(
+            [
+                self.FAKE_AWS,
+                "a token line " + self.FAKE_GH,
+                "slack: " + self.FAKE_SLACK,
+                self.FAKE_PEM,
+                self.FAKE_GENERIC,
+                self.FAKE_ENTROPY,
+            ]
+        )
+        findings = self.scan({"seeded.md": note(body)})
+        rules = sorted(f["rule"] for f in findings)
+        self.assertEqual(
+            rules,
+            [
+                "secret-aws-access-key-id",
+                "secret-generic-credential",
+                "secret-github-token",
+                "secret-high-entropy-string",
+                "secret-private-key",
+                "secret-slack-token",
+            ],
+        )
+        self.assertTrue(all(f["path"] == "seeded.md" for f in findings))
+        self.assertTrue(all(isinstance(f["line"], int) for f in findings))
+        # The matched secret is never echoed into the message (§10.5).
+        self.assertFalse(any(self.FAKE_AWS in f["message"] for f in findings))
+
+    def test_validate_exits_1_and_names_rule(self):
+        with tempfile.TemporaryDirectory() as td:
+            make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": self.CONVENTIONS,
+                    "leak.md": note(self.FAKE_AWS),
+                },
+            )
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                code = brain.main(["validate", "--vault", td])
+            self.assertEqual(code, 1)
+            self.assertIn("secret-aws-access-key-id", buf.getvalue())
+
+    def test_non_markdown_text_files_scanned(self):
+        findings = self.scan({"06_Resources/creds.txt": "key = " + self.FAKE_AWS + "\n"})
+        self.assertEqual(
+            [(f["path"], f["rule"]) for f in findings],
+            [("06_Resources/creds.txt", "secret-aws-access-key-id")],
+        )
+
+    def test_binary_files_skipped(self):
+        payload = b"\x00\x01" + self.FAKE_AWS.encode() + b"\x00"
+        findings = self.scan({"08_Assets/blob.png": payload})
+        self.assertEqual(findings, [])
+
+    def test_allowlist_marker_suppresses(self):
+        marked = (
+            self.FAKE_AWS + " <!-- " + brain.SECRET_ALLOW_MARKER + " -->"
+        )
+        findings = self.scan({"documented.md": note(marked)})
+        self.assertEqual(findings, [])
+        # Marker on a different line does not suppress.
+        findings = self.scan(
+            {
+                "leaky.md": note(
+                    self.FAKE_AWS + "\n<!-- " + brain.SECRET_ALLOW_MARKER + " -->"
+                )
+            }
+        )
+        self.assertEqual([f["rule"] for f in findings], ["secret-aws-access-key-id"])
+
+    def test_negatives_do_not_flag(self):
+        body = "\n".join(
+            [
+                "Prose about AWS AKIA prefixes and akiaiosfodnn7example shapes.",
+                "See [[06_Resources/some-note]] and #topic/software tags.",
+                'commit = "d3b07384d113edec49eaa6238ad5ff00c0ffee12"',  # git SHA: no uppercase
+                "https://example.com/AbC123defGHI456jklMNO789pqrSTU012vwxYZ345",
+                "the token: value pair syntax (unquoted, not a credential)",
+                'display_name: "A Perfectly Ordinary Quoted Title 2026"',
+                "ghp_ and github_pat_ are GitHub token prefixes.",
+            ]
+        )
+        self.assertEqual(self.scan({"clean.md": note(body)}), [])
+
+    def test_repo_self_scan_clean(self):
+        root = brain.default_vault_root()
+        notes, assets = brain.walk_corpus(root)
+        self.assertEqual(brain.scan_secrets(root, notes + assets), [])
 
 
 if __name__ == "__main__":
