@@ -71,4 +71,4 @@ CLI pre-approval: `--allow-tool='shell(python3 10_Agents/tools/brain/brain.py)'`
 
 ## Reference config
 
-None to copy — the working config ships in the repo itself: `.github/copilot-instructions.md` (IDE/web bootstrap shim), `.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh` (cloud-agent enforcement). All three sit outside the note corpus (dot-paths are pruned), so `brain` never validates or indexes them.
+None to copy — the working config ships in the repo itself: `.github/copilot-instructions.md` (IDE/web bootstrap shim), `.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh` (cloud-agent enforcement). All three sit outside the note corpus (dot-paths are pruned), so `brain` never validates or indexes them. They are catalogued as `shipped-in-repo` artifacts in `overlay/manifest.json` — the Copilot **overlay** (see the Overlays section of [[10_Agents/harnesses/README]]): present in every clone, so [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] installs and removes nothing for them.
