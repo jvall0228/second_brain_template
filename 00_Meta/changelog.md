@@ -12,6 +12,16 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] milestone | M8 Hardening & test foundation shipped (issues #5, #9, #10, #11, #20, #24, #25)
+
+- **Test foundation (#5, PR #36):** `10_Agents/tools/run_tests.py` runs every `10_Agents/tools/*/tests/` suite in one command, locally and in CI; the vscode tools gained their first suites; the TDD convention (tests land with the change) is documented in [[10_Agents/tools/README]].
+- **Validate bug fixes (#9, #10, PR #37):** unreadable notes (broken symlink, permission denied) yield a per-note `not-readable` finding instead of crashing every command; `tags: []` now fails the missing-tags check. Spec §3/§10.2 updated.
+- **Hook exit codes (#11, PR #39):** the Claude Code example hook no longer swallows validation — `10_Agents/harnesses/claude-code/validate-hook.sh` maps brain errors to the PostToolUse blocking contract (stderr + exit 2); contract documented in the wiring doc.
+- **Secret scanning (#24, PR #38):** `brain validate` now scans the whole working corpus (notes + assets) against a data-driven rule table (AWS/GitHub/Slack tokens, PEM keys, generic credentials, one conservative entropy heuristic) — findings are errors, enforced by hook/CI/agent chain with no new wiring; per-line escape via a `brain:allow-secret-pattern` HTML comment. Spec §10.5. GitHub-side scanning + push protection remains an owner setting.
+- **Merge drivers (#25, PR #40):** `vault-index.json` and the VS Code snippets carry `merge=regenerate` (keep-ours driver, correctness from regeneration); new `.githooks/post-merge` refreshes both after any merge; spec §8.2.
+- **Adopter smoke test (#20, PR #41):** `10_Agents/tools/adopt_check.py` replays the README's adoption steps in a scratch copy and requires zero validation errors; seeded-example list is data-driven and drift-checked against the README; runs in CI.
+- **Phase-gate review (PR #42):** four-lens adversarial sweep over the merged diff; ten verified findings fixed — single-finding rule for unreadable notes, tool-test-tree pruning generalized, Windows-safe tests, SessionStart also arms the merge driver, adopt_check fails gracefully on unreadable trees.
+
 ## [2026-08-11] config | Claude Code sessions auto-install the pre-commit hook
 
 - Shipped repo-scoped `.claude/settings.json` (root dot-path per [[00_Meta/prd]] §9.3) with a `SessionStart` hook running `git config core.hooksPath .githooks` — every Claude Code session (local, web, cloud container) arms the pre-commit hook automatically, closing the hook-less-session stale-index failure mode at the source for the Claude fleet. Other harnesses get a new explicit bootstrap step in [[10_Agents/docs/operating-rules]] (arm the hook before first commit); the reworked self-healing CI (entry below) remains the universal backstop. Claude Code wiring doc updated.
