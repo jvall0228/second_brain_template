@@ -12,6 +12,14 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] milestone | M10 Orientation & onboarding shipped (issues #3, #7, #13, #14)
+
+- **agent-orientation output contract (#13, PR #51):** four required inventory sections (solution inventory across nine categories, harness introspection with PRD §8.3 tiers, ecosystem identification, environment capabilities & policy) and a six-rung interface ladder (custom tooling → first-party CLI → MCP/connector → wrapped vendor API → browser → none); inventory notes land per-environment under the new `10_Agents/environments/` convention (the minimal #15 slice — never bootstrap-linked, self-guarding preambles); recommended-automations and self-maintenance read the current environment's inventory.
+- **Per-harness overlays (#3, PR #52):** `10_Agents/harnesses/<name>/overlay/` with `manifest.json` v1 extending PR #33's marker-managed/reversible install contract; Cursor and Copilot proto-overlays migrated; onboard-harness installs/uninstalls overlays; standards-first guard (an overlay carries only what a cross-harness standard can't express).
+- **Recommended community skills (#7, PR #53):** links-only pinned-ref catalog at [[06_Resources/recommended-skills]] with per-item license/trust/sign-off contract; onboard-harness optional install to user scope under owner sign-off. The two seeded items await owner-verified pins.
+- **onboard-owner people map + intent/role (#14, PR #54):** infer-first people map seeded from the environment inventory with verbatim PRD §16.2 sensitivity rules and confirm-before-landing consent flow into `03_Journal/people/`; vault-intent question drives the M9.4 specialization; role/team interview fills the `01_Profile/` shells.
+- **Phase-gate review (PR #55):** four-lens adversarial sweep, 16 verified findings fixed — managed-block `.cursorignore` sync (idempotent, handles tag removal), truthful seed template, overlay artifacts gitignored, inventory `expires:`, environments write exception granted in the write rules, `restricted/private` offered as the person-note default, test scoping + a bootstrap-link guard.
+
 ## [2026-08-11] milestone | M9 Config & core conventions shipped (issues #2, #12, #16, #17, #18)
 
 - **Vault config (#2, PR #44):** optional `00_Meta/config.yaml` in a bounded YAML subset parsed by brain's own stdlib reader (spec §15); `write_exceptions` (Inbox-first widening, enforced fail-closed via `agent_write_allowed`) and `extension_trust` implemented, plus `context` (#12) and `report` (#16) later in the phase; malformed config is per-file validate findings, never a crash; new `brain config` command.
