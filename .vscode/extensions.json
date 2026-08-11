@@ -4,8 +4,8 @@
   // GitHub) are recommended. Community and personal-publisher extensions —
   // including Foam, the usual Obsidian-parity pick — are documented but
   // deliberately not shipped. Rationale, tier model, and the .obsidian
-  // feature mapping: 02_Inbox/2026-08-11-vscode-editor-support.md
-  // (PRD §6.5 once triaged).
+  // feature mapping: 06_Resources/vscode-editor-support.md
+  // (PRD §6.5).
   "recommendations": [
     // Microsoft — Live Preview: renders HTML files (e.g. exports in
     // 08_Assets/) in an embedded, auto-refreshing browser panel.

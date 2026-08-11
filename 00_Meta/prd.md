@@ -88,7 +88,7 @@ Obsidian remains the primary human UI (§2), but the vault must stay usable when
 - **Accepted gaps** (no first-party equivalent): wikilink click-through, backlinks panel, graph view, tag pane, mermaid in preview, `.canvas`. Mitigations run through the `brain` tasks above and harness skills; `brain validate` remains the authoritative convention check.
 - **Acceptance criteria:** a fresh clone opened in VS Code prompts exactly the three recommended extensions; pasting an image into a note files it under `08_Assets/`; `Run Task` lists the brain, daily-note, and homepage tasks and they succeed with only `python3` on PATH (homepage additionally needs the `code` CLI); typing `sb-` in a markdown file offers the frontmatter and template snippets; a template edit followed by a commit updates the snippet file automatically; an editing session produces no unintended diffs; `brain validate` passes throughout.
 
-Requirements, trust policy detail, candidate evaluations, and the full `.obsidian` → `.vscode` mapping: `02_Inbox/2026-08-11-vscode-editor-support.md` (path updates on triage).
+Requirements, trust policy detail, candidate evaluations, and the full `.obsidian` → `.vscode` mapping: [[06_Resources/vscode-editor-support]].
 
 ## 7. Information architecture (top-level, number-prefixed)
 Top-level directories (must exist; number prefixes required for ordering):

@@ -158,106 +158,111 @@
     {
      "level": 2,
      "line": 23,
+     "text": "[2026-08-11] triage | VS Code support note filed to Resources"
+    },
+    {
+     "level": 2,
+     "line": 27,
      "text": "2026-08-11 — VS Code Alternative-Editor Support (strict first-party)"
     },
     {
      "level": 2,
-     "line": 29,
+     "line": 33,
      "text": "[2026-08-11] review-fixes | Adversarial review: doc-consistency + brain hygiene"
     },
     {
      "level": 2,
-     "line": 37,
+     "line": 41,
      "text": "[2026-08-11] restructure | Split harness research per-harness; resolve expires backfill review"
     },
     {
      "level": 2,
-     "line": 46,
+     "line": 50,
      "text": "[2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 56,
      "text": "2026-08-11 — Rhythm & Reviews (Ops Plan Phase 6)"
     },
     {
      "level": 2,
-     "line": 59,
+     "line": 63,
      "text": "2026-08-11 — Express & Outbox (Ops Plan Phase 5)"
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 70,
      "text": "2026-08-11 — Curation & Signals (Ops Plan Phase 4)"
     },
     {
      "level": 2,
-     "line": 73,
+     "line": 77,
      "text": "2026-08-11 — Note Surgery (Ops Plan Phase 3)"
     },
     {
      "level": 2,
-     "line": 78,
+     "line": 82,
      "text": "2026-08-11 — Triage & Distill Upgrade (Ops Plan Phase 2)"
     },
     {
      "level": 2,
-     "line": 84,
+     "line": 88,
      "text": "2026-08-11 — Rules & Retrieval (Ops Plan Phase 1)"
     },
     {
      "level": 2,
-     "line": 90,
+     "line": 94,
      "text": "2026-08-11 — Copilot Research Deduped"
     },
     {
      "level": 2,
-     "line": 95,
+     "line": 99,
      "text": "2026-08-11 — onboard-owner Skill Shipped"
     },
     {
      "level": 2,
-     "line": 101,
+     "line": 105,
      "text": "2026-08-11 — Copilot Promoted to P0"
     },
     {
      "level": 2,
-     "line": 108,
+     "line": 112,
      "text": "2026-08-11 — M7: Environment Integration Shipped (template scope)"
     },
     {
      "level": 2,
-     "line": 115,
+     "line": 119,
      "text": "2026-08-11 — M6: Agent Plugin Library Shipped"
     },
     {
      "level": 2,
-     "line": 121,
+     "line": 125,
      "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
     },
     {
      "level": 2,
-     "line": 127,
+     "line": 131,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 137,
+     "line": 141,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 142,
+     "line": 146,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 148,
+     "line": 152,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 159,
+     "line": 163,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
@@ -312,6 +317,17 @@
      "fragment": null,
      "line": 25,
      "placeholder": false,
+     "raw": "[[06_Resources/vscode-editor-support]]",
+     "resolved": "06_Resources/vscode-editor-support.md",
+     "target": "06_Resources/vscode-editor-support",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 25,
+     "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
      "target": "00_Meta/prd",
@@ -321,7 +337,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 26,
+     "line": 29,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -329,10 +345,32 @@
      "warnings": []
     },
     {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 30,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 30,
+     "placeholder": false,
+     "raw": "[[06_Resources/vscode-editor-support]]",
+     "resolved": "06_Resources/vscode-editor-support.md",
+     "target": "06_Resources/vscode-editor-support",
+     "warnings": []
+    },
+    {
      "display": "vscode tools",
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 31,
      "placeholder": false,
      "raw": "[[10_Agents/tools/vscode/README|vscode tools]]",
      "resolved": "10_Agents/tools/vscode/README.md",
@@ -343,7 +381,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 31,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -354,7 +392,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 38,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -365,7 +403,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 34,
+     "line": 38,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -376,7 +414,7 @@
      "display": "backfill review",
      "embed": false,
      "fragment": null,
-     "line": 39,
+     "line": 43,
      "placeholder": false,
      "raw": "[[07_Archives/inbox/2026-08-11-expires-backfill-report|           backfill review]]",
      "resolved": "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
@@ -387,7 +425,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-primitives-research]]",
      "resolved": "06_Resources/harness-primitives-research.md",
@@ -398,7 +436,7 @@
      "display": "standards & protocols",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-standards|standards & protocols]]",
      "resolved": "06_Resources/harness-standards.md",
@@ -409,7 +447,7 @@
      "display": "Claude Code",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-claude-code|Claude Code]]",
      "resolved": "06_Resources/harness-claude-code.md",
@@ -420,7 +458,7 @@
      "display": "Codex",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-codex|Codex]]",
      "resolved": "06_Resources/harness-codex.md",
@@ -431,7 +469,7 @@
      "display": "opencode",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-opencode|opencode]]",
      "resolved": "06_Resources/harness-opencode.md",
@@ -442,7 +480,7 @@
      "display": "Pi",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-pi|Pi]]",
      "resolved": "06_Resources/harness-pi.md",
@@ -453,7 +491,7 @@
      "display": "Cursor",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-cursor|Cursor]]",
      "resolved": "06_Resources/harness-cursor.md",
@@ -464,7 +502,7 @@
      "display": "GitHub Copilot",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-copilot|GitHub Copilot]]",
      "resolved": "06_Resources/harness-copilot.md",
@@ -475,7 +513,7 @@
      "display": "Muse Code",
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 45,
      "placeholder": false,
      "raw": "[[06_Resources/harness-muse-code|Muse Code]]",
      "resolved": "06_Resources/harness-muse-code.md",
@@ -486,7 +524,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 42,
+     "line": 46,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -497,7 +535,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 43,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -508,7 +546,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 44,
+     "line": 48,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -519,7 +557,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 44,
+     "line": 48,
      "placeholder": false,
      "raw": "[[06_Resources/harness-copilot]]",
      "resolved": "06_Resources/harness-copilot.md",
@@ -530,7 +568,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 48,
+     "line": 52,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -541,7 +579,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 48,
+     "line": 52,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -552,7 +590,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 50,
+     "line": 54,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -563,7 +601,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 54,
+     "line": 58,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -574,7 +612,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 54,
+     "line": 58,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -585,7 +623,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 59,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -596,7 +634,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 60,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -607,7 +645,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 60,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -618,7 +656,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 57,
+     "line": 61,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -629,7 +667,7 @@
      "display": "express-packet",
      "embed": false,
      "fragment": null,
-     "line": 62,
+     "line": 66,
      "placeholder": false,
      "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
      "resolved": "10_Agents/skills/express-packet/SKILL.md",
@@ -640,7 +678,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 67,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -651,7 +689,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 67,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -662,7 +700,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 63,
+     "line": 67,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -673,7 +711,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 69,
+     "line": 73,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -684,7 +722,7 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 71,
+     "line": 75,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
@@ -695,7 +733,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 75,
+     "line": 79,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -706,7 +744,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 76,
+     "line": 80,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -717,7 +755,7 @@
      "display": "distill-note",
      "embed": false,
      "fragment": null,
-     "line": 80,
+     "line": 84,
      "placeholder": false,
      "raw": "[[10_Agents/skills/distill-note/SKILL|distill-note]]",
      "resolved": "10_Agents/skills/distill-note/SKILL.md",
@@ -728,7 +766,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 81,
+     "line": 85,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -739,7 +777,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 82,
+     "line": 86,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -750,7 +788,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 86,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -761,7 +799,7 @@
      "display": "research-to-resource",
      "embed": false,
      "fragment": null,
-     "line": 92,
+     "line": 96,
      "placeholder": false,
      "raw": "[[10_Agents/skills/research-to-resource/SKILL|research-to-resource]]",
      "resolved": "10_Agents/skills/research-to-resource/SKILL.md",
@@ -772,7 +810,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 92,
+     "line": 96,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -783,7 +821,7 @@
      "display": "the harness research's Copilot section",
      "embed": false,
      "fragment": null,
-     "line": 93,
+     "line": 97,
      "placeholder": false,
      "raw": "[[06_Resources/harness-copilot|the harness research's Copilot section]]",
      "resolved": "06_Resources/harness-copilot.md",
@@ -794,7 +832,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 97,
+     "line": 101,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -805,7 +843,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 97,
+     "line": 101,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -816,7 +854,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 97,
+     "line": 101,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -827,7 +865,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 97,
+     "line": 101,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -838,7 +876,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 98,
+     "line": 102,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -849,7 +887,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 98,
+     "line": 102,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -860,7 +898,7 @@
      "display": "that section",
      "embed": false,
      "fragment": null,
-     "line": 103,
+     "line": 107,
      "placeholder": false,
      "raw": "[[06_Resources/harness-copilot|that section]]",
      "resolved": "06_Resources/harness-copilot.md",
@@ -871,7 +909,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 104,
+     "line": 108,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -882,7 +920,7 @@
      "display": "the wiring doc",
      "embed": false,
      "fragment": null,
-     "line": 105,
+     "line": 109,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring|the wiring doc]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -893,7 +931,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 105,
+     "line": 109,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -904,7 +942,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 105,
+     "line": 109,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -915,18 +953,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 106,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 113,
+     "line": 110,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -939,6 +966,17 @@
      "fragment": null,
      "line": 117,
      "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 121,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -948,7 +986,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 124,
+     "line": 128,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -959,7 +997,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 125,
+     "line": 129,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -970,7 +1008,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 129,
+     "line": 133,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -981,7 +1019,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 139,
+     "line": 143,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -992,7 +1030,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 145,
+     "line": 149,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1003,7 +1041,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 152,
+     "line": 156,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -1014,7 +1052,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 153,
+     "line": 157,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1025,7 +1063,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 153,
+     "line": 157,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -1036,7 +1074,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 157,
+     "line": 161,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1044,7 +1082,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 29872,
+   "sizeBytes": 30457,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -1360,11 +1398,11 @@
     "00_Meta/changelog.md",
     "00_Meta/conventions.md",
     "00_Meta/prd.md",
-    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "03_Journal/README.md",
     "04_Projects/README.md",
     "05_Areas/README.md",
     "06_Resources/README.md",
+    "06_Resources/vscode-editor-support.md",
     "07_Archives/README.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
@@ -1832,8 +1870,8 @@
     "00_Meta/conventions.md",
     "00_Meta/index.md",
     "00_Meta/status.md",
-    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "06_Resources/harness-primitives-research.md",
+    "06_Resources/vscode-editor-support.md",
     "07_Archives/inbox/2026-08-11-copilot-p0-plan.md",
     "07_Archives/inbox/2026-08-11-expires-backfill-report.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
@@ -2201,6 +2239,17 @@
      "display": null,
      "embed": false,
      "fragment": null,
+     "line": 91,
+     "placeholder": false,
+     "raw": "[[06_Resources/vscode-editor-support]]",
+     "resolved": "06_Resources/vscode-editor-support.md",
+     "target": "06_Resources/vscode-editor-support",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
      "line": 111,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
@@ -2341,7 +2390,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 36733,
+   "sizeBytes": 36700,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -3268,157 +3317,6 @@
    ],
    "sizeBytes": 17953,
    "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)",
-   "updated": "2026-08-11"
-  },
-  "02_Inbox/2026-08-11-vscode-editor-support.md": {
-   "backlinks": [],
-   "bodyTags": [],
-   "frontmatter": {
-    "tags": [
-     "audience/agent",
-     "audience/human",
-     "type/reference",
-     "topic/software",
-     "workflow/draft"
-    ],
-    "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
-    "updated": "2026-08-11"
-   },
-   "frontmatterErrors": [],
-   "headings": [
-    {
-     "level": 1,
-     "line": 12,
-     "text": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config"
-    },
-    {
-     "level": 2,
-     "line": 16,
-     "text": "Trust policy (owner decision, 2026-08-11)"
-    },
-    {
-     "level": 2,
-     "line": 26,
-     "text": "Requirements (brainstormed, tiered)"
-    },
-    {
-     "level": 2,
-     "line": 57,
-     "text": "Candidates evaluated (research, 2026-08-11)"
-    },
-    {
-     "level": 2,
-     "line": 81,
-     "text": "Shipped config: `.obsidian` → `.vscode` mapping"
-    },
-    {
-     "level": 2,
-     "line": 95,
-     "text": "Round-two decisions (owner, 2026-08-11) and what shipped"
-    },
-    {
-     "level": 2,
-     "line": 108,
-     "text": "Verification and adversarial review (2026-08-11)"
-    },
-    {
-     "level": 2,
-     "line": 124,
-     "text": "Process notes"
-    }
-   ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 14,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 14,
-     "placeholder": false,
-     "raw": "[[00_Meta/prd]]",
-     "resolved": "00_Meta/prd.md",
-     "target": "00_Meta/prd",
-     "warnings": []
-    },
-    {
-     "display": "daily-log",
-     "embed": false,
-     "fragment": null,
-     "line": 41,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
-     "resolved": "10_Agents/skills/daily-log/SKILL.md",
-     "target": "10_Agents/skills/daily-log/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "daily-log",
-     "embed": false,
-     "fragment": null,
-     "line": 53,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
-     "resolved": "10_Agents/skills/daily-log/SKILL.md",
-     "target": "10_Agents/skills/daily-log/SKILL",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 101,
-     "placeholder": false,
-     "raw": "[[10_Agents/harnesses/cursor/wiring]]",
-     "resolved": "10_Agents/harnesses/cursor/wiring.md",
-     "target": "10_Agents/harnesses/cursor/wiring",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 103,
-     "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 106,
-     "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 106,
-     "placeholder": false,
-     "raw": "[[00_Meta/index]]",
-     "resolved": "00_Meta/index.md",
-     "target": "00_Meta/index",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 12124,
-   "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
    "updated": "2026-08-11"
   },
   "02_Inbox/README.md": {
@@ -6675,6 +6573,160 @@
    "title": "Harness Primitives: Universal Standards & Protocols",
    "updated": "2026-08-11"
   },
+  "06_Resources/vscode-editor-support.md": {
+   "backlinks": [
+    "00_Meta/changelog.md",
+    "00_Meta/prd.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2026-11-11",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/reference",
+     "topic/software"
+    ],
+    "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Trust policy (owner decision, 2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Requirements (brainstormed, tiered)"
+    },
+    {
+     "level": 2,
+     "line": 57,
+     "text": "Candidates evaluated (research, 2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 81,
+     "text": "Shipped config: `.obsidian` → `.vscode` mapping"
+    },
+    {
+     "level": 2,
+     "line": 95,
+     "text": "Round-two decisions (owner, 2026-08-11) and what shipped"
+    },
+    {
+     "level": 2,
+     "line": 108,
+     "text": "Verification and adversarial review (2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 124,
+     "text": "Process notes"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 41,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 53,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 101,
+     "placeholder": false,
+     "raw": "[[10_Agents/harnesses/cursor/wiring]]",
+     "resolved": "10_Agents/harnesses/cursor/wiring.md",
+     "target": "10_Agents/harnesses/cursor/wiring",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 103,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 106,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 106,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 12264,
+   "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
+   "updated": "2026-08-11"
+  },
   "07_Archives/README.md": {
    "backlinks": [
     "00_Meta/index.md",
@@ -9400,7 +9452,7 @@
     "00_Meta/prd.md",
     "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
-    "02_Inbox/2026-08-11-vscode-editor-support.md",
+    "06_Resources/vscode-editor-support.md",
     "10_Agents/README.md",
     "10_Agents/docs/README.md",
     "10_Agents/skills/curate/SKILL.md",
@@ -10080,7 +10132,7 @@
   },
   "10_Agents/harnesses/cursor/wiring.md": {
    "backlinks": [
-    "02_Inbox/2026-08-11-vscode-editor-support.md",
+    "06_Resources/vscode-editor-support.md",
     "10_Agents/harnesses/README.md"
    ],
    "bodyTags": [],
@@ -11061,7 +11113,7 @@
   },
   "10_Agents/skills/daily-log/SKILL.md": {
    "backlinks": [
-    "02_Inbox/2026-08-11-vscode-editor-support.md",
+    "06_Resources/vscode-editor-support.md",
     "10_Agents/docs/operating-rules.md",
     "10_Agents/skills/README.md",
     "10_Agents/tools/vscode/README.md"

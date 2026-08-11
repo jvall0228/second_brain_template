@@ -5,8 +5,8 @@ tags:
   - audience/human
   - type/reference
   - topic/software
-  - workflow/draft
 updated: 2026-08-11
+expires: 2026-11-11
 ---
 
 # VS Code as Alternative Editor: Requirements, Trust Policy, and Config
@@ -99,7 +99,7 @@ Sources:
 3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute), all built-in task machinery, `python3` the only requirement.
 4. **Snippets over raw templates as the user-facing surface:** shipped `.vscode/second-brain.code-snippets`, **generated** from `09_Templates/` by `10_Agents/tools/vscode/gen_snippets.py` and kept in sync automatically by the pre-commit hook (`--check` mode available). `{{date}}` maps to VS Code's auto-filling date variables; other tokens become tabstops. Plus an `sb-frontmatter` snippet for bare capture.
 5. **Cursor synergy:** noted in [[10_Agents/harnesses/cursor/wiring]] — the whole `.vscode/` surface works in Cursor unchanged.
-6. **Acceptance criteria:** written into PRD §6.5. Config is script-verified in this environment (snippet generation deterministic + valid JSON, daily-note output passes `brain validate`, tasks reference real commands); the open-in-real-VS-Code pass remains for the owner before merge.
+6. **Acceptance criteria:** written into PRD §6.5. Config is script-verified in this environment (snippet generation deterministic + valid JSON, daily-note output passes `brain validate`, tasks reference real commands); the open-in-real-VS-Code acceptance pass was waived by the owner at merge (2026-08-11).
 7. **Homepage on open:** shipped as a `folderOpen` automatic task opening [[00_Meta/index]] (VS Code prompts once to allow automatic tasks; needs the `code` CLI on PATH, silently no-ops without it). Obsidian core has no auto-open equivalent — a community "Homepage" plugin exists but fails the trust posture; gap noted in the mapping.
 8. **Old duplicate branch:** ignore/delete note stands (below).
 
@@ -119,10 +119,10 @@ Machine verification: brain's 22-test suite passes; snippet generation is determ
 - `tags: []` (explicitly empty list) passes `brain validate`; the missing-tags check only fires when the key is absent.
 - The Claude Code reference hook (`10_Agents/harnesses/claude-code/settings-example.json`) ends `brain validate || true`, so edit-time findings never reach the agent (needs exit 2 + stderr semantics).
 
-**Remaining human verification (gates merge):** the §6.5 acceptance pass in a real VS Code window — extension prompt, `sb-` snippets, task menu, image paste, folder-open homepage.
+**Human verification (§6.5 acceptance pass):** waived by the owner at merge (2026-08-11); the in-editor pass — extension prompt, `sb-` snippets, task menu, image paste, folder-open homepage — remains a recommended spot-check.
 
 ## Process notes
 
 - Requirements were brainstormed first and the trust policy set by the owner before this configuration was finalized; an earlier draft of this branch shipped the Tier 2 community set (Foam et al.) and was reworked to strict first-party on owner direction.
-- Delivered on branch `claude/second-brain-vscode-support-jjtrlg` (owner decision 2026-08-11). `claude/vscode-editor-support` is a session-created duplicate pointing at the same history — no unique commits; ignore it and delete whenever convenient.
+- Delivered on branch `claude/second-brain-vscode-support-jjtrlg` (owner decision 2026-08-11). `claude/vscode-editor-support` is a session-created duplicate pointing at the same history — no unique commits; ignore it. Deleting it currently fails with a GitHub permission error (HTTP 403), so it needs the repo web UI.
 - `brain validate` remains the sole authoritative convention check for the vault; editor tooling is assistance only.
