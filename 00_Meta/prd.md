@@ -123,13 +123,13 @@ updated: 2026-08-11
 ```
 
 ### 8.2 Claude Code adapter file
-`CLAUDE.md` at repo root is a regular file whose body imports the entrypoint via Claude Code's memory-import syntax:
+`CLAUDE.md` at repo root is a **thin adapter**: its entire content is the single memory-import line
 
 ```markdown
 @AGENTS.md
 ```
 
-Claude Code auto-loads `CLAUDE.md` and the `@AGENTS.md` line injects the entrypoint's contents; harnesses that read `AGENTS.md` natively never touch `CLAUDE.md`. The import syntax is Claude-specific, so `CLAUDE.md` also carries a one-line pointer for tooling that doesn't expand `@` imports.
+Claude Code auto-loads `CLAUDE.md` and the `@AGENTS.md` line injects the entrypoint's contents; harnesses that read `AGENTS.md` natively never touch `CLAUDE.md`. As a one-line machine directive rather than a note, `CLAUDE.md` is **exempt from the §10.1 frontmatter requirement** and cannot carry the `workflow/canonical` tag — treat it as canonical for change-control purposes anyway (§6.3).
 
 **Decision history:** the vault originally used `CONTEXT.md` as the entrypoint with `AGENTS.md`/`CLAUDE.md` as aliases (stub files, later symlinks). On 2026-08-11 `CONTEXT.md` was retired: its content moved to `AGENTS.md` (now the real file) and `CLAUDE.md` became the `@`-import adapter above — no symlinks remain, which also removes the old platform-portability caveat.
 
@@ -165,7 +165,7 @@ Today, agents discover available docs and solutions by reading `10_Agents/README
 - `tags` (list of slash-delimited strings)
 - `updated` (ISO `YYYY-MM-DD`)
 
-**Exception:** files in `09_Templates/` may use placeholder tokens (`{{date}}`, `{{title}}`, `{{...}}`); any note instantiated from a template must replace them and set `updated` to a real ISO date.
+**Exceptions:** files in `09_Templates/` may use placeholder tokens (`{{date}}`, `{{title}}`, `{{...}}`); any note instantiated from a template must replace them and set `updated` to a real ISO date. `CLAUDE.md` carries no frontmatter at all — it is a one-line adapter, not a note (§8.2).
 
 Example:
 ```yaml
@@ -197,7 +197,7 @@ Tags signal **intent and handling, not access control**. Agents should assume al
 
 Canonical notes are read-only for agents except via the change-control process in §6.3.
 
-**Current canonical set:** `AGENTS.md`, `CLAUDE.md`, `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `01_Profile/now.md`, `01_Profile/preferences.md`, `01_Profile/defaults.md`, `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`.
+**Current canonical set:** `AGENTS.md`, `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `01_Profile/now.md`, `01_Profile/preferences.md`, `01_Profile/defaults.md`, `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`. (`CLAUDE.md` cannot carry the tag — see §8.2 — but follows the same change control.)
 
 **Deliberately not canonical:** `00_Meta/status.md` is a living snapshot that agents may update directly (e.g. milestone status); this is recorded in the note itself.
 
@@ -308,7 +308,7 @@ Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 - All eleven number-prefixed directories exist.
 - `AGENTS.md` exists at root, lists the §6.1 four-item order first, and names `02_Inbox/` as the default write location.
 - `CLAUDE.md` exists at root and its body contains the `@AGENTS.md` import line.
-- Every markdown note passes the §10.1 frontmatter check (`title`, `tags`, `updated`; slash-delimited tags) — scriptable, template placeholders exempt.
+- Every markdown note passes the §10.1 frontmatter check (`title`, `tags`, `updated`; slash-delimited tags) — scriptable; template placeholders and the `CLAUDE.md` adapter exempt.
 - An agent-authored note with required frontmatter exists in `02_Inbox/` (the M0 success criterion).
 - Zero unresolved wikilinks from `AGENTS.md`, `00_Meta/index.md`, and section READMEs (template placeholders exempt).
 - Canonical notes carry `workflow/canonical`, and the change-control table in [[00_Meta/conventions]] covers them (Git-native collaboration goal).

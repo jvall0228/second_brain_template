@@ -15,7 +15,7 @@ Notable structural changes to the vault. For individual file history, use `git l
 ## 2026-08-11 — AGENTS.md Becomes the Entrypoint
 
 - Retired `CONTEXT.md`: its content now lives in `AGENTS.md`, the standard cross-harness agent entrypoint (git history preserved via rename).
-- Replaced the symlink aliases with a real `CLAUDE.md` containing the `@AGENTS.md` memory-import line — Claude Code auto-loads `CLAUDE.md` and injects the entrypoint's contents; other harnesses read `AGENTS.md` directly.
+- Replaced the symlink aliases with a thin one-line `CLAUDE.md` containing only the `@AGENTS.md` memory-import line — Claude Code auto-loads it and injects the entrypoint's contents; other harnesses read `AGENTS.md` directly. As a one-line adapter, `CLAUDE.md` is exempt from the frontmatter requirement (see [[00_Meta/conventions]]) but follows canonical change control.
 - Updated every reference across the vault (PRD §8 rewritten as "Universal agent entrypoint" with the decision history; bootstrap sequences, index, conventions' entrypoint exceptions, READMEs, operating rules, status).
 
 ## 2026-08-11 — PRD v2 + Spec Alignment

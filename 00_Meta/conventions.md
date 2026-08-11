@@ -59,6 +59,10 @@ updated: YYYY-MM-DD
 
 Files in `09_Templates/` may use placeholder tokens such as `{{date}}`, `{{title}}`, and `{{...}}` in frontmatter and body. Any instantiated note created from a template must replace placeholders and set `updated` to a real ISO date.
 
+### Adapter File Exception
+
+`CLAUDE.md` at the vault root carries no frontmatter: it is a one-line adapter (`@AGENTS.md`) that Claude Code expands into the [[AGENTS]] entrypoint, not a note. It follows canonical change control despite having no tags.
+
 ## Tag Namespaces
 
 Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/prd]] and [[AGENTS]]) summarize it. Current namespaces:
