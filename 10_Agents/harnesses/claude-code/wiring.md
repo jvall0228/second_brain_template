@@ -43,6 +43,8 @@ python3 10_Agents/tools/brain/brain.py <command> --json
 
 Pre-approve it with a permission allow rule (see `settings-example.json`) so queries never prompt.
 
+**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §17): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+
 ## Harness-specific notes
 
 - **Permission denies** can hard-enforce change control (deny `Edit` on `00_Meta/**`, `01_Profile/**`) — stricter than the vault's approval-based policy, so the reference config includes them for adopters who want belt-and-suspenders; note an approved canonical edit then requires loosening the rule. There is **no `.claudeignore`** — privacy exclusion is deny `Read()` rules, and the vault-wide privacy policy is still an open owner decision (PRD §21).

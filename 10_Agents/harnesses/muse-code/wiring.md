@@ -32,6 +32,8 @@ Muse scans the shared `.agents/skills/` (plus compat paths) — the `~/.agents/s
 python3 10_Agents/tools/brain/brain.py <command> --json
 ```
 
+**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §17): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+
 ## Harness-specific notes
 
 - **Config is user-scope only** (`~/.config/muse/settings.json`) — no project settings, no project MCP. Anything per-vault must be documented for manual user-scope setup, not committed.

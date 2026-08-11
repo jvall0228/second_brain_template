@@ -1,6 +1,10 @@
 __pycache__/
 *.pyc
 
+# Semantic-search embeddings sidecar (brain spec §17.1): model- and
+# machine-specific, regenerated per clone — never committed, unlike the index.
+10_Agents/tools/brain/vault-embeddings.json
+
 # Machine-local Cursor overlay artifacts (installed per-clone by
 # onboard-harness, reversed by delete — never shared between machines).
 .cursor/

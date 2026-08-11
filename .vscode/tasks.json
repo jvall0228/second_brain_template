@@ -35,6 +35,14 @@
       "problemMatcher": []
     },
     {
+      "label": "Brain: Semantic Search",
+      "detail": "Relevance-ranked notes via the embeddings sidecar (spec \u00a717); degrades to keyword search when no vectors exist",
+      "type": "shell",
+      "command": "python3 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"",
+      "windows": { "command": "python 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"" },
+      "problemMatcher": []
+    },
+    {
       "label": "Brain: Recent Notes",
       "type": "shell",
       "command": "python3 10_Agents/tools/brain/brain.py recent",
@@ -79,6 +87,11 @@
       "id": "brainQuery",
       "type": "promptString",
       "description": "Search titles, headings, and body text across the vault"
+    },
+    {
+      "id": "brainSemanticQuery",
+      "type": "promptString",
+      "description": "Natural-language question to rank vault notes against (semantic search)"
     }
   ]
 }
