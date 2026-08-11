@@ -80,7 +80,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 
 ## Recommended community skills
 
-Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — pinned refs, license and trust notes, per-item owner sign-off — lives at [[06_Resources/recommended-skills]]. Community content installs to the harness's user scope via [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] and is never vendored into this directory.
+Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — branch-tracked upstreams (installs the latest), license and trust notes, per-item owner sign-off against the fetched content — lives at [[06_Resources/recommended-skills]], backed by the machine-readable registry [[10_Agents/components/README|10_Agents/components/manifest.json]] (which also carries first-party overlays and vault-config presets). Community content installs to the harness's user scope via [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] and is never vendored into this directory.
 
 ## The Rhythm (cadence table)
 
