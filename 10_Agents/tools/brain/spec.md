@@ -599,8 +599,13 @@ different target is replaceable only when its digest matches this manifest's
 recorded digest. Apply uses same-directory temporary files and `os.replace`; if
 manifest update fails after a target mutation, the old target is restored (or
 the new target removed). Uninstall likewise refuses drift and restores a removed
-target if manifest cleanup fails. Preview, doctor, and refused operations make
-zero writes. Tests use fake PATH/state/home directories exclusively.
+target if manifest cleanup fails. Target and state parent chains are
+identity-bound before reads or writes; POSIX mutations use a held directory
+descriptor, while the portable fallback rechecks every component and rejects
+symlink/reparse-point swaps. A `KeyboardInterrupt` during the manifest phase
+rolls the preceding target mutation back before propagating. Preview, doctor,
+and refused operations make zero writes. Tests use fake PATH/state/home
+directories exclusively.
 
 ### 21.3 Host capability boundary
 

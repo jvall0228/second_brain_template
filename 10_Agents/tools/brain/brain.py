@@ -18,6 +18,7 @@ import json
 import math
 import os
 import re
+import secrets
 import stat
 import subprocess
 import sys
@@ -4066,25 +4067,6 @@ def _installer_source(root: Path, filename: str) -> Path:
     return source
 
 
-def _external_digest(path: Path) -> str | None:
-    try:
-        if path.is_symlink():
-            return None
-        info = path.stat()
-        if not stat.S_ISREG(info.st_mode) or info.st_size > 1024 * 1024:
-            return None
-        digest = hashlib.sha256()
-        with path.open("rb") as handle:
-            while True:
-                chunk = handle.read(64 * 1024)
-                if not chunk:
-                    break
-                digest.update(chunk)
-        return digest.hexdigest()
-    except OSError:
-        return None
-
-
 def _outside_vault(root: Path, path: Path, label: str) -> Path:
     if not path.is_absolute():
         raise InstallError(f"{label} must be an absolute path")
@@ -4126,17 +4108,229 @@ def _empty_install_manifest() -> dict:
     return {"artifacts": [], "schemaVersion": INSTALL_MANIFEST_SCHEMA_VERSION}
 
 
-def _load_install_manifest(path: Path) -> tuple[dict, bool]:
-    if not path.exists() and not path.is_symlink():
-        return _empty_install_manifest(), False
-    if path.is_symlink() or not path.is_file():
-        raise InstallError("install manifest is not a regular file")
+def _capture_external_parent(root: Path, path: Path, label: str) -> dict:
+    """Snapshot a non-link directory chain outside the vault."""
+    parent = path.parent
     try:
-        if os.name != "nt" and stat.S_IMODE(path.stat().st_mode) & 0o077:
+        parent.relative_to(root.resolve())
+    except ValueError:
+        pass
+    else:
+        raise InstallError(f"{label} must be outside the vault")
+    chain = [*reversed(parent.parents), parent]
+    snapshots = []
+    try:
+        for component in chain:
+            info = os.lstat(component)
+            if _link_like_stat(info) or not stat.S_ISDIR(info.st_mode):
+                raise InstallError(f"{label} parent chain is unsafe")
+            snapshots.append(
+                (str(component), info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode))
+            )
+    except OSError:
+        raise InstallError(f"{label} parent is unavailable") from None
+    return {"label": label, "parent": parent, "snapshots": tuple(snapshots)}
+
+
+def _assert_external_parent(guard: dict) -> None:
+    try:
+        for raw, device, inode, kind in guard["snapshots"]:
+            info = os.lstat(raw)
+            current = (info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode))
+            if _link_like_stat(info) or current != (device, inode, kind):
+                raise InstallError(f"{guard['label']} parent changed after preflight")
+    except OSError:
+        raise InstallError(f"{guard['label']} parent changed after preflight") from None
+
+
+def _open_external_parent(guard: dict) -> int | None:
+    """Open and identity-check the guarded directory when openat is available."""
+    _assert_external_parent(guard)
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    directory = getattr(os, "O_DIRECTORY", 0)
+    if not (nofollow and directory and os.open in getattr(os, "supports_dir_fd", set())):
+        return None
+    descriptor = os.open(
+        guard["parent"], os.O_RDONLY | directory | nofollow | getattr(os, "O_CLOEXEC", 0)
+    )
+    info = os.fstat(descriptor)
+    _raw, device, inode, kind = guard["snapshots"][-1]
+    if (info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode)) != (
+        device,
+        inode,
+        kind,
+    ):
+        os.close(descriptor)
+        raise InstallError(f"{guard['label']} parent changed after preflight")
+    return descriptor
+
+
+def _ensure_external_parent(root: Path, path: Path, label: str) -> dict:
+    """Create a missing private parent without traversing a link on POSIX."""
+    parent = path.parent
+    if parent.exists() or parent.is_symlink():
+        return _capture_external_parent(root, path, label)
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    directory = getattr(os, "O_DIRECTORY", 0)
+    if nofollow and directory and os.open in getattr(os, "supports_dir_fd", set()):
+        parts = parent.parts
+        current_path = Path(parts[0])
+        descriptor = os.open(
+            current_path,
+            os.O_RDONLY | directory | nofollow | getattr(os, "O_CLOEXEC", 0),
+        )
+        try:
+            for part in parts[1:]:
+                try:
+                    child = os.open(
+                        part,
+                        os.O_RDONLY | directory | nofollow | getattr(os, "O_CLOEXEC", 0),
+                        dir_fd=descriptor,
+                    )
+                except FileNotFoundError:
+                    try:
+                        os.mkdir(part, 0o700, dir_fd=descriptor)
+                    except FileExistsError:
+                        pass
+                    child = os.open(
+                        part,
+                        os.O_RDONLY | directory | nofollow | getattr(os, "O_CLOEXEC", 0),
+                        dir_fd=descriptor,
+                    )
+                os.close(descriptor)
+                descriptor = child
+                current_path = current_path / part
+        except OSError:
+            raise InstallError(f"{label} parent could not be created safely") from None
+        finally:
+            os.close(descriptor)
+    else:
+        # The subsequent capture rejects a reparse-point chain and binds the
+        # resulting identities. Windows mutation helpers recheck that guard.
+        parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    return _capture_external_parent(root, path, label)
+
+
+def _external_lstat(path: Path, guard: dict) -> os.stat_result | None:
+    descriptor = _open_external_parent(guard)
+    if descriptor is not None:
+        try:
+            try:
+                return os.stat(path.name, dir_fd=descriptor, follow_symlinks=False)
+            except FileNotFoundError:
+                return None
+        finally:
+            os.close(descriptor)
+    try:
+        info = os.lstat(path)
+    except FileNotFoundError:
+        _assert_external_parent(guard)
+        return None
+    _assert_external_parent(guard)
+    return info
+
+
+def _read_external_regular(
+    path: Path, guard: dict, *, max_bytes: int
+) -> tuple[bytes, int] | None:
+    """Read an external regular file through its bound parent directory."""
+    descriptor = _open_external_parent(guard)
+    if descriptor is not None:
+        opened = None
+        try:
+            try:
+                opened = os.open(
+                    path.name,
+                    os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0),
+                    dir_fd=descriptor,
+                )
+            except FileNotFoundError:
+                return None
+            info = os.fstat(opened)
+            if (
+                not stat.S_ISREG(info.st_mode)
+                or info.st_size > max_bytes
+                or _link_like_stat(info)
+            ):
+                raise InstallError("external artifact is not a safe regular file")
+            chunks: list[bytes] = []
+            total = 0
+            while True:
+                chunk = os.read(opened, 64 * 1024)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > max_bytes:
+                    raise InstallError("external artifact exceeds its read limit")
+                chunks.append(chunk)
+            return b"".join(chunks), stat.S_IMODE(info.st_mode)
+        except OSError:
+            raise InstallError("external artifact changed during read") from None
+        finally:
+            if opened is not None:
+                os.close(opened)
+            os.close(descriptor)
+
+    # Portable fallback: refuse redirects, compare lstat to the opened file,
+    # then recheck both file and parent identities after reading.
+    try:
+        before = os.lstat(path)
+    except FileNotFoundError:
+        _assert_external_parent(guard)
+        return None
+    if (
+        _link_like_stat(before)
+        or not stat.S_ISREG(before.st_mode)
+        or before.st_size > max_bytes
+    ):
+        raise InstallError("external artifact is not a safe regular file")
+    opened = os.open(path, os.O_RDONLY | getattr(os, "O_BINARY", 0))
+    try:
+        info = os.fstat(opened)
+        expected = (before.st_dev, before.st_ino, stat.S_IFMT(before.st_mode))
+        actual = (info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode))
+        if actual != expected:
+            raise InstallError("external artifact changed during read")
+        chunks = []
+        total = 0
+        while True:
+            chunk = os.read(opened, 64 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > max_bytes:
+                raise InstallError("external artifact exceeds its read limit")
+            chunks.append(chunk)
+    finally:
+        os.close(opened)
+    after = os.lstat(path)
+    _assert_external_parent(guard)
+    if _link_like_stat(after) or (
+        after.st_dev,
+        after.st_ino,
+        stat.S_IFMT(after.st_mode),
+    ) != expected:
+        raise InstallError("external artifact changed during read")
+    return b"".join(chunks), stat.S_IMODE(info.st_mode)
+
+
+def _external_digest(path: Path, guard: dict) -> str | None:
+    result = _read_external_regular(path, guard, max_bytes=1024 * 1024)
+    return hashlib.sha256(result[0]).hexdigest() if result is not None else None
+
+
+def _load_install_manifest(path: Path, guard: dict | None) -> tuple[dict, bool, bytes | None]:
+    if guard is None:
+        if path.parent.exists() or path.parent.is_symlink():
+            raise InstallError("install manifest parent changed during preflight")
+        return _empty_install_manifest(), False, None
+    try:
+        result = _read_external_regular(path, guard, max_bytes=64 * 1024)
+        if result is None:
+            return _empty_install_manifest(), False, None
+        raw, mode = result
+        if os.name != "nt" and mode & 0o077:
             raise InstallError("install manifest permissions are not private")
-        raw = path.read_bytes()
-        if len(raw) > 64 * 1024:
-            raise ValueError("oversized")
         data = json.loads(raw.decode("utf-8"))
     except InstallError:
         raise
@@ -4168,7 +4362,7 @@ def _load_install_manifest(path: Path) -> tuple[dict, bool]:
         ):
             raise InstallError("install manifest contains an invalid artifact")
         seen_platforms.add(row["platform"])
-    return data, True
+    return data, True, raw
 
 
 def _path_install_directory(
@@ -4214,8 +4408,52 @@ def _path_install_directory(
     return candidates[0]
 
 
-def _atomic_external_write(path: Path, data: bytes, mode: int) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+def _atomic_external_write(path: Path, data: bytes, mode: int, guard: dict) -> None:
+    descriptor = _open_external_parent(guard)
+    if descriptor is not None:
+        temporary = None
+        file_descriptor = None
+        try:
+            for _attempt in range(20):
+                candidate = ".brain-install-" + secrets.token_hex(12)
+                try:
+                    file_descriptor = os.open(
+                        candidate,
+                        os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_CLOEXEC", 0),
+                        0o600,
+                        dir_fd=descriptor,
+                    )
+                    temporary = candidate
+                    break
+                except FileExistsError:
+                    continue
+            if file_descriptor is None or temporary is None:
+                raise OSError("could not allocate temporary artifact")
+            with os.fdopen(file_descriptor, "wb") as handle:
+                file_descriptor = None
+                handle.write(data)
+                handle.flush()
+                os.fsync(handle.fileno())
+                os.fchmod(handle.fileno(), mode)
+            os.replace(
+                temporary,
+                path.name,
+                src_dir_fd=descriptor,
+                dst_dir_fd=descriptor,
+            )
+            temporary = None
+        finally:
+            if file_descriptor is not None:
+                os.close(file_descriptor)
+            if temporary is not None:
+                try:
+                    os.unlink(temporary, dir_fd=descriptor)
+                except FileNotFoundError:
+                    pass
+            os.close(descriptor)
+        return
+
+    _assert_external_parent(guard)
     fd, temporary = tempfile.mkstemp(prefix=".brain-install-", dir=path.parent)
     temporary_path = Path(temporary)
     try:
@@ -4223,7 +4461,8 @@ def _atomic_external_write(path: Path, data: bytes, mode: int) -> None:
             handle.write(data)
             handle.flush()
             os.fsync(handle.fileno())
-        os.chmod(temporary_path, mode)
+            os.fchmod(handle.fileno(), mode)
+        _assert_external_parent(guard)
         os.replace(temporary_path, path)
     finally:
         try:
@@ -4232,16 +4471,42 @@ def _atomic_external_write(path: Path, data: bytes, mode: int) -> None:
             pass
 
 
+def _remove_external(path: Path, guard: dict, *, missing_ok: bool = False) -> None:
+    descriptor = _open_external_parent(guard)
+    if descriptor is not None:
+        try:
+            try:
+                os.unlink(path.name, dir_fd=descriptor)
+            except FileNotFoundError:
+                if not missing_ok:
+                    raise
+        finally:
+            os.close(descriptor)
+        return
+    _assert_external_parent(guard)
+    try:
+        path.unlink()
+    except FileNotFoundError:
+        if not missing_ok:
+            raise
+    _assert_external_parent(guard)
+
+
 def _manifest_bytes(manifest: dict) -> bytes:
     return (
         json.dumps(manifest, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
     ).encode("utf-8")
 
 
-def _target_state(target: Path, source_digest: str, artifact: dict | None) -> str:
-    if not target.exists() and not target.is_symlink():
+def _target_state(
+    target: Path, source_digest: str, artifact: dict | None, guard: dict
+) -> str:
+    info = _external_lstat(target, guard)
+    if info is None:
         return "absent"
-    digest = _external_digest(target)
+    if _link_like_stat(info) or not stat.S_ISREG(info.st_mode):
+        return "foreign"
+    digest = _external_digest(target, guard)
     if digest is None:
         return "foreign"
     if digest == source_digest:
@@ -4251,23 +4516,36 @@ def _target_state(target: Path, source_digest: str, artifact: dict | None) -> st
     return "foreign"
 
 
-def _manifest_is_unchanged(path: Path, present: bool, snapshot: bytes | None) -> bool:
+def _manifest_is_unchanged(
+    path: Path, present: bool, snapshot: bytes | None, guard: dict
+) -> bool:
     if not present:
-        return not path.exists() and not path.is_symlink()
+        return _external_lstat(path, guard) is None
     try:
-        return not path.is_symlink() and path.read_bytes() == snapshot
-    except OSError:
+        result = _read_external_regular(path, guard, max_bytes=64 * 1024)
+        return result is not None and result[0] == snapshot
+    except (OSError, InstallError):
         return False
 
 
-def _restore_external(path: Path, prior: tuple[bytes, int] | None) -> None:
+_EXTERNAL_ABSENT = object()
+
+
+def _restore_external(
+    path: Path,
+    prior: tuple[bytes, int] | None,
+    guard: dict,
+    expected_current: object | str,
+) -> None:
+    if expected_current is _EXTERNAL_ABSENT:
+        if _external_lstat(path, guard) is not None:
+            raise InstallError("rollback refused because target is no longer absent")
+    elif _external_digest(path, guard) != expected_current:
+        raise InstallError("rollback refused because target changed")
     if prior is None:
-        try:
-            path.unlink()
-        except FileNotFoundError:
-            pass
+        _remove_external(path, guard, missing_ok=True)
         return
-    _atomic_external_write(path, prior[0], prior[1])
+    _atomic_external_write(path, prior[0], prior[1], guard)
 
 
 def cmd_install(root: Path, args) -> int:
@@ -4280,8 +4558,14 @@ def cmd_install(root: Path, args) -> int:
         source_digest = hashlib.sha256(source_bytes).hexdigest()
         source_mode = stat.S_IMODE(source.stat().st_mode)
         state_file = _install_state_path(root, args, environ)
-        manifest, manifest_present = _load_install_manifest(state_file)
-        manifest_snapshot = state_file.read_bytes() if manifest_present else None
+        state_guard = (
+            _capture_external_parent(root, state_file, "state file")
+            if state_file.parent.exists() or state_file.parent.is_symlink()
+            else None
+        )
+        manifest, manifest_present, manifest_snapshot = _load_install_manifest(
+            state_file, state_guard
+        )
         artifact = next(
             (row for row in manifest["artifacts"] if row["platform"] == platform_name),
             None,
@@ -4304,7 +4588,8 @@ def cmd_install(root: Path, args) -> int:
             target_dir = _path_install_directory(root, environ, explicit_target)
             target = _outside_vault(root, target_dir / filename, "target")
 
-        state = _target_state(target, source_digest, artifact)
+        target_guard = _capture_external_parent(root, target, "target")
+        state = _target_state(target, source_digest, artifact, target_guard)
         on_path = any(
             raw
             and Path(raw).is_absolute()
@@ -4360,16 +4645,25 @@ def cmd_install(root: Path, args) -> int:
                     ["brain uninstall preview:", *(f"  {a}" for a in payload["actions"]), "writes performed: no"],
                 )
                 return 0
+            if state_guard is None:
+                state_guard = _ensure_external_parent(root, state_file, "state file")
+            else:
+                _assert_external_parent(state_guard)
             if not _manifest_is_unchanged(
-                state_file, manifest_present, manifest_snapshot
+                state_file, manifest_present, manifest_snapshot, state_guard
             ):
                 raise InstallError("install manifest changed after preview; retry")
             prior = None
             if state != "absent":
-                if _target_state(target, source_digest, artifact) != state:
+                if _target_state(target, source_digest, artifact, target_guard) != state:
                     raise InstallError("installed launcher changed after preview; retry")
-                prior = (target.read_bytes(), stat.S_IMODE(target.stat().st_mode))
-                target.unlink()
+                current = _read_external_regular(
+                    target, target_guard, max_bytes=1024 * 1024
+                )
+                if current is None:
+                    raise InstallError("installed launcher changed after preview; retry")
+                prior = current
+                _remove_external(target, target_guard)
             remaining = [
                 row for row in manifest["artifacts"] if row["platform"] != platform_name
             ]
@@ -4379,17 +4673,25 @@ def cmd_install(root: Path, args) -> int:
             }
             try:
                 if not _manifest_is_unchanged(
-                    state_file, manifest_present, manifest_snapshot
+                    state_file, manifest_present, manifest_snapshot, state_guard
                 ):
                     raise OSError("manifest changed")
                 if remaining:
-                    _atomic_external_write(state_file, _manifest_bytes(updated), 0o600)
+                    _atomic_external_write(
+                        state_file, _manifest_bytes(updated), 0o600, state_guard
+                    )
                 else:
-                    state_file.unlink()
-            except OSError:
+                    _remove_external(state_file, state_guard)
+            except (OSError, InstallError, KeyboardInterrupt) as exc:
                 if prior is not None:
-                    _restore_external(target, prior)
-                raise InstallError("uninstall could not update its manifest; target restored") from None
+                    _restore_external(
+                        target, prior, target_guard, _EXTERNAL_ABSENT
+                    )
+                if isinstance(exc, KeyboardInterrupt):
+                    raise
+                raise InstallError(
+                    "uninstall could not update its manifest; target restored"
+                ) from None
             payload["writesPerformed"] = True
             emit(payload, args.json, [f"removed managed launcher: {target}"])
             return 0
@@ -4410,16 +4712,24 @@ def cmd_install(root: Path, args) -> int:
 
         prior = None
         changed_target = state != "current"
+        if state_guard is None:
+            state_guard = _ensure_external_parent(root, state_file, "state file")
+        else:
+            _assert_external_parent(state_guard)
         if not _manifest_is_unchanged(
-            state_file, manifest_present, manifest_snapshot
+            state_file, manifest_present, manifest_snapshot, state_guard
         ):
             raise InstallError("install manifest changed after preview; retry")
         if changed_target:
-            if _target_state(target, source_digest, artifact) != state:
+            if _target_state(target, source_digest, artifact, target_guard) != state:
                 raise InstallError("target changed after preview; retry")
             if state == "managed-upgrade":
-                prior = (target.read_bytes(), stat.S_IMODE(target.stat().st_mode))
-            _atomic_external_write(target, source_bytes, source_mode)
+                prior = _read_external_regular(
+                    target, target_guard, max_bytes=1024 * 1024
+                )
+                if prior is None:
+                    raise InstallError("target changed after preview; retry")
+            _atomic_external_write(target, source_bytes, source_mode, target_guard)
         updated_artifact = {
             "installedDigest": source_digest,
             "platform": platform_name,
@@ -4435,14 +4745,22 @@ def cmd_install(root: Path, args) -> int:
         }
         try:
             if not _manifest_is_unchanged(
-                state_file, manifest_present, manifest_snapshot
+                state_file, manifest_present, manifest_snapshot, state_guard
             ):
                 raise OSError("manifest changed")
-            _atomic_external_write(state_file, _manifest_bytes(updated), 0o600)
-        except OSError:
+            _atomic_external_write(
+                state_file, _manifest_bytes(updated), 0o600, state_guard
+            )
+        except (OSError, InstallError, KeyboardInterrupt) as exc:
             if changed_target:
-                _restore_external(target, prior)
-            raise InstallError("install could not write its manifest; target restored") from None
+                _restore_external(
+                    target, prior, target_guard, source_digest
+                )
+            if isinstance(exc, KeyboardInterrupt):
+                raise
+            raise InstallError(
+                "install could not write its manifest; target restored"
+            ) from None
         payload["status"] = "current"
         payload["writesPerformed"] = True
         emit(payload, args.json, [f"installed managed launcher: {target}"])

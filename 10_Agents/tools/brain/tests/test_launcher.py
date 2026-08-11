@@ -324,16 +324,154 @@ class InstallerTests(unittest.TestCase):
             state_file = base / "state.json"
             original_write = brain._atomic_external_write
 
-            def fail_manifest(path, data, mode):
+            def fail_manifest(path, data, mode, guard):
                 if path.name == "state.json":
                     raise OSError("injected")
-                return original_write(path, data, mode)
+                return original_write(path, data, mode, guard)
 
             with mock.patch.object(brain, "_atomic_external_write", side_effect=fail_manifest):
                 code, _, _ = self.run_install(bin_dir, state_file, "--apply")
             self.assertEqual(code, 1)
             self.assertFalse((bin_dir / "brain").exists())
             self.assertFalse(state_file.exists())
+
+    def test_keyboard_interrupt_during_install_manifest_write_rolls_back_target(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state/brain-install.json"
+            original_write = brain._atomic_external_write
+
+            def interrupt_manifest(path, data, mode, guard):
+                if path == state_file.resolve(strict=False):
+                    raise KeyboardInterrupt
+                return original_write(path, data, mode, guard)
+
+            with mock.patch.object(
+                brain, "_atomic_external_write", side_effect=interrupt_manifest
+            ), self.assertRaises(KeyboardInterrupt):
+                self.run_install(bin_dir, state_file, "--apply")
+            self.assertFalse((bin_dir / "brain").exists())
+            self.assertFalse(state_file.exists())
+
+    def test_keyboard_interrupt_during_uninstall_manifest_removal_restores_target(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state/brain-install.json"
+            code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+            self.assertEqual(code, 0)
+            target = bin_dir / "brain"
+            original_remove = brain._remove_external
+
+            def interrupt_manifest_removal(path, guard, *, missing_ok=False):
+                if path == state_file.resolve(strict=False):
+                    raise KeyboardInterrupt
+                return original_remove(path, guard, missing_ok=missing_ok)
+
+            with mock.patch.object(
+                brain, "_remove_external", side_effect=interrupt_manifest_removal
+            ), self.assertRaises(KeyboardInterrupt):
+                self.run_install(bin_dir, state_file, "--uninstall", "--apply")
+            self.assertEqual(target.read_bytes(), LAUNCHER.read_bytes())
+            self.assertTrue(state_file.exists())
+
+    @unittest.skipUnless(os.name == "posix", "symlink race fixture")
+    def test_target_parent_swap_after_preflight_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_file = base / "state/brain-install.json"
+            malicious = base / "malicious"
+            malicious.mkdir()
+            parked = base / "parked-bin"
+            original_write = brain._atomic_external_write
+            swapped = False
+
+            def swap_before_target_write(path, data, mode, guard):
+                nonlocal swapped
+                if path.name == "brain" and not swapped:
+                    swapped = True
+                    bin_dir.rename(parked)
+                    os.symlink(malicious, bin_dir)
+                return original_write(path, data, mode, guard)
+
+            try:
+                with mock.patch.object(
+                    brain, "_atomic_external_write", side_effect=swap_before_target_write
+                ):
+                    code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+                self.assertEqual(code, 1)
+                self.assertFalse((malicious / "brain").exists())
+                self.assertFalse((parked / "brain").exists())
+            finally:
+                if bin_dir.is_symlink():
+                    bin_dir.unlink()
+                if parked.exists():
+                    parked.rename(bin_dir)
+
+    @unittest.skipUnless(os.name == "posix", "symlink race fixture")
+    def test_state_parent_swap_after_target_write_is_rejected_and_rolled_back(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            state_dir = base / "state"
+            state_dir.mkdir()
+            state_file = state_dir / "brain-install.json"
+            malicious = base / "malicious"
+            malicious.mkdir()
+            parked = base / "parked-state"
+            original_write = brain._atomic_external_write
+            swapped = False
+
+            def swap_before_manifest_write(path, data, mode, guard):
+                nonlocal swapped
+                if path.name == "brain-install.json" and not swapped:
+                    swapped = True
+                    state_dir.rename(parked)
+                    os.symlink(malicious, state_dir)
+                return original_write(path, data, mode, guard)
+
+            try:
+                with mock.patch.object(
+                    brain, "_atomic_external_write", side_effect=swap_before_manifest_write
+                ):
+                    code, _, _ = self.run_install(bin_dir, state_file, "--apply")
+                self.assertEqual(code, 1)
+                self.assertFalse((bin_dir / "brain").exists())
+                self.assertFalse((malicious / "brain-install.json").exists())
+                self.assertFalse((parked / "brain-install.json").exists())
+            finally:
+                if state_dir.is_symlink():
+                    state_dir.unlink()
+                if parked.exists():
+                    parked.rename(state_dir)
+
+    @unittest.skipUnless(os.name == "posix", "symlink race fixture")
+    def test_digest_refuses_parent_swap_without_reading_redirected_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            bin_dir = base / "bin"
+            bin_dir.mkdir()
+            target = (bin_dir / "brain").resolve(strict=False)
+            target.write_bytes(b"managed")
+            guard = brain._capture_external_parent(ROOT, target, "target")
+            parked = base / "parked-bin"
+            malicious = base / "malicious"
+            malicious.mkdir()
+            (malicious / "brain").write_bytes(b"external-secret")
+            bin_dir.rename(parked)
+            os.symlink(malicious, bin_dir)
+            try:
+                with self.assertRaises(brain.InstallError):
+                    brain._external_digest(target, guard)
+            finally:
+                bin_dir.unlink()
+                parked.rename(bin_dir)
 
     def test_stale_or_foreign_manifest_is_refused_without_writes(self):
         with tempfile.TemporaryDirectory() as td:
