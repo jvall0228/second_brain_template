@@ -24,7 +24,7 @@ Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) —
 
 ## Hook installation
 
-Run `git config core.hooksPath .githooks` in the vault clone (the pre-commit hook runs unchanged — Claude Code commits via Bash). Optional native enhancement: a `PostToolUse` hook on `Write|Edit` in settings can run `brain validate` at edit time instead of commit time; see `settings-example.json`.
+**Automatic since 2026-08-11:** the repo ships `.claude/settings.json` with a `SessionStart` hook that runs `git config core.hooksPath .githooks` in every Claude Code session (local, web, cloud containers) — fresh clones arm the pre-commit hook with zero manual setup, closing the stale-index CI failure mode that hook-less agent sessions produce. The pre-commit hook itself runs unchanged (Claude Code commits via Bash). Optional native enhancement: a `PostToolUse` hook on `Write|Edit` in settings can run `brain validate` at edit time instead of commit time; see `settings-example.json` (and issue #11 — the example's current `|| true` form never surfaces findings).
 
 ## Invoking brain
 
