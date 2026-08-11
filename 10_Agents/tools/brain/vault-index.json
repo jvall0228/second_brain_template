@@ -7,6 +7,8 @@
   "10_Agents/harnesses/cursor/rule-example.mdc",
   "10_Agents/harnesses/opencode/opencode-example.json",
   "10_Agents/harnesses/pi/settings-example.json",
+  "10_Agents/tools/adopt_check.py",
+  "10_Agents/tools/adopt_examples.json",
   "10_Agents/tools/brain/brain.py",
   "10_Agents/tools/run_tests.py",
   "10_Agents/tools/vscode/daily_note.py",
@@ -2973,8 +2975,7 @@
   },
   "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
    "backlinks": [
-    "02_Inbox/2026-08-11-para-operations-skills-requirements.md",
-    "07_Archives/inbox/2026-08-11-expires-backfill-report.md"
+    "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -5390,8 +5391,7 @@
     "00_Meta/index.md",
     "04_Projects/example-project/README.md",
     "05_Areas/example-area/README.md",
-    "06_Resources/README.md",
-    "07_Archives/inbox/2026-08-11-expires-backfill-report.md"
+    "06_Resources/README.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -7154,17 +7154,6 @@
     {
      "display": null,
      "embed": false,
-     "fragment": null,
-     "line": 26,
-     "placeholder": false,
-     "raw": "[[06_Resources/example-resource]]",
-     "resolved": "06_Resources/example-resource.md",
-     "target": "06_Resources/example-resource",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
      "fragment": "Expiration (          )",
      "line": 30,
      "placeholder": false,
@@ -7218,17 +7207,6 @@
      "warnings": []
     },
     {
-     "display": "Implementation plan",
-     "embed": false,
-     "fragment": null,
-     "line": 40,
-     "placeholder": false,
-     "raw": "[[02_Inbox/2026-08-11-para-operations-implementation-plan|Implementation plan]]",
-     "resolved": "02_Inbox/2026-08-11-para-operations-implementation-plan.md",
-     "target": "02_Inbox/2026-08-11-para-operations-implementation-plan",
-     "warnings": []
-    },
-    {
      "display": null,
      "embed": false,
      "fragment": null,
@@ -7240,7 +7218,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4318,
+   "sizeBytes": 4438,
    "title": "Report: expires: Backfill — Judgment Calls (Resolved)",
    "updated": "2026-08-11"
   },
@@ -13194,12 +13172,12 @@
     },
     {
      "level": 2,
-     "line": 21,
+     "line": 22,
      "text": "Testing (TDD convention)"
     },
     {
      "level": 2,
-     "line": 35,
+     "line": 36,
      "text": "Rules"
     }
    ],
@@ -13252,7 +13230,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 37,
+     "line": 38,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -13260,7 +13238,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1854,
+   "sizeBytes": 2380,
    "title": "Agent Tools",
    "updated": "2026-08-11"
   },
@@ -14296,37 +14274,37 @@
     },
     {
      "level": 2,
-     "line": 50,
+     "line": 54,
      "text": "Validation and the vault index"
     },
     {
      "level": 2,
-     "line": 61,
+     "line": 65,
      "text": "Personal vs work"
     },
     {
      "level": 2,
-     "line": 70,
+     "line": 74,
      "text": "Structure"
     },
     {
      "level": 2,
-     "line": 86,
+     "line": 90,
      "text": "Entrypoints"
     },
     {
      "level": 2,
-     "line": 93,
+     "line": 97,
      "text": "Frameworks"
     },
     {
      "level": 2,
-     "line": 99,
+     "line": 103,
      "text": "Agent rules (summary)"
     }
    ],
    "links": [],
-   "sizeBytes": 6170,
+   "sizeBytes": 6877,
    "title": "Second Brain Template",
    "updated": "2026-08-11"
   }
