@@ -40,7 +40,7 @@ Overridable before Phase 1; silence = assumption stands.
 | 1 | Rules & retrieval | R11, R14, R22 | S | Done |
 | 2 | Triage & distill upgrade | R2, R6, R13, R19 | M | Done |
 | 3 | Note surgery | R7 | S | Done |
-| 4 | Curation & signals | R17, R17b, R20, R24, R8 | L | Pending |
+| 4 | Curation & signals | R17, R17b, R20, R24, R8 | L | Done |
 | 5 | Express & Outbox | R10, R3, R12 | M | Pending |
 | 6 | Rhythm & reviews | R15, R18, R9, R16 | M | Pending |
 | 7 | Recategorize & polish | R1, R4, R5, R21 | S | Pending |

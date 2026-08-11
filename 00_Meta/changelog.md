@@ -12,6 +12,13 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — Curation & Signals (Ops Plan Phase 4)
+
+- **`brain` grew its curation engine** (spec §14; all tunables in one constants block): new `curate` command reporting expired / missing / over-cap `expires:`, oversized notes, staleness weighted by backlink count, orphans, unreferenced `08_Assets/` files, and opt-in `--check-urls` dead-link probes; new `context` command reporting bootstrap-doc sizes against byte budgets (~150% of measured size, 32 KiB total). Nine new tests; suite at 30.
+- **`expires:` schema shipped**: [[00_Meta/conventions]] gained the Expiration section (TTL defaults 3/6/12 months by volatility, hard one-year cap, exemption list for events-not-claims), the Bootstrap Context Budgets section, and the draft→canonical promotion checklist; five knowledge templates carry an `expires:` placeholder.
+- **One-time backfill** added `expires:` to all 56 in-scope notes (3-month for harness wiring facts, 12-month evergreen default); judgment calls batched into `02_Inbox/2026-08-11-expires-backfill-report.md` for owner review. Validate-side curation warnings then flipped on — warn-only, never blocking; the three standing oversized warnings (prd, harness research, brain spec) are the queued split candidates.
+- New canonical skill [[10_Agents/skills/curate/SKILL|curate]] (epistemic integrity, vs vault-maintenance's mechanical): four outcomes per flagged note (refresh / re-verify / propose-archive / propose-split), semantic-lint pass (contradictions, superseded claims, concept-with-no-note, missing cross-links — proposals only), run summary to the Inbox.
+
 ## 2026-08-11 — Note Surgery (Ops Plan Phase 3)
 
 - New canonical skill [[10_Agents/skills/merge-notes/SKILL|merge-notes]]: executes **approved** note surgery only — merge (survivor rewritten by replacement, backlinks retargeted via `brain links`, losers archived), split (one note per subject, backlinks re-pointed by citing intent), and the safe rename/move procedure (backlinks captured first, `git mv`, retarget, reindex).

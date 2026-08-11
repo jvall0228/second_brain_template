@@ -27,6 +27,7 @@ Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for 
 | [[10_Agents/skills/vault-maintenance/SKILL\|vault-maintenance]] | Vault maintenance | Run `brain validate`, fix findings, keep status/changelog current |
 | [[10_Agents/skills/link-repair/SKILL\|link-repair]] | Vault maintenance | Find and fix broken wikilinks using the index's repair hints |
 | [[10_Agents/skills/merge-notes/SKILL\|merge-notes]] | Vault maintenance | Execute approved merges, splits, and renames: rewrite, retarget backlinks, archive, validate |
+| [[10_Agents/skills/curate/SKILL\|curate]] | Vault maintenance | Work the `brain curate` report: refresh, re-verify, propose archives/splits, semantic lint |
 | [[10_Agents/skills/solution-capture/SKILL\|solution-capture]] | Vault maintenance | Record a solved problem in `10_Agents/solutions/` |
 | [[10_Agents/skills/research-to-resource/SKILL\|research-to-resource]] | Research → resource | Turn research into a `06_Resources/` note or zettel with provenance |
 | [[10_Agents/skills/vault-answer/SKILL\|vault-answer]] | Retrieval | Answer "what do I know about X?" from vault notes, with wikilink citations and capture offers for substantive answers |

@@ -33,6 +33,7 @@ Keep the vault passing its own checks and its snapshots truthful.
 
 - Never delete or restructure content as "cleanup" — flag candidates for the human instead.
 - Warnings don't block commits; errors do. Leave the vault at zero errors.
+- Staleness and expiration are the [[10_Agents/skills/curate/SKILL|curate]] skill's charter (epistemic integrity); this skill stays mechanical.
 
 ## References
 
