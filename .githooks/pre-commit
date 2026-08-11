@@ -1,0 +1,24 @@
+#!/bin/sh
+# Pre-commit hook (PRD §18): regenerate the committed vault index, re-stage
+# it, and run brain validate. Errors (exit 1) abort the commit; warnings
+# (exit 2) pass. Install once per clone:
+#
+#   git config core.hooksPath .githooks
+#
+root="$(git rev-parse --show-toplevel)" || exit 1
+brain="$root/10_Agents/tools/brain/brain.py"
+
+python3 "$brain" index >/dev/null || {
+    echo "pre-commit: brain index failed — commit aborted" >&2
+    exit 1
+}
+git add "$root/10_Agents/tools/brain/vault-index.json" || exit 1
+
+python3 "$brain" validate
+case $? in
+    0|2) exit 0 ;;
+    *)
+        echo "pre-commit: brain validate found errors — commit aborted" >&2
+        exit 1
+        ;;
+esac

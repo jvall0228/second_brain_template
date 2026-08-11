@@ -1,0 +1,4 @@
+# The committed vault index is byte-compared against fresh rebuilds
+# (brain validate --check-index); never let checkout newline conversion
+# touch it (spec.md §8.2).
+10_Agents/tools/brain/vault-index.json -text

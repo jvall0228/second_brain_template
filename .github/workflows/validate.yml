@@ -1,0 +1,24 @@
+# CI backstop for clones without the pre-commit hook installed (PRD §18):
+# rebuild the vault index, fail if it differs from the committed copy, and
+# run the full validation suite. Validation warnings (exit 2) pass; only
+# errors (exit 1) fail the run — same contract as the hook.
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: brain validate --check-index
+        run: |
+          set +e
+          python3 10_Agents/tools/brain/brain.py validate --check-index
+          ec=$?
+          case "$ec" in
+            0|2) exit 0 ;;
+            *) exit "$ec" ;;
+          esac

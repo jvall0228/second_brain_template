@@ -8001,32 +8001,37 @@
     },
     {
      "level": 2,
-     "line": 41,
+     "line": 45,
+     "text": "Validation and the vault index"
+    },
+    {
+     "level": 2,
+     "line": 56,
      "text": "Personal vs work"
     },
     {
      "level": 2,
-     "line": 50,
+     "line": 65,
      "text": "Structure"
     },
     {
      "level": 2,
-     "line": 66,
+     "line": 81,
      "text": "Entrypoints"
     },
     {
      "level": 2,
-     "line": 73,
+     "line": 88,
      "text": "Frameworks"
     },
     {
      "level": 2,
-     "line": 79,
+     "line": 94,
      "text": "Agent rules (summary)"
     }
    ],
    "links": [],
-   "sizeBytes": 4288,
+   "sizeBytes": 5145,
    "title": "Second Brain Template",
    "updated": "2026-08-11"
   }

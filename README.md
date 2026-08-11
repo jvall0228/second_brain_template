@@ -28,7 +28,11 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 2. Open the folder as an **Obsidian vault**, or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
 4. Skim [`00_Meta/conventions.md`](00_Meta/conventions.md) to learn the naming and tagging rules.
-5. **Delete the seeded examples** once you've seen the pattern:
+5. **Install the pre-commit hook** so every commit keeps the vault index fresh and the conventions enforced:
+   ```
+   git config core.hooksPath .githooks
+   ```
+6. **Delete the seeded examples** once you've seen the pattern:
    - `04_Projects/example-project/`
    - `05_Areas/example-area/`
    - `06_Resources/example-resource.md`
@@ -36,7 +40,18 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
    - `03_Journal/ideas/example-idea.md`
    - `03_Journal/periodic/daily/2025-01-15.md`
    - `03_Journal/periodic/weekly/2025-W03-review.md`
-6. Start capturing into `02_Inbox/` and triage from there.
+7. Start capturing into `02_Inbox/` and triage from there.
+
+## Validation and the vault index
+
+The vault ships a zero-dependency CLI, [`brain`](10_Agents/tools/brain/spec.md), that indexes every note and enforces the conventions (Python 3.10+, stdlib only):
+
+```
+python3 10_Agents/tools/brain/brain.py validate   # frontmatter, tags, filenames, wikilinks
+python3 10_Agents/tools/brain/brain.py search <q> # plus: list, links, tags, show, recent
+```
+
+The committed index at `10_Agents/tools/brain/vault-index.json` gives agents structured vault access without running anything. The pre-commit hook (step 5 above) regenerates it on every commit and blocks commits that break the conventions; a GitHub Actions workflow re-checks both on push as a backstop.
 
 ## Personal vs work
 
