@@ -16,7 +16,7 @@ Facts verified 2026-08-11 against [opencode.ai/docs](https://opencode.ai/docs) (
 
 ## Entrypoint loading
 
-opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over `CLAUDE.md`). It does **not** follow `@file` references or wikilinks, so the adapter makes the bootstrap sequence deterministic: the `instructions[]` array in `opencode.json` loads the must-read files as plain paths alongside `AGENTS.md` (see `opencode-example.json`). User scope: `onboard-harness` writes the import block into `~/.config/opencode/AGENTS.md` (global instructions file).
+opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over `CLAUDE.md`). It does **not** follow `@file` references or wikilinks, so the adapter makes the bootstrap sequence deterministic: the `instructions[]` array in `opencode.json` loads the must-read files as plain paths alongside `AGENTS.md` (see `opencode-example.json`). User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then writes a marker-delimited plain-text instruction into `~/.config/opencode/AGENTS.md` telling opencode to read that shared registration when owner-specific context materially helps. Do not assume `~/.agents/second-brain/AGENTS.md` is automatically discovered, and do not embed the adopter's vault path in the opencode-owned file; the shared registration owns that runtime-specific path.
 
 ## Skills
 

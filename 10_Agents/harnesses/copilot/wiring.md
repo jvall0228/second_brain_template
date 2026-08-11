@@ -30,8 +30,8 @@ Copilot supports Agent Skills on the cloud agent, code review, the CLI, the Copi
 
 User scope (what `onboard-harness` does for Copilot — **not** the `~/.agents/skills/` symlinks, which the CLI does not reliably discover):
 
-- **CLI:** register the real directory — `copilot skill add <vault>/10_Agents/skills` (in-session: `/skills add`). Reversible with `copilot skill remove` / `/skills remove`; where the registration persists is undocumented.
-- **VS Code / fallback:** **copy** skill folders into `~/.copilot/skills/` (a documented personal path; copies, not symlinks — record hashes for drift re-sync per the onboard-harness manifest). `chat.agentSkillsLocations` is documented for *project* locations; treating it as user-scope config is unverified.
+- **CLI:** the first registered second-brain vault that provides the global skill set becomes the manifest-recorded provider; register that real directory with `copilot skill add <vault>/10_Agents/skills` (in-session: `/skills add`). Additional registered vaults with the same skill names become consumers rather than adding duplicate directories. Compare recorded hashes; if another vault's copies differ, report managed version drift and keep the current provider until the owner explicitly chooses a global version. Provider removal follows the generic `onboard-harness` transfer/preflight rule. Reversible with `copilot skill remove` / `/skills remove`; where the registration persists is undocumented.
+- **VS Code / fallback:** **copy** skill folders into `~/.copilot/skills/` (a documented personal path; copies, not symlinks) and treat those copies as shared manifest-owned resources with provider/consumer references and content hashes. Do not overwrite them merely because another vault is onboarded. `chat.agentSkillsLocations` is documented for *project* locations; treating it as user-scope config is unverified.
 
 Caveats: the CLI ships nine built-in skills (`analyze`, `design`, `document`, `fix`, `investigate`, `research`, `security`, `test`, `verify`) that can override same-named user skills — none of the vault's twelve collide; keep it that way. The vault's superset SKILL.md frontmatter (`title`/`tags`/`updated` beyond `name`/`description`) is tolerated in practice (GitHub's own `gh skill install` writes extra frontmatter) but officially undefined — the spec's `metadata:` map is the sanctioned home if a surface ever objects.
 
@@ -66,8 +66,8 @@ CLI pre-approval: `--allow-tool='shell(python3 10_Agents/tools/brain/brain.py)'`
 
 ## User scope (onboard-harness)
 
-- **Memory:** append the marker block to `~/.copilot/copilot-instructions.md` as a **plain-text pointer** with the absolute vault path — the CLI's `@`-includes do not load absolute or `~/` paths, so no import syntax, just "read `<vault>/AGENTS.md` first".
-- **Skills:** `copilot skill add` the real directory, or copy into `~/.copilot/skills/` (see Skills above). Record either in the manifest; uninstall = `copilot skill remove` / delete recorded copies.
+- **Memory:** create or reconcile `~/.agents/second-brain/AGENTS.md`, then append a marker-delimited **plain-text pointer** to that stable shared registration in `~/.copilot/copilot-instructions.md`. Do not put the adopter's vault path in Copilot's file. Because import behavior for external home-directory paths varies by Copilot surface and documentation, baseline onboarding does not rely on `@` here; the instruction says to read `~/.agents/second-brain/AGENTS.md` when owner-specific context materially helps. The shared registration contains the runtime-resolved vault path and routes onward to the vault's `AGENTS.md`.
+- **Skills:** use one manifest-owned global provider at a time: `copilot skill add` that provider's real directory, or maintain the shared copies in `~/.copilot/skills/` (see Skills above). Additional vaults are consumers, not duplicate registrations. Record provider, consumers, and hashes in the manifest; uninstall/removal follows the generic shared-resource preflight and provider-transfer rules.
 
 ## Reference config
 

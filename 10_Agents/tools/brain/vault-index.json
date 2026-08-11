@@ -9963,7 +9963,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3099,
+   "sizeBytes": 3428,
    "title": "Claude Code Wiring",
    "updated": "2026-08-11"
   },
@@ -10035,7 +10035,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2809,
+   "sizeBytes": 3149,
    "title": "Codex Wiring",
    "updated": "2026-08-11"
   },
@@ -10126,7 +10126,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 8938,
+   "sizeBytes": 10096,
    "title": "Copilot Wiring",
    "updated": "2026-08-11"
   },
@@ -10210,7 +10210,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2372,
+   "sizeBytes": 2768,
    "title": "Cursor Wiring",
    "updated": "2026-08-11"
   },
@@ -10282,7 +10282,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1975,
+   "sizeBytes": 2585,
    "title": "Muse Code Wiring",
    "updated": "2026-08-11"
   },
@@ -10354,7 +10354,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2201,
+   "sizeBytes": 2548,
    "title": "opencode Wiring",
    "updated": "2026-08-11"
   },
@@ -10426,7 +10426,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2328,
+   "sizeBytes": 2654,
    "title": "Pi Wiring",
    "updated": "2026-08-11"
   },
@@ -11628,7 +11628,7 @@
    ],
    "bodyTags": [],
    "frontmatter": {
-    "description": "Install this vault's agent primitives into a coding harness's user-level config — symlink-first — and wire the harness's memory file to import the vault entrypoint. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code to use this vault everywhere, or to re-sync or uninstall a previous install.",
+    "description": "Install this vault's agent primitives into a coding harness's user-level config — symlink-first — and wire the harness to a shared second-brain registration. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code to use this vault everywhere, or to re-sync or uninstall a previous install.",
     "expires": "2027-08-11",
     "name": "onboard-harness",
     "tags": [
@@ -11658,17 +11658,17 @@
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 66,
      "text": "Re-run and uninstall"
     },
     {
      "level": 2,
-     "line": 50,
+     "line": 71,
      "text": "Rules"
     },
     {
      "level": 2,
-     "line": 56,
+     "line": 79,
      "text": "References"
     }
    ],
@@ -11685,7 +11685,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4917,
+   "sizeBytes": 10035,
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },

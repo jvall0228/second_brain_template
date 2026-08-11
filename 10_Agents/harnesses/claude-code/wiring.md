@@ -16,7 +16,7 @@ Facts verified 2026-08-11 against [code.claude.com/docs](https://code.claude.com
 
 ## Entrypoint loading
 
-Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and the vault's root `CLAUDE.md` (`@AGENTS.md`) is exactly the documented memory-import pattern, so **project scope needs no setup**. User scope: `onboard-harness` appends the marker-delimited import block to `~/.claude/CLAUDE.md` with the absolute vault path (`@/path/to/vault/AGENTS.md`), making the vault context load in every session.
+Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and the vault's root `CLAUDE.md` (`@AGENTS.md`) is exactly the documented memory-import pattern, so **project scope needs no setup**. User scope: `onboard-harness` first creates the stable shared registration at `~/.agents/second-brain/AGENTS.md`, then appends a marker-delimited `@~/.agents/second-brain/AGENTS.md` import to `~/.claude/CLAUDE.md`. Claude therefore loads only the thin registration globally; that registration points at the adopter's actual vault and tells Claude to read the vault's `AGENTS.md` when owner-specific context materially helps with the task. The adopter-specific vault path never appears in this template or in the Claude adapter block.
 
 ## Skills
 

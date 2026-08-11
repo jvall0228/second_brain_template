@@ -21,7 +21,7 @@ Codex reads **`AGENTS.md` natively** — global `~/.codex/AGENTS.md` first, then
 - **No import expansion:** Codex does not expand `@file` imports or `[[wikilinks]]` — the bootstrap works because `AGENTS.md` lists plain paths agents read themselves; do not rely on link-following.
 - **32 KiB cap:** combined project docs are capped by `project_doc_max_bytes` (default 32 KiB). The vault's `AGENTS.md` is well under it; if an adopter's grows past the cap, raise the value in config (see `config-example.toml`).
 
-User scope: `onboard-harness` puts the vault import block in `~/.codex/AGENTS.md` (plain-path pointer plus a "read these first" line — Codex has no import syntax to expand).
+User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then puts a marker-delimited plain-text instruction in `~/.codex/AGENTS.md` telling Codex that personal second-brain context is registered there and to read it when owner-specific context materially helps with the task. Codex has no import syntax to expand, so the adapter does not use `@`; it also does not embed the adopter's vault path. The shared registration owns that runtime-specific path and routes onward to the vault's `AGENTS.md`.
 
 ## Skills
 

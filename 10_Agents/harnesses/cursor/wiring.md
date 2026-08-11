@@ -16,7 +16,7 @@ Facts verified 2026-08-11 against [cursor.com/docs](https://cursor.com/docs) (se
 
 ## Entrypoint loading
 
-Cursor reads **`AGENTS.md` natively** (IDE: root and nested levels; CLI also reads `CLAUDE.md`) — the vault bootstrap loads unmodified. User scope: `onboard-harness` writes the import block into Cursor's user rules (or a user-level `AGENTS.md` where supported; per-surface — check current docs at install time).
+Cursor reads **`AGENTS.md` natively** (IDE: root and nested levels; CLI also reads `CLAUDE.md`) — the vault bootstrap loads unmodified. User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md` and registers a marker-delimited reference to it through Cursor's documented user-rules surface. If the current Cursor surface documents a user-level instruction file or native include mechanism at install time, prefer that; otherwise use a plain user rule telling Cursor to read the shared registration when owner-specific context materially helps. Do not assume `~/.agents/second-brain/AGENTS.md` is automatically discovered, and never embed the adopter's vault path in the Cursor-specific adapter.
 
 ## Skills
 

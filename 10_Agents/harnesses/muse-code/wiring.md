@@ -16,7 +16,7 @@ expires: 2026-11-11
 
 ## Entrypoint loading
 
-Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.md` when `AGENTS.md` exists) — the vault bootstrap loads unmodified. Bootstrap links work as prose only; no import mechanism exists.
+Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.md` when `AGENTS.md` exists) — the vault bootstrap loads unmodified. Bootstrap links work as prose only; no import mechanism exists. User-scope onboarding still creates the shared registration at `~/.agents/second-brain/AGENTS.md`, but the current adapter does **not** invent an undocumented global instruction location or assume Muse discovers that file automatically. If a documented user-level instruction or memory-injection surface is available when onboarding runs, add a marker-managed plain-path reference to the shared registration there; otherwise report that persistent second-brain registration is not yet supported for Muse and leave the shared file ready for a future adapter update.
 
 ## Skills
 
@@ -35,7 +35,7 @@ python3 10_Agents/tools/brain/brain.py <command> --json
 ## Harness-specific notes
 
 - **Config is user-scope only** (`~/.config/muse/settings.json`) — no project settings, no project MCP. Anything per-vault must be documented for manual user-scope setup, not committed.
-- **Memory bridge** is the adapter's distinctive job: mirroring vault pointers into `.agents/memory/MEMORY.md` so Muse's memory-recall observer surfaces vault context — deferred until the memory format is stable.
+- **Memory bridge** is the adapter's distinctive job: once Muse's memory format is stable, use it to reference `~/.agents/second-brain/AGENTS.md` rather than duplicating vault context or embedding the vault path — deferred until the memory format is stable.
 - No ignore/exclusion mechanism is documented — feeds the open privacy-policy decision (PRD §21).
 
 ## Reference config

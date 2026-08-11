@@ -16,7 +16,7 @@ Facts verified 2026-08-11 against the [pi-mono docs](https://github.com/badlogic
 
 ## Entrypoint loading
 
-Pi reads **`AGENTS.md` natively** (with `CLAUDE.md` fallback), walking parent directories to the cwd — the vault bootstrap works unmodified. User scope: `onboard-harness` writes the import block into `~/.pi/agent/AGENTS.md` for owner-level defaults across all projects.
+Pi reads **`AGENTS.md` natively** (with `CLAUDE.md` fallback), walking parent directories to the cwd — the vault bootstrap works unmodified. User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then writes a marker-delimited plain-text instruction into `~/.pi/agent/AGENTS.md` telling Pi to read that shared registration when owner-specific context materially helps. The adapter does not embed the adopter's vault path or assume the shared file is automatically discovered; the shared registration owns the runtime-specific path and routes onward to the vault's `AGENTS.md`.
 
 ## Skills
 
