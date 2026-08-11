@@ -18333,12 +18333,12 @@
     },
     {
      "level": 3,
-     "line": 534,
+     "line": 539,
      "text": "19.2 Provider boundary and decisions"
     },
     {
      "level": 3,
-     "line": 559,
+     "line": 565,
      "text": "19.3 Output, exit status, and shared guard"
     }
    ],
@@ -18498,7 +18498,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 77057,
+   "sizeBytes": 77453,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

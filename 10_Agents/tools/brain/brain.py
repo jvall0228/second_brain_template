@@ -252,6 +252,21 @@ def _safe_subprocess_env() -> dict[str, str]:
     return env
 
 
+def _ambient_git_subprocess_env() -> dict[str, str]:
+    """Model this invocation's effective Git config without trace side effects."""
+    env = os.environ.copy()
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    # Discovery is local and non-networked, but Git trace variables can write
+    # repository/config details to attacker-chosen sinks. Preserve config,
+    # HOME, and repository-selection variables because a later Git invocation
+    # in this same environment will honor them; the local-only discovery pass
+    # is unioned with this one so neither view can hide the other.
+    for key in list(env):
+        if key.startswith("GIT_TRACE") or key == "GIT_CURL_VERBOSE":
+            env.pop(key, None)
+    return env
+
+
 class GitHubMetadataProvider:
     """Injectable GitHub repository-metadata boundary (§19.2)."""
 
@@ -364,7 +379,40 @@ def _git_push_urls(root: Path) -> tuple[list[str], list[str]]:
             reasons.append("push-url-enumeration-failed")
         else:
             urls.extend(found)
-    return urls, sorted(set(reasons))
+
+    # A real later `git push` also honors ambient global/system config, HOME,
+    # url.* rewrites, and GIT_CONFIG_* controls. Ignoring that view permits a
+    # local private target to be rewritten to public. Trusting it alone permits
+    # the opposite substitution. Evaluate the union of the repository-local
+    # view above and this invocation's ambient-effective view.
+    ambient_kwargs = dict(kwargs)
+    ambient_kwargs["env"] = _ambient_git_subprocess_env()
+    try:
+        ambient_inside = subprocess.run(
+            command + ["rev-parse", "--is-inside-work-tree"], **ambient_kwargs
+        )
+        if ambient_inside.stdout.strip() != "true":
+            reasons.append("ambient-push-url-enumeration-failed")
+        else:
+            ambient_remotes = subprocess.run(command + ["remote"], **ambient_kwargs)
+            for remote in sorted(
+                line for line in ambient_remotes.stdout.splitlines() if line
+            ):
+                result = subprocess.run(
+                    command + ["remote", "get-url", "--push", "--all", remote],
+                    **ambient_kwargs,
+                )
+                found = result.stdout.splitlines()
+                if not found:
+                    reasons.append("ambient-push-url-enumeration-failed")
+                else:
+                    urls.extend(found)
+    except (OSError, UnicodeError, subprocess.SubprocessError):
+        reasons.append("ambient-push-url-enumeration-failed")
+    # The two discovery views commonly return the same strings. Deduplicate
+    # exact raw values in memory before normalization; raw values and any
+    # credential-bearing equality keys never cross the output boundary.
+    return list(dict.fromkeys(urls)), sorted(set(reasons))
 
 
 def _classify_github_metadata(metadata: dict) -> tuple[str, list[str]]:

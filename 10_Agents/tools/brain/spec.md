@@ -522,6 +522,11 @@ allows it.
   `unknown` (`unsafe-local-config-include`). They can expand through ambient
   HOME or another path outside the clone and substitute a target, so discovery
   reads the raw local config with includes disabled and refuses the indirection.
+- Discovery evaluates the union of a sanitized repository-local view and the
+  current invocation's ambient-effective Git view. The latter accounts for
+  global/system `remote.*.pushurl`, `url.*.insteadOf`/`pushInsteadOf`, HOME, and
+  `GIT_CONFIG_*` controls that a later Git invocation would honor; the union
+  prevents either view from replacing and hiding a target in the other.
 - GitHub HTTPS and SSH (`ssh://` or SCP-style) URLs on their default ports
   normalize to a provider key without userinfo, query, fragment, or `.git`.
   Insecure transports, nonstandard ports, malformed URLs, and non-GitHub hosts
@@ -536,9 +541,10 @@ allows it.
 The default injectable provider runs `gh repo view OWNER/REPO --json
 visibility,isPrivate,isTemplate,templateRepository` with prompting disabled and a
 bounded timeout. It pins `GH_HOST=github.com` and removes debug/trace sinks and Git
-control/config-injection variables from child environments. Git discovery ignores
-ambient user/system config and reads repository-local config only; local config
-that delegates to another file is rejected as described in §19.1. Missing `gh`, auth/access
+control/config-injection variables from provider child environments. Git target
+discovery separately evaluates both repository-local and ambient-effective config;
+local config that delegates to another file is rejected as described in §19.1.
+Missing `gh`, auth/access
 failures, timeouts, malformed JSON, and missing or inconsistent fields are stable
 `unknown` reason codes; subprocess text is never forwarded.
 

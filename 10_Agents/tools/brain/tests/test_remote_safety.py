@@ -276,7 +276,7 @@ class EvaluationTests(unittest.TestCase):
                     )
         self.assertEqual(result["state"], "block")
         self.assertIn(("acme", "public"), provider.calls)
-        self.assertNotIn(("acme", "private"), provider.calls)
+        self.assertIn(("acme", "private"), provider.calls)
         connector.assert_not_called()
 
     def test_local_include_cannot_substitute_push_target_through_home(self):
@@ -324,6 +324,59 @@ class EvaluationTests(unittest.TestCase):
                 self.assertEqual(result["state"], "unknown")
                 self.assertIn("unsafe-local-config-include", result["reasonCodes"])
                 self.assertEqual(provider.calls, [])
+                connector.assert_not_called()
+
+    def test_ambient_global_targets_are_unioned_with_local_targets(self):
+        global_configs = {
+            "pushurl": (
+                '[remote "origin"]\n'
+                "\tpushurl = https://github.com/acme/public.git\n"
+            ),
+            "pushInsteadOf": (
+                '[url "https://github.com/acme/public.git"]\n'
+                "\tpushInsteadOf = https://github.com/acme/private.git\n"
+            ),
+            "insteadOf": (
+                '[url "https://github.com/acme/public.git"]\n'
+                "\tinsteadOf = https://github.com/acme/private.git\n"
+            ),
+        }
+        for mode, config in global_configs.items():
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as td:
+                base = Path(td)
+                root = base / "repo"
+                home = base / "home"
+                root.mkdir()
+                home.mkdir()
+                init_repo(root)
+                git(
+                    root,
+                    "remote",
+                    "add",
+                    "origin",
+                    "https://github.com/acme/private.git",
+                )
+                (home / ".gitconfig").write_text(config, encoding="utf-8")
+                provider = FakeProvider(
+                    {
+                        ("acme", "private"): PRIVATE,
+                        ("acme", "public"): PUBLIC,
+                    }
+                )
+                connector = mock.Mock()
+                with mock.patch.dict(os.environ, {"HOME": str(home)}):
+                    result = self.evaluate(root, provider)
+                    with self.assertRaises(brain.RemoteSafetyError):
+                        brain.guarded_personal_data_call(
+                            root,
+                            connector,
+                            metadata_provider=provider,
+                            persist=True,
+                        )
+                self.assertEqual(result["state"], "block")
+                self.assertIn("repository-public", result["reasonCodes"])
+                self.assertIn(("acme", "private"), provider.calls)
+                self.assertIn(("acme", "public"), provider.calls)
                 connector.assert_not_called()
 
 
