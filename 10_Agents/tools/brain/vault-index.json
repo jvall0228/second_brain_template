@@ -2122,7 +2122,7 @@
      "workflow/needs-review",
      "status/active"
     ],
-    "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R18)",
+    "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)",
     "updated": "2026-08-11"
    },
    "frontmatterErrors": [],
@@ -2154,42 +2154,47 @@
     },
     {
      "level": 3,
-     "line": 47,
+     "line": 48,
      "text": "Outbox"
     },
     {
      "level": 3,
-     "line": 51,
+     "line": 52,
      "text": "Remaining operational gaps"
     },
     {
      "level": 3,
-     "line": 60,
+     "line": 65,
      "text": "Expiration & curation"
     },
     {
      "level": 3,
-     "line": 65,
+     "line": 71,
      "text": "Automations"
     },
     {
      "level": 2,
-     "line": 69,
+     "line": 76,
      "text": "Open questions (owner to decide)"
     },
     {
      "level": 2,
-     "line": 76,
+     "line": 85,
      "text": "Settled during brainstorm (no longer open)"
     },
     {
      "level": 2,
-     "line": 80,
+     "line": 89,
+     "text": "Reviewed and deliberately not adopted"
+    },
+    {
+     "level": 2,
+     "line": 99,
      "text": "Research basis"
     },
     {
      "level": 2,
-     "line": 86,
+     "line": 107,
      "text": "Related"
     }
    ],
@@ -2209,7 +2214,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 58,
+     "line": 59,
      "placeholder": false,
      "raw": "[[01_Profile/now]]",
      "resolved": "01_Profile/now.md",
@@ -2220,7 +2225,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 88,
+     "line": 109,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
      "resolved": "10_Agents/skills/README.md",
@@ -2231,7 +2236,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 89,
+     "line": 110,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -2242,7 +2247,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 90,
+     "line": 111,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -2253,7 +2258,7 @@
      "display": "onboard-owner requirements",
      "embed": false,
      "fragment": null,
-     "line": 91,
+     "line": 112,
      "placeholder": false,
      "raw": "[[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|onboard-owner requirements]]",
      "resolved": "07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md",
@@ -2261,8 +2266,8 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10650,
-   "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R18)",
+   "sizeBytes": 17989,
+   "title": "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)",
    "updated": "2026-08-11"
   },
   "02_Inbox/README.md": {

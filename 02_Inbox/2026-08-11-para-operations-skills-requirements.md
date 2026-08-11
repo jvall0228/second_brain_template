@@ -1,5 +1,5 @@
 ---
-title: "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R18)"
+title: "Requirements: CODE Operations Reorg & Missing Vault Operations (R1–R25)"
 tags:
   - type/plan
   - audience/human
@@ -14,7 +14,7 @@ updated: 2026-08-11
 
 Owner-directed brainstorm (2026-08-11 session) on aligning the skills library with the canonical second-brain operations (CODE: Capture → Organize → Distill → Express) and codifying the mechanical operations an agent-operated vault needs beyond CODE. **Requirements only — nothing here is built yet.** Review, then direct execution.
 
-Grounding: Forte Labs' BASB spec (CODE, PARA, progressive summarization, intermediate packets) and a survey of 7 second-brain agent implementations (see [[#Research basis]]).
+Grounding: Forte Labs' BASB spec (CODE, PARA, progressive summarization, intermediate packets) and a survey of 7 second-brain agent implementations. A same-day review pass added R19–R25 and refinements, grounded in Karpathy's LLM-Wiki pattern and OpenClaw's context/memory/heartbeat model (see [[#Research basis]]).
 
 ## Current coverage verdict
 
@@ -40,9 +40,10 @@ Plus two agent-native layers CODE doesn't name, both partially built: system hea
 ### System operations (non-CODE mechanics)
 
 - **R6 — Atomize at triage.** New triage-inbox step: multi-topic capture → split into one-topic notes *before* classifying. Never at capture (capture stays zero-friction).
-- **R7 — New skill `merge-notes`.** Executes an *approved* merge: pick survivor → rewrite overlapping sections into one coherent whole (replacement, never concatenation) → retarget inbound wikilinks → archive the loser → validate. Split (the inverse, for over-grown notes) documented in the same skill. vault-maintenance keeps detection/proposal; this skill is execution.
+- **R7 — New skill `merge-notes`.** Executes an *approved* merge: pick survivor → rewrite overlapping sections into one coherent whole (replacement, never concatenation) → retarget inbound wikilinks → archive the loser → validate. Split (the inverse, for over-grown notes) documented in the same skill. Also documents the safe rename/move procedure (retarget inbound links via the index, then validate). vault-maintenance keeps detection/proposal; this skill is execution.
 - **R8 — Promote & refresh ride on existing docs.** Draft→canonical promotion checklist in conventions/vault-maintenance. Staleness detection is superseded by R17.
 - **R9 — Archive completion path.** periodic-review defines the project/area → `07_Archives/` move (status/done, index update, changelog entry).
+- **R19 — Ingest is propagation.** A new source rarely yields just one note. triage-inbox and research-to-resource gain an explicit propagation step: after filing, update the existing notes whose claims the source touches (extend, correct, flag contradictions) and the index — supervised, one source at a time. (Karpathy: "a single source might touch 10–15 wiki pages"; filing without propagation is how vaults drift into self-contradiction.)
 
 ### Outbox
 
@@ -50,38 +51,58 @@ Plus two agent-native layers CODE doesn't name, both partially built: system hea
 
 ### Remaining operational gaps
 
-- **R11 — New skill `vault-answer`.** Retrieval discipline for "what do I know about X?": search order (brain search → index → grep), cite vault notes by wikilink in every answer, separate vault knowledge from model knowledge, and treat unanswerable questions as capture opportunities (offer research-to-resource).
+- **R11 — New skill `vault-answer`.** Retrieval discipline for "what do I know about X?": search order (brain search → index → grep), cite vault notes by wikilink in every answer, separate vault knowledge from model knowledge, and treat unanswerable questions as capture opportunities (offer research-to-resource). **Answers are assets:** a substantive synthesized answer (comparison, cross-note synthesis) is offered for capture to Inbox instead of evaporating in chat — explorations compound (Karpathy's query loop).
 - **R12 — Privacy gate at egress.** Outbound packets never include `01_Profile/` or `03_Journal/` content unless the owner directs it per-packet; packets built from personal-context notes flag it in the draft. (Counterpart to agent-orientation's ingestion-side sensitivity judgment.)
 - **R13 — Action-item extraction at triage.** Triage step: actionable commitment found in a capture → add to the relevant project's tasks (or propose a project); the note still files normally.
 - **R14 — Stuck/escalation protocol.** operating-rules section: when blocked, or when two vault sources conflict, write a `workflow/needs-review` Inbox note stating the conflict and stop — never guess-and-commit or silently resolve rule conflicts.
 - **R15 — One canonical cadence table.** Single table (conventions or skills README): cadence → skills → trigger (daily: log; weekly: triage + review + Outbox sweep; monthly: review + maintenance/curation; quarterly: review + curation + self-maintenance audit). recommended-automations wires *this table*; onboard-owner teaches it as "the rhythm".
 - **R16 — Goal alignment in reviews.** Weekly/monthly review templates ask: does each active project serve something in [[01_Profile/now]]? Anything on the Now page with no project moving it? Quarterly review updates now.md.
+- **R20 — Bootstrap context budget.** The bootstrap docs (AGENTS.md, now, preferences, defaults, conventions) are loaded into every session — they need explicit size budgets, documented in conventions, and a new `brain context` report showing each bootstrap doc's actual size against its budget (validate warns on breach, never blocks). Modeled on OpenClaw's per-file/total bootstrap caps and `/context list` observability; Karpathy's context-window-as-RAM. Initial budget values set at build time.
+- **R21 — Grep-parseable changelog entries.** Standardize changelog entry headers to `## [YYYY-MM-DD] <operation> | <summary>` so recency queries are one grep for humans, agents, and brain alike (Karpathy's log.md convention). Canonical edit; suggest forward-only (no rewrite of historical entries).
+- **R22 — Session-end flush.** operating-rules gains a pre-exit rule: before ending a working session (or when the harness compacts context), write durable session learnings to the daily log or an Inbox capture — the vault only knows what reaches disk. Mirrors OpenClaw's pre-compaction memory flush; complements solution-capture (which covers solved problems only, not general session learnings).
+- **R23 — New skill `import-notes` (bulk ingest).** Migrate a pre-existing note pile (old vault, notes-app export, docs folder) into the vault: batch-capture to Inbox with per-item provenance, then atomize and triage in supervised batches. Fills the gap between onboard-owner (interview from scratch) and inbox-capture (one note at a time). Scope question below.
 
 ### Expiration & curation
 
-- **R17 — `expires:` property + curation job.** New frontmatter field on knowledge notes, best-effort at write time, hard cap one year. Default TTLs by volatility: wiring/product facts 3 mo; retrieval-dated research 6 mo; evergreen/canonical 12 mo. Exempt (events, not claims): Journal logs, changelog, solution notes, all of 07_Archives. Flagging is **report-driven, no tag churn**. New skill `curate` (distinct from vault-maintenance: *epistemic* vs *mechanical* integrity) runs ad hoc or scheduled; per flagged note: (1) still good → bump updated + fresh expires; (2) stale → re-verify via research-to-resource corrective mode; (3) dead → propose archive; (4) too big → propose split. 1–2 executable by agents; 3–4 are proposals. One-time backfill migration for existing notes.
-- **R17b — `brain` is the single signal engine.** New `brain curate` command (human + `--json` output) computing all re-review signals: expired, missing-expires (per exemption rules), oversized (start ~400 lines / ~20 KB, tunable in one place), old-updated weighted by inbound-link count, and opt-in `--check-urls` for dead source URLs. `validate` gains the free/offline signals as *warnings* (never blocks commits; URL checks never run pre-commit). Skills consume the report; detection logic never lives in skill prose.
+- **R17 — `expires:` property + curation job.** New frontmatter field on knowledge notes, best-effort at write time, hard cap one year. Default TTLs by volatility: wiring/product facts 3 mo; retrieval-dated research 6 mo; evergreen/canonical 12 mo. Exempt (events, not claims): Journal logs, changelog, solution notes, all of 07_Archives. Flagging is **report-driven, no tag churn**. New skill `curate` (distinct from vault-maintenance: *epistemic* vs *mechanical* integrity) runs ad hoc or scheduled; per flagged note: (1) still good → bump updated + fresh expires; (2) stale → re-verify via research-to-resource corrective mode; (3) dead → propose archive; (4) too big → propose split. 1–2 executable by agents; 3–4 are proposals. One-time backfill migration for existing notes. *Implementation note:* requires canonical edits (conventions frontmatter schema, templates gain `expires:`, brain validate rules).
+- **R17b — `brain` is the single signal engine.** New `brain curate` command (human + `--json` output) computing all re-review signals: expired, missing-expires (per exemption rules), oversized (start ~400 lines / ~20 KB, tunable in one place), old-updated weighted by inbound-link count, orphan notes (zero inbound wikilinks), unreferenced `08_Assets/` files, and opt-in `--check-urls` for dead source URLs. `validate` gains the free/offline signals as *warnings* (never blocks commits; URL checks never run pre-commit). Skills consume the report; detection logic never lives in skill prose.
+- **R24 — Semantic lint in `curate`.** Beyond staleness and size, curate's charter includes the epistemic-coherence checks Karpathy names "lint": contradictions between notes, claims superseded by newer notes, concepts mentioned repeatedly with no note of their own, missing cross-links between clearly related notes. brain supplies the mechanical inputs (orphans, link counts, term co-occurrence where cheap); the judgment lives in the skill; findings land as proposals in the Inbox report, never silent fixes.
 
 ### Automations
 
-- **R18 — recommended-automations gains a second flow family.** Charter widens from ingestion-only to "wire any recurring vault operation": (1) inbound flows (unchanged); (2) **rhythm jobs** — headless skill invocations on cadence (curate, vault-maintenance, weekly triage/review prompt, Outbox sweep, daily-log scaffold). Source of truth inverts to the R15 cadence table. Scheduled runs inherit the strictest write posture: execute only self-contained outcomes; everything needing judgment → report note to Inbox. Guardrails: no automation ever ships from Outbox; rhythm jobs are dry-run-first like inbound flows. onboard-owner's automation stage adds the rhythm-jobs pitch.
+- **R18 — recommended-automations gains a second flow family.** Charter widens from ingestion-only to "wire any recurring vault operation": (1) inbound flows (unchanged); (2) **rhythm jobs** — headless skill invocations on cadence (curate, vault-maintenance, weekly triage/review prompt, Outbox sweep, daily-log scaffold). Source of truth inverts to the R15 cadence table. Scheduled runs inherit the strictest write posture: execute only self-contained outcomes; everything needing judgment → report note to Inbox; a scheduled run's output is the deliverable, not a plan or a request for input (OpenClaw's "unattended contract"). Guardrails: no automation ever ships from Outbox; rhythm jobs are dry-run-first like inbound flows. onboard-owner's automation stage adds the rhythm-jobs pitch.
+- **R25 — Heartbeat (deferred — build last, after R18).** An ambient "does anything need attention?" loop, distinct from R18's fixed-deliverable rhythm jobs: a `10_Agents/heartbeat.md` checklist (judgment-requiring prose only — **schedules stay in the scheduler**; OpenClaw itself migrated away from parsing schedules out of the markdown file), a complementary heartbeat skill with a deliberately narrow prompt (work only the checklist; don't infer stale tasks from prior context; reply with a quiet sentinel like `HEARTBEAT_OK` when nothing needs attention, which the automation drops instead of notifying), wired per R18. Cost/noise controls from OpenClaw worth copying: skip the run when the checklist is empty, quiet hours, cheap-model override where the harness allows. Owner-flagged as interesting but explicitly not for adoption now.
 
 ## Open questions (owner to decide)
 
-1. **Build order.** Suggested: R11+R14 (cheap, high-leverage) → R2+R7 (policy debt already incurred) → R17+R17b+R18 (curation milestone) → R10+R3+R12 (Express milestone) → R1/R4/R5/R13/R15/R16 ride along with the recategorization pass. All at once is also viable.
+1. **Build order.** Suggested: R11+R14+R22 (cheap, high-leverage operating-rules wave) → R2+R7+R19 (policy debt already incurred) → R17+R17b+R18+R24+R20 (curation/brain milestone) → R10+R3+R12 (Express milestone) → R1/R4/R5/R13/R15/R16/R21 ride along with the recategorization pass → R25 last (deferred). R23 slots wherever, pending scope call.
 2. **Entity notes** (tiered people/tool profiles, per COG-second-brain): in scope for the template, or explicitly out?
 3. **Size threshold** for R17b: confirm ~400 lines / ~20 KB starting point.
 4. **Missing-`expires:` warning timing**: immediately, or only after the backfill migration lands?
+5. **R23 `import-notes`**: in template scope, or a per-owner concern to leave out?
+6. **R20 budgets**: any initial numbers preferred, or set them empirically at build time (measure current bootstrap docs, add headroom)?
 
 ## Settled during brainstorm (no longer open)
 
-- No mass renames (R1); merge execution is its own skill, not a vault-maintenance mode (R7); curation is its own skill (R17); Outbox shares the `02_` prefix — no directory renumbering (R10); agents never auto-ship (R10/R18); flagging is report-driven, not tag-driven (R17); brain owns all detection signals (R17b).
+- No mass renames (R1); merge execution is its own skill, not a vault-maintenance mode (R7); curation is its own skill (R17); Outbox shares the `02_` prefix — no directory renumbering (R10); agents never auto-ship (R10/R18); flagging is report-driven, not tag-driven (R17); brain owns all detection signals (R17b); heartbeat is deferred to after R18 by owner direction, 2026-08-11 (R25).
+
+## Reviewed and deliberately not adopted
+
+From the same research, considered and rejected for this vault (so review doesn't re-litigate):
+
+- **Embedding/vector search** (Karpathy's qmd, OpenClaw's memory_search): index-first + grep is Karpathy's own recommendation at personal scale (~hundreds of pages); noted as a later upgrade path in R11, not a requirement.
+- **Persona files** (OpenClaw SOUL.md/IDENTITY.md): persona is a harness concern, not vault knowledge; our profile layer covers owner context.
+- **DB-backed state** (OpenClaw's monitor scratch, SQLite job history): this vault is deliberately git+markdown-only; schedules live in each harness's scheduler (R18), state lives in notes.
+- **Dated-directive format for preferences** (OpenClaw USER.md): our update-by-replacement rule + git history already provides supersession and audit trail.
+- **A separate immutable `sources/` layer** (Karpathy's raw layer): provenance-with-retrieval-dates in notes (existing rule) plus `08_Assets/` for oversized material covers this at our scale without a fourth content class.
 
 ## Research basis
 
 - CODE/BASB spec: [The Building a Second Brain overview](https://fortelabs.com/blog/basboverview/), [The 4 Levels of PKM](https://fortelabs.com/blog/the-4-levels-of-personal-knowledge-management/) (retrieved 2026-08-11).
 - Implementation survey (2026-08-11), 7 repos: jamesmcroft/obsidian-ai-second-brain (only explicit CODE adopter — stages in docs/folders, skill names stay generic verbs), ballred/obsidian-claude-pkm (review-centric command family, goal cascade), eugeniughelbur/obsidian-second-brain (~46 commands; distill/graduate verbs; scheduled review agents), AgriciDaniel/claude-obsidian (PARA as pluggable mode; hash-approved change control), huytieu/COG-second-brain (fullest Express stage: content-factory, publish flows; verification agents), smixs/agent-second-brain (memory-decay tiers ≈ expiration), coleam00/second-brain-starter (proactive-heartbeat reviews).
 - Key findings applied: explicit CODE naming is rare — the stages survive as verbs (→R1); Express is the field's weakest stage (→R3/R10); distillation appears as structural promotion, not highlighting (→R2); reviews everywhere drift into their own first-class family (→ keep periodic-review as-is); memory decay is the field's expiration analog (→R17).
+- Karpathy's LLM-Wiki pattern (retrieved 2026-08-11): [the gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) (Apr 2026) and its [origin](https://x.com/karpathy/status/2039805659525644595)/[announcement](https://x.com/karpathy/status/2040470801506541998) posts; [docs-for-LLMs](https://x.com/karpathy/status/1899876370492383450) (Mar 2025); [system prompt learning](https://x.com/karpathy/status/1921368644069765486) (May 2025); [Software 3.0 talk writeup](https://www.latent.space/p/s3) (Jun 2025). Applied: ingest-propagates (→R19), answers-are-assets (→R11), semantic lint (→R24), grep-parseable log (→R21), context-window-as-RAM (→R20). Confirms decisions already made: index-first retrieval before search infrastructure, AGENTS.md as the co-evolved "schema file," human-as-curator/agent-as-clerk division, git as the archive.
+- OpenClaw harness docs (retrieved 2026-08-11): [agent workspace](https://docs.openclaw.ai/concepts/agent-workspace), [memory](https://docs.openclaw.ai/concepts/memory), [heartbeat](https://docs.openclaw.ai/gateway/heartbeat), [automations](https://docs.openclaw.ai/automation/cron-jobs), [token use](https://docs.openclaw.ai/reference/token-use). Applied: bootstrap size caps + injection observability (→R20), pre-compaction memory flush (→R22), heartbeat mechanics — sentinel-quiet convention, skip-if-empty, schedules-belong-in-the-scheduler (→R25), unattended contract for scheduled runs (→R18). Its "dreaming" consolidation pipeline (thresholded promotion, taint gate on untrusted content, human-reviewable summaries) independently validates our Inbox-review gate and report-driven curation; its private-session-only memory loading validates R12's direction.
 
 ## Related
 
