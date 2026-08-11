@@ -190,6 +190,7 @@ class IndexTests(unittest.TestCase):
             self.assertEqual(index["notes"]["ok.md"]["sizeBytes"], len("---\ntitle: x\n---\nhi\n"))
 
 
+@unittest.skipUnless(os.name == "posix", "relies on POSIX symlinks and file modes")
 class UnreadableNoteTests(unittest.TestCase):
     """Spec §3 read failure: OSError on a note is a finding, never a crash."""
 
@@ -221,8 +222,42 @@ class UnreadableNoteTests(unittest.TestCase):
             root = self.broken_symlink_vault(Path(td))
             errors, _ = brain.run_validate(root, check_index=False)
             rules = {f["rule"] for f in errors if f["path"] == "02_Inbox/dangling.md"}
-            self.assertIn("not-readable", rules)
-            self.assertNotIn("missing-frontmatter", rules)
+            # §10.2: the read failure is the note's ONLY finding — derived
+            # frontmatter-field checks are suppressed.
+            self.assertEqual(rules, {"not-readable"})
+
+    def test_not_utf8_note_gets_single_finding(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "02_Inbox/binary.md": b"\xff\xfe garbage \x80\x81",
+                },
+            )
+            errors, _ = brain.run_validate(root, check_index=False)
+            rules = {f["rule"] for f in errors if f["path"] == "02_Inbox/binary.md"}
+            self.assertEqual(rules, {"not-utf8"})
+
+    def test_tool_test_trees_pruned_from_corpus(self):
+        # Any 10_Agents/tools/*/tests tree stays out of the corpus (spec §2),
+        # so secret-shaped test data in a non-brain tool suite is never
+        # scanned and never indexed as an asset.
+        with tempfile.TemporaryDirectory() as td:
+            fake_secret = "ghp_" + "a1B2" * 9  # runtime-concatenated
+            root = make_vault(
+                Path(td),
+                {
+                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "10_Agents/tools/vscode/tests/test_x.py": f'token = "{fake_secret}"\n',
+                    "10_Agents/tools/vscode/gen.py": "print('kept')\n",
+                },
+            )
+            notes, assets = brain.walk_corpus(root)
+            self.assertNotIn("10_Agents/tools/vscode/tests/test_x.py", assets)
+            self.assertIn("10_Agents/tools/vscode/gen.py", assets)
+            errors, _ = brain.run_validate(root, check_index=False)
+            self.assertEqual([f for f in errors if f["rule"].startswith("secret-")], [])
 
     def test_broken_symlink_commands_do_not_crash(self):
         with tempfile.TemporaryDirectory() as td:
@@ -241,7 +276,9 @@ class UnreadableNoteTests(unittest.TestCase):
                 expected = {1} if argv == ["validate"] else {0}
                 self.assertIn(code, expected, f"{argv} exited {code}")
 
-    @unittest.skipIf(os.geteuid() == 0, "root ignores file modes")
+    # getattr guard: os.geteuid does not exist on Windows, and skipIf's
+    # condition evaluates at import time.
+    @unittest.skipIf(getattr(os, "geteuid", lambda: -1)() == 0, "root ignores file modes")
     def test_permission_denied_is_not_readable(self):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(

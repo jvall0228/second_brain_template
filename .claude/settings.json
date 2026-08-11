@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git config core.hooksPath .githooks 2>/dev/null || true"
+            "command": "git config core.hooksPath .githooks 2>/dev/null; git config merge.regenerate.driver true 2>/dev/null || true"
           }
         ]
       }

@@ -24,7 +24,9 @@ from pathlib import Path
 
 SCHEMA_VERSION = 1
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
-TESTS_RELPATH = "10_Agents/tools/brain/tests"
+# Any tool's test tree (fixture mini-vaults, secret-shaped test data) stays
+# out of the corpus — mirrors run_tests.py's */tests/ discovery rule.
+TOOL_TESTS_RE = re.compile(r"^10_Agents/tools/[^/]+/tests$")
 CONVENTIONS_RELPATH = "00_Meta/conventions.md"
 
 # ---------------------------------------------------------------------------
@@ -102,8 +104,8 @@ def walk_corpus(root: Path) -> tuple[list[str], list[str]]:
             for d in dirnames
             if not d.startswith(".")
             and d != "__pycache__"
-            and not (
-                nfc(f"{rel_dir}/{d}" if rel_dir != "." else d) == TESTS_RELPATH
+            and not TOOL_TESTS_RE.match(
+                nfc(f"{rel_dir}/{d}" if rel_dir != "." else d)
             )
         ]
         dirnames.sort()
@@ -764,9 +766,12 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                     continue
                 else:
                     err(rel, rule, fe)
-            if not fm and not (
-                {"not-utf8", "not-readable"} & set(rec["frontmatterErrors"])
-            ):
+            if {"not-utf8", "not-readable"} & set(rec["frontmatterErrors"]):
+                # §10.2: the read/decode failure is the note's only finding —
+                # frontmatter was never read, so derived missing-* checks
+                # would be false claims that bury the actual cause.
+                pass
+            elif not fm:
                 if "unterminated-frontmatter" not in rec["frontmatterErrors"]:
                     err(rel, "missing-frontmatter", "note has no frontmatter block")
             else:

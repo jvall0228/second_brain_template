@@ -120,7 +120,13 @@ def run(repo: Path, keep: bool) -> list[str]:
     scratch_root = Path(tempfile.mkdtemp(prefix="adopt-check-"))
     scratch = scratch_root / "vault"
     try:
-        shutil.copytree(repo, scratch, ignore=copy_ignore)
+        try:
+            shutil.copytree(repo, scratch, ignore=copy_ignore)
+        except (shutil.Error, OSError) as exc:
+            # A broken symlink or unreadable file must flow through the
+            # failure report, not a traceback (same posture as spec §3).
+            failures.append(f"cannot copy working tree to scratch: {exc}")
+            return failures
 
         # Step: delete the seeded examples; every listed path must exist.
         for entry in delete_list:
