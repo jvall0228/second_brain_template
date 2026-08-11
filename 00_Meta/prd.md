@@ -6,6 +6,7 @@ tags:
   - audience/human
   - audience/agent
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # PRD: Second Brain Knowledge Management System (Markdown + Git + Obsidian + Agents)

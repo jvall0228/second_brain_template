@@ -4,7 +4,8 @@ tags:
   - type/resource
   - topic/productivity
   - audience/human
-updated: 2026-08-10
+updated: 2026-08-11
+expires: 2027-02-11
 ---
 
 # Example Resource

@@ -5,6 +5,7 @@ tags:
   - type/meta
   - workflow/canonical
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Second Brain

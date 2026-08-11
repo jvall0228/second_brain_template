@@ -6,6 +6,7 @@ tags:
   - audience/agent
   - audience/human
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Conventions

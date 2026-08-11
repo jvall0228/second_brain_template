@@ -6,6 +6,7 @@ tags:
   - audience/human
   - audience/agent
 updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Vault Index (Map of Content)

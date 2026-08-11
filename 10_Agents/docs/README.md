@@ -3,7 +3,8 @@ title: "Agent Docs"
 tags:
   - type/meta
   - audience/agent
-updated: 2026-02-22
+updated: 2026-08-11
+expires: 2027-08-11
 ---
 
 # Agent Docs
