@@ -1,0 +1,29 @@
+# Vault-config preset: work fork.
+#
+# A config FRAGMENT, not a full config. It is applied by onboard-owner (under
+# its live-session write exception) via the `merge-config` install method of
+# the vault-config-work component (10_Agents/components/manifest.json): the
+# uncommented key/value lines below are merged into 00_Meta/config.yaml.
+# A personal fork needs no preset — the shipped defaults already fit.
+#
+# Grammar is the bounded YAML subset only (spec §15.2): scalars, flat lists,
+# one nested mapping level. Comments are FULL-LINE only — a trailing "# ..."
+# after a value becomes part of the value. Every key here must be a registered
+# config key (spec §15.3); unknown keys only earn a validate warning.
+#
+# ---------------------------------------------------------------------------
+# Fork context (issue #12): work. onboard-owner also rewrites the periodic
+# templates in place from 09_Templates/variants/ when it records this.
+context: work
+#
+# Uncomment to admit community VS Code extensions (e.g. Foam) in this fork.
+# first-party (default) | relaxed — see 06_Resources/vscode-editor-support.md.
+#
+# extension_trust: relaxed
+#
+# Extra directories agents may write to, beyond the Inbox-first defaults
+# (02_Inbox/, 02_Outbox/, 10_Agents/solutions/). Vault-relative dirs only.
+# A work fork often wants a shared area writable — uncomment and adjust.
+#
+# write_exceptions:
+#   - 05_Areas/

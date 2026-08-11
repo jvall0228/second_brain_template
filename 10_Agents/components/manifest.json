@@ -1,0 +1,137 @@
+{
+  "manifest_version": 1,
+  "components": [
+    {
+      "id": "i-have-adhd",
+      "kind": "skill",
+      "provenance": "community",
+      "description": "Ten persistent output rules that stop an agent burying the answer: lead with the next action, number multi-step tasks, cap lists, no preamble or recap.",
+      "license": "MIT",
+      "signoff": "owner-per-item",
+      "source": {
+        "type": "submodule",
+        "path": ".extern/i-have-adhd",
+        "repo": "https://github.com/ayghri/i-have-adhd",
+        "track": "main",
+        "content": "skills/i-have-adhd/SKILL.md"
+      },
+      "install": {
+        "method": "copy",
+        "scope": "user",
+        "target": "~/.agents/skills/i-have-adhd/"
+      },
+      "reverse": {
+        "method": "delete"
+      },
+      "catalog": "06_Resources/recommended-skills.md#i-have-adhd"
+    },
+    {
+      "id": "karpathy-guidelines",
+      "kind": "skill",
+      "provenance": "community",
+      "description": "Behavioral guardrails for coding agents from Karpathy's four failure modes: no silent assumptions, no over-engineering, surgical changes, goal-driven execution.",
+      "license": "MIT",
+      "signoff": "owner-per-item",
+      "source": {
+        "type": "submodule",
+        "path": ".extern/andrej-karpathy-skills",
+        "repo": "https://github.com/multica-ai/andrej-karpathy-skills",
+        "track": "main",
+        "content": "skills/karpathy-guidelines/SKILL.md"
+      },
+      "install": {
+        "method": "copy",
+        "scope": "user",
+        "target": "~/.agents/skills/karpathy-guidelines/"
+      },
+      "reverse": {
+        "method": "delete"
+      },
+      "catalog": "06_Resources/recommended-skills.md#karpathy"
+    },
+    {
+      "id": "karpathy-memory-block",
+      "kind": "memory-block",
+      "provenance": "community",
+      "description": "The same four rails as a user-scope memory-file block for any coding harness: think before coding, simplicity first, surgical changes, goal-driven execution.",
+      "license": "MIT",
+      "signoff": "owner-per-item",
+      "source": {
+        "type": "submodule",
+        "path": ".extern/andrej-karpathy-skills",
+        "repo": "https://github.com/multica-ai/andrej-karpathy-skills",
+        "track": "main",
+        "content": "CLAUDE.md"
+      },
+      "install": {
+        "method": "marker-block",
+        "scope": "user",
+        "target": "~/.claude/CLAUDE.md"
+      },
+      "reverse": {
+        "method": "remove-marker-block"
+      },
+      "catalog": "06_Resources/recommended-skills.md#karpathy"
+    },
+    {
+      "id": "cursor-overlay",
+      "kind": "overlay",
+      "provenance": "first-party",
+      "description": "Cursor-native overlay: a glob-scoped Inbox .mdc rule and the .cursorignore privacy template. The overlay's own manifest is the authority for its artifacts.",
+      "license": "n/a",
+      "signoff": "default-ok",
+      "source": {
+        "type": "repo",
+        "path": "10_Agents/harnesses/cursor/overlay/manifest.json"
+      },
+      "install": {
+        "method": "shipped-in-repo",
+        "scope": "project",
+        "target": "10_Agents/harnesses/cursor/overlay/manifest.json"
+      },
+      "reverse": {
+        "method": "none"
+      }
+    },
+    {
+      "id": "copilot-overlay",
+      "kind": "overlay",
+      "provenance": "first-party",
+      "description": "Copilot-native overlay: the .github instructions shim and cloud-agent validate hook, all shipped-in-repo. The overlay's own manifest is the authority for its artifacts.",
+      "license": "n/a",
+      "signoff": "default-ok",
+      "source": {
+        "type": "repo",
+        "path": "10_Agents/harnesses/copilot/overlay/manifest.json"
+      },
+      "install": {
+        "method": "shipped-in-repo",
+        "scope": "project",
+        "target": "10_Agents/harnesses/copilot/overlay/manifest.json"
+      },
+      "reverse": {
+        "method": "none"
+      }
+    },
+    {
+      "id": "vault-config-work",
+      "kind": "vault-config-preset",
+      "provenance": "first-party",
+      "description": "Work-fork starting point: sets context: work plus commented guidance for extension_trust and write_exceptions, merged into the vault config.",
+      "license": "n/a",
+      "signoff": "owner-per-item",
+      "source": {
+        "type": "repo",
+        "path": "10_Agents/components/presets/work-fork.yaml"
+      },
+      "install": {
+        "method": "merge-config",
+        "scope": "vault",
+        "target": "00_Meta/config.yaml"
+      },
+      "reverse": {
+        "method": "restore-config"
+      }
+    }
+  ]
+}

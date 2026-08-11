@@ -1,8 +1,9 @@
 """Contract tests for the recommended community skills catalog (issue #7).
 
 Mechanical structure checks only: the catalog note exists, every catalog item
-carries either a commit/tag-pinned ref URL or an explicit TODO-pin marker, and
-the install/link surfaces reference the catalog. No prose is pinned.
+carries either a Tracks branch ref or an explicit TODO-pin marker (community
+components track their upstream branch and install latest, not a frozen SHA),
+and the install/link surfaces reference the catalog. No prose is pinned.
 
 Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests
@@ -18,11 +19,9 @@ CATALOG = ROOT / "06_Resources/recommended-skills.md"
 SKILLS_README = ROOT / "10_Agents/skills/README.md"
 ONBOARD = ROOT / "10_Agents/skills/onboard-harness/SKILL.md"
 
-# A pinned ref is a URL containing a 7-40 char hex commit sha path segment,
-# or an explicit tag-style ref segment (e.g. .../v1.2.3/...).
-PINNED_URL = re.compile(
-    r"https?://\S*/(?:[0-9a-f]{7,40}|v\d+[\w.-]*)(?:/|\b)", re.IGNORECASE
-)
+# A Tracks ref names the upstream branch the item follows (e.g. "@ `main`") or
+# marks it "(latest)" — the install pulls that branch's tip, not a frozen SHA.
+TRACKS_REF = re.compile(r"@\s*`[\w./-]+`|\(latest", re.IGNORECASE)
 TODO_PIN = "TODO-pin"
 
 
@@ -56,22 +55,22 @@ class RecommendedSkillsCatalogTests(unittest.TestCase):
         items = catalog_items(read(CATALOG))
         self.assertGreaterEqual(len(items), 2)
 
-    def test_every_item_has_pinned_ref_or_todo_marker(self):
+    def test_every_item_has_tracks_ref_or_todo_marker(self):
         for name, body in catalog_items(read(CATALOG)).items():
             with self.subTest(item=name):
-                pin_lines = [
+                track_lines = [
                     line
                     for line in body.splitlines()
-                    if re.match(r"^\s*-\s+\*\*Pinned ref:?\*\*", line)
+                    if re.match(r"^\s*-\s+\*\*Tracks:?\*\*", line)
                 ]
                 self.assertEqual(
-                    len(pin_lines), 1, f"item {name!r} needs exactly one Pinned ref field"
+                    len(track_lines), 1, f"item {name!r} needs exactly one Tracks field"
                 )
-                line = pin_lines[0]
+                line = track_lines[0]
                 self.assertTrue(
-                    PINNED_URL.search(line) or TODO_PIN in line,
-                    f"item {name!r} Pinned ref must be a sha/tag-pinned URL "
-                    f"or carry the {TODO_PIN} marker: {line!r}",
+                    TRACKS_REF.search(line) or TODO_PIN in line,
+                    f"item {name!r} Tracks must name a branch (e.g. \"@ `main`\" / "
+                    f"\"(latest)\") or carry the {TODO_PIN} marker: {line!r}",
                 )
 
     def test_every_item_has_required_fields(self):

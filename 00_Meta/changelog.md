@@ -12,12 +12,20 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] feature | Recommended components: agent-library registry + onboarder install (follow-up to #7)
+
+- **New registry `10_Agents/components/manifest.json`** (schema v1) is the machine-readable source of truth for installable **recommended components**, making third-party components a first-class part of the agent library without vendoring: six components across four kinds — `skill` (i-have-adhd, karpathy), `memory-block` (karpathy `CLAUDE.md` guidance), `overlay` (the Cursor/Copilot harness primitives surfaced as components), and `vault-config-preset` (a `work-fork` starting config applied via a new `merge-config` install). Documented in [[10_Agents/components/README]].
+- **Onboarder installs them:** [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] gained a first-class "install recommended skills & configs" stage; [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]'s optional step is now manifest-driven, grouped by kind, under the same reversible M6 install contract. Community content installs only to the harness's **user scope**, never the vault (separation invariant preserved).
+- **Pin → track-latest reversal (owner decision, 2026-08-11):** the community submodule components now **track their upstream `main` and install the latest** commit (`source.track`, `.gitmodules` `branch = main`) rather than freezing a SHA — reversing issue #7's pinned-ref choice. The supply-chain safeguard is the **per-item owner sign-off against the content fetched at install time**; never-vendor still holds (3p content lives only under dot-pruned `.extern/`).
+- **Gaps closed:** [[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] gained classify rows for `.gitmodules` / `.extern/` (owner-content — re-tracking is a curated decision) and `10_Agents/components/` (machinery); mechanical `test_components.py` enforces the manifest shape and branch-tracking. The catalog [[06_Resources/recommended-skills]] is reframed as the human-facing view naming the manifest as source of truth.
+- **Also:** the root README gained one-click "Open with an AI agent" entrypoints (committed badge buttons + copyable desktop-scheme links); the five tool entrypoints are executable (`./brain.py`); the two recommended skills materialize as branch-tracking `.extern/` submodules.
+
 ## [2026-08-11] skill-update | onboard-owner adaptive interview (UI probe, ask+recommend default, research-before-ask)
 
 - Triaged [[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|Cursor dry-run feedback]] into [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|requirements R1–R5]] and an [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]], then executed against [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] on branch `onboard-owner/adaptive-interview` (PR pending).
 - New "Interaction defaults" section: a lightweight, session-scoped in-thread-UI capability probe at stage 1 (independent of and earlier than agent-orientation's stage-8 profile), and "ask + recommend" (2–4 grounded options per question) as the skill-wide default interaction pattern.
 - Stage 2 (profile interview) gained a research-before-ask sub-step — infer `now`/`preferences` from conversation and repo signals, `defaults` from system/environment signals — extending the inference-first posture already used by stage 3's role interview and stage 4's people map.
-- Stage 8 gained a one-line pointer reconciling the stage-1 probe with agent-orientation's fuller harness capability profile.
+- The agent-orientation "Connect their world" stage gained a one-line pointer reconciling the stage-1 probe with agent-orientation's fuller harness capability profile.
 - Source feedback note and both plan docs archived to `07_Archives/inbox/` with `status/done`.
 
 ## [2026-08-11] milestone | M12 Sync & self-improvement shipped (issues #6, #22) — M8–M12 plan complete
