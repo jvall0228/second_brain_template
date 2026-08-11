@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # Copilot P0 Promotion Plan
 
-Owner directive (2026-08-11): "Add copilot support. Do research on the copilot harness and implement." Copilot has been a P1 adapter since M6.3; this plan brings it to first-class support, grounded in [[06_Resources/copilot-harness-deep-dive|the same-day deep-dive research]]. Standards-first discipline holds: the adapter carries only what a cross-harness standard cannot. The plan was adversarially reviewed before implementation (see the review log at the end); all accepted findings are folded in below.
+Owner directive (2026-08-11): "Add copilot support. Do research on the copilot harness and implement." Copilot has been a P1 adapter since M6.3; this plan brings it to first-class support, grounded in the same-day deep-dive research (since merged into [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]). Standards-first discipline holds: the adapter carries only what a cross-harness standard cannot. The plan was adversarially reviewed before implementation (see the review log at the end); all accepted findings are folded in below.
 
 ## Scope decision
 
