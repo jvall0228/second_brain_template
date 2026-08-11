@@ -12,6 +12,14 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] skill-update | onboard-owner adaptive interview (UI probe, ask+recommend default, research-before-ask)
+
+- Triaged [[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|Cursor dry-run feedback]] into [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|requirements R1–R5]] and an [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]], then executed against [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] on branch `onboard-owner/adaptive-interview` (PR pending).
+- New "Interaction defaults" section: a lightweight, session-scoped in-thread-UI capability probe at stage 1 (independent of and earlier than agent-orientation's stage-8 profile), and "ask + recommend" (2–4 grounded options per question) as the skill-wide default interaction pattern.
+- Stage 2 (profile interview) gained a research-before-ask sub-step — infer `now`/`preferences` from conversation and repo signals, `defaults` from system/environment signals — extending the inference-first posture already used by stage 3's role interview and stage 4's people map.
+- Stage 8 gained a one-line pointer reconciling the stage-1 probe with agent-orientation's fuller harness capability profile.
+- Source feedback note and both plan docs archived to `07_Archives/inbox/` with `status/done`.
+
 ## [2026-08-11] milestone | M12 Sync & self-improvement shipped (issues #6, #22) — M8–M12 plan complete
 
 - **sync-upstream (#6, PR #61):** new canonical skill — detect (`template_version` config key, now implemented, vs upstream `template-v*` release tags), classify (a test-enforced path map covering every top-level path, with overrides for owner content incl. #12-specialized templates and the rejection log), apply (machinery direct · canonical docs via PR per §6.3 · owner content never), backfill (regenerate + `brain validate` proof), report to the Inbox; dry-run first, idempotent, **pull-only**. Upstream tagging documented as a release duty.
