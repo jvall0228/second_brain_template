@@ -15,7 +15,7 @@ session: https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73
 
 A curated, **links-only** catalog of third-party / community `SKILL.md`-style content and user-scope memory-file content that pairs well with this vault. Decided in [issue #7](https://github.com/jvall0228/second_brain_template/issues/7) (2026-08-11):
 
-- **Links-only with pinned refs, never vendored copies.** Each item records its upstream URL plus a **pinned commit/tag ref**, a one-paragraph local summary, its license, and a trust note. The vault never carries third-party content — only these curated pointers. Licensing stays upstream's; staleness is visible in the explicit pin instead of silent in a drifting copy.
+- **Links-only with pinned refs, never vendored copies.** Each item records its upstream URL plus a **pinned commit/tag ref**, a one-paragraph local summary, its license, and a trust note. The vault never carries third-party content in its own history — only these curated pointers, plus (owner decision, 2026-08-11) **pinned git submodules under `.extern/`** where materialization helps: a submodule commits only a SHA pointer (the machine-readable form of the pin), content materializes opt-in via `git submodule update --init`, and the dot-prefixed path keeps it outside the note corpus, index, secret scan, and adopter flow. Licensing stays upstream's; staleness is visible in the explicit pin instead of silent in a drifting copy. Re-pinning = update the submodule commit AND the catalog's pinned-ref URL together (they must agree).
 - **Per-item owner sign-off**, matching the community-extension precedent ([[00_Meta/prd]] §6.5): first-party items may install by default; community items require an explicit yes during onboarding, recorded in the install manifest.
 - **Install path:** [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] fetches from the pinned ref into the harness's **user scope** at install time (see its "Optional: recommended community content" section). Installs are manifest-driven and reversible.
 
@@ -38,25 +38,31 @@ Updating a pin is an ordinary curated edit to this note: verify the new ref's co
 
 ### i-have-adhd
 
-- **Upstream:** TODO-pin — community `SKILL.md`; exact source to be confirmed with the owner and pinned.
-- **Pinned ref:** TODO-pin
-- **License:** TODO-pin
-- **What it does:** A skill/memory-file block that adapts agent interaction style for an ADHD owner — shorter turns, explicit next actions, externalized working memory, and low-friction capture prompts. Complements this vault's Inbox-first capture posture.
-- **Trust note:** community; named by the owner (2026-08-11 session) as an example of community skill content worth recommending. Content must be read in full at the pinned ref before install.
+- **Upstream:** <https://github.com/ayghri/i-have-adhd> (the canonical community repo, ~19.6k stars)
+- **Pinned ref:** <https://github.com/ayghri/i-have-adhd/blob/2ed064090711586e0c97a2fbbf15465fe8f1808b/skills/i-have-adhd/SKILL.md> (main @ 2026-08-10)
+- **Local checkout:** `.extern/i-have-adhd` (pinned submodule at the same SHA; opt-in via `git submodule update --init`)
+- **License:** MIT
+- **What it does:** Ten persistent output rules that stop an agent from burying the answer — lead with the next action, number multi-step tasks, end with a concrete next step, cap lists, no preamble/recap/closers, visible progress, matter-of-fact error handling. Complements this vault's Inbox-first capture posture.
+- **Trust note:** community; named by the owner (2026-08-11 session). Content at the pinned ref was read and verified 2026-08-11 (formatting guidance only — no command execution, fetching, or exfiltration instructions). Re-verify on any re-pin.
 - **Sign-off:** owner-per-item
 
 ### karpathy
 
-- **Upstream:** TODO-pin — community `SKILL.md`; exact source to be confirmed with the owner and pinned.
-- **Pinned ref:** TODO-pin
-- **License:** TODO-pin
-- **What it does:** A skill/memory-file block distilling Andrej Karpathy-style working guidance for coding agents — terse, first-principles explanations and pragmatic engineering defaults. Useful as user-scope guidance alongside vault skills.
-- **Trust note:** community; named by the owner (2026-08-11 session) as an example of community skill content worth recommending. Content must be read in full at the pinned ref before install.
+- **Upstream:** <https://github.com/multica-ai/andrej-karpathy-skills> (the viral repo, ~200k stars; originally `forrestchang/andrej-karpathy-skills`, which now redirects here — not authored by Karpathy himself, but derived from his posted observations on LLM coding pitfalls)
+- **Pinned ref:** <https://github.com/multica-ai/andrej-karpathy-skills/blob/2c606141936f1eeef17fa3043a72095b4765b9c2/skills/karpathy-guidelines/SKILL.md> (main @ 2026-04-20)
+- **Local checkout:** `.extern/andrej-karpathy-skills` (pinned submodule at the same SHA; opt-in via `git submodule update --init`)
+- **License:** MIT
+- **What it does:** Behavioral guardrails for coding agents distilled from Karpathy's four observed failure modes — no silent assumptions, no over-engineering, surgical changes only, goal-driven execution with verifiable success criteria. The repo also ships the same content as a root `CLAUDE.md` (same pin) usable as user-scope memory-file content.
+- **Trust note:** community; named by the owner (2026-08-11 session). Content at the pinned ref was read and verified 2026-08-11 (engineering guidance only — no command execution, fetching, or exfiltration instructions). Re-verify on any re-pin.
 - **Sign-off:** owner-per-item
 
 ## Recommended user-scope memory-file content
 
-Curated blocks the owner may want in their harness **user-level** `AGENTS.md`/`CLAUDE.md`, outside the vault. These install through the same onboard-harness path as their own marker-delimited blocks (separate from the second-brain registration block), recorded in the manifest and removed on uninstall. No entries yet beyond what the catalog items above provide as memory-file content; propose additions via the Inbox.
+Curated blocks the owner may want in their harness **user-level** `AGENTS.md`/`CLAUDE.md`, outside the vault. These install through the same onboard-harness path as their own marker-delimited blocks (separate from the second-brain registration block), recorded in the manifest and removed on uninstall.
+
+- **karpathy coding guidelines** — the root `CLAUDE.md` of the [[#karpathy]] item (same pin: `.extern/andrej-karpathy-skills/CLAUDE.md`, or the pinned URL). Four behavioral rails — think before coding (no silent assumptions), simplicity first, surgical changes, goal-driven execution — as a user-scope block for any coding harness. Offered by name during onboard-harness's optional step; owner sign-off per the [[#karpathy]] catalog entry covers it.
+
+Propose further additions via the Inbox.
 
 ## Rules
 
