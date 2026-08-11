@@ -59,7 +59,7 @@ This order is **contractual** and is listed first in `AGENTS.md`:
 ### 6.2 Agent write pattern (active policy)
 - Agents write new notes to `02_Inbox/` by default (the **Inbox-first rule**).
 - Non-Inbox destinations are allowed only when the human explicitly names the destination in the current request.
-- **Standing exception:** agents may append solution notes to `10_Agents/solutions/` (see §9.2).
+- **Standing exceptions:** agents may append solution notes to `10_Agents/solutions/` (see §9.2); once M6 ships the plugin library, agents may also add or update **agent-generated** skills and tools under `10_Agents/skills/` and `10_Agents/tools/` (see §9.3 — generated items carry `workflow/draft` until promoted; template-shipped plugins are canonical).
 - Agents should not modify canonical profile files unless explicitly instructed.
 
 **Roadmap — not adopted:** a milestone-gated expansion (direct agent writes to `06_Resources/` for research summaries with provenance; `04_Projects/` opt-in via a `workflow/agent-writable` tag on the project's status note). If adopted, the tag must first be registered in [[00_Meta/conventions]] and this section plus [[10_Agents/docs/task-patterns]] updated. Until then the active policy above governs; roadmap language does not override it.
@@ -167,14 +167,16 @@ Tier meanings:
 At M6 the directory grows into a plugin library:
 ```
 10_Agents/
-  skills/                # universal skill definitions (prompt templates)
-  tools/                 # executable tools (e.g., brain CLI)
+  skills/<skill-name>/   # Agent Skills format: SKILL.md + optional bundled files
+  tools/brain/           # executable tools; brain is built here at M5 (§19)
   harnesses/<name>/      # harness-specific adapters (hooks, rules)
 ```
-Design principles: universal primitives (skills, tools) work across any agent harness; harness-specific adapters are isolated under `harnesses/<name>/` and carry only what a cross-harness standard cannot; adapters ship both reference configs and wiring docs. Which harnesses get adapters, and in what order, is defined by the support tiers in §8.3 (standards-first).
+Design principles: universal primitives (skills, tools) work across any agent harness; skills use the **Agent Skills format** — folder-per-skill with a `SKILL.md` carrying YAML frontmatter (decision 2026-08-11) — so harnesses that understand the standard consume them unchanged; harness-specific adapters are isolated under `harnesses/<name>/` and carry only what a cross-harness standard cannot; adapters ship both reference configs and wiring docs. Which harnesses get adapters, and in what order, is defined by the support tiers in §8.3 (standards-first).
+
+**Write policy (decision 2026-08-11):** the Inbox-first carve-out extends to this library — agents may add or update **agent-generated** skills and tools directly, tagging them `workflow/draft` until the human promotes them. Template-**shipped** skills and tools are canonical (§11) and follow §6.3 change control. Restructuring or deleting still requires human direction.
 
 ### 9.4 Discovery
-Today, agents discover available docs and solutions by reading `10_Agents/README.md`. Once M5 ships, the `brain` index becomes the primary discovery mechanism.
+Today, agents discover available docs and solutions by reading `10_Agents/README.md`. Once M5 ships, the `brain` index becomes the primary discovery mechanism (the committed `vault-index.json` is readable directly, even without running the CLI).
 
 ## 10. Frontmatter and tags
 ### 10.1 Requirement: YAML frontmatter (all notes)
@@ -218,6 +220,8 @@ Canonical notes are read-only for agents except via the change-control process i
 **Current canonical set:** `AGENTS.md`, `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `01_Profile/now.md`, `01_Profile/preferences.md`, `01_Profile/defaults.md`, `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`. (`CLAUDE.md` cannot carry the tag — see §8.2 — but follows the same change control.)
 
 **Deliberately not canonical:** `00_Meta/status.md` is a living snapshot that agents may update directly (e.g. milestone status); this is recorded in the note itself.
+
+**Planned additions (M5–M6, decision 2026-08-11):** shipped plugin-library content joins the canonical set as it lands — the `brain` tool's parsing-rules spec note and each template-shipped skill. Agent-generated skills and tools instead start as `workflow/draft` (§9.3).
 
 ### 11.1 Real-content files (must exist and be meaningful in an adopter's fork — see §5)
 - `AGENTS.md`
@@ -292,7 +296,7 @@ This vault is a personal context layer read in full by every connected agent ser
 ## 18. Validation and enforcement
 - **Current:** honor-system — the self-validation checklist in [[10_Agents/docs/operating-rules]] (frontmatter fields, tag namespaces, filename convention, destination, `updated:` bump).
 - **Planned (M5):** a `brain validate` subcommand checking frontmatter fields, tag namespaces against conventions, filename conventions, and wikilink resolution.
-- Automated enforcement (pre-commit hook / CI) remains an open consideration (§21).
+- **Planned (M5, decision 2026-08-11):** automated enforcement — a versioned pre-commit hook that regenerates the committed vault index and runs `brain validate` (blocking on errors), plus a CI workflow re-running validation and index freshness on push as a backstop for clones without the hook installed. This resolves the former §21 open consideration.
 
 ## 19. Milestones (status as of 2026-08-11)
 ### M0: Bootstrap Minimum — **Done**
@@ -312,17 +316,27 @@ Section READMEs for every top-level directory (directories themselves exist from
 Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 
 ### M5: Vault Index CLI (`brain`) — **Not started**
-- Python CLI at `.tools/brain/` that indexes all `.md` files (frontmatter, wikilinks, headings, inline tags, backlinks, file stats).
-- Index stored as JSON (`.tools/brain/vault-index.json`; moves to `10_Agents/tools/brain/vault-index.json` after the M6 migration).
+Requirements settled 2026-08-11 (see [[00_Meta/changelog]] and the implementation plan in the Inbox):
+- Python CLI at `10_Agents/tools/brain/` — built directly in its final home; the earlier `.tools/` staging step and its M6 migration are dropped.
+- **Stdlib-only:** no third-party dependencies; the frontmatter parser targets the vault's §10.1 contract rather than full YAML.
+- Index stored as JSON at `10_Agents/tools/brain/vault-index.json`, **committed to the repo** and regenerated by the pre-commit hook (§18) so agents can read it without running Python. Serialization is deterministic (sorted, stable ordering) to keep diffs clean.
 - Query commands: `list`, `search`, `links`, `tags`, `show`, `recent`; all support `--json`.
-- Also: `validate` (§18).
-- Obsidian's MetadataCache is the design inspiration; concrete parsing and link-resolution rules must be specified before implementation (start from [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]).
+- Also: `validate` (§18) — enforced via the pre-commit hook and CI.
+- Obsidian's MetadataCache is the design inspiration; concrete parsing and link-resolution rules must be specified before implementation in a spec note shipped alongside the tool (start from [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]).
 
-### M6: Agent Plugin Library — **Not started**
-Standards-first build order (§8.3):
-1. **Standards track (P0 foundation):** populate `10_Agents/skills/` (universal skill definitions) and `10_Agents/tools/` (migrate `brain` here) as harness-agnostic primitives aligned with cross-harness standards (the `AGENTS.md` convention, MCP). This step alone must leave harnesses outside the support list working with no bespoke adapter.
+### M6: Agent Plugin Library (core) — **Not started**
+Repo-only content; environment-dependent work moved to the new M7 (decision 2026-08-11). Standards-first build order (§8.3):
+1. **Standards track (P0 foundation):** populate `10_Agents/skills/` and `10_Agents/tools/` (`brain` is already here from M5) as harness-agnostic primitives. Skills use the **Agent Skills format** (§9.3). Initial skill families: capture & triage, periodic reviews, vault maintenance, research → resource, and **onboarding** — a skill that installs the library into each supported harness's user config and installs the pre-commit hook. This step alone must leave harnesses outside the support list working with no bespoke adapter.
 2. **P0 adapters:** add `10_Agents/harnesses/` with reference configs and wiring docs for Claude Code, Codex, Opencode, and Pi. Adapters carry only what a standard cannot.
 3. **P1 second wave:** Cursor, Copilot, Muse Code.
+
+### M7: Environment Integration — **Not started**
+Depends on M6; ships as template content but completes in an adopter's environment (decision 2026-08-11):
+- **Agent orientation:** a skill that discovers the high-value context sources available to the adopter (e.g. Teams chats, meeting transcripts, calendars, email) and generates skills and tools/scripts to access them.
+- **Ingestion automations:** recommended recurring flows (email, calendar, chat) capturing into `02_Inbox/`.
+- **Self-maintenance:** a skill that maintains the generated skills and tools over time (audit, prune, update), proposing draft → promotion to the human.
+- **Integration preference ladder:** when a skill needs an external source, prefer (1) environment-specific custom tooling (CLI or MCP), then (2) the vendor's first-party CLI, then (3) a first-party MCP server/connector. Credentials never enter the repo (§16.2).
+- A vault MCP server is **out of scope** permanently — the `brain` CLI is the vault's programmatic interface (§21).
 
 ## 20. Acceptance criteria (M0, objective)
 - All eleven number-prefixed directories exist.
@@ -337,6 +351,5 @@ Standards-first build order (§8.3):
 ## 21. Open considerations (document-only, not blockers)
 - Whether to adopt a `restricted/*` tag namespace (interim handling: §16.2).
 - Whether/when to activate the expanded write ladder (§6.2 roadmap) and register `workflow/agent-writable`.
-- Whether to add automated enforcement (pre-commit/CI) beyond the planned `brain validate`.
 
-**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped (§8.2); Zettelkasten home → `06_Resources/` (§7).
+**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped (§8.2); Zettelkasten home → `06_Resources/` (§7); automated enforcement → adopted as pre-commit hook + CI backstop (§18, 2026-08-11); vault MCP server → out of scope, the `brain` CLI is the vault's programmatic interface (§19 M7, 2026-08-11).
