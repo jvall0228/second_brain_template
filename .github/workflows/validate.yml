@@ -1,7 +1,8 @@
 # CI backstop for clones without the pre-commit hook installed (PRD §18):
-# rebuild the vault index, fail if it differs from the committed copy, and
-# run the full validation suite. Validation warnings (exit 2) pass; only
-# errors (exit 1) fail the run — same contract as the hook.
+# run the executable test suite, check generated editor surfaces, rebuild the
+# vault index, fail if it differs from the committed copy, and run the full
+# validation suite. Validation warnings (exit 2) pass; only errors (exit 1)
+# fail the run — same contract as the hook.
 name: validate
 
 on:
@@ -13,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: unit tests
+        run: python3 -m unittest discover -s 10_Agents/tools/brain/tests
       - name: snippet parity (PRD §6.5)
         run: python3 10_Agents/tools/vscode/gen_snippets.py --check
       - name: brain validate --check-index
