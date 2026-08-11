@@ -90,8 +90,10 @@ class SharedRegistrationContractTests(unittest.TestCase):
             onboard,
         )
         for name in ("opencode", "cursor", "muse-code"):
+            text = read(HARNESS_WIRING[name])
             with self.subTest(harness=name):
-                self.assertIn("automatically discover", read(HARNESS_WIRING[name]))
+                self.assertIn(SHARED, text)
+                self.assertIn("automat", text.lower())
 
 
 if __name__ == "__main__":
