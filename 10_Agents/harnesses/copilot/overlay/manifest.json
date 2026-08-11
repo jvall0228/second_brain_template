@@ -1,0 +1,53 @@
+{
+  "overlay_version": 1,
+  "harness": "copilot",
+  "description": "Copilot-native primitives that ship as working config in the repository itself: the IDE/web bootstrap instructions shim and the cloud-agent validate hook.",
+  "standards_gap": "Surfaces that never read AGENTS.md (github.com Copilot Chat, Eclipse, Visual Studio, JetBrains chat) need .github/copilot-instructions.md, and cloud-agent enforcement needs the .github/hooks agentStop hook - both Copilot-only surfaces no cross-harness standard reaches.",
+  "artifacts": [
+    {
+      "id": "instructions-shim",
+      "kind": "instructions-file",
+      "source": ".github/copilot-instructions.md",
+      "source_root": "repo",
+      "install": {
+        "method": "shipped-in-repo",
+        "target": ".github/copilot-instructions.md",
+        "scope": "project"
+      },
+      "reverse": {
+        "method": "none",
+        "condition": "repo-tracked working config; removal is a repo change, not an onboard-harness uninstall action"
+      }
+    },
+    {
+      "id": "cloud-agent-validate-hook",
+      "kind": "agent-hook",
+      "source": ".github/hooks/vault-validate.json",
+      "source_root": "repo",
+      "install": {
+        "method": "shipped-in-repo",
+        "target": ".github/hooks/vault-validate.json",
+        "scope": "project"
+      },
+      "reverse": {
+        "method": "none",
+        "condition": "repo-tracked working config; removal is a repo change, not an onboard-harness uninstall action"
+      }
+    },
+    {
+      "id": "cloud-agent-validate-script",
+      "kind": "hook-script",
+      "source": ".github/scripts/agent-stop-validate.sh",
+      "source_root": "repo",
+      "install": {
+        "method": "shipped-in-repo",
+        "target": ".github/scripts/agent-stop-validate.sh",
+        "scope": "project"
+      },
+      "reverse": {
+        "method": "none",
+        "condition": "repo-tracked working config; removal is a repo change, not an onboard-harness uninstall action"
+      }
+    }
+  ]
+}

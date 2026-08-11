@@ -21,7 +21,7 @@ Turn recurring vault operations into scheduled flows the owner doesn't have to r
 
 ## Ground rules
 
-- **Preference ladder** for each flow's source access (PRD §19 M7): (1) environment-specific custom tooling (CLI or MCP) → (2) first-party CLI → (3) first-party MCP server/connector.
+- **Interface ranking ladder** for each flow's source access (PRD §19 M7; full six-rung ladder in `agent-orientation`): (1) environment-specific custom tooling (CLI or MCP) → (2) first-party CLI → (3) first-party MCP server/connector → (4) vendor API wrapped in a generated tool → (5) browser automation, last resort → (6) none, recorded explicitly.
 - **Credentials never enter the repo** (PRD §16.2): schedules and scripts are committed; auth stays in the environment (CLI sessions, env vars, the harness's connector store).
 - Every inbound flow **writes through the `inbox-capture` rules** — dated kebab filenames, full frontmatter, `workflow/draft` — so triage stays uniform. **Inbound flows** never write outside `02_Inbox/` except `daily-log` context flows, which follow that skill's rules. Rhythm jobs instead write to each invoked skill's own home (reviews to `03_Journal/`, maintenance to `00_Meta/status.md`) — they inherit that skill's write posture, not the Inbox-only rule.
 - **The unattended contract:** a scheduled run has nobody to ask. It executes only self-contained outcomes; anything needing judgment becomes a report note in the Inbox; its final output is the **deliverable** (the log entry, the report, the review draft) — never a plan, a question, or a request for input. Scheduled runs inherit the strictest write posture of the skills they invoke.
@@ -62,7 +62,7 @@ Document each wired flow in the harness's context (what runs, when, writing what
 
 ## Steps
 
-1. Read the orientation inventory note for adopted sources and priorities; read the cadence table for the rhythm side.
+1. Read the **current environment's** orientation inventory note (`10_Agents/environments/<env-slug>/orientation-inventory.md` — see [[10_Agents/environments/README]]) for adopted sources, interface rungs, priorities, and the environment's permission envelope (never propose a flow the environment forbids); read the cadence table for the rhythm side.
 2. Propose flows from both families (tables above, pruned to real sources and the owner's actual rhythm) with cadence and cost/noise notes — owner picks.
 3. Wire each approved flow via the harness scheduler; first runs in **dry-run mode** — inbound flows produce a sample Inbox note, rhythm jobs produce their deliverable tagged `workflow/draft` — before anything is enabled.
 4. Owner reviews samples → enable; register the flows with `self-maintenance` (it audits `10_Agents/` drafts and the documented flows).
