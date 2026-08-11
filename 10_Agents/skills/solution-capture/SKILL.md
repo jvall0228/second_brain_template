@@ -29,6 +29,8 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
      - audience/agent
      - topic/<subject>
    updated: YYYY-MM-DD
+   author: claude-code
+   session: SESSION_REF
    ---
 
    # Concise Problem Name
@@ -39,6 +41,7 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
    ## Prevention   — how to avoid hitting it again
    ## Related      — links/paths to affected docs
    ```
+   The provenance fields (`00_Meta/conventions.md` § Provenance) are expected on agent-written notes: `author:` is your harness identifier (`claude-code`, `copilot`, …); `session:` is the session URL / PR / task reference — omit it when none exists.
 4. **Keep it evergreen:** facts and commands, no session narrative. If a solution supersedes an old note, update that note (bump `updated:`) instead of writing a duplicate.
 5. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
 
