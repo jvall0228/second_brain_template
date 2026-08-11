@@ -230,7 +230,7 @@ Tag namespace membership is read **at runtime** from the authoritative table in 
 
 ### 10.2 Checks
 
-**Errors** (exit 1): missing frontmatter; missing/null `title`, `tags`, or `updated`; `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved wikilink (placeholder links exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems.
+**Errors** (exit 1): missing frontmatter; missing/null `title`, `tags`, or `updated`; `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved wikilink (placeholder links exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems. Secret-scanning findings (§10.5) are also errors.
 
 **Filename convention:** applies to the **basename** of note files only (directories and assets are not checked). A note basename must match `^[a-z0-9]+(-[a-z0-9]+)*\.md$` — all-digit segments are allowed, so dated notes like `2025-01-15.md` and `2024-01-review.md` pass. Exceptions per [[00_Meta/conventions]]: `AGENTS.md`, `CLAUDE.md`, `README.md` at any level; periodic tokens `YYYY-W##-review.md` and `YYYY-Q#-review.md`; `SKILL.md` inside `10_Agents/skills/` (Agent Skills format, M6).
 
@@ -250,6 +250,31 @@ Tag namespace membership is read **at runtime** from the authoritative table in 
 Human output: one line per finding — `ERROR <path>[:<line>] <rule>: <message>` / `WARN …` — sorted by path, then line (findings without a line first), then rule; a final summary line `N errors, M warnings`. JSON: `{"errors": [...], "warnings": [...]}` where each finding is `{"line": int|null, "message": str, "path": str, "rule": str}`.
 
 Exit codes: `0` clean · `1` at least one error · `2` warnings only. The pre-commit hook and CI (M5.4) block on exit 1 and pass on 0/2.
+
+### 10.5 Secret scanning
+
+PRD §16.2's never-commit-credentials rule is enforced by `validate` itself, so the existing hook/CI/agent-stop chain blocks credentials with no new wiring. Every finding is an **error** (rule `secret-<name>`, exit 1); severity is fixed by design.
+
+**Scope.** Every file in the **working corpus** (§2) — notes *and* assets — one pass per `validate` run. The §2 pruning already keeps the scan safe by construction: dot-directories (`.git/`, `.obsidian/`, `.vscode/`, …), the tool's test tree, and the committed `vault-index.json` never enter the corpus. Binary files are skipped by NUL-byte sniff (a `0x00` byte in the first 8 KiB); text is decoded UTF-8 with replacement characters and newline-normalized per §3, so line numbers match the rest of `validate`. Frontmatter and code blocks are **not** excluded — a credential is a credential wherever it sits.
+
+**Rule table.** Detection is **data-driven**: the module-level `SECRET_RULES` table in `brain.py` — `(name, compiled pattern)` pairs — is authoritative for the exact patterns; extending detection is a table edit (add a row there and a row here in the same commit; #22's self-improvement loop and upstream sync extend it the same way). The table below describes each rule in words (deliberately not as literal match-bait):
+
+| Rule name | Detects | Pattern (in words) |
+|-----------|---------|--------------------|
+| `aws-access-key-id` | AWS access key IDs | `AKIA` followed by exactly 16 uppercase letters/digits, word-bounded |
+| `github-token` | GitHub tokens | prefix `ghp_`, `gho_`, or `github_pat_` followed by 20+ word characters |
+| `slack-token` | Slack tokens | `xox` + one lowercase letter + `-` + 10+ token characters |
+| `private-key` | PEM private-key headers | five dashes, `BEGIN`, an optional uppercase label, `PRIVATE KEY`, five dashes |
+| `generic-credential` | literal credential assignments | a key named like api-key / secret / token / password (case-insensitive), then `:` or `=`, then a **quoted** literal of 12+ token characters containing at least one digit |
+| `high-entropy-string` | long opaque literals (the one conservative entropy heuristic) | `:` or `=`, then a **quoted** run of 40+ base64 characters containing lowercase, uppercase, and a digit (padding `=` allowed) |
+
+The two assignment rules require the value to be *entirely* quoted token characters, and the entropy heuristic requires mixed case plus a digit — so prose, wikilinks, bare git SHAs (lowercase hex has no uppercase), and long URLs (contain `:`/`.`/`?` outside the charset) never flag; tuned to zero false positives on this repo's own tree, which the test suite pins with a repo self-scan.
+
+**Allowlist.** A line is exempt when it carries an HTML comment containing the token `brain:allow-secret-pattern` — marker and pattern on the **same line**. The committed marker is the audit trail: documentation *about* token shapes stays possible, and every suppression is greppable. There is no file- or directory-level allowlist.
+
+**Output.** Findings follow §10.4 (`ERROR <path>:<line> secret-<name>: …`) but the message **never echoes the matched text** — it names the rule and points at the marker escape, so a real credential is not additionally copied into terminals, CI logs, or agent transcripts.
+
+**Backstop.** GitHub-side secret scanning + push protection (issue #24 item 3) is a repository setting owned outside this tool — it catches formats this table doesn't know, including in git history. Tracked separately; `validate` neither depends on nor replaces it.
 
 ## 11. Divergences from Obsidian and known limitations
 

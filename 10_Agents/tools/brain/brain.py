@@ -600,6 +600,80 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 
 
 # ---------------------------------------------------------------------------
+# §10.5 Secret scanning
+
+# Inline allowlist: an HTML comment containing this token on the SAME line
+# suppresses every secret finding on that line — the committed marker is the
+# audit trail for an intentional example.
+SECRET_ALLOW_MARKER = "brain:allow-secret-pattern"
+SECRET_ALLOW_RE = re.compile(r"<!--[^\n]*" + re.escape(SECRET_ALLOW_MARKER) + r"[^\n]*-->")
+
+# Data-driven rule table (§10.5): (name, compiled pattern). Every finding is
+# an ERROR with rule `secret-<name>`. Extending detection is a table edit —
+# add a row here and a row to the spec.md §10.5 table in the same commit.
+# Patterns are written so they never match their own source text, keeping the
+# repo self-scan clean by construction.
+SECRET_RULES: tuple[tuple[str, re.Pattern], ...] = (
+    ("aws-access-key-id", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+    ("github-token", re.compile(r"\b(?:ghp_|gho_|github_pat_)[A-Za-z0-9_]{20,}\b")),
+    ("slack-token", re.compile(r"\bxox[a-z]-[A-Za-z0-9-]{10,}")),
+    ("private-key", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
+    (
+        "generic-credential",
+        re.compile(
+            r"""(?i)\b(?:api[_-]?key|secret|token|passwd|password)"""
+            r"""\s*[:=]\s*["'](?=[^"']*\d)[A-Za-z0-9_\-+/=]{12,}["']"""
+        ),
+    ),
+    (
+        "high-entropy-string",
+        re.compile(
+            r"""[:=]\s*["'](?=[^"']*[a-z])(?=[^"']*[A-Z])(?=[^"']*\d)"""
+            r"""[A-Za-z0-9+/]{40,}={0,2}["']"""
+        ),
+    ),
+)
+
+
+def scan_secrets(root: Path, paths: list[str]) -> list[dict]:
+    """§10.5: secret findings over every text file in the working corpus.
+
+    Binary files (NUL byte in the first 8 KiB) are skipped; text is decoded
+    UTF-8 with replacement and newline-normalized per §3, so line numbers
+    match the rest of validate. One finding per (line, rule); the matched
+    text is never echoed into the message."""
+    findings: list[dict] = []
+    for rel in sorted(paths):
+        try:
+            raw = (root / rel).read_bytes()
+        except OSError:
+            continue
+        if b"\0" in raw[:8192]:
+            continue
+        text = raw.decode("utf-8", errors="replace")
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
+        for lineno, line in enumerate(text.split("\n"), start=1):
+            if SECRET_ALLOW_RE.search(line):
+                continue
+            for name, pattern in SECRET_RULES:
+                if pattern.search(line):
+                    findings.append(
+                        {
+                            "line": lineno,
+                            "message": (
+                                f"matches secret rule {name!r} — remove the "
+                                "credential, or mark an intentional example "
+                                "with an HTML comment containing "
+                                f"{SECRET_ALLOW_MARKER} on this line"
+                            ),
+                            "path": rel,
+                            "rule": f"secret-{name}",
+                        }
+                    )
+    return findings
+
+
+# ---------------------------------------------------------------------------
 # §10 Validate
 
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*\.md$")
@@ -640,6 +714,8 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
             "conventions-table-unreadable",
             "cannot read the authoritative Tag Namespaces table",
         )
+
+    errors.extend(scan_secrets(root, notes + assets))
 
     folded: dict[str, list[str]] = {}
     for p in notes + assets:
