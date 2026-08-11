@@ -105,6 +105,26 @@ class SectionTests(ReportTestCase):
             )
             self.assertEqual(rep["thresholds"], {"inboxDays": 14, "staleDays": 30})
 
+    def test_inbox_date_prefix_requires_boundary(self):
+        # '2026-08-1234-weird.md' must not parse as capture date 2026-08-12 —
+        # it falls back to updated:, keeping real triage debt visible.
+        with tempfile.TemporaryDirectory() as td:
+            extra = {
+                "02_Inbox/2026-08-1234-weird.md": (
+                    "---\ntitle: \"w\"\ntags:\n  - type/log\nupdated: 2026-06-01\n---\nx\n"
+                )
+            }
+            rep = self.report_json(self.vault(td, extra))
+            rows = [
+                r
+                for bucket in rep["inboxAging"]["buckets"].values()
+                for r in bucket
+                if r["path"].endswith("weird.md")
+            ]
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["source"], "updated")
+            self.assertIn("02_Inbox/2026-08-1234-weird.md", rep["inboxAging"]["triageDebt"])
+
     def test_orphans_exclude_readmes_templates_archives(self):
         with tempfile.TemporaryDirectory() as td:
             rep = self.report_json(self.vault(td))

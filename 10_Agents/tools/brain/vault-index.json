@@ -1433,7 +1433,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 10229,
+   "sizeBytes": 10239,
    "title": "Conventions",
    "updated": "2026-08-11"
   },
@@ -13832,7 +13832,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3597,
+   "sizeBytes": 3630,
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
   },
@@ -14233,7 +14233,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 52319,
+   "sizeBytes": 52641,
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"
   },
@@ -14858,7 +14858,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6853,
+   "sizeBytes": 7023,
    "title": "Agents",
    "updated": "2026-08-11"
   },

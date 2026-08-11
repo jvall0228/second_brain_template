@@ -199,6 +199,30 @@ class RestrictedIndexReductionTests(unittest.TestCase):
             # Non-restricted notes are untouched.
             self.assertTrue(reduced["notes"]["normal.md"]["headings"])
 
+    def test_reduction_strips_link_prose(self):
+        # Alias text, fragments, and verbatim raw markup are body prose —
+        # a reduced record's links keep only structure (§8.3).
+        with tempfile.TemporaryDirectory() as td:
+            files = base_files()
+            files["secret.md"] = (
+                "---\ntitle: \"Secret Plans\"\ntags:\n  - type/note\n"
+                "  - restricted/private\nupdated: 2026-08-11\n---\n\n"
+                "See [[other-secret#Hidden Section|the secret alias text]] "
+                "and ![[normal]].\n"
+            )
+            root = make_vault(Path(td), files)
+            reduced = brain.reduce_restricted(self.build(root))
+            links = reduced["notes"]["secret.md"]["links"]
+            self.assertEqual(len(links), 2)
+            for link in links:
+                self.assertIsNone(link["display"])
+                self.assertIsNone(link["fragment"])
+            self.assertEqual(links[0]["raw"], "[[other-secret]]")
+            self.assertEqual(links[1]["raw"], "![[normal]]")
+            # Non-restricted notes keep full link records.
+            normal_links = reduced["notes"]["normal.md"]["links"]
+            self.assertTrue(all("raw" in l for l in normal_links))
+
     def test_cmd_index_writes_reduced_index(self):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(Path(td), base_files())
