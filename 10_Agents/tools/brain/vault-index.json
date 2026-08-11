@@ -1989,6 +1989,7 @@
     "10_Agents/harnesses/README.md",
     "10_Agents/harnesses/cursor/wiring.md",
     "10_Agents/skills/README.md",
+    "10_Agents/skills/sync-upstream/SKILL.md",
     "10_Agents/tools/README.md",
     "10_Agents/tools/brain/spec.md",
     "10_Agents/tools/vscode/README.md",
@@ -11825,22 +11826,22 @@
     },
     {
      "level": 3,
-     "line": 71,
+     "line": 72,
      "text": "Onboarding & environment"
     },
     {
      "level": 2,
-     "line": 79,
+     "line": 80,
      "text": "Recommended community skills"
     },
     {
      "level": 2,
-     "line": 83,
+     "line": 84,
      "text": "The Rhythm (cadence table)"
     },
     {
      "level": 2,
-     "line": 97,
+     "line": 98,
      "text": "Rules"
     }
    ],
@@ -12033,10 +12034,21 @@
      "warnings": []
     },
     {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 70,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL\\|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
+    },
+    {
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 75,
+     "line": 76,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL\\|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -12047,7 +12059,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 76,
+     "line": 77,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL\\|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -12058,7 +12070,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 77,
+     "line": 78,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL\\|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -12069,7 +12081,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 81,
+     "line": 82,
      "placeholder": false,
      "raw": "[[06_Resources/recommended-skills]]",
      "resolved": "06_Resources/recommended-skills.md",
@@ -12080,7 +12092,7 @@
      "display": "onboard-harness",
      "embed": false,
      "fragment": null,
-     "line": 81,
+     "line": 82,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
      "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
@@ -12091,7 +12103,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 86,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -12102,7 +12114,7 @@
      "display": "onboard-owner",
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 86,
      "placeholder": false,
      "raw": "[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]",
      "resolved": "10_Agents/skills/onboard-owner/SKILL.md",
@@ -12113,7 +12125,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 85,
+     "line": 86,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -12124,7 +12136,7 @@
      "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 89,
+     "line": 90,
      "placeholder": false,
      "raw": "[[10_Agents/skills/daily-log/SKILL\\|daily-log]]",
      "resolved": "10_Agents/skills/daily-log/SKILL.md",
@@ -12135,7 +12147,7 @@
      "display": "triage-inbox",
      "embed": false,
      "fragment": null,
-     "line": 90,
+     "line": 91,
      "placeholder": false,
      "raw": "[[10_Agents/skills/triage-inbox/SKILL\\|triage-inbox]]",
      "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
@@ -12146,7 +12158,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 90,
+     "line": 91,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -12157,7 +12169,7 @@
      "display": "periodic-review",
      "embed": false,
      "fragment": null,
-     "line": 91,
+     "line": 92,
      "placeholder": false,
      "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
      "resolved": "10_Agents/skills/periodic-review/SKILL.md",
@@ -12168,7 +12180,7 @@
      "display": "vault-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 91,
+     "line": 92,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-maintenance/SKILL\\|vault-maintenance]]",
      "resolved": "10_Agents/skills/vault-maintenance/SKILL.md",
@@ -12179,44 +12191,11 @@
      "display": "curate",
      "embed": false,
      "fragment": null,
-     "line": 91,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
-     "resolved": "10_Agents/skills/curate/SKILL.md",
-     "target": "10_Agents/skills/curate/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "periodic-review",
-     "embed": false,
-     "fragment": null,
-     "line": 92,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
-     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
-     "target": "10_Agents/skills/periodic-review/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "curate",
-     "embed": false,
-     "fragment": null,
      "line": 92,
      "placeholder": false,
      "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
      "resolved": "10_Agents/skills/curate/SKILL.md",
      "target": "10_Agents/skills/curate/SKILL",
-     "warnings": []
-    },
-    {
-     "display": "self-maintenance",
-     "embed": false,
-     "fragment": null,
-     "line": 92,
-     "placeholder": false,
-     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
-     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
-     "target": "10_Agents/skills/self-maintenance/SKILL",
      "warnings": []
     },
     {
@@ -12231,10 +12210,43 @@
      "warnings": []
     },
     {
+     "display": "curate",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/curate/SKILL\\|curate]]",
+     "resolved": "10_Agents/skills/curate/SKILL.md",
+     "target": "10_Agents/skills/curate/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "self-maintenance",
+     "embed": false,
+     "fragment": null,
+     "line": 93,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/self-maintenance/SKILL\\|self-maintenance]]",
+     "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
+     "target": "10_Agents/skills/self-maintenance/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "periodic-review",
+     "embed": false,
+     "fragment": null,
+     "line": 94,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/periodic-review/SKILL\\|periodic-review]]",
+     "resolved": "10_Agents/skills/periodic-review/SKILL.md",
+     "target": "10_Agents/skills/periodic-review/SKILL",
+     "warnings": []
+    },
+    {
      "display": "inbox-capture",
      "embed": false,
      "fragment": null,
-     "line": 95,
+     "line": 96,
      "placeholder": false,
      "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
      "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
@@ -12245,7 +12257,7 @@
      "display": "vault-answer",
      "embed": false,
      "fragment": null,
-     "line": 95,
+     "line": 96,
      "placeholder": false,
      "raw": "[[10_Agents/skills/vault-answer/SKILL|vault-answer]]",
      "resolved": "10_Agents/skills/vault-answer/SKILL.md",
@@ -12256,7 +12268,7 @@
      "display": "express-packet",
      "embed": false,
      "fragment": null,
-     "line": 95,
+     "line": 96,
      "placeholder": false,
      "raw": "[[10_Agents/skills/express-packet/SKILL|express-packet]]",
      "resolved": "10_Agents/skills/express-packet/SKILL.md",
@@ -12267,7 +12279,7 @@
      "display": "merge-notes",
      "embed": false,
      "fragment": null,
-     "line": 95,
+     "line": 96,
      "placeholder": false,
      "raw": "[[10_Agents/skills/merge-notes/SKILL|merge-notes]]",
      "resolved": "10_Agents/skills/merge-notes/SKILL.md",
@@ -12275,10 +12287,21 @@
      "warnings": []
     },
     {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 96,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 99,
+     "line": 100,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -12286,7 +12309,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 7189,
+   "sizeBytes": 7601,
    "tasks": [],
    "title": "Agent Skills",
    "updated": "2026-08-11"
@@ -13817,6 +13840,133 @@
    "sizeBytes": 2204,
    "tasks": [],
    "title": "Skill: Solution Capture",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/skills/sync-upstream/SKILL.md": {
+   "backlinks": [
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/sync-upstream/SKILL.md",
+    "10_Agents/tools/brain/spec.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Pull upstream second_brain_template releases into this fork - detect pending releases via the template_version config key and upstream release tags, classify every changed file (machinery / owner content / canonical docs), apply per lane, backfill mechanical fixes, and report to the Inbox. Use when the owner asks to check for or adopt template updates. Pull-only, dry-run first.",
+    "expires": "2027-08-11",
+    "name": "sync-upstream",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/draft"
+    ],
+    "title": "Skill: Sync Upstream",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 13,
+     "text": "Sync Upstream"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Ground rules"
+    },
+    {
+     "level": 2,
+     "line": 27,
+     "text": "Detect"
+    },
+    {
+     "level": 2,
+     "line": 43,
+     "text": "Classify"
+    },
+    {
+     "level": 3,
+     "line": 53,
+     "text": "Path map"
+    },
+    {
+     "level": 3,
+     "line": 80,
+     "text": "Overrides"
+    },
+    {
+     "level": 3,
+     "line": 92,
+     "text": "Cross-cutting rules (apply after path lanes)"
+    },
+    {
+     "level": 2,
+     "line": 98,
+     "text": "Apply"
+    },
+    {
+     "level": 2,
+     "line": 107,
+     "text": "Backfill"
+    },
+    {
+     "level": 2,
+     "line": 116,
+     "text": "Report"
+    },
+    {
+     "level": 2,
+     "line": 124,
+     "text": "Upstream release duty"
+    },
+    {
+     "level": 2,
+     "line": 128,
+     "text": "Steps"
+    },
+    {
+     "level": 2,
+     "line": 137,
+     "text": "References"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": "Report",
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[#Report]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 29,
+     "placeholder": false,
+     "raw": "[[00_Meta/config.yaml]]",
+     "resolved": "00_Meta/config.yaml",
+     "target": "00_Meta/config.yaml",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 139,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 11828,
+   "tasks": [],
+   "title": "Skill: Sync Upstream",
    "updated": "2026-08-11"
   },
   "10_Agents/skills/triage-inbox/SKILL.md": {
@@ -15403,6 +15553,17 @@
      "warnings": []
     },
     {
+     "display": "sync-upstream",
+     "embed": false,
+     "fragment": null,
+     "line": 374,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]",
+     "resolved": "10_Agents/skills/sync-upstream/SKILL.md",
+     "target": "10_Agents/skills/sync-upstream/SKILL",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
@@ -15414,7 +15575,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 71708,
+   "sizeBytes": 72378,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

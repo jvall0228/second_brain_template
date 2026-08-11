@@ -67,6 +67,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | [[10_Agents/skills/merge-notes/SKILL\|merge-notes]] | Execute approved merges, splits, and renames: rewrite, retarget backlinks, archive, validate |
 | [[10_Agents/skills/recommended-automations/SKILL\|recommended-automations]] | Wire inbound capture flows and rhythm jobs via the harness's scheduler |
 | [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] | Audit generated tooling: validate, prune, update, propose promotions |
+| [[10_Agents/skills/sync-upstream/SKILL\|sync-upstream]] | Pull upstream template releases into the fork: detect via `template_version` + release tags, classify (machinery / owner content / canonical docs), apply per lane, backfill, report — pull-only, dry-run first |
 
 ### Onboarding & environment
 
@@ -92,7 +93,7 @@ Vault-canonical skills live above. A separate, curated **links-only** catalog of
 | Quarterly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (quarterly, updates the Now page) + [[10_Agents/skills/curate/SKILL\|curate]] + [[10_Agents/skills/self-maintenance/SKILL\|self-maintenance]] audit | Quarter end |
 | Yearly | [[10_Agents/skills/periodic-review/SKILL\|periodic-review]] (yearly) | Year end |
 
-Ad hoc, not scheduled: capture and retrieval ([[10_Agents/skills/inbox-capture/SKILL|inbox-capture]], [[10_Agents/skills/vault-answer/SKILL|vault-answer]], [[10_Agents/skills/express-packet/SKILL|express-packet]]) run when needed; surgery ([[10_Agents/skills/merge-notes/SKILL|merge-notes]]) runs on approval only.
+Ad hoc, not scheduled: capture and retrieval ([[10_Agents/skills/inbox-capture/SKILL|inbox-capture]], [[10_Agents/skills/vault-answer/SKILL|vault-answer]], [[10_Agents/skills/express-packet/SKILL|express-packet]]) run when needed; surgery ([[10_Agents/skills/merge-notes/SKILL|merge-notes]]) runs on approval only; upstream syncing ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]]) runs when the owner asks to check for or adopt template releases.
 
 ## Rules
 

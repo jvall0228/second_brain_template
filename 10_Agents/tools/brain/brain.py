@@ -763,6 +763,7 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 #   agent_write_allowed(rel, config) -> bool  (Inbox-first + exceptions)
 #   extension_trust(config)        -> policy string (default "first-party")
 #   vault_context(config)          -> context string (default "personal")
+#   template_version(config)       -> recorded upstream version or None
 #
 # The config is OPTIONAL: an absent file (or empty/all-comment file) yields
 # ({}, []) and every behavior stays at its built-in default. Malformed
@@ -771,19 +772,25 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 
 CONFIG_RELPATH = "00_Meta/config.yaml"
 CONFIG_IMPLEMENTED_KEYS = frozenset(
-    {"context", "extension_trust", "report", "tasks", "write_exceptions"}
+    {
+        "context",
+        "extension_trust",
+        "report",
+        "tasks",
+        "template_version",
+        "write_exceptions",
+    }
 )
 # Named-but-unimplemented keys reserved for the issues that claimed them
-# (#15 environments, #32 modules, #18 provenance,
-# #26 sync, #6 template_version). Parsed and tolerated with no finding, so
-# a forward-looking config never fails an older brain.
+# (#15 environments, #32 modules, #18 provenance, #26 sync). Parsed and
+# tolerated with no finding, so a forward-looking config never fails an
+# older brain.
 CONFIG_RESERVED_KEYS = frozenset(
     {
         "environments",
         "modules",
         "provenance",
         "sync",
-        "template_version",
     }
 )
 # §16.4: known subkeys of the `report` mapping (values: digits-only scalars).
@@ -1019,6 +1026,18 @@ def vault_context(config: dict) -> str:
     return DEFAULT_CONTEXT
 
 
+def template_version(config: dict) -> str | None:
+    """Recorded upstream template version (issue #6, spec §15.3): the
+    free-form scalar the sync-upstream skill writes after a completed sync
+    and compares against upstream release tags, or None when the fork has
+    never recorded one. A record, not a switch — brain drives no behavior
+    from it."""
+    value = config.get("template_version")
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return None
+
+
 def check_config(
     root: Path, config: dict, findings: list[dict]
 ) -> tuple[list[dict], list[dict]]:
@@ -1181,6 +1200,20 @@ def check_config(
                     "(first-party | relaxed)",
                 )
             )
+    if "template_version" in config:
+        raw = config["template_version"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, str):
+            errors.append(
+                _cfg_finding(
+                    None,
+                    "config-invalid-value",
+                    "template_version must be a scalar version string",
+                )
+            )
+        # Free-form by design (§15.3): any scalar is a documented value,
+        # so there is no config-unknown-value warning for this key.
     if "context" in config:
         raw = config["context"]
         if raw is None:
@@ -2623,6 +2656,7 @@ def cmd_config(root: Path, args) -> int:
         "raw": config,
         "reservedKeys": sorted(CONFIG_RESERVED_KEYS),
         "tasksCarryOver": tasks_carry_over(config),
+        "templateVersion": template_version(config),
         "warnings": cfg_warnings,
         "writeExceptions": list(write_exception_prefixes(config)),
     }
@@ -2633,6 +2667,7 @@ def cmd_config(root: Path, args) -> int:
         f"extension trust: {payload['extensionTrust']}",
         f"context: {payload['context']}",
         f"tasks carry-over: {'on' if payload['tasksCarryOver'] else 'off'}",
+        f"template version: {payload['templateVersion'] or '(unset)'}",
     ]
     for f in cfg_errors:
         lines.append(f"ERROR {f['rule']}: {f['message']}")
