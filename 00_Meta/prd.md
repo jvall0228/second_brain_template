@@ -10,6 +10,7 @@ updated: 2026-08-11
 
 # PRD: Second Brain Knowledge Management System (Markdown + Git + Obsidian + Agents)
 
+> **Revision 2.1 — 2026-08-11.** `AGENTS.md` became the entrypoint with `CLAUDE.md` as a one-line adapter (§8.2); harness support tiers recorded, standards-first (§8.3); M5–M7 requirements settled — M6 rescoped to the plugin-library core, M7 (environment integration) added (§19).
 > **Revision 2.0 — 2026-08-11.** Aligned the spec with the shipped template: normalized all paths to kebab-case, recorded milestone status (M0–M4 done, M5–M6 not started), made [[00_Meta/conventions]] the authoritative tag taxonomy, documented the shipped surface (Journal subtree, solutions library, extra profile notes and templates), and added sections for the template phase, data sensitivity, concurrency, and validation. Revision 1.x (2026-02 through 2026-08) evolved in place without a revision log.
 
 ## 1. Summary
@@ -300,7 +301,7 @@ This vault is a personal context layer read in full by every connected agent ser
 
 ## 19. Milestones (status as of 2026-08-11)
 ### M0: Bootstrap Minimum — **Done**
-Real-content files (§11.1, shipped as fill-in shells per §5), aliases, Inbox README, all numbered directories.
+Real-content files (§11.1, shipped as fill-in shells per §5), the entrypoint files per §8 (originally aliases, now the `CLAUDE.md` adapter), Inbox README, all numbered directories.
 Success criterion: an agent reads the must-read sequence and produces an Inbox note that matches conventions. *(Verified 2026-08-11: `2026-08-11-prd-review.md`, written to the Inbox and archived after triage to `07_Archives/inbox/`.)*
 
 ### M1: Repo skeleton expansion — **Done**
@@ -352,4 +353,4 @@ Depends on M6; ships as template content but completes in an adopter's environme
 - Whether to adopt a `restricted/*` tag namespace (interim handling: §16.2).
 - Whether/when to activate the expanded write ladder (§6.2 roadmap) and register `workflow/agent-writable`.
 
-**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped (§8.2); Zettelkasten home → `06_Resources/` (§7); automated enforcement → adopted as pre-commit hook + CI backstop (§18, 2026-08-11); vault MCP server → out of scope, the `brain` CLI is the vault's programmatic interface (§19 M7, 2026-08-11).
+**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped in 1.x, retired 2026-08-11 for the `@AGENTS.md` import adapter (§8.2); Zettelkasten home → `06_Resources/` (§7); automated enforcement → adopted as pre-commit hook + CI backstop (§18, 2026-08-11); vault MCP server → out of scope, the `brain` CLI is the vault's programmatic interface (§19 M7, 2026-08-11).
