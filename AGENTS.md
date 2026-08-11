@@ -42,7 +42,7 @@ Standing exceptions:
 
 See [[02_Inbox/README]] for triage instructions.
 
-**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `python3 10_Agents/tools/brain/brain.py index` before each commit. CI self-heals stragglers, but don't rely on it.
+**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `python3 10_Agents/tools/brain/brain.py index` before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the two committed generated files (the vault index and `.vscode/second-brain.code-snippets`) by keeping ours; the post-merge hook then regenerates both, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [[10_Agents/solutions/vault-tooling/index-merge-conflicts]].
 
 ## Tagging Rules (Summary)
 

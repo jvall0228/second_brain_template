@@ -1,4 +1,16 @@
 # The committed vault index is byte-compared against fresh rebuilds
 # (brain validate --check-index); never let checkout newline conversion
 # touch it (spec.md §8.2).
-10_Agents/tools/brain/vault-index.json -text
+#
+# merge=regenerate (spec.md §8.2): both committed generated files use a
+# custom merge driver that keeps "ours" and relies on regeneration for
+# correctness — never hand-merge generated content. Install once per clone:
+#
+#   git config merge.regenerate.driver true
+#
+# ("true" exits 0 leaving %A = ours.) Clones without the driver configured
+# degrade to a normal conflict; see
+# 10_Agents/solutions/vault-tooling/index-merge-conflicts.md for the
+# fallback recipe.
+10_Agents/tools/brain/vault-index.json -text merge=regenerate
+.vscode/second-brain.code-snippets merge=regenerate
