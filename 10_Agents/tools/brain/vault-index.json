@@ -137,26 +137,31 @@
     {
      "level": 2,
      "line": 15,
+     "text": "2026-08-11 — M5: `brain` Vault Index CLI Shipped"
+    },
+    {
+     "level": 2,
+     "line": 21,
      "text": "2026-08-11 — M5–M7 Requirements Settled"
     },
     {
      "level": 2,
-     "line": 25,
+     "line": 31,
      "text": "2026-08-11 — Harness Support Tiers"
     },
     {
      "level": 2,
-     "line": 30,
+     "line": 36,
      "text": "2026-08-11 — AGENTS.md Becomes the Entrypoint"
     },
     {
      "level": 2,
-     "line": 36,
+     "line": 42,
      "text": "2026-08-11 — PRD v2 + Spec Alignment"
     },
     {
      "level": 2,
-     "line": 47,
+     "line": 53,
      "text": "2026-08-10 — Template Initialized"
     }
    ],
@@ -165,7 +170,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 17,
+     "line": 18,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -175,8 +180,19 @@
     {
      "display": null,
      "embed": false,
+     "fragment": "Tag Namespaces",
+     "line": 19,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions#Tag Namespaces]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
      "fragment": null,
-     "line": 27,
+     "line": 23,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -189,6 +205,17 @@
      "fragment": null,
      "line": 33,
      "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 39,
+     "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
      "target": "00_Meta/conventions",
@@ -198,7 +225,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 40,
+     "line": 46,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -209,7 +236,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 47,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -220,7 +247,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 41,
+     "line": 47,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -231,7 +258,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 45,
+     "line": 51,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -239,7 +266,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6521,
+   "sizeBytes": 7714,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -828,6 +855,7 @@
     "02_Inbox/2026-08-11-harness-primitives-research.md",
     "02_Inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
+    "10_Agents/tools/README.md",
     "10_Agents/tools/brain/spec.md"
    ],
    "bodyTags": [],
@@ -935,152 +963,152 @@
     },
     {
      "level": 3,
-     "line": 164,
+     "line": 165,
      "text": "9.2 Solutions knowledge base"
     },
     {
      "level": 3,
-     "line": 167,
-     "text": "9.3 M6 target structure (not built)"
+     "line": 168,
+     "text": "9.3 M6 target structure (`tools/brain/` shipped at M5; `skills/` and `harnesses/` not built)"
     },
     {
      "level": 3,
-     "line": 179,
+     "line": 180,
      "text": "9.4 Discovery"
     },
     {
      "level": 2,
-     "line": 182,
+     "line": 183,
      "text": "10. Frontmatter and tags"
     },
     {
      "level": 3,
-     "line": 183,
+     "line": 184,
      "text": "10.1 Requirement: YAML frontmatter (all notes)"
     },
     {
      "level": 3,
-     "line": 204,
+     "line": 205,
      "text": "10.2 Authoritative taxonomy"
     },
     {
      "level": 3,
-     "line": 213,
+     "line": 214,
      "text": "10.3 Tag intent default"
     },
     {
      "level": 2,
-     "line": 216,
+     "line": 217,
      "text": "11. Canonical notes"
     },
     {
      "level": 3,
-     "line": 227,
+     "line": 228,
      "text": "11.1 Real-content files (must exist and be meaningful in an adopter's fork — see §5)"
     },
     {
      "level": 3,
-     "line": 233,
+     "line": 234,
      "text": "11.2 Structural requirements"
     },
     {
      "level": 2,
-     "line": 240,
+     "line": 241,
      "text": "12. Templates"
     },
     {
      "level": 2,
-     "line": 254,
+     "line": 255,
      "text": "13. Functional requirements"
     },
     {
      "level": 2,
-     "line": 265,
+     "line": 266,
      "text": "14. Non-functional requirements"
     },
     {
      "level": 2,
-     "line": 272,
+     "line": 273,
      "text": "15. Recency (\"what changed?\")"
     },
     {
      "level": 2,
-     "line": 278,
+     "line": 279,
      "text": "16. Assets and data sensitivity"
     },
     {
      "level": 3,
-     "line": 279,
+     "line": 280,
      "text": "16.1 Asset lifecycle"
     },
     {
      "level": 3,
-     "line": 284,
+     "line": 285,
      "text": "16.2 Data sensitivity"
     },
     {
      "level": 2,
-     "line": 292,
+     "line": 293,
      "text": "17. Multi-agent concurrency"
     },
     {
      "level": 2,
-     "line": 297,
+     "line": 298,
      "text": "18. Validation and enforcement"
     },
     {
      "level": 2,
-     "line": 302,
+     "line": 303,
      "text": "19. Milestones (status as of 2026-08-11)"
     },
     {
      "level": 3,
-     "line": 303,
+     "line": 304,
      "text": "M0: Bootstrap Minimum — **Done**"
     },
     {
      "level": 3,
-     "line": 307,
+     "line": 308,
      "text": "M1: Repo skeleton expansion — **Done**"
     },
     {
      "level": 3,
-     "line": 310,
+     "line": 311,
      "text": "M2: Canonical navigation — **Done**"
     },
     {
      "level": 3,
-     "line": 313,
+     "line": 314,
      "text": "M3: Templates + agent docs — **Done**"
     },
     {
      "level": 3,
-     "line": 316,
+     "line": 317,
      "text": "M4: Navigation integrity — **Done**"
     },
     {
      "level": 3,
-     "line": 319,
-     "text": "M5: Vault Index CLI (`brain`) — **Not started**"
+     "line": 320,
+     "text": "M5: Vault Index CLI (`brain`) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 328,
+     "line": 329,
      "text": "M6: Agent Plugin Library (core) — **Not started**"
     },
     {
      "level": 3,
-     "line": 334,
+     "line": 335,
      "text": "M7: Environment Integration — **Not started**"
     },
     {
      "level": 2,
-     "line": 342,
+     "line": 343,
      "text": "20. Acceptance criteria (M0, objective)"
     },
     {
      "level": 2,
-     "line": 352,
+     "line": 353,
      "text": "21. Open considerations (document-only, not blockers)"
     }
    ],
@@ -1166,7 +1194,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 205,
+     "line": 206,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -1177,7 +1205,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 252,
+     "line": 253,
      "placeholder": false,
      "raw": "[[09_Templates/README]]",
      "resolved": "09_Templates/README.md",
@@ -1188,7 +1216,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 275,
+     "line": 276,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1199,7 +1227,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 275,
+     "line": 276,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1210,40 +1238,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 298,
-     "placeholder": false,
-     "raw": "[[10_Agents/docs/operating-rules]]",
-     "resolved": "10_Agents/docs/operating-rules.md",
-     "target": "10_Agents/docs/operating-rules",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 320,
-     "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 326,
-     "placeholder": false,
-     "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
-     "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
-     "target": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 349,
+     "line": 299,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1254,7 +1249,51 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 356,
+     "line": 301,
+     "placeholder": false,
+     "raw": "[[10_Agents/docs/operating-rules]]",
+     "resolved": "10_Agents/docs/operating-rules.md",
+     "target": "10_Agents/docs/operating-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 321,
+     "placeholder": false,
+     "raw": "[[00_Meta/changelog]]",
+     "resolved": "00_Meta/changelog.md",
+     "target": "00_Meta/changelog",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 327,
+     "placeholder": false,
+     "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
+     "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
+     "target": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 350,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 357,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1262,7 +1301,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 27964,
+   "sizeBytes": 28857,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -1337,7 +1376,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2077,
+   "sizeBytes": 2004,
    "title": "Status",
    "updated": "2026-08-11"
   },
@@ -6297,11 +6336,16 @@
     {
      "level": 2,
      "line": 19,
+     "text": "Tools"
+    },
+    {
+     "level": 2,
+     "line": 23,
      "text": "Solutions"
     },
     {
      "level": 2,
-     "line": 27,
+     "line": 31,
      "text": "Related"
     }
    ],
@@ -6340,10 +6384,32 @@
      "warnings": []
     },
     {
-     "display": "Solutions",
+     "display": "brain",
      "embed": false,
      "fragment": null,
      "line": 21,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/README|brain]]",
+     "resolved": "10_Agents/tools/brain/README.md",
+     "target": "10_Agents/tools/brain/README",
+     "warnings": []
+    },
+    {
+     "display": "Tools",
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/README|Tools]]",
+     "resolved": "10_Agents/tools/README.md",
+     "target": "10_Agents/tools/README",
+     "warnings": []
+    },
+    {
+     "display": "Solutions",
+     "embed": false,
+     "fragment": null,
+     "line": 25,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/README|Solutions]]",
      "resolved": "10_Agents/solutions/README.md",
@@ -6354,7 +6420,7 @@
      "display": "Wikilink Resolution Rules",
      "embed": false,
      "fragment": null,
-     "line": 25,
+     "line": 29,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules|Wikilink Resolution Rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -6365,7 +6431,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 33,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -6376,7 +6442,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 34,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -6387,7 +6453,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 35,
      "placeholder": false,
      "raw": "[[01_Profile/preferences]]",
      "resolved": "01_Profile/preferences.md",
@@ -6398,7 +6464,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 36,
      "placeholder": false,
      "raw": "[[01_Profile/defaults]]",
      "resolved": "01_Profile/defaults.md",
@@ -6406,7 +6472,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1213,
+   "sizeBytes": 1526,
    "title": "Agents",
    "updated": "2026-08-11"
   },
@@ -6523,12 +6589,12 @@
     },
     {
      "level": 2,
-     "line": 48,
+     "line": 49,
      "text": "Concurrency"
     },
     {
      "level": 2,
-     "line": 52,
+     "line": 53,
      "text": "Related"
     }
    ],
@@ -6589,10 +6655,21 @@
      "warnings": []
     },
     {
+     "display": "brain",
+     "embed": false,
+     "fragment": null,
+     "line": 47,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/README|brain]]",
+     "resolved": "10_Agents/tools/brain/README.md",
+     "target": "10_Agents/tools/brain/README",
+     "warnings": []
+    },
+    {
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 54,
+     "line": 55,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -6603,7 +6680,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 55,
+     "line": 56,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -6614,7 +6691,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 56,
+     "line": 57,
      "placeholder": false,
      "raw": "[[10_Agents/docs/task-patterns]]",
      "resolved": "10_Agents/docs/task-patterns.md",
@@ -6622,7 +6699,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1870,
+   "sizeBytes": 2072,
    "title": "Operating Rules",
    "updated": "2026-08-11"
   },
@@ -7253,8 +7330,146 @@
    "title": "Vault Maintenance Solutions",
    "updated": "2026-08-10"
   },
+  "10_Agents/tools/README.md": {
+   "backlinks": [
+    "10_Agents/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/meta",
+     "audience/agent",
+     "audience/human",
+     "workflow/canonical"
+    ],
+    "title": "Agent Tools",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 11,
+     "text": "Agent Tools"
+    },
+    {
+     "level": 2,
+     "line": 15,
+     "text": "Contents"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Rules"
+    }
+   ],
+   "links": [
+    {
+     "display": "brain",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/README|brain]]",
+     "resolved": "10_Agents/tools/brain/README.md",
+     "target": "10_Agents/tools/brain/README",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 21,
+     "placeholder": false,
+     "raw": "[[00_Meta/prd]]",
+     "resolved": "00_Meta/prd.md",
+     "target": "00_Meta/prd",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 887,
+   "title": "Agent Tools",
+   "updated": "2026-08-11"
+  },
+  "10_Agents/tools/brain/README.md": {
+   "backlinks": [
+    "10_Agents/README.md",
+    "10_Agents/docs/operating-rules.md",
+    "10_Agents/tools/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "audience/human",
+     "topic/software",
+     "workflow/canonical"
+    ],
+    "title": "brain — Vault Index CLI",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "`brain` — Vault Index CLI"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "Invocation"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Commands"
+    },
+    {
+     "level": 2,
+     "line": 43,
+     "text": "The committed index"
+    },
+    {
+     "level": 2,
+     "line": 47,
+     "text": "Tests"
+    }
+   ],
+   "links": [
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[10_Agents/tools/brain/spec]]",
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "10_Agents/tools/brain/spec",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2286,
+   "title": "brain — Vault Index CLI",
+   "updated": "2026-08-11"
+  },
   "10_Agents/tools/brain/spec.md": {
-   "backlinks": [],
+   "backlinks": [
+    "10_Agents/tools/README.md",
+    "10_Agents/tools/brain/README.md"
+   ],
    "bodyTags": [],
    "frontmatter": {
     "tags": [

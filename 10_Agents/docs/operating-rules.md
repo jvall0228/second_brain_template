@@ -44,6 +44,7 @@ Before writing any note, verify:
 - [ ] Tags use defined namespaces (see [[00_Meta/conventions#Tag Namespaces]])
 - [ ] Filename follows [[00_Meta/conventions#Filename Convention]] and does not collide with an existing note
 - [ ] Destination is `02_Inbox/` (unless explicitly directed elsewhere, or a `10_Agents/solutions/` note)
+- [ ] Run `python3 10_Agents/tools/brain/brain.py validate` after writing — fix any errors it reports before committing (the pre-commit hook enforces this; see [[10_Agents/tools/brain/README|brain]])
 
 ## Concurrency
 

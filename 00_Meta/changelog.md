@@ -12,6 +12,12 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
+## 2026-08-11 — M5: `brain` Vault Index CLI Shipped
+
+- Landed `10_Agents/tools/brain/`: `spec.md` (the parsing/link-resolution/index contract, owner-reviewed and promoted to canonical), stdlib-only `brain.py` (Python 3.10+) with `index`, `list`, `search`, `links`, `tags`, `show`, `recent`, and `validate` (all supporting `--json`), the committed deterministic `vault-index.json` (built from git-tracked files; byte-identical on rebuild), and a 21-test `unittest` suite with a fixture mini-vault under `tests/`.
+- Enforcement is live per [[00_Meta/prd]] §18: `.githooks/pre-commit` regenerates the index and blocks commits on validation errors (install once per clone with `git config core.hooksPath .githooks` — documented in the root README), with `.github/workflows/validate.yml` re-checking validation and index freshness on every push; `.gitattributes` shields the byte-compared index from newline conversion.
+- `validate` reads the tag taxonomy from [[00_Meta/conventions#Tag Namespaces]] at runtime, and the operating-rules self-validation checklist now ends with running it. New READMEs: `10_Agents/tools/` and `10_Agents/tools/brain/`; the agents README gained a Tools section.
+
 ## 2026-08-11 — M5–M7 Requirements Settled
 
 Requirements for the remaining roadmap were gathered from the owner and recorded in [[00_Meta/prd]]; the build detail lives in the implementation plan at `02_Inbox/2026-08-11-m5-m7-implementation-plan.md`.

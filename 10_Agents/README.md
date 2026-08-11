@@ -16,6 +16,10 @@ Agent-facing documentation for working within this vault. Start with the bootstr
 - [[10_Agents/docs/task-patterns|Task Patterns]] — Write rules, allowed destinations, example output
 - [[10_Agents/docs/operating-rules|Operating Rules]] — Behavior expectations and self-modification protocol
 
+## Tools
+
+- [[10_Agents/tools/brain/README|brain]] — the vault index CLI: structured queries (`list`, `search`, `links`, `tags`, `show`, `recent`) plus `validate`; the committed `vault-index.json` it maintains is readable without running anything. See [[10_Agents/tools/README|Tools]] for the directory rules.
+
 ## Solutions
 
 A running knowledge base of solutions to recurring problems agents hit while working in the vault, organized by category. Add a note whenever you solve something worth not re-deriving later. See [[10_Agents/solutions/README|Solutions]] for the category index.

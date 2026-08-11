@@ -159,17 +159,18 @@ Tier meanings:
   README.md              # directory index + "start here"
   docs/                  # operating-rules.md, task-patterns.md
   solutions/             # knowledge base of solved problems, by category
+  tools/brain/           # vault index CLI (M5): brain.py, spec.md, vault-index.json, tests/
 ```
 
 ### 9.2 Solutions knowledge base
 `10_Agents/solutions/` is a standing knowledge base of solutions to recurring problems, organized by category. Agents **may append** solution notes here whenever they solve something worth not re-deriving later — this is a deliberate, bounded carve-out from the Inbox-first rule. Solution notes must carry required frontmatter (including `audience/agent` and `type/solution`), use kebab-case filenames, and follow the note format in `10_Agents/solutions/README.md`. Agents add notes; restructuring or deleting within `solutions/` still requires human direction.
 
-### 9.3 M6 target structure (not built)
+### 9.3 M6 target structure (`tools/brain/` shipped at M5; `skills/` and `harnesses/` not built)
 At M6 the directory grows into a plugin library:
 ```
 10_Agents/
   skills/<skill-name>/   # Agent Skills format: SKILL.md + optional bundled files
-  tools/brain/           # executable tools; brain is built here at M5 (§19)
+  tools/brain/           # executable tools; brain shipped here at M5 (§19)
   harnesses/<name>/      # harness-specific adapters (hooks, rules)
 ```
 Design principles: universal primitives (skills, tools) work across any agent harness; skills use the **Agent Skills format** — folder-per-skill with a `SKILL.md` carrying YAML frontmatter (decision 2026-08-11) — so harnesses that understand the standard consume them unchanged; harness-specific adapters are isolated under `harnesses/<name>/` and carry only what a cross-harness standard cannot; adapters ship both reference configs and wiring docs. Which harnesses get adapters, and in what order, is defined by the support tiers in §8.3 (standards-first).
@@ -177,7 +178,7 @@ Design principles: universal primitives (skills, tools) work across any agent ha
 **Write policy (decision 2026-08-11):** the Inbox-first carve-out extends to this library — agents may add or update **agent-generated** skills and tools directly, tagging them `workflow/draft` until the human promotes them. Template-**shipped** skills and tools are canonical (§11) and follow §6.3 change control. Restructuring or deleting still requires human direction.
 
 ### 9.4 Discovery
-Today, agents discover available docs and solutions by reading `10_Agents/README.md`. Once M5 ships, the `brain` index becomes the primary discovery mechanism (the committed `vault-index.json` is readable directly, even without running the CLI).
+Agents discover available docs and solutions by reading `10_Agents/README.md` and, since M5 (2026-08-11), the `brain` index: the committed `10_Agents/tools/brain/vault-index.json` is the primary discovery mechanism — per-note frontmatter, headings, links, and backlinks, readable directly even without running the CLI.
 
 ## 10. Frontmatter and tags
 ### 10.1 Requirement: YAML frontmatter (all notes)
@@ -295,9 +296,9 @@ This vault is a personal context layer read in full by every connected agent ser
 - Merge conflicts are resolved by the human. Agents must never force-push.
 
 ## 18. Validation and enforcement
-- **Current:** honor-system — the self-validation checklist in [[10_Agents/docs/operating-rules]] (frontmatter fields, tag namespaces, filename convention, destination, `updated:` bump).
-- **Planned (M5):** a `brain validate` subcommand checking frontmatter fields, tag namespaces against conventions, filename conventions, and wikilink resolution.
-- **Planned (M5, decision 2026-08-11):** automated enforcement — a versioned pre-commit hook that regenerates the committed vault index and runs `brain validate` (blocking on errors), plus a CI workflow re-running validation and index freshness on push as a backstop for clones without the hook installed. This resolves the former §21 open consideration.
+- **Current (shipped at M5, 2026-08-11):** `brain validate` checks frontmatter fields, tag namespaces against the [[00_Meta/conventions]] table (read at runtime — conventions stays the single source), filename conventions, and wikilink resolution; exit codes 0 clean / 1 errors / 2 warnings.
+- **Automated enforcement (shipped at M5):** the versioned pre-commit hook `.githooks/pre-commit` (installed via `git config core.hooksPath .githooks`) regenerates the committed vault index and runs `brain validate`, blocking commits on errors; `.github/workflows/validate.yml` re-runs validation and index freshness on push as the backstop for clones without the hook. This resolved the former §21 open consideration.
+- The self-validation checklist in [[10_Agents/docs/operating-rules]] remains the agent-side first line of defense and now ends with running `brain validate`.
 
 ## 19. Milestones (status as of 2026-08-11)
 ### M0: Bootstrap Minimum — **Done**
@@ -316,8 +317,8 @@ Section READMEs for every top-level directory (directories themselves exist from
 ### M4: Navigation integrity — **Done**
 Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 
-### M5: Vault Index CLI (`brain`) — **Not started**
-Requirements settled 2026-08-11 (see [[00_Meta/changelog]] and the implementation plan in the Inbox):
+### M5: Vault Index CLI (`brain`) — **Done (2026-08-11)**
+Shipped as specified below; the parsing/link-resolution contract lives in `10_Agents/tools/brain/spec.md` (owner-reviewed and promoted to canonical before implementation). Verified: all six query commands plus `validate` work with and without `--json`; the committed index is byte-reproducible and CI-checked; `validate` passes on the shipped template with zero errors; the hook demonstrably blocked a commit carrying frontmatter violations; 21-test stdlib suite with a fixture mini-vault. Requirements had been settled 2026-08-11 (see [[00_Meta/changelog]] and the implementation plan in the Inbox):
 - Python CLI at `10_Agents/tools/brain/` — built directly in its final home; the earlier `.tools/` staging step and its M6 migration are dropped.
 - **Stdlib-only:** no third-party dependencies; the frontmatter parser targets the vault's §10.1 contract rather than full YAML.
 - Index stored as JSON at `10_Agents/tools/brain/vault-index.json`, **committed to the repo** and regenerated by the pre-commit hook (§18) so agents can read it without running Python. Serialization is deterministic (sorted, stable ordering) to keep diffs clean.

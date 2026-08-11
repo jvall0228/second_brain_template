@@ -35,7 +35,7 @@ Per the roadmap in [[00_Meta/prd]] §19:
 | M2 | Index + defaults | Done |
 | M3 | Templates + agent docs (incl. solutions library) | Done |
 | M4 | Navigation integrity | Done |
-| M5 | `brain` vault-index CLI | In progress — M5.0 spec drafted (`10_Agents/tools/brain/spec.md`), awaiting owner review |
+| M5 | `brain` vault-index CLI | Done (2026-08-11) |
 | M6 | Agent plugin library core (SKILL.md skills, onboarding, harness adapters) | Not started |
 | M7 | Environment integration (orientation, ingestion automations, self-maintenance) | Not started |
 
