@@ -6,7 +6,8 @@ Behavior is governed by spec.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
-Commands: index, list, search, links, tags, show, recent, validate
+Commands: index, list, search, links, tags, show, recent, validate,
+          curate, context
 """
 
 from __future__ import annotations
@@ -25,6 +26,47 @@ SCHEMA_VERSION = 1
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
 TESTS_RELPATH = "10_Agents/tools/brain/tests"
 CONVENTIONS_RELPATH = "00_Meta/conventions.md"
+
+# ---------------------------------------------------------------------------
+# §14 Curation tunables — the single place these numbers live.
+# Policy prose: 00_Meta/conventions.md § Expiration / § Bootstrap Context.
+
+CURATE_MAX_LINES = 400
+CURATE_MAX_BYTES = 20_000
+CURATE_STALE_DAYS = 180
+EXPIRES_CAP_DAYS = 366
+
+# Events, not claims — never asked for an expires: date. 02_Inbox/ is exempt
+# because capture is zero-friction; expires is assigned at triage/filing.
+EXPIRES_EXEMPT_PREFIXES = (
+    "02_Inbox/",
+    "03_Journal/",
+    "07_Archives/",
+    "09_Templates/",
+    "10_Agents/solutions/",
+)
+EXPIRES_EXEMPT_PATHS = frozenset(
+    {"00_Meta/changelog.md", "00_Meta/status.md", "CLAUDE.md"}
+)
+ORPHAN_EXEMPT_PATHS = frozenset({"AGENTS.md", "CLAUDE.md", "README.md"})
+OVERSIZED_EXEMPT_PATHS = frozenset({"00_Meta/changelog.md"})
+
+# Gate for the validate-side curation warnings (missing-expires,
+# expires-beyond-cap, oversized, bootstrap-budget). Off until the one-time
+# expires: backfill lands; `brain curate` always reports regardless.
+VALIDATE_CURATION_WARNINGS = False
+
+# R20 bootstrap context budgets (bytes): measured 2026-08-11 sizes + ~50%
+# headroom, rounded up. Total ties to the smallest harness project-doc cap.
+BOOTSTRAP_BUDGETS = {
+    "00_Meta/conventions.md": 10240,
+    "00_Meta/index.md": 4096,
+    "01_Profile/defaults.md": 2048,
+    "01_Profile/now.md": 2048,
+    "01_Profile/preferences.md": 3072,
+    "AGENTS.md": 8192,
+}
+BOOTSTRAP_TOTAL_BUDGET = 32768
 
 # ---------------------------------------------------------------------------
 # §2 Corpus
@@ -245,6 +287,26 @@ def typed_fields(fm: dict, errors: list[str]) -> tuple[str | None, list[str] | N
     return title, tags, updated
 
 
+def iso_date(s: str | None) -> date | None:
+    if not isinstance(s, str) or not UPDATED_RE.match(s):
+        return None
+    y, mo, d = (int(x) for x in s.split("-"))
+    try:
+        return date(y, mo, d)
+    except ValueError:
+        return None
+
+
+def check_expires(fm: dict, errors: list[str]) -> None:
+    """§14: expires: must be a real YYYY-MM-DD when present (templates may
+    hold a placeholder — exempted in run_validate like invalid-updated)."""
+    if "expires" not in fm:
+        return
+    raw = fm.get("expires")
+    if not isinstance(raw, str) or iso_date(raw) is None:
+        errors.append("invalid-expires")
+
+
 # ---------------------------------------------------------------------------
 # §5.2 Exclusion zones
 
@@ -451,6 +513,7 @@ def build_index(root: Path, notes: list[str], assets: list[str]) -> dict:
         lines = text.split("\n")
         fm, errors, body_start, _has_fm = parse_frontmatter(lines)
         title, _tags, updated = typed_fields(fm, errors)
+        check_expires(fm, errors)
         links, headings, body_tags = extract_body(lines, body_start)
         records[rel] = {
             "backlinks": [],
@@ -608,6 +671,10 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
                     fm.get("updated")
                 ):
                     continue
+                elif rule == "invalid-expires" and template and has_placeholder(
+                    fm.get("expires")
+                ):
+                    continue
                 else:
                     err(rel, rule, fe)
             if not fm and "not-utf8" not in rec["frontmatterErrors"]:
@@ -680,6 +747,38 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
         if not (isinstance(description, str) and description.strip()):
             err(skill_md, "skill-missing-description", "frontmatter lacks a description string")
 
+    if VALIDATE_CURATION_WARNINGS:
+        cur = compute_curation(root, index, today())
+        for rel in cur["missingExpires"]:
+            warn(rel, "missing-expires", "no expires: date (see conventions § Expiration)")
+        for row in cur["beyondCap"]:
+            warn(
+                row["path"],
+                "expires-beyond-cap",
+                f"expires {row['expires']} is more than a year after updated {row['updated']}",
+            )
+        for row in cur["oversized"]:
+            warn(
+                row["path"],
+                "oversized",
+                f"{row['sizeBytes']} bytes / {row['lines']} lines exceeds "
+                f"{CURATE_MAX_BYTES} bytes / {CURATE_MAX_LINES} lines — split candidate",
+            )
+        ctx = context_report(root)
+        for row in ctx["docs"]:
+            if row["sizeBytes"] is not None and row["sizeBytes"] > row["budget"]:
+                warn(
+                    row["path"],
+                    "bootstrap-budget",
+                    f"{row['sizeBytes']} bytes exceeds its {row['budget']}-byte bootstrap budget",
+                )
+        if ctx["totalBytes"] > ctx["totalBudget"]:
+            warn(
+                "AGENTS.md",
+                "bootstrap-budget-total",
+                f"bootstrap docs total {ctx['totalBytes']} bytes, budget {ctx['totalBudget']}",
+            )
+
     if check_index:
         tnotes, tassets = index_corpus(root)
         fresh = serialize(build_index(root, tnotes, tassets))
@@ -691,6 +790,149 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
         return (f["path"], 0 if f["line"] is None else 1, f["line"] or 0, f["rule"])
 
     return sorted(errors, key=key), sorted(warnings, key=key)
+
+
+# ---------------------------------------------------------------------------
+# §14 Curation signals
+
+
+def today() -> date:
+    return date.today()
+
+
+def expires_exempt(rel: str) -> bool:
+    return rel in EXPIRES_EXEMPT_PATHS or rel.startswith(EXPIRES_EXEMPT_PREFIXES)
+
+
+def compute_curation(root: Path, index: dict, today_d: date) -> dict:
+    """All re-review signals, deterministic given the tree and today's date.
+    Detection lives here; the judgment lives in the curate skill."""
+    notes = index["notes"]
+    expired: list[dict] = []
+    missing: list[str] = []
+    beyond_cap: list[dict] = []
+    oversized: list[dict] = []
+    stale: list[dict] = []
+    orphans: list[str] = []
+    for rel in sorted(notes):
+        rec = notes[rel]
+        fm = rec["frontmatter"]
+        if rel == "CLAUDE.md":
+            continue
+        exp_d = iso_date(fm.get("expires"))
+        upd_d = iso_date(rec["updated"])
+        if exp_d:
+            if exp_d < today_d:
+                expired.append(
+                    {"expires": fm["expires"], "path": rel, "title": rec["title"]}
+                )
+            if upd_d and (exp_d - upd_d).days > EXPIRES_CAP_DAYS:
+                beyond_cap.append(
+                    {"expires": fm["expires"], "path": rel, "updated": rec["updated"]}
+                )
+        elif "expires" not in fm and fm and not expires_exempt(rel) and not is_template(rel):
+            missing.append(rel)
+        if not (rel in OVERSIZED_EXEMPT_PATHS or rel.startswith("07_Archives/")):
+            text, _ = load_text(root, rel)
+            lines = text.count("\n") + 1 if text else 0
+            if rec["sizeBytes"] > CURATE_MAX_BYTES or lines > CURATE_MAX_LINES:
+                oversized.append(
+                    {"lines": lines, "path": rel, "sizeBytes": rec["sizeBytes"]}
+                )
+        if upd_d:
+            days = (today_d - upd_d).days
+            if days > CURATE_STALE_DAYS:
+                stale.append(
+                    {
+                        "backlinks": len(rec["backlinks"]),
+                        "daysOld": days,
+                        "path": rel,
+                        "score": days * (1 + len(rec["backlinks"])),
+                        "updated": rec["updated"],
+                    }
+                )
+        if (
+            not rec["backlinks"]
+            and not expires_exempt(rel)
+            and rel not in ORPHAN_EXEMPT_PATHS
+        ):
+            orphans.append(rel)
+    stale.sort(key=lambda r: (-r["score"], r["path"]))
+    referenced = {
+        link["resolved"]
+        for rec in notes.values()
+        for link in rec["links"]
+        if link["resolved"]
+    }
+    unreferenced_assets = [
+        a
+        for a in index["assets"]
+        if a.startswith("08_Assets/") and a not in referenced
+    ]
+    return {
+        "beyondCap": beyond_cap,
+        "expired": expired,
+        "missingExpires": missing,
+        "orphans": orphans,
+        "oversized": oversized,
+        "stale": stale,
+        "unreferencedAssets": unreferenced_assets,
+    }
+
+
+def context_report(root: Path) -> dict:
+    """R20: bootstrap docs' actual sizes against their byte budgets."""
+    docs: list[dict] = []
+    total = 0
+    for rel in sorted(BOOTSTRAP_BUDGETS):
+        budget = BOOTSTRAP_BUDGETS[rel]
+        try:
+            _, size = load_text(root, rel)
+        except OSError:
+            size = None
+        if size is not None:
+            total += size
+        docs.append({"budget": budget, "path": rel, "sizeBytes": size})
+    return {"docs": docs, "totalBudget": BOOTSTRAP_TOTAL_BUDGET, "totalBytes": total}
+
+
+URL_RE = re.compile(r"https?://[^\s<>()\[\]\"'`]+")
+
+
+def collect_urls(root: Path, notes: list[str]) -> dict[str, str]:
+    """url -> first note path mentioning it."""
+    found: dict[str, str] = {}
+    for rel in notes:
+        text, _ = load_text(root, rel)
+        if text is None:
+            continue
+        for m in URL_RE.finditer(text):
+            url = m.group(0).rstrip(".,;:!?")
+            found.setdefault(url, rel)
+    return found
+
+
+def check_urls(root: Path, notes: list[str]) -> list[dict]:
+    """Opt-in (network): dead source URLs. Never runs pre-commit."""
+    import urllib.error
+    import urllib.request
+
+    dead: list[dict] = []
+    urls = collect_urls(root, notes)
+    for url in sorted(urls):
+        req = urllib.request.Request(
+            url, method="HEAD", headers={"User-Agent": "brain-curate/1.0"}
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=10):
+                pass
+        except urllib.error.HTTPError as e:
+            if e.code in (403, 405):  # HEAD-hostile hosts are not dead links
+                continue
+            dead.append({"error": f"HTTP {e.code}", "path": urls[url], "url": url})
+        except (urllib.error.URLError, OSError, ValueError) as e:
+            dead.append({"error": str(e), "path": urls[url], "url": url})
+    return dead
 
 
 # ---------------------------------------------------------------------------
@@ -883,6 +1125,56 @@ def cmd_recent(root: Path, args) -> int:
     return 0
 
 
+def cmd_curate(root: Path, args) -> int:
+    notes, assets = walk_corpus(root)
+    index = build_index(root, notes, assets)
+    cur = compute_curation(root, index, today())
+    if args.check_urls:
+        cur["deadUrls"] = check_urls(root, sorted(index["notes"]))
+    lines: list[str] = []
+    sections = [
+        ("expired", "expired", lambda r: f"{r['path']}  (expired {r['expires']})"),
+        ("missingExpires", "missing expires:", lambda r: r),
+        ("beyondCap", "expires beyond the one-year cap", lambda r: f"{r['path']}  (updated {r['updated']}, expires {r['expires']})"),
+        ("oversized", "oversized (split candidates)", lambda r: f"{r['path']}  ({r['sizeBytes']} bytes, {r['lines']} lines)"),
+        ("stale", "stale (days old x inbound links)", lambda r: f"{r['path']}  (updated {r['updated']}, {r['daysOld']}d, {r['backlinks']} backlinks, score {r['score']})"),
+        ("orphans", "orphans (no inbound links)", lambda r: r),
+        ("unreferencedAssets", "unreferenced assets", lambda r: r),
+        ("deadUrls", "dead source urls", lambda r: f"{r['url']}  ({r['error']}; first seen in {r['path']})"),
+    ]
+    flagged = 0
+    for key_name, label, fmt in sections:
+        rows = cur.get(key_name)
+        if rows is None:
+            continue
+        lines.append(f"{label}: {len(rows)}")
+        for row in rows:
+            lines.append(f"  {fmt(row)}")
+        flagged += len(rows)
+    lines.append(f"total flagged: {flagged}")
+    emit(cur, args.json, lines)
+    return 0
+
+
+def cmd_context(root: Path, args) -> int:
+    ctx = context_report(root)
+    lines = []
+    for row in ctx["docs"]:
+        if row["sizeBytes"] is None:
+            lines.append(f"{row['path']}  missing  (budget {row['budget']})")
+        else:
+            pct = 100 * row["sizeBytes"] // row["budget"]
+            over = "  OVER BUDGET" if row["sizeBytes"] > row["budget"] else ""
+            lines.append(
+                f"{row['path']}  {row['sizeBytes']} / {row['budget']} bytes ({pct}%){over}"
+            )
+    tpct = 100 * ctx["totalBytes"] // ctx["totalBudget"]
+    over = "  OVER BUDGET" if ctx["totalBytes"] > ctx["totalBudget"] else ""
+    lines.append(f"total  {ctx['totalBytes']} / {ctx['totalBudget']} bytes ({tpct}%){over}")
+    emit(ctx, args.json, lines)
+    return 0
+
+
 def cmd_validate(root: Path, args) -> int:
     errors, warnings = run_validate(root, args.check_index)
     if args.json:
@@ -938,6 +1230,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("n", nargs="?", type=int, default=10)
     p = add("validate", help="check vault conventions; exit 0 clean / 1 errors / 2 warnings")
     p.add_argument("--check-index", action="store_true", help="also verify the committed index is fresh")
+    p = add("curate", help="re-review signals: expired, missing/over-cap expires, oversized, stale, orphans, unreferenced assets")
+    p.add_argument("--check-urls", action="store_true", help="also probe source URLs over the network (never pre-commit)")
+    add("context", help="bootstrap docs' sizes against their context budgets")
 
     args = parser.parse_args(argv)
     root = (args.vault or default_vault_root()).resolve()
@@ -950,6 +1245,8 @@ def main(argv: list[str] | None = None) -> int:
         "show": cmd_show,
         "recent": cmd_recent,
         "validate": cmd_validate,
+        "curate": cmd_curate,
+        "context": cmd_context,
     }
     return handlers[args.command](root, args)
 
