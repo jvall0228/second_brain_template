@@ -12,6 +12,15 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([[00_Meta/conventions#Recency|conventions § Recency]]) — forward-only since 2026-08-11; older entries below keep their original headers.
 
+## [2026-08-11] milestone | M9 Config & core conventions shipped (issues #2, #12, #16, #17, #18)
+
+- **Vault config (#2, PR #44):** optional `00_Meta/config.yaml` in a bounded YAML subset parsed by brain's own stdlib reader (spec §15); `write_exceptions` (Inbox-first widening, enforced fail-closed via `agent_write_allowed`) and `extension_trust` implemented, plus `context` (#12) and `report` (#16) later in the phase; malformed config is per-file validate findings, never a crash; new `brain config` command.
+- **Provenance (#18, PR #45):** optional `author:` (harness identifier) / `session:` frontmatter registered in [[00_Meta/conventions]]; `missing-author` validate warning for agent-tagged Inbox drafts; note-writing skills updated.
+- **restricted/* (#17, PR #46):** tag-only `restricted/private` in the closed taxonomy; the committed index reduces restricted notes (body-derived fields and link prose emptied — spec §8.3); `restricted-link` containment warning; `.cursorignore` generation documented; never-quote rule in operating-rules.
+- **Context-aware templates (#12, PR #47):** `09_Templates/variants/` work-variant sources (outside the template contract and snippet generation, pinned by test); onboard-owner gained the fork-time specialization stage recording `context:` in config.
+- **brain report (#16, PR #48):** five-section vault-health synthesis (stale-active, disconnected orphans, Inbox aging + triage debt, tag drift vs taxonomy, unresolved links) with `--json`/`--since`, config thresholds, a VS Code task, and periodic-review/vault-maintenance skills opening from it.
+- **Phase-gate review (PR #49):** four-lens adversarial sweep, 13 verified findings fixed — write-gate path-traversal fail-closed, restricted link-prose stripped from the committed index, the shipped config template made grammar-safe, empty write-exception entries reported, Inbox date-prefix boundary, onboard-owner exception scope extended, fork-safe shipped-config test.
+
 ## [2026-08-11] milestone | M8 Hardening & test foundation shipped (issues #5, #9, #10, #11, #20, #24, #25)
 
 - **Test foundation (#5, PR #36):** `10_Agents/tools/run_tests.py` runs every `10_Agents/tools/*/tests/` suite in one command, locally and in CI; the vscode tools gained their first suites; the TDD convention (tests land with the change) is documented in [[10_Agents/tools/README]].
