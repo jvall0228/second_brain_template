@@ -118,7 +118,6 @@
     "00_Meta/index.md",
     "00_Meta/prd.md",
     "00_Meta/status.md",
-    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "07_Archives/inbox/2026-08-11-prd-review.md",
     "AGENTS.md"
@@ -144,7 +143,7 @@
     {
      "level": 2,
      "line": 15,
-     "text": "2026-08-11 — VS Code Alternative-Editor Support"
+     "text": "2026-08-11 — VS Code Alternative-Editor Support (strict first-party)"
     },
     {
      "level": 2,
@@ -512,7 +511,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 15836,
+   "sizeBytes": 16159,
    "title": "Changelog",
    "updated": "2026-08-11"
   },
@@ -1199,187 +1198,187 @@
     },
     {
      "level": 2,
-     "line": 88,
+     "line": 89,
      "text": "7. Information architecture (top-level, number-prefixed)"
     },
     {
      "level": 2,
-     "line": 111,
+     "line": 112,
      "text": "8. Universal agent entrypoint"
     },
     {
      "level": 3,
-     "line": 112,
+     "line": 113,
      "text": "8.1 Required root file"
     },
     {
      "level": 3,
-     "line": 136,
+     "line": 137,
      "text": "8.2 Claude Code adapter file"
     },
     {
      "level": 3,
-     "line": 147,
+     "line": 148,
      "text": "8.3 Supported harnesses (decision 2026-08-11)"
     },
     {
      "level": 2,
-     "line": 165,
+     "line": 166,
      "text": "9. Agent library directory (`10_Agents/`)"
     },
     {
      "level": 3,
-     "line": 166,
+     "line": 167,
      "text": "9.1 Shipped structure"
     },
     {
      "level": 3,
-     "line": 175,
+     "line": 176,
      "text": "9.2 Solutions knowledge base"
     },
     {
      "level": 3,
-     "line": 178,
+     "line": 179,
      "text": "9.3 Plugin library structure (shipped: `tools/brain/` at M5; `skills/` and `harnesses/` at M6)"
     },
     {
      "level": 3,
-     "line": 190,
+     "line": 191,
      "text": "9.4 Discovery"
     },
     {
      "level": 2,
-     "line": 193,
+     "line": 194,
      "text": "10. Frontmatter and tags"
     },
     {
      "level": 3,
-     "line": 194,
+     "line": 195,
      "text": "10.1 Requirement: YAML frontmatter (all notes)"
     },
     {
      "level": 3,
-     "line": 215,
+     "line": 216,
      "text": "10.2 Authoritative taxonomy"
     },
     {
      "level": 3,
-     "line": 224,
+     "line": 225,
      "text": "10.3 Tag intent default"
     },
     {
      "level": 2,
-     "line": 227,
+     "line": 228,
      "text": "11. Canonical notes"
     },
     {
      "level": 3,
-     "line": 238,
+     "line": 239,
      "text": "11.1 Real-content files (must exist and be meaningful in an adopter's fork — see §5)"
     },
     {
      "level": 3,
-     "line": 244,
+     "line": 245,
      "text": "11.2 Structural requirements"
     },
     {
      "level": 2,
-     "line": 251,
+     "line": 252,
      "text": "12. Templates"
     },
     {
      "level": 2,
-     "line": 265,
+     "line": 266,
      "text": "13. Functional requirements"
     },
     {
      "level": 2,
-     "line": 276,
+     "line": 277,
      "text": "14. Non-functional requirements"
     },
     {
      "level": 2,
-     "line": 283,
+     "line": 284,
      "text": "15. Recency (\"what changed?\")"
     },
     {
      "level": 2,
-     "line": 289,
+     "line": 290,
      "text": "16. Assets and data sensitivity"
     },
     {
      "level": 3,
-     "line": 290,
+     "line": 291,
      "text": "16.1 Asset lifecycle"
     },
     {
      "level": 3,
-     "line": 295,
+     "line": 296,
      "text": "16.2 Data sensitivity"
     },
     {
      "level": 2,
-     "line": 303,
+     "line": 304,
      "text": "17. Multi-agent concurrency"
     },
     {
      "level": 2,
-     "line": 308,
+     "line": 309,
      "text": "18. Validation and enforcement"
     },
     {
      "level": 2,
-     "line": 314,
+     "line": 315,
      "text": "19. Milestones (status as of 2026-08-11)"
     },
     {
      "level": 3,
-     "line": 315,
+     "line": 316,
      "text": "M0: Bootstrap Minimum — **Done**"
     },
     {
      "level": 3,
-     "line": 319,
+     "line": 320,
      "text": "M1: Repo skeleton expansion — **Done**"
     },
     {
      "level": 3,
-     "line": 322,
+     "line": 323,
      "text": "M2: Canonical navigation — **Done**"
     },
     {
      "level": 3,
-     "line": 325,
+     "line": 326,
      "text": "M3: Templates + agent docs — **Done**"
     },
     {
      "level": 3,
-     "line": 328,
+     "line": 329,
      "text": "M4: Navigation integrity — **Done**"
     },
     {
      "level": 3,
-     "line": 331,
+     "line": 332,
      "text": "M5: Vault Index CLI (`brain`) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 340,
+     "line": 341,
      "text": "M6: Agent Plugin Library (core) — **Done (2026-08-11)**"
     },
     {
      "level": 3,
-     "line": 346,
+     "line": 347,
      "text": "M7: Environment Integration — **Done (2026-08-11, template scope)**"
     },
     {
      "level": 2,
-     "line": 354,
+     "line": 355,
      "text": "20. Acceptance criteria (M0, objective)"
     },
     {
      "level": 2,
-     "line": 364,
+     "line": 365,
      "text": "21. Open considerations (document-only, not blockers)"
     }
    ],
@@ -1454,7 +1453,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 105,
+     "line": 106,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1465,7 +1464,7 @@
      "display": null,
      "embed": false,
      "fragment": "Tag Namespaces",
-     "line": 216,
+     "line": 217,
      "placeholder": false,
      "raw": "[[00_Meta/conventions#Tag Namespaces]]",
      "resolved": "00_Meta/conventions.md",
@@ -1476,7 +1475,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 263,
+     "line": 264,
      "placeholder": false,
      "raw": "[[09_Templates/README]]",
      "resolved": "09_Templates/README.md",
@@ -1487,7 +1486,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 286,
+     "line": 287,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1498,7 +1497,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 286,
+     "line": 287,
      "placeholder": false,
      "raw": "[[00_Meta/status]]",
      "resolved": "00_Meta/status.md",
@@ -1509,7 +1508,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 309,
+     "line": 310,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1520,7 +1519,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 311,
+     "line": 312,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/copilot/wiring]]",
      "resolved": "10_Agents/harnesses/copilot/wiring.md",
@@ -1531,7 +1530,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 312,
+     "line": 313,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1542,7 +1541,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 332,
+     "line": 333,
      "placeholder": false,
      "raw": "[[00_Meta/changelog]]",
      "resolved": "00_Meta/changelog.md",
@@ -1553,7 +1552,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 338,
+     "line": 339,
      "placeholder": false,
      "raw": "[[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]",
      "resolved": "10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md",
@@ -1564,7 +1563,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 361,
+     "line": 362,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -1575,7 +1574,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 368,
+     "line": 369,
      "placeholder": false,
      "raw": "[[10_Agents/docs/operating-rules]]",
      "resolved": "10_Agents/docs/operating-rules.md",
@@ -1583,7 +1582,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 32856,
+   "sizeBytes": 33351,
    "title": "PRD",
    "updated": "2026-08-11"
   },
@@ -2151,7 +2150,7 @@
      "topic/software",
      "workflow/draft"
     ],
-    "title": "VS Code as Alternative Editor: Requirements and Config",
+    "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
     "updated": "2026-08-11"
    },
    "frontmatterErrors": [],
@@ -2159,32 +2158,32 @@
     {
      "level": 1,
      "line": 12,
-     "text": "VS Code as Alternative Editor: Requirements and Config"
+     "text": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config"
     },
     {
      "level": 2,
      "line": 16,
-     "text": "Requirements (brainstormed)"
+     "text": "Trust policy (owner decision, 2026-08-11)"
     },
     {
      "level": 2,
-     "line": 44,
+     "line": 26,
+     "text": "Requirements (brainstormed, tiered)"
+    },
+    {
+     "level": 2,
+     "line": 57,
+     "text": "Candidates evaluated (research, 2026-08-11)"
+    },
+    {
+     "level": 2,
+     "line": 81,
      "text": "Shipped config: `.obsidian` → `.vscode` mapping"
     },
     {
      "level": 2,
-     "line": 64,
-     "text": "Research notes (2026-08-11)"
-    },
-    {
-     "level": 2,
-     "line": 82,
-     "text": "Known caveats"
-    },
-    {
-     "level": 2,
-     "line": 88,
-     "text": "Proposed spec amendment"
+     "line": 95,
+     "text": "Process notes"
     }
    ],
    "links": [
@@ -2203,7 +2202,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 90,
+     "line": 14,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -2211,19 +2210,30 @@
      "warnings": []
     },
     {
-     "display": null,
+     "display": "daily-log",
      "embed": false,
      "fragment": null,
-     "line": 90,
+     "line": 41,
      "placeholder": false,
-     "raw": "[[00_Meta/changelog]]",
-     "resolved": "00_Meta/changelog.md",
-     "target": "00_Meta/changelog",
+     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "daily-log",
+     "embed": false,
+     "fragment": null,
+     "line": 53,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/daily-log/SKILL|daily-log]]",
+     "resolved": "10_Agents/skills/daily-log/SKILL.md",
+     "target": "10_Agents/skills/daily-log/SKILL",
      "warnings": []
     }
    ],
-   "sizeBytes": 8859,
-   "title": "VS Code as Alternative Editor: Requirements and Config",
+   "sizeBytes": 7700,
+   "title": "VS Code as Alternative Editor: Requirements, Trust Policy, and Config",
    "updated": "2026-08-11"
   },
   "02_Inbox/README.md": {
@@ -8473,6 +8483,7 @@
   },
   "10_Agents/skills/daily-log/SKILL.md": {
    "backlinks": [
+    "02_Inbox/2026-08-11-vscode-editor-support.md",
     "10_Agents/skills/README.md"
    ],
    "bodyTags": [],

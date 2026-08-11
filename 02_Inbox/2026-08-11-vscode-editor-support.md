@@ -1,5 +1,5 @@
 ---
-title: "VS Code as Alternative Editor: Requirements and Config"
+title: "VS Code as Alternative Editor: Requirements, Trust Policy, and Config"
 tags:
   - audience/agent
   - audience/human
@@ -9,82 +9,91 @@ tags:
 updated: 2026-08-11
 ---
 
-# VS Code as Alternative Editor: Requirements and Config
+# VS Code as Alternative Editor: Requirements, Trust Policy, and Config
 
-Owner-directed (2026-08-11): the vault spec should support **VS Code as an alternative editor** for when Obsidian is not available. This note records the requirements brainstorm, the online research behind the extension choices, and the mapping from the shipped `.obsidian/` config to the shipped `.vscode/` config. The working config itself lives at `.vscode/settings.json` + `.vscode/extensions.json` (root-scope dot-path, outside the note corpus — the `.github/` / `CLAUDE.md` precedent from [[00_Meta/prd]] §9.3). PRD change proposed alongside: new §6.5.
+Owner-directed (2026-08-11): the vault spec supports **VS Code as an alternative editor** for when Obsidian is not available. This note records the requirements brainstorm, the extension **trust policy the owner set**, the online research behind the candidates, and the mapping from the shipped `.obsidian/` config to the shipped `.vscode/` config. The working config lives at `.vscode/settings.json` + `.vscode/extensions.json` (root-scope dot-path, outside the note corpus — the `.github/` / `CLAUDE.md` precedent from [[00_Meta/prd]] §9.3). Spec change: [[00_Meta/prd]] §6.5.
 
-## Requirements (brainstormed)
+## Trust policy (owner decision, 2026-08-11)
 
-**Must have — parity with the enabled `.obsidian` core plugins:**
+**Only extensions published by first-party organization accounts (Microsoft, Anthropic, GitHub, and similar) may be recommended.** Community and personal-publisher extensions are excluded from `extensions.json` regardless of reputation. Preference order:
 
-1. **Wikilink navigation and completion** — follow `[[00_Meta/conventions]]`-style links (path-style, `#heading`, `|alias`), autocomplete targets while typing. Obsidian: core editor. VS Code: Foam.
-2. **Backlinks** — see what links to the current note (`backlink`, `outgoing-link` plugins). VS Code: Foam's Connections/Backlinks panel.
-3. **Graph view** — visualize the link graph (`graph` plugin). VS Code: Foam's "Show graph" command.
-4. **Tag navigation** — browse slash-namespaced tags (`tag-pane` plugin). VS Code: Foam's Tag Explorer, which supports hierarchical (`topic/software`) tags.
-5. **Markdown preview with mermaid** — rendered reading view. VS Code: built-in preview (`Ctrl/Cmd+Shift+V`) + mermaid extension.
-6. **Daily notes** — one command to open today's log in `03_Journal/periodic/daily/` (`daily-notes` plugin). VS Code: Foam `openDailyNote`, configured to the same directory and `yyyy-mm-dd` filenames.
-7. **Quick switcher / search / file explorer / outline / word count** (`switcher`, `global-search`, `file-explorer`, `outline`, `word-count` plugins) — all native VS Code (`Ctrl/Cmd+P`, search view, explorer, outline view, status bar).
-8. **YAML frontmatter (`properties` plugin)** — native syntax highlighting in VS Code; no extension required.
-9. **HTML rendering** — preview HTML files (exports, `08_Assets/` artifacts) inside the editor. Obsidian has no real equivalent (`webviewer` is disabled in our config); VS Code: Microsoft **Live Preview**.
+1. VS Code **built-in** capability (no extension at all)
+2. **First-party org publishers** (`ms-vscode`, `anthropic`, `github`, …)
+3. Everything else: documented here for reference, **never shipped**
 
-**Must have — vault-contract safety:**
+Extensions must run locally, require no account for core function, and must not rewrite notes on save. Future agents must not add recommendations outside this policy without owner approval.
 
-10. **No diff noise.** The editor must not rewrite notes on save (no format-on-save, no auto-appended link-reference definitions) — PRD §14 diffability. This drives two config decisions: `foam.edit.linkReferenceDefinitions: "off"` and Prettier in `unwantedRecommendations`.
-11. **Asset rule preserved.** Pasted images must land in `08_Assets/` (PRD §16.1) — handled natively via `markdown.copyFiles.destination`, no extension needed (VS Code ≥1.79).
-12. **Zero-setup onboarding.** Opening the repo folder must prompt "install recommended extensions" and work after one click — the same day-one usability bar as "usable as an Obsidian vault from day one" (PRD §13).
-13. **Search hygiene.** `vault-index.json` duplicates every note's text; exclude it (and `.obsidian/`) from workspace search.
+## Requirements (brainstormed, tiered)
 
-**Nice to have (documented, not shipped):**
+**Tier 0 — built-ins, zero extensions (shipped via `settings.json`):**
 
-- **Lint parity with `brain validate`** — markdownlint is shipped with a relaxed config (frontmatter-first notes, inline HTML allowed, soft wrap); it complements but does not replace `brain validate`, which stays authoritative.
-- **Templates** — Foam templates live in `.foam/templates/`, which would duplicate `09_Templates/` (single-source violation). Not shipped; instantiate templates by copying from `09_Templates/` or via an agent, as today.
-- **Canvas** (`canvas` plugin) — `.canvas` files are Obsidian-proprietary JSON; no faithful VS Code renderer. Accepted gap (the template ships no canvas files).
-- **Sync / file recovery** — covered by Git in VS Code (built-in SCM view); Obsidian Sync is orthogonal.
+1. Quick switcher (`Ctrl/Cmd+P`), global search, file explorer, outline, word count — native equivalents of the `switcher`, `global-search`, `file-explorer`, `outline`, `word-count` core plugins.
+2. YAML frontmatter syntax highlighting (`properties` plugin) — native.
+3. Markdown preview (`Ctrl/Cmd+Shift+V`) — native reading view.
+4. Standard-markdown link validation and path autocompletion (`markdown.validate.enabled`, `markdown.suggest.paths.enabled`).
+5. Pasted/dropped images auto-filed to `08_Assets/` (`markdown.copyFiles.destination`) — preserves the asset rule (PRD §16.1) with no extension.
+6. **No write-behavior:** no format-on-save; Prettier in `unwantedRecommendations` (PRD §14 diffability).
+7. Search hygiene: `vault-index.json` and `.obsidian/` excluded from workspace search.
 
-## Shipped config: `.obsidian` → `.vscode` mapping
+**Tier 1 — first-party extensions (shipped via `extensions.json`):**
 
-| Obsidian (`.obsidian/`, enabled plugin) | VS Code equivalent | How |
+8. **HTML rendering** — Microsoft **Live Preview** (`ms-vscode.live-server`): embedded auto-refreshing browser panel for HTML files (exports, `08_Assets/` artifacts). Obsidian has no equivalent in our config (`webviewer` disabled).
+9. **P0 harness companions** (PRD §8.3): **Claude Code** (`anthropic.claude-code`) and **Copilot** (`github.copilot`) — the two P0 harnesses with VS Code surfaces; wiring docs under `10_Agents/harnesses/`. With a harness attached, agent-mediated workflows (daily log via the [[10_Agents/skills/daily-log/SKILL|daily-log]] skill, link queries via `brain`) partially compensate for the excluded community features below.
+
+**Tier 2 — full Obsidian parity — evaluated and NOT shipped (fails trust policy):**
+
+10. Wikilink click-through/completion, backlinks panel, graph view, tag explorer, daily-note command. Only community extensions provide these (see research below). Owner reviewed and declined; accepted gaps with mitigations:
+
+| Gap (Obsidian plugin) | Mitigation in VS Code |
+|---|---|
+| Wikilink navigation | `Ctrl/Cmd+P` / search on the target name; `brain links <note>` for outgoing/backlinks; `brain validate` catches broken links |
+| Backlinks (`backlink`, `outgoing-link`) | `brain links --json`; workspace search for `[[target` |
+| Graph (`graph`) | none (accepted) |
+| Tag pane (`tag-pane`) | `brain tags`; workspace search for the tag string |
+| Daily notes (`daily-notes`) | [[10_Agents/skills/daily-log/SKILL|daily-log]] skill via an attached harness, or copy `09_Templates/template-daily-log.md` |
+| Mermaid in preview | renders on GitHub and in Obsidian; not in VS Code preview (accepted) |
+| Canvas, `bases` | Obsidian-proprietary; accepted (template ships neither) |
+
+## Candidates evaluated (research, 2026-08-11)
+
+| Candidate | Publisher type | Verdict under policy |
 |---|---|---|
-| Editor wikilinks | Foam | `foam.foam-vscode` extension |
-| `backlink`, `outgoing-link` | Foam Connections panel | same |
-| `graph` | Foam: Show graph | same |
-| `tag-pane` | Foam Tag Explorer | same |
-| `page-preview` (hover) | Foam link hover preview | same |
-| `daily-notes` → `03_Journal/periodic/daily/` | Foam daily note | `foam.openDailyNote.*` in settings.json |
-| `switcher`, `command-palette` | native | `Ctrl/Cmd+P` / `Ctrl/Cmd+Shift+P` |
-| `global-search`, `file-explorer`, `outline`, `word-count`, `bookmarks`, `editor-status` | native | built-in views |
-| `properties` (frontmatter) | native YAML highlighting | built-in |
-| Reading view / preview | native preview + mermaid | `bierner.markdown-mermaid` |
-| — (no Obsidian equivalent) | HTML rendering | `ms-vscode.live-server` (Live Preview) |
-| `templates`, `note-composer` | partially via Markdown All in One | `yzhang.markdown-all-in-one`; templates stay manual (see above) |
-| `sync`, `file-recovery` | Git | built-in SCM |
-| `canvas`, `bases` | no equivalent | accepted gap |
-| `appearance.json` font | not imposed | user-level setting, not workspace |
-
-## Research notes (2026-08-11)
-
-- **Foam vs. alternatives.** The Obsidian-like VS Code ecosystem has four candidates: **Foam** (FOSS, active, works on plain markdown folders, explicitly compatible with Obsidian-style vaults), **Dendron** (imposes its own hierarchical vault structure — wrong fit), **Markdown Memo** (bidirectional links, less active), and **AS Notes** (newer, smaller). Foam wins: no structural demands on the repo, supports path-style wikilinks, `#heading` anchors, `|` aliases, hierarchical tags, backlinks, graph, daily notes, and hover preview.
-- **Foam's own template** ships `.vscode/settings.json` + `extensions.json` with auto-save, markdown quick-suggestions, and its recommended-extension prompt — the pattern our shipped config follows. Its default `foam.edit.linkReferenceDefinitions` behavior (appending link-reference blocks) is deliberately disabled here for diff hygiene.
-- **Markdown editing/preview extension consensus (2026):** Markdown All in One (editing shortcuts, tables, ToC — 5M+ installs), markdownlint (style consistency), Markdown Preview Enhanced (heavier alternative preview with PlantUML/math — omitted from recommendations as overkill; the built-in preview + mermaid covers our notes), and mermaid support for the built-in preview.
-- **HTML rendering:** Microsoft's first-party **Live Preview** (`ms-vscode.live-server`) renders HTML in an embedded, auto-refreshing browser panel — the standard answer for viewing HTML inside VS Code.
-- **Native VS Code has absorbed a lot:** markdown link validation (`markdown.validate.enabled`), path completion, drag/paste-image-to-destination (`markdown.copyFiles.destination`), frontmatter highlighting — several former extension jobs need no extension now.
+| Live Preview (`ms-vscode.live-server`) | Microsoft org | **Shipped** |
+| Claude Code (`anthropic.claude-code`) | Anthropic org | **Shipped** |
+| Copilot (`github.copilot`) | GitHub org | **Shipped** |
+| Foam (`foam.foam-vscode`) | Community (MIT, 17.3k★, 133 contributors, ~268k installs, 5.0★) | Excluded — best-in-class for wikilinks/backlinks/graph/tags/daily notes, and the closest Obsidian equivalent, but community-published with no org backing. Documented as the owner-optional upgrade if the policy is ever relaxed. |
+| Markdown All in One (`yzhang`) | Personal (5M+ installs) | Excluded — personal publisher |
+| markdownlint (`DavidAnson`) | Personal (author is a Microsoft engineer; publishes from a personal account) | Excluded — personal publisher; `brain validate` is the vault's real linter anyway |
+| Markdown Mermaid (`bierner`) | Personal (author maintains VS Code's built-in markdown at Microsoft; personal account) | Excluded — personal publisher |
+| Markdown Preview Enhanced (`shd101wyy`) | Personal | Excluded |
+| Dendron | Community; imposes its own vault hierarchy | Excluded — structurally invasive regardless of trust |
+| Markdown Memo, AS Notes | Community, smaller | Excluded |
 
 Sources:
 
+- [Foam (GitHub)](https://github.com/foambubble/foam) · [Foam on the Marketplace](https://marketplace.visualstudio.com/items?itemName=foam.foam-vscode)
+- [Live Preview extension (Microsoft)](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server)
 - [XDA: Using VS Code instead of Obsidian for notes](https://www.xda-developers.com/tried-using-vs-code-obsidian-notes/)
 - [Deep Notes: Integrating Obsidian with VS Code](https://deepaksood619.github.io/devops/ides/obsidian-in-vscode/)
-- [Foam (GitHub)](https://github.com/foambubble/foam) and [foam-template `.vscode/`](https://github.com/foambubble/foam-template)
-- [Foam on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=foam.foam-vscode)
 - [Best Markdown Extensions for VS Code in 2026](https://www.merge-json-files.com/blog/best-markdown-extensions-for-vscode)
 - [VS Code Markdown Guide 2026](https://allmarkdowntools.com/vscode-markdown)
-- [Live Preview extension (Microsoft)](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server)
 
-## Known caveats
+## Shipped config: `.obsidian` → `.vscode` mapping
 
-- **Embeds:** Obsidian `![[file.png]]` embeds render in Obsidian only; Foam renders `![[note]]` embeds in preview but image-attachment embeds are weaker. The conventions already name relative markdown links as the portable option (PRD §16.1) — VS Code renders those fine.
-- **Foam writes nothing by default with our settings** — but if a future setting change re-enables link-reference definitions, expect bulk diffs; keep it off.
-- **`brain validate` stays authoritative** for vault conventions; markdownlint is cosmetic assistance only.
+| Obsidian (enabled plugin) | VS Code equivalent | Tier |
+|---|---|---|
+| `switcher`, `command-palette` | `Ctrl/Cmd+P` / `Ctrl/Cmd+Shift+P` | 0 (built-in) |
+| `global-search`, `file-explorer`, `outline`, `word-count`, `bookmarks`, `editor-status` | built-in views | 0 |
+| `properties` (frontmatter) | native YAML highlighting | 0 |
+| Reading view | native preview | 0 |
+| `sync`, `file-recovery` | Git (built-in SCM) | 0 |
+| — (no Obsidian equivalent) | HTML rendering via Live Preview | 1 |
+| Agent workflows | Claude Code / Copilot extensions | 1 |
+| Wikilinks, `backlink`, `outgoing-link`, `graph`, `tag-pane`, `page-preview`, `daily-notes`, `templates`, `note-composer` | not shipped — see gap table above | 2 (declined) |
+| `canvas`, `bases`, `appearance.json` font | not shipped | — |
 
-## Proposed spec amendment
+## Process notes
 
-Applied on this branch for review (canonical change per §6.3): [[00_Meta/prd]] gains **§6.5 Alternative editor: VS Code** — Obsidian remains the primary human UI (§2 unchanged); the repo additionally ships `.vscode/` workspace config so the vault is usable in VS Code with feature parity for linking, backlinks, graph, tags, daily notes, markdown preview, and HTML rendering. [[00_Meta/changelog]] entry added.
+- Requirements were brainstormed first and the trust policy set by the owner before this configuration was finalized; an earlier draft of this branch shipped the Tier 2 community set (Foam et al.) and was reworked to strict first-party on owner direction.
+- Delivered on the dedicated branch `claude/vscode-editor-support`, isolated from parallel skill-rearchitecture work.
+- `brain validate` remains the sole authoritative convention check for the vault; editor tooling is assistance only.

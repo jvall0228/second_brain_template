@@ -1,7 +1,9 @@
 {
   // VS Code counterpart to .obsidian/ — workspace settings that make this repo
-  // behave like a knowledge vault. Rationale + feature mapping:
-  // 02_Inbox/2026-08-11-vscode-editor-support.md (PRD §6.5 once triaged).
+  // behave like a knowledge vault using built-in capabilities only (strict
+  // first-party trust policy; see extensions.json). Rationale + feature
+  // mapping: 02_Inbox/2026-08-11-vscode-editor-support.md (PRD §6.5 once
+  // triaged).
 
   // --- Editing feel (matches Obsidian's editor defaults) ---
   "files.autoSave": "onFocusChange",
@@ -13,7 +15,7 @@
     "editor.minimap.enabled": false,
     // Trailing double-space is a hard line break in markdown — never trim.
     "files.trimTrailingWhitespace": false,
-    // Let [[wikilink]] and path completions fire while typing prose.
+    // Let path completions fire while typing prose.
     "editor.quickSuggestions": {
       "comments": "off",
       "strings": "off",
@@ -22,35 +24,16 @@
     "editor.suggest.showWords": false
   },
 
-  // --- Built-in markdown engine (no extension needed) ---
-  // Validate standard markdown links and flag ones that point nowhere
-  // (wikilinks are Foam's job and are not flagged by this).
+  // --- Built-in markdown engine (no extension required) ---
+  // Validate standard markdown links and flag ones that point nowhere.
+  // [[Wikilinks]] are not parsed by VS Code and are neither validated nor
+  // flagged here — `brain links` / `brain validate` remain authoritative.
   "markdown.validate.enabled": true,
   "markdown.suggest.paths.enabled": true,
   // Pasting/dropping an image into a note files it under 08_Assets/,
   // matching the vault's asset rule (PRD §16.1).
   "markdown.copyFiles.destination": {
     "**/*": "/08_Assets/"
-  },
-
-  // --- Foam (wikilinks, backlinks, graph, daily notes) ---
-  // Never auto-append link-reference-definition blocks to notes: they resolve
-  // wikilinks for plain-markdown consumers but generate constant diff noise
-  // against the vault's diffability requirement (PRD §14); the brain CLI and
-  // Obsidian resolve wikilinks without them.
-  "foam.edit.linkReferenceDefinitions": "off",
-  // Daily notes land where Obsidian's daily-notes core plugin writes them.
-  "foam.openDailyNote.directory": "03_Journal/periodic/daily",
-  "foam.openDailyNote.filenameFormat": "yyyy-mm-dd",
-  "foam.openDailyNote.titleFormat": "yyyy-mm-dd",
-
-  // --- Lint config: markdownlint tuned for a vault, not a docs site ---
-  "markdownlint.config": {
-    "MD013": false, // no hard line-length limit; notes use soft wrap
-    "MD033": false, // inline HTML is allowed in notes
-    "MD041": false, // notes start with YAML frontmatter, not an H1
-    "MD024": { "siblings_only": true }, // repeated headings ok across sections
-    "MD025": false // frontmatter title + H1 is the vault's standard shape
   },
 
   // --- Noise control ---

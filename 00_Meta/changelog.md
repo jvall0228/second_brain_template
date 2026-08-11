@@ -12,10 +12,10 @@ updated: 2026-08-11
 
 Notable structural changes to the vault. For individual file history, use `git log`.
 
-## 2026-08-11 — VS Code Alternative-Editor Support
+## 2026-08-11 — VS Code Alternative-Editor Support (strict first-party)
 
-- Owner-directed: the vault is now usable in VS Code when Obsidian is unavailable. Shipped root-scope `.vscode/` workspace config (the `.obsidian/` counterpart, dot-path outside the note corpus per [[00_Meta/prd]] §9.3): `extensions.json` recommends Foam (wikilinks/backlinks/graph/tags/daily notes), Markdown All in One, markdownlint, mermaid preview support, and Live Preview for HTML rendering — with Prettier explicitly unwanted; `settings.json` routes daily notes to `03_Journal/periodic/daily/`, pastes images into `08_Assets/`, disables Foam's link-reference-definition writes (diff hygiene), relaxes markdownlint for frontmatter-first notes, and excludes `vault-index.json` from search.
-- [[00_Meta/prd]] revision 2.2 records the decision as new §6.5 (Obsidian stays primary). Requirements brainstorm, online research, and the full `.obsidian` → `.vscode` feature mapping captured in `02_Inbox/2026-08-11-vscode-editor-support.md` (untriaged).
+- Owner-directed: the vault is now usable in VS Code when Obsidian is unavailable, under an owner-set **strict first-party extension trust policy** (org publishers only — Microsoft, Anthropic, GitHub; built-ins preferred over extensions). Shipped root-scope `.vscode/` workspace config (the `.obsidian/` counterpart, dot-path outside the note corpus per [[00_Meta/prd]] §9.3): `extensions.json` recommends only Live Preview (HTML rendering, Microsoft) plus the P0-harness companions Claude Code (Anthropic) and Copilot (GitHub), with Prettier explicitly unwanted; `settings.json` covers the rest via built-ins — image paste into `08_Assets/`, markdown link validation and path completion, no write-on-save behavior, `vault-index.json` excluded from search.
+- Community extensions (Foam, Markdown All in One, markdownlint, mermaid preview) were evaluated and **declined** under the policy; wikilink navigation, backlinks, graph, tag pane, and daily-note gaps are mitigated via the `brain` CLI and harness skills. [[00_Meta/prd]] revision 2.2 records the decision as new §6.5 (Obsidian stays primary). Requirements, trust policy, candidate evaluations, and the `.obsidian` → `.vscode` mapping: `02_Inbox/2026-08-11-vscode-editor-support.md` (untriaged).
 
 ## 2026-08-11 — Copilot Research Deduped
 

@@ -10,7 +10,7 @@ updated: 2026-08-11
 
 # PRD: Second Brain Knowledge Management System (Markdown + Git + Obsidian + Agents)
 
-> **Revision 2.2 — 2026-08-11.** Added §6.5: VS Code supported as an alternative editor via shipped `.vscode/` workspace config (owner-directed).
+> **Revision 2.2 — 2026-08-11.** Added §6.5: VS Code supported as an alternative editor via shipped `.vscode/` workspace config, under an owner-set strict first-party extension trust policy.
 > **Revision 2.1 — 2026-08-11.** `AGENTS.md` became the entrypoint with `CLAUDE.md` as a one-line adapter (§8.2); harness support tiers recorded, standards-first (§8.3); M5–M7 requirements settled — M6 rescoped to the plugin-library core, M7 (environment integration) added (§19).
 > **Revision 2.0 — 2026-08-11.** Aligned the spec with the shipped template: normalized all paths to kebab-case, recorded milestone status (M0–M4 done, M5–M6 not started), made [[00_Meta/conventions]] the authoritative tag taxonomy, documented the shipped surface (Journal subtree, solutions library, extra profile notes and templates), and added sections for the template phase, data sensitivity, concurrency, and validation. Revision 1.x (2026-02 through 2026-08) evolved in place without a revision log.
 
@@ -79,11 +79,12 @@ This order is **contractual** and is listed first in `AGENTS.md`:
 ### 6.5 Alternative editor: VS Code (decision 2026-08-11)
 Obsidian remains the primary human UI (§2), but the vault must stay usable when Obsidian is unavailable. The repo ships root-scope `.vscode/` workspace config (`settings.json` + `extensions.json`) as the VS Code counterpart to `.obsidian/` — a dot-path outside the note corpus, per the §9.3 precedent (`.github/`, `CLAUDE.md`):
 
-- **Extension recommendations** (one-click install on first open): **Foam** for wikilinks, backlinks, graph, tag explorer, and daily notes; **Markdown All in One** for editing ergonomics; **markdownlint** (relaxed, vault-tuned config); **mermaid preview support**; and Microsoft's **Live Preview** for rendering HTML files. Prettier is explicitly unwanted (it reformats markdown against §14 diffability).
-- **Workspace settings** align VS Code with vault contracts: daily notes open in `03_Journal/periodic/daily/` with `yyyy-mm-dd` names, pasted images land in `08_Assets/` (§16.1), Foam's link-reference-definition writing is disabled (no diff noise), and the generated `vault-index.json` is excluded from search.
-- `brain validate` remains the authoritative convention check; editor lint is assistance only. Accepted gaps: `.canvas` files and Obsidian-only embed rendering.
+- **Extension trust policy (owner-set):** only extensions published by **first-party organization accounts** (Microsoft, Anthropic, GitHub, and similar) may be recommended; built-in VS Code capability is preferred over any extension. Community and personal-publisher extensions are never recommended, regardless of reputation — notably **Foam**, the standard Obsidian-parity extension, was evaluated and declined under this policy.
+- **Extension recommendations:** Microsoft's **Live Preview** for rendering HTML files, plus the two P0-harness companions with VS Code surfaces (§8.3): **Claude Code** (Anthropic) and **Copilot** (GitHub). Prettier is explicitly unwanted (it reformats markdown against §14 diffability).
+- **Workspace settings** use built-ins to honor vault contracts: pasted images land in `08_Assets/` (§16.1), standard-markdown links are validated and path-completed, no tooling rewrites notes on save, and the generated `vault-index.json` is excluded from search.
+- **Accepted gaps** (no first-party equivalent): wikilink click-through, backlinks panel, graph view, tag pane, daily-note command, mermaid in preview, `.canvas`. Mitigations run through the `brain` CLI (`links`, `tags`, `validate`) and harness skills; `brain validate` remains the authoritative convention check.
 
-Requirements, research, and the full `.obsidian` → `.vscode` feature mapping: `02_Inbox/2026-08-11-vscode-editor-support.md` (path updates on triage).
+Requirements, trust policy detail, candidate evaluations, and the full `.obsidian` → `.vscode` mapping: `02_Inbox/2026-08-11-vscode-editor-support.md` (path updates on triage).
 
 ## 7. Information architecture (top-level, number-prefixed)
 Top-level directories (must exist; number prefixes required for ordering):

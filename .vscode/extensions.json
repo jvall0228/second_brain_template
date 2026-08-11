@@ -1,28 +1,23 @@
 {
-  // VS Code counterpart to the .obsidian/ config: opening this repo in VS Code
-  // prompts for these extensions ("Install All"), giving an Obsidian-equivalent
-  // vault experience. Rationale + .obsidian feature mapping:
-  // 02_Inbox/2026-08-11-vscode-editor-support.md (PRD §6.5 once triaged).
+  // Strict trust policy (owner decision, 2026-08-11): only extensions
+  // published by first-party organization accounts (Microsoft, Anthropic,
+  // GitHub) are recommended. Community and personal-publisher extensions —
+  // including Foam, the usual Obsidian-parity pick — are documented but
+  // deliberately not shipped. Rationale, tier model, and the .obsidian
+  // feature mapping: 02_Inbox/2026-08-11-vscode-editor-support.md
+  // (PRD §6.5 once triaged).
   "recommendations": [
-    // Core Obsidian replacement: [[wikilinks]] with path completion, backlinks
-    // panel, graph view, tag explorer, daily notes, note templates.
-    "foam.foam-vscode",
+    // Microsoft — Live Preview: renders HTML files (e.g. exports in
+    // 08_Assets/) in an embedded, auto-refreshing browser panel.
+    "ms-vscode.live-server",
 
-    // Editing quality-of-life: list continuation, table formatting, ToC,
-    // checkbox toggling, bold/italic shortcuts, "create note from selection".
-    "yzhang.markdown-all-in-one",
+    // Anthropic — Claude Code in VS Code; P0 harness for this vault
+    // (PRD §8.3, wiring: 10_Agents/harnesses/claude-code/wiring.md).
+    "anthropic.claude-code",
 
-    // Lint markdown against a relaxed config (see settings.json) so agent- and
-    // human-authored notes stay consistent.
-    "davidanson.vscode-markdownlint",
-
-    // Mermaid diagrams in the built-in markdown preview (parity with
-    // Obsidian's native mermaid rendering).
-    "bierner.markdown-mermaid",
-
-    // Microsoft's Live Preview: renders HTML files (e.g. exports in 08_Assets/)
-    // in an embedded browser panel with auto-reload.
-    "ms-vscode.live-server"
+    // GitHub — Copilot; P0 harness for this vault
+    // (PRD §8.3, wiring: 10_Agents/harnesses/copilot/wiring.md).
+    "github.copilot"
   ],
   "unwantedRecommendations": [
     // Prettier reformats markdown (line wrapping, list markers) and creates
