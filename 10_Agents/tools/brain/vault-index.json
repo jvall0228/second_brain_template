@@ -392,6 +392,7 @@
     "10_Agents/README.md",
     "10_Agents/docs/operating-rules.md",
     "10_Agents/docs/task-patterns.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "10_Agents/tools/brain/spec.md",
     "AGENTS.md"
    ],
@@ -569,6 +570,7 @@
     "06_Resources/README.md",
     "07_Archives/README.md",
     "09_Templates/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -1621,6 +1623,7 @@
     "01_Profile/README.md",
     "02_Inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -1766,6 +1769,7 @@
     "00_Meta/index.md",
     "01_Profile/README.md",
     "02_Inbox/2026-08-11-onboard-owner-skill-requirements.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -1832,6 +1836,7 @@
     "06_Resources/harness-primitives-research.md",
     "07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md",
     "10_Agents/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -2036,7 +2041,7 @@
     {
      "level": 2,
      "line": 56,
-     "text": "Open questions (for build time)"
+     "text": "Build-time decisions (owner-settled)"
     },
     {
      "level": 2,
@@ -2189,7 +2194,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 5196,
+   "sizeBytes": 5264,
    "title": "Requirements: onboard-owner skill",
    "updated": "2026-08-11"
   },
@@ -5872,6 +5877,7 @@
   "09_Templates/template-area.md": {
    "backlinks": [
     "05_Areas/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -6381,6 +6387,7 @@
   "09_Templates/template-project.md": {
    "backlinks": [
     "04_Projects/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -8304,7 +8311,8 @@
   "10_Agents/skills/agent-orientation/SKILL.md": {
    "backlinks": [
     "02_Inbox/2026-08-11-onboard-owner-skill-requirements.md",
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -8392,7 +8400,8 @@
   },
   "10_Agents/skills/inbox-capture/SKILL.md": {
    "backlinks": [
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -8483,7 +8492,8 @@
     "00_Meta/changelog.md",
     "02_Inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/harnesses/README.md",
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -8547,6 +8557,223 @@
    "title": "Skill: Onboard Harness",
    "updated": "2026-08-11"
   },
+  "10_Agents/skills/onboard-owner/SKILL.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "description": "Welcome a new vault owner — teach what the second brain does for them, interview them to fill in their profile, and orchestrate the other onboarding skills (harness wiring, environment orientation). Use on the first run of a freshly adopted vault, or to resume an unfinished onboarding.",
+    "name": "onboard-owner",
+    "tags": [
+     "type/reference",
+     "audience/agent",
+     "workflow/draft"
+    ],
+    "title": "Skill: Onboard Owner",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "text": "Onboard Owner"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "text": "The ruling constraint: the owner may be non-technical"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Teaching: tone and best practices"
+    },
+    {
+     "level": 2,
+     "line": 37,
+     "text": "Write policy during onboarding"
+    },
+    {
+     "level": 2,
+     "line": 41,
+     "text": "State: the onboarding checklist"
+    },
+    {
+     "level": 2,
+     "line": 51,
+     "text": "Stages"
+    },
+    {
+     "level": 2,
+     "line": 64,
+     "text": "Orchestration rules"
+    },
+    {
+     "level": 2,
+     "line": 68,
+     "text": "Exit criteria (\"onboarded\")"
+    }
+   ],
+   "links": [
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 14,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[00_Meta/conventions]]",
+     "resolved": "00_Meta/conventions.md",
+     "target": "00_Meta/conventions",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[00_Meta/index]]",
+     "resolved": "00_Meta/index.md",
+     "target": "00_Meta/index",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 24,
+     "placeholder": false,
+     "raw": "[[AGENTS]]",
+     "resolved": "AGENTS.md",
+     "target": "AGENTS",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 54,
+     "placeholder": false,
+     "raw": "[[01_Profile/now]]",
+     "resolved": "01_Profile/now.md",
+     "target": "01_Profile/now",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 54,
+     "placeholder": false,
+     "raw": "[[01_Profile/preferences]]",
+     "resolved": "01_Profile/preferences.md",
+     "target": "01_Profile/preferences",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 54,
+     "placeholder": false,
+     "raw": "[[01_Profile/defaults]]",
+     "resolved": "01_Profile/defaults.md",
+     "target": "01_Profile/defaults",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 55,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-project]]",
+     "resolved": "09_Templates/template-project.md",
+     "target": "09_Templates/template-project",
+     "warnings": []
+    },
+    {
+     "display": null,
+     "embed": false,
+     "fragment": null,
+     "line": 55,
+     "placeholder": false,
+     "raw": "[[09_Templates/template-area]]",
+     "resolved": "09_Templates/template-area.md",
+     "target": "09_Templates/template-area",
+     "warnings": []
+    },
+    {
+     "display": "inbox-capture",
+     "embed": false,
+     "fragment": null,
+     "line": 56,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/inbox-capture/SKILL|inbox-capture]]",
+     "resolved": "10_Agents/skills/inbox-capture/SKILL.md",
+     "target": "10_Agents/skills/inbox-capture/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "triage-inbox",
+     "embed": false,
+     "fragment": null,
+     "line": 56,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]",
+     "resolved": "10_Agents/skills/triage-inbox/SKILL.md",
+     "target": "10_Agents/skills/triage-inbox/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "onboard-harness",
+     "embed": false,
+     "fragment": null,
+     "line": 57,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]",
+     "resolved": "10_Agents/skills/onboard-harness/SKILL.md",
+     "target": "10_Agents/skills/onboard-harness/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "agent-orientation",
+     "embed": false,
+     "fragment": null,
+     "line": 58,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
+     "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
+     "target": "10_Agents/skills/agent-orientation/SKILL",
+     "warnings": []
+    },
+    {
+     "display": "recommended-automations",
+     "embed": false,
+     "fragment": null,
+     "line": 58,
+     "placeholder": false,
+     "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
+     "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
+     "target": "10_Agents/skills/recommended-automations/SKILL",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 7600,
+   "title": "Skill: Onboard Owner",
+   "updated": "2026-08-11"
+  },
   "10_Agents/skills/periodic-review/SKILL.md": {
    "backlinks": [
     "10_Agents/skills/README.md"
@@ -8596,7 +8823,8 @@
     "00_Meta/changelog.md",
     "02_Inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/harnesses/copilot/wiring.md",
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -8778,7 +9006,8 @@
   "10_Agents/skills/triage-inbox/SKILL.md": {
    "backlinks": [
     "02_Inbox/2026-08-11-triage-report.md",
-    "10_Agents/skills/README.md"
+    "10_Agents/skills/README.md",
+    "10_Agents/skills/onboard-owner/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -9880,6 +10109,7 @@
     "02_Inbox/2026-08-11-onboard-owner-skill-requirements.md",
     "10_Agents/README.md",
     "10_Agents/docs/operating-rules.md",
+    "10_Agents/skills/onboard-owner/SKILL.md",
     "AGENTS.md"
    ],
    "bodyTags": [],

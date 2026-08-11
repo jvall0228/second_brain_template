@@ -53,11 +53,11 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 - **Discoverability**: root README and [[AGENTS]] point first-run adopters at this skill as step 0 of the adoption path.
 - **Exit criteria** ("onboarded"): profile notes filled; at least one harness wired; seed examples decided on; owner has done one capture → triage cycle with the agent and knows they can just say "remember this" / "what's in my inbox?".
 
-## Open questions (for build time)
+## Build-time decisions (owner-settled)
 
-1. Exact plain-language script/beats for the teaching moments — draft in the SKILL.md or leave to agent judgment with tone guidance?
-2. Does the write-policy exception for `01_Profile/` extend to the seeded `04_Projects/`/`05_Areas/` notes, or do those stage through the Inbox as usual?
-3. Should the resumable checklist note archive to `07_Archives/inbox/` on completion (like executed plans) as the record of onboarding?
+1. The SKILL.md **sets tone and teaching best practices**, not a script — the agent improvises the actual words within that guidance.
+2. The write-policy exception **extends to the seeded `04_Projects/` and `05_Areas/` notes**: everything written during the live onboarding conversation is owner-approved in the moment.
+3. The onboarding checklist note **archives to `07_Archives/inbox/` on completion** (`status/done`), like executed plans — it becomes the record of the onboarding.
 
 ## Related
 
