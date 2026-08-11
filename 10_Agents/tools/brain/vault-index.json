@@ -13201,9 +13201,7 @@
   "10_Agents/environments/README.md": {
    "backlinks": [
     "10_Agents/README.md",
-    "10_Agents/skills/agent-orientation/SKILL.md",
-    "10_Agents/skills/recommended-automations/SKILL.md",
-    "10_Agents/skills/self-maintenance/SKILL.md"
+    "10_Agents/skills/agent-orientation/SKILL.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -13228,16 +13226,16 @@
     {
      "level": 2,
      "line": 17,
-     "text": "The convention"
+     "text": "The contract"
     },
     {
      "level": 2,
-     "line": 24,
-     "text": "Deferred (#15)"
+     "line": 26,
+     "text": "Detect, list, and migrate"
     },
     {
      "level": 2,
-     "line": 28,
+     "line": 34,
      "text": "Related"
     }
    ],
@@ -13257,7 +13255,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[AGENTS]]",
      "resolved": "AGENTS.md",
@@ -13268,7 +13266,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[00_Meta/index]]",
      "resolved": "00_Meta/index.md",
@@ -13279,7 +13277,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -13290,7 +13288,7 @@
      "display": "recommended-automations",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]",
      "resolved": "10_Agents/skills/recommended-automations/SKILL.md",
@@ -13301,7 +13299,7 @@
      "display": "self-maintenance",
      "embed": false,
      "fragment": null,
-     "line": 21,
+     "line": 23,
      "placeholder": false,
      "raw": "[[10_Agents/skills/self-maintenance/SKILL|self-maintenance]]",
      "resolved": "10_Agents/skills/self-maintenance/SKILL.md",
@@ -13312,7 +13310,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 22,
+     "line": 24,
      "placeholder": false,
      "raw": "[[00_Meta/conventions]]",
      "resolved": "00_Meta/conventions.md",
@@ -13323,7 +13321,7 @@
      "display": "agent-orientation",
      "embed": false,
      "fragment": null,
-     "line": 30,
+     "line": 36,
      "placeholder": false,
      "raw": "[[10_Agents/skills/agent-orientation/SKILL|agent-orientation]]",
      "resolved": "10_Agents/skills/agent-orientation/SKILL.md",
@@ -13334,7 +13332,7 @@
      "display": "Harness adapters",
      "embed": false,
      "fragment": null,
-     "line": 31,
+     "line": 37,
      "placeholder": false,
      "raw": "[[10_Agents/harnesses/README|Harness adapters]]",
      "resolved": "10_Agents/harnesses/README.md",
@@ -13345,7 +13343,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 32,
+     "line": 38,
      "placeholder": false,
      "raw": "[[10_Agents/README]]",
      "resolved": "10_Agents/README.md",
@@ -13353,7 +13351,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 2663,
+   "sizeBytes": 3338,
    "tasks": [],
    "title": "Environments",
    "updated": "2026-08-11"
@@ -14924,17 +14922,17 @@
     },
     {
      "level": 2,
-     "line": 100,
+     "line": 116,
      "text": "Inventory note template"
     },
     {
      "level": 2,
-     "line": 159,
+     "line": 175,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 173,
+     "line": 189,
      "text": "References"
     }
    ],
@@ -14965,7 +14963,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 175,
+     "line": 191,
      "placeholder": false,
      "raw": "[[10_Agents/environments/README]]",
      "resolved": "10_Agents/environments/README.md",
@@ -14973,7 +14971,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 12820,
+   "sizeBytes": 13703,
    "tasks": [],
    "title": "Skill: Agent Orientation",
    "updated": "2026-08-11"
@@ -16294,17 +16292,6 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 67,
-     "placeholder": false,
-     "raw": "[[10_Agents/environments/README]]",
-     "resolved": "10_Agents/environments/README.md",
-     "target": "10_Agents/environments/README",
-     "warnings": []
-    },
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
      "line": 74,
      "placeholder": false,
      "raw": "[[10_Agents/skills/README]]",
@@ -16313,7 +16300,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6961,
+   "sizeBytes": 7027,
    "tasks": [],
    "title": "Skill: Recommended Automations",
    "updated": "2026-08-11"
@@ -16722,20 +16709,8 @@
      "text": "References"
     }
    ],
-   "links": [
-    {
-     "display": null,
-     "embed": false,
-     "fragment": null,
-     "line": 25,
-     "placeholder": false,
-     "raw": "[[10_Agents/environments/README]]",
-     "resolved": "10_Agents/environments/README.md",
-     "target": "10_Agents/environments/README",
-     "warnings": []
-    }
-   ],
-   "sizeBytes": 2916,
+   "links": [],
+   "sizeBytes": 3034,
    "tasks": [],
    "title": "Skill: Self Maintenance",
    "updated": "2026-08-11"
@@ -16824,52 +16799,52 @@
     },
     {
      "level": 2,
-     "line": 43,
+     "line": 50,
      "text": "Classify"
     },
     {
      "level": 3,
-     "line": 53,
+     "line": 60,
      "text": "Path map"
     },
     {
      "level": 3,
-     "line": 82,
+     "line": 89,
      "text": "Overrides"
     },
     {
      "level": 3,
-     "line": 96,
+     "line": 103,
      "text": "Cross-cutting rules (apply after path lanes)"
     },
     {
      "level": 2,
-     "line": 102,
+     "line": 109,
      "text": "Apply"
     },
     {
      "level": 2,
-     "line": 111,
+     "line": 118,
      "text": "Backfill"
     },
     {
      "level": 2,
-     "line": 120,
+     "line": 127,
      "text": "Report"
     },
     {
      "level": 2,
-     "line": 128,
+     "line": 135,
      "text": "Upstream release duty"
     },
     {
      "level": 2,
-     "line": 132,
+     "line": 139,
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 141,
+     "line": 148,
      "text": "References"
     }
    ],
@@ -16889,7 +16864,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 29,
+     "line": 36,
      "placeholder": false,
      "raw": "[[00_Meta/config.yaml]]",
      "resolved": "00_Meta/config.yaml",
@@ -16900,7 +16875,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 143,
+     "line": 150,
      "placeholder": false,
      "raw": "[[00_Meta/prd]]",
      "resolved": "00_Meta/prd.md",
@@ -16908,7 +16883,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 12711,
+   "sizeBytes": 13160,
    "tasks": [],
    "title": "Skill: Sync Upstream",
    "updated": "2026-08-11"
@@ -18006,12 +17981,12 @@
     },
     {
      "level": 2,
-     "line": 51,
+     "line": 52,
      "text": "The committed index"
     },
     {
      "level": 2,
-     "line": 55,
+     "line": 56,
      "text": "Tests"
     }
    ],
@@ -18031,7 +18006,7 @@
      "display": null,
      "embed": false,
      "fragment": null,
-     "line": 61,
+     "line": 62,
      "placeholder": false,
      "raw": "[[10_Agents/tools/README]]",
      "resolved": "10_Agents/tools/README.md",
@@ -18039,7 +18014,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4782,
+   "sizeBytes": 5118,
    "tasks": [],
    "title": "brain — Vault Index CLI",
    "updated": "2026-08-11"
@@ -18346,51 +18321,76 @@
     {
      "level": 2,
      "line": 454,
+     "text": "20. Environment identity and scoped retrieval"
+    },
+    {
+     "level": 3,
+     "line": 460,
+     "text": "20.1 Tracked manifest"
+    },
+    {
+     "level": 3,
+     "line": 494,
+     "text": "20.2 Clone-local state"
+    },
+    {
+     "level": 3,
+     "line": 504,
+     "text": "20.3 Selection"
+    },
+    {
+     "level": 3,
+     "line": 524,
+     "text": "20.4 Commands and migration"
+    },
+    {
+     "level": 2,
+     "line": 543,
      "text": "18. Semantic search (QMD — issue #8)"
     },
     {
      "level": 3,
-     "line": 458,
+     "line": 547,
      "text": "18.1 Embeddings sidecar"
     },
     {
      "level": 3,
-     "line": 478,
+     "line": 567,
      "text": "18.2 Staleness and store loading"
     },
     {
      "level": 3,
-     "line": 483,
+     "line": 572,
      "text": "18.3 `brain embed`"
     },
     {
      "level": 3,
-     "line": 492,
+     "line": 581,
      "text": "18.4 `brain search --semantic <query>`"
     },
     {
      "level": 3,
-     "line": 501,
+     "line": 590,
      "text": "18.5 Determinism and invariants"
     },
     {
      "level": 2,
-     "line": 507,
+     "line": 596,
      "text": "19. Remote safety (`brain remote-safety`) — issue #83"
     },
     {
      "level": 3,
-     "line": 515,
+     "line": 604,
      "text": "19.1 Push-target discovery and normalization"
     },
     {
      "level": 3,
-     "line": 539,
+     "line": 628,
      "text": "19.2 Provider boundary and decisions"
     },
     {
      "level": 3,
-     "line": 565,
+     "line": 654,
      "text": "19.3 Output, exit status, and shared guard"
     }
    ],
@@ -18550,7 +18550,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 77453,
+   "sizeBytes": 82052,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-11"

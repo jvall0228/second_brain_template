@@ -26,6 +26,13 @@ Keep an adopter's fork current with the upstream `second_brain_template`: detect
 
 ## Detect
 
+Before classification, resolve the current environment with `brain env detect
+--json`. If registered environments exist and matching fails, stop before
+reading environment content or writing a report. Treat every non-current
+`10_Agents/environments/<slug>/` path as opaque owner content: report metadata
+only, never diff or serialize its contents. `.second-brain/` is ignored local
+state and must never be staged, classified, or proposed upstream.
+
 Upstream version signaling (accepted design, issue #6): the fork records the upstream release it has adopted in the `template_version` key of [[00_Meta/config.yaml]] (spec §15.3, read via `brain config`); upstream marks each template release with a git tag (`template-v*`).
 
 1. **Upstream remote.** Look for a git remote named `upstream` pointing at the template repo. If none is configured, this is a documented one-time setup step — propose it in the report and stop:

@@ -26,7 +26,7 @@ Convenient shell alias (add to your shell profile, adjusting the path):
 alias brain='python3 "$(git rev-parse --show-toplevel)/10_Agents/tools/brain/brain.py"'
 ```
 
-Every command accepts `--json` for machine-readable output and `--vault PATH` to override vault-root autodetection. Where a command takes a `<note>`, both bare names (`prd`) and vault paths (`00_Meta/prd.md`) work.
+Every command accepts `--json` for machine-readable output, `--vault PATH` to override vault-root autodetection, and `--env current|SLUG` for environment selection. Where a command takes a `<note>`, both bare names (`prd`) and vault paths (`00_Meta/prd.md`) work.
 
 ## Commands
 
@@ -47,6 +47,7 @@ Every command accepts `--json` for machine-readable output and `--vault PATH` to
 | `tasks` | Checkbox tasks across the vault (spec §17; Obsidian Tasks emoji metadata — 📅 due, ⏫/🔼/🔽 priority). Filters: `--open`, `--due <YYYY-MM-DD\|today>`, `--overdue`, `--project PREFIX`. Ordered due-date first (undated last), then path, then line |
 | `embed` | Maintain the gitignored semantic-search embeddings sidecar (`vault-embeddings.json`, spec §18): `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional `sentence-transformers` model, `--status` reports coverage. Restricted/private notes never enter the sidecar |
 | `remote-safety` | Redacted, fail-closed preflight before personal-data connector reads (spec §19). Verifies every push target is private and non-template; `--acknowledge-unknown` is invocation-only and never bypasses public/template. Add `--persist` for capture/write flows: no-push repositories are local-only, so that requested operation is blocked before the connector |
+| `env detect\|list\|migrate` | Detect current hashed identity, list metadata-only environment records, or preview an exact legacy-directory migration (spec §20). Selection is `--env` > `SECOND_BRAIN_ENV` > ignored selector > unique fingerprint and fails closed on ambiguity/no match |
 
 ## The committed index
 

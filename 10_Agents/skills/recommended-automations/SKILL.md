@@ -64,7 +64,7 @@ Document each wired flow in the harness's context (what runs, when, writing what
 
 ## Steps
 
-1. Read the **current environment's** orientation inventory note (`10_Agents/environments/<env-slug>/orientation-inventory.md` — see [[10_Agents/environments/README]]) for adopted sources, interface rungs, priorities, and the environment's permission envelope (never propose a flow the environment forbids); read the cadence table for the rhythm side.
+1. Resolve the current environment with `brain env detect --json` and fail closed unless exactly one slug is selected. Read **only that environment's** orientation inventory note for adopted sources, interface rungs, priorities, and the permission envelope (never propose a flow the environment forbids); read the cadence table for the rhythm side. Store generated wiring/state under that environment's ignored overlay.
 2. Propose flows from both families (tables above, pruned to real sources and the owner's actual rhythm) with cadence and cost/noise notes — owner picks.
 3. Wire each approved flow via the harness scheduler. For inbound flows, make the persistence preflight the first executable step before the connector or output path is opened, and test block, unknown, and local-only with connector/output spies. First runs in **dry-run mode** — inbound flows produce a sample Inbox note only after that gate passes; rhythm jobs produce their deliverable tagged `workflow/draft` — before anything is enabled.
 4. Owner reviews samples → enable; register the flows with `self-maintenance` (it audits `10_Agents/` drafts and the documented flows).

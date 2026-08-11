@@ -95,7 +95,23 @@ Environment facts (not harness or vault facts):
 
 ## Where the inventory lands
 
-One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [[10_Agents/environments/README]] for the convention: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment. Full environment-scoping machinery (fingerprinting, automatic detection) is deferred to #15 — this is the minimal landing convention only.
+One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [[10_Agents/environments/README]] for the contract: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment.
+
+Before reading or writing an inventory, resolve the current environment with
+`brain env detect --json`. If a legacy unregistered directory exists, run
+`brain env migrate <old-slug> <owner-chosen-slug>` and show the preview; never
+move it until the owner accepts the exact plan. For a new environment, ask the
+owner for a stable kebab-case slug, then create:
+
+- the version-1 `environment.json` from the hashed fingerprint evidence and
+  confirmed non-secret capability booleans (brain spec §20.1); and
+- a `README.md` whose first body block says it applies only to that slug and
+  other environments must ignore the directory.
+
+Write the clone-local slug to `.second-brain/environment` only after previewing
+that ignored path. Secrets, endpoints, generated wiring, and delivery/hosting
+state go only under `.second-brain/environments/<slug>/`; never put raw machine
+identity or secrets in the manifest, landing note, inventory, output, or logs.
 
 ## Inventory note template
 
@@ -163,7 +179,7 @@ session: <session-or-pr-ref>
 3. **Fill the solution inventory** (contract §1) per category, ranking each entry on the ladder. Record "none" explicitly.
 4. **Run the remote-safety preflight** before any personal-data read, following the boundary above. Requesting permission from the owner does not replace this gate.
 5. **Interview the owner** for what can't be observed: which sources carry real context, per-source value, sensitivity (some sources shouldn't enter the vault at all — PRD §16.2), and desired freshness. Source priorities are the owner's call, decided here.
-6. **Write the inventory note** to `10_Agents/environments/<env-slug>/orientation-inventory.md` using the template above (`workflow/draft`; the self-guarding preamble is mandatory). If the environment directory doesn't exist yet, create it with the owner's chosen slug. In local-only mode, include capability facts and the safety state only—never connector-derived data.
+6. **Register and write the selected environment:** preview any legacy migration; create or refresh the versioned manifest and self-guarding landing note; preview the ignored selector write; then write `10_Agents/environments/<env-slug>/orientation-inventory.md` using the template above (`workflow/draft`; the self-guarding preamble is mandatory). In local-only mode, include capability facts and the safety state only—never connector-derived data.
 7. **Generate the access layer for each adopted source:**
    - **Tooling** under `10_Agents/tools/<source>/` — a script (stdlib-first, config via env vars) where the rung is a CLI or wrapped API; an access doc naming the exact harness tools where the rung is MCP/connector.
    - **A paired skill** at `10_Agents/skills/<source>-capture/SKILL.md` describing when and how to pull from the source and capture into the vault **via the `inbox-capture` rules**.

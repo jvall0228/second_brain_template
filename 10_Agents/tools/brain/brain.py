@@ -7,7 +7,7 @@ references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
 Commands: index, list, search, links, tags, show, recent, validate,
-          curate, context, config, report, tasks, embed, remote-safety
+          curate, context, config, report, tasks, embed, remote-safety, env
 """
 
 from __future__ import annotations
@@ -100,6 +100,34 @@ SCP_REMOTE_RE = re.compile(
 # key (spec §15.3 / §16.4): report: → stale_days / inbox_days.
 REPORT_STALE_ACTIVE_DAYS = 30
 REPORT_INBOX_TRIAGE_DAYS = 14
+
+# §20 Environment identity. Tracked manifests contain only hashed machine
+# evidence. The selector and overlays are clone-local and gitignored.
+ENVIRONMENT_SCHEMA_VERSION = 1
+ENVIRONMENTS_RELPATH = "10_Agents/environments"
+ENVIRONMENT_MANIFEST_NAME = "environment.json"
+ENVIRONMENT_SELECTOR_RELPATH = ".second-brain/environment"
+ENVIRONMENT_OVERLAYS_RELPATH = ".second-brain/environments"
+ENVIRONMENT_SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+ENVIRONMENT_DIGEST_RE = re.compile(r"^[0-9a-f]{64}$")
+ENVIRONMENT_CLASS_VALUES = frozenset(
+    {"desktop", "laptop", "server", "container", "cloud", "other"}
+)
+ENVIRONMENT_SECRET_KEY_RE = re.compile(
+    r"(?i)(?:secret|token|password|passwd|credential|webhook|hostname|username|user|path|url)"
+)
+
+
+class EnvironmentSelectionError(RuntimeError):
+    """Fail-closed environment selection with a stable, non-identifying code."""
+
+    def __init__(self, code: str):
+        self.code = code
+        super().__init__(f"environment selection failed: {code}")
+
+
+_ENVIRONMENT_UNSET = object()
+_ACTIVE_ENVIRONMENT: object | str | None = _ENVIRONMENT_UNSET
 
 
 # ---------------------------------------------------------------------------
@@ -592,6 +620,464 @@ def guarded_personal_data_call(
     )
     return connector(*connector_args, **connector_kwargs)
 
+
+# ---------------------------------------------------------------------------
+# §20 Environment identity and selection
+
+
+def _valid_environment_slug(value: object) -> bool:
+    return isinstance(value, str) and bool(ENVIRONMENT_SLUG_RE.fullmatch(value))
+
+
+def _has_symlink_component(root: Path, relative: str) -> bool:
+    current = root
+    for part in Path(relative).parts:
+        current = current / part
+        if current.is_symlink():
+            return True
+    return False
+
+
+def _safe_environment_dir(root: Path, slug: str) -> Path:
+    """Return an immediate environment directory without following a link."""
+    if not _valid_environment_slug(slug):
+        raise EnvironmentSelectionError("invalid-slug")
+    base = root / ENVIRONMENTS_RELPATH
+    candidate = base / slug
+    try:
+        if _has_symlink_component(root, f"{ENVIRONMENTS_RELPATH}/{slug}"):
+            raise EnvironmentSelectionError("unsafe-environment-path")
+        resolved_base = base.resolve()
+        resolved_candidate = candidate.resolve(strict=False)
+        resolved_candidate.relative_to(resolved_base)
+    except (OSError, ValueError):
+        raise EnvironmentSelectionError("unsafe-environment-path") from None
+    return candidate
+
+
+def machine_fingerprints() -> list[dict[str, str]]:
+    """Return stable SHA-256 evidence; raw identity never leaves this function."""
+    material: bytes | None = None
+    source = "machine-v1"
+    if sys.platform.startswith("linux"):
+        for candidate in (Path("/etc/machine-id"), Path("/var/lib/dbus/machine-id")):
+            try:
+                if candidate.is_symlink():
+                    continue
+                raw = candidate.read_bytes().strip()
+            except OSError:
+                continue
+            if raw and len(raw) <= 4096:
+                material = b"linux-machine-id-v1\0" + raw
+                break
+    elif sys.platform == "darwin":
+        try:
+            proc = subprocess.run(
+                ["ioreg", "-rd1", "-c", "IOPlatformExpertDevice"],
+                capture_output=True,
+                check=False,
+                env=_safe_subprocess_env(),
+                timeout=5,
+            )
+            match = re.search(
+                rb'"IOPlatformUUID"\s*=\s*"([0-9A-Fa-f-]{32,40})"',
+                proc.stdout[:128 * 1024],
+            )
+            if proc.returncode == 0 and match:
+                material = b"darwin-platform-uuid-v1\0" + match.group(1).lower()
+        except (OSError, subprocess.SubprocessError):
+            pass
+    elif os.name == "nt":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
+                r"SOFTWARE\Microsoft\Cryptography",
+                0,
+                winreg.KEY_READ | getattr(winreg, "KEY_WOW64_64KEY", 0),
+            ) as key:
+                raw, _kind = winreg.QueryValueEx(key, "MachineGuid")
+            if isinstance(raw, str) and 16 <= len(raw) <= 128:
+                material = b"windows-machine-guid-v1\0" + raw.encode("utf-8")
+        except (ImportError, OSError):
+            pass
+    if material is None:
+        # Hostnames and usernames are low entropy and dictionary-identifiable
+        # even after hashing. Explicit selection is required when the OS does
+        # not expose a high-entropy machine identifier.
+        return []
+    return [
+        {
+            "algorithm": "sha256",
+            "digest": hashlib.sha256(material).hexdigest(),
+            "source": source,
+        }
+    ]
+
+
+def _manifest_finding(rule: str, message: str) -> dict:
+    return {"rule": rule, "message": message}
+
+
+def validate_environment_manifest(data: object, expected_slug: str) -> list[dict]:
+    """Validate the complete tracked v1 manifest shape without echoing values."""
+    findings: list[dict] = []
+    if not isinstance(data, dict):
+        return [_manifest_finding("environment-schema", "manifest must be an object")]
+    allowed = {
+        "schemaVersion",
+        "slug",
+        "class",
+        "surfaces",
+        "capabilities",
+        "fingerprints",
+        "freshness",
+        "maintenance",
+    }
+    unknown = sorted(set(data) - allowed)
+    if unknown:
+        findings.append(
+            _manifest_finding(
+                "environment-schema",
+                "manifest has unknown keys (names suppressed at the privacy boundary)",
+            )
+        )
+    if data.get("schemaVersion") != ENVIRONMENT_SCHEMA_VERSION:
+        findings.append(
+            _manifest_finding(
+                "environment-schema-version",
+                f"schemaVersion must be {ENVIRONMENT_SCHEMA_VERSION}",
+            )
+        )
+    slug = data.get("slug")
+    if not _valid_environment_slug(slug) or slug != expected_slug:
+        findings.append(
+            _manifest_finding(
+                "environment-slug",
+                "slug must be kebab-case and equal its immediate directory name",
+            )
+        )
+    if data.get("class") not in ENVIRONMENT_CLASS_VALUES:
+        findings.append(
+            _manifest_finding(
+                "environment-class",
+                "class must be desktop, laptop, server, container, cloud, or other",
+            )
+        )
+    surfaces = data.get("surfaces")
+    if (
+        not isinstance(surfaces, list)
+        or not all(_valid_environment_slug(item) for item in surfaces)
+        or len(set(surfaces)) != len(surfaces)
+        or surfaces != sorted(surfaces)
+    ):
+        findings.append(
+            _manifest_finding(
+                "environment-surfaces",
+                "surfaces must be a sorted unique list of kebab-case identifiers",
+            )
+        )
+    capabilities = data.get("capabilities")
+    if not isinstance(capabilities, dict) or not all(
+        _valid_environment_slug(key) and isinstance(value, bool)
+        for key, value in capabilities.items()
+    ) or (isinstance(capabilities, dict) and list(capabilities) != sorted(capabilities)):
+        findings.append(
+            _manifest_finding(
+                "environment-capabilities",
+                "capabilities must map kebab-case non-secret names to booleans",
+            )
+        )
+    elif any(ENVIRONMENT_SECRET_KEY_RE.search(key) for key in capabilities):
+        findings.append(
+            _manifest_finding(
+                "environment-private-key",
+                "capability names must not describe identity, locations, credentials, or endpoints",
+            )
+        )
+    fingerprints = data.get("fingerprints")
+    if not isinstance(fingerprints, list) or not fingerprints:
+        findings.append(
+            _manifest_finding(
+                "environment-fingerprints", "fingerprints must be a non-empty list"
+            )
+        )
+    else:
+        seen: set[tuple[str, str, str]] = set()
+        for row in fingerprints:
+            if not isinstance(row, dict) or set(row) != {
+                "algorithm",
+                "digest",
+                "source",
+            }:
+                findings.append(
+                    _manifest_finding(
+                        "environment-fingerprints",
+                        "each fingerprint must contain only algorithm, digest, and source",
+                    )
+                )
+                continue
+            key = (row.get("algorithm"), row.get("digest"), row.get("source"))
+            if (
+                key[0] != "sha256"
+                or not isinstance(key[1], str)
+                or not ENVIRONMENT_DIGEST_RE.fullmatch(key[1])
+                or key[2] != "machine-v1"
+            ):
+                findings.append(
+                    _manifest_finding(
+                        "environment-fingerprints",
+                        "fingerprints require a SHA-256 digest and a supported generic source",
+                    )
+                )
+            elif key in seen:
+                findings.append(
+                    _manifest_finding(
+                        "environment-fingerprints", "duplicate fingerprint record"
+                    )
+                )
+            seen.add(key)
+    freshness = data.get("freshness")
+    if not isinstance(freshness, dict) or set(freshness) != {
+        "checkedAt",
+        "expiresAt",
+    }:
+        findings.append(
+            _manifest_finding(
+                "environment-freshness",
+                "freshness must contain only checkedAt and expiresAt",
+            )
+        )
+    else:
+        checked = iso_date(freshness.get("checkedAt"))
+        expires = iso_date(freshness.get("expiresAt"))
+        if checked is None or expires is None or expires < checked:
+            findings.append(
+                _manifest_finding(
+                    "environment-freshness", "freshness dates must be real and ordered"
+                )
+            )
+    maintenance = data.get("maintenance")
+    if not isinstance(maintenance, dict) or set(maintenance) != {
+        "inventory",
+        "ownerReviewRequired",
+    }:
+        findings.append(
+            _manifest_finding(
+                "environment-maintenance",
+                "maintenance must contain only inventory and ownerReviewRequired",
+            )
+        )
+    elif (
+        maintenance.get("inventory") != "orientation-inventory.md"
+        or maintenance.get("ownerReviewRequired") is not True
+    ):
+        findings.append(
+            _manifest_finding(
+                "environment-maintenance",
+                "maintenance requires the local inventory filename and owner review",
+            )
+        )
+    return findings
+
+
+def load_environment_manifests(root: Path) -> tuple[dict[str, dict], list[dict]]:
+    """Load only immediate, non-symlinked environment directories."""
+    base = root / ENVIRONMENTS_RELPATH
+    manifests: dict[str, dict] = {}
+    findings: list[dict] = []
+    if _has_symlink_component(root, ENVIRONMENTS_RELPATH):
+        return manifests, [
+            {
+                "path": ENVIRONMENTS_RELPATH + "/",
+                **_manifest_finding(
+                    "environment-unsafe-path",
+                    "environments root must be a real directory inside the vault",
+                ),
+            }
+        ]
+    try:
+        entries = sorted(os.scandir(base), key=lambda item: item.name)
+    except OSError:
+        return manifests, findings
+    for entry in entries:
+        if entry.name.startswith(".") or entry.name == "README.md":
+            continue
+        if entry.is_symlink():
+            findings.append(
+                {
+                    "path": f"{ENVIRONMENTS_RELPATH}/{entry.name}/",
+                    **_manifest_finding(
+                        "environment-unsafe-path",
+                        "environment entries must not be symlinks",
+                    ),
+                }
+            )
+            continue
+        if not entry.is_dir(follow_symlinks=False):
+            continue
+        slug = entry.name
+        rel = f"{ENVIRONMENTS_RELPATH}/{slug}/{ENVIRONMENT_MANIFEST_NAME}"
+        if not _valid_environment_slug(slug):
+            findings.append(
+                {
+                    "path": rel,
+                    **_manifest_finding(
+                        "environment-slug", "environment directory must be kebab-case"
+                    ),
+                }
+            )
+            continue
+        manifest_path = Path(entry.path) / ENVIRONMENT_MANIFEST_NAME
+        if manifest_path.is_symlink():
+            findings.append(
+                {
+                    "path": rel,
+                    **_manifest_finding(
+                        "environment-unsafe-path", "manifest must not be a symlink"
+                    ),
+                }
+            )
+            continue
+        try:
+            raw = manifest_path.read_bytes()
+            if len(raw) > 64 * 1024:
+                raise ValueError("oversized")
+            data = json.loads(raw.decode("utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+            findings.append(
+                {
+                    "path": rel,
+                    **_manifest_finding(
+                        "environment-manifest-unreadable",
+                        "manifest must be readable UTF-8 JSON under 64 KiB",
+                    ),
+                }
+            )
+            continue
+        row_findings = validate_environment_manifest(data, slug)
+        for dirpath, dirnames, filenames in os.walk(entry.path, followlinks=False):
+            unsafe = [
+                name
+                for name in [*dirnames, *filenames]
+                if (Path(dirpath) / name).is_symlink()
+            ]
+            if unsafe:
+                row_findings.append(
+                    _manifest_finding(
+                        "environment-unsafe-path",
+                        "environment contents must not contain symlinks",
+                    )
+                )
+                break
+        findings.extend({"path": rel, **finding} for finding in row_findings)
+        if not row_findings:
+            manifests[slug] = data
+    return manifests, findings
+
+
+def _read_environment_selector(root: Path) -> str | None:
+    selector = root / ENVIRONMENT_SELECTOR_RELPATH
+    if _has_symlink_component(root, ".second-brain"):
+        raise EnvironmentSelectionError("unsafe-selector-parent")
+    if not selector.exists() and not selector.is_symlink():
+        return None
+    if selector.is_symlink():
+        raise EnvironmentSelectionError("unsafe-selector")
+    try:
+        raw = selector.read_bytes()
+    except OSError:
+        raise EnvironmentSelectionError("selector-unreadable") from None
+    if len(raw) > 128 or b"\0" in raw:
+        raise EnvironmentSelectionError("selector-invalid")
+    try:
+        value = raw.decode("utf-8").strip()
+    except UnicodeError:
+        raise EnvironmentSelectionError("selector-invalid") from None
+    if not _valid_environment_slug(value):
+        raise EnvironmentSelectionError("selector-invalid")
+    return value
+
+
+def select_environment(
+    root: Path,
+    requested: str | None = None,
+    *,
+    environ: dict[str, str] | None = None,
+    fingerprints: list[dict[str, str]] | None = None,
+) -> dict:
+    """Resolve CLI > environment variable > selector > unique fingerprint."""
+    manifests, findings = load_environment_manifests(root)
+    if findings:
+        raise EnvironmentSelectionError("invalid-manifest")
+    env = os.environ if environ is None else environ
+    if requested not in (None, "current"):
+        if not _valid_environment_slug(requested):
+            raise EnvironmentSelectionError("invalid-explicit")
+        if requested not in manifests:
+            raise EnvironmentSelectionError("explicit-not-found")
+        return {"slug": requested, "source": "cli", "state": "selected"}
+
+    variable = env.get("SECOND_BRAIN_ENV")
+    if variable and variable != "current":
+        if not _valid_environment_slug(variable):
+            raise EnvironmentSelectionError("invalid-environment-variable")
+        if variable not in manifests:
+            raise EnvironmentSelectionError("environment-variable-not-found")
+        return {"slug": variable, "source": "environment", "state": "selected"}
+
+    selector = _read_environment_selector(root)
+    if selector is not None:
+        if selector not in manifests:
+            raise EnvironmentSelectionError("selector-not-found")
+        return {"slug": selector, "source": "selector", "state": "selected"}
+
+    if not manifests:
+        return {"slug": None, "source": "none", "state": "unconfigured"}
+
+    local_rows = fingerprints if fingerprints is not None else machine_fingerprints()
+    local = {(row["algorithm"], row["digest"], row["source"]) for row in local_rows}
+    matches = []
+    for slug, data in manifests.items():
+        recorded = {
+            (row["algorithm"], row["digest"], row["source"])
+            for row in data["fingerprints"]
+        }
+        if local & recorded:
+            matches.append(slug)
+    if len(matches) == 1:
+        return {"slug": matches[0], "source": "fingerprint", "state": "selected"}
+    if len(matches) > 1:
+        raise EnvironmentSelectionError("ambiguous-fingerprint")
+    raise EnvironmentSelectionError("no-fingerprint-match")
+
+
+def environment_metadata(data: dict, selected: str | None) -> dict:
+    """Metadata-only row: no digest, capability values, endpoint, or path."""
+    return {
+        "freshness": data["freshness"],
+        "slug": data["slug"],
+        "status": "selected" if data["slug"] == selected else "registered",
+    }
+
+
+def _environment_for_corpus(root: Path) -> str | None:
+    if _ACTIVE_ENVIRONMENT is not _ENVIRONMENT_UNSET:
+        return _ACTIVE_ENVIRONMENT  # type: ignore[return-value]
+    return select_environment(root)["slug"]
+
+
+def _environment_path_allowed(rel: str, selected: str | None) -> bool:
+    prefix = ENVIRONMENTS_RELPATH + "/"
+    if not rel.startswith(prefix):
+        return True
+    remainder = rel[len(prefix) :]
+    if "/" not in remainder:
+        return True
+    slug = remainder.split("/", 1)[0]
+    return selected is not None and slug == selected
+
 # ---------------------------------------------------------------------------
 # §2 Corpus
 
@@ -609,8 +1095,14 @@ def fold(s: str) -> str:
     return nfc(s).casefold()
 
 
-def walk_corpus(root: Path) -> tuple[list[str], list[str]]:
+def walk_corpus(
+    root: Path, *, selected_environment: object | str | None = _ENVIRONMENT_UNSET
+) -> tuple[list[str], list[str]]:
     """Working corpus: (note paths, asset paths), vault-relative NFC, sorted."""
+    if selected_environment is _ENVIRONMENT_UNSET:
+        selected = _environment_for_corpus(root)
+    else:
+        selected = selected_environment
     notes: list[str] = []
     assets: list[str] = []
     for dirpath, dirnames, filenames in os.walk(root):
@@ -624,12 +1116,20 @@ def walk_corpus(root: Path) -> tuple[list[str], list[str]]:
                 nfc(f"{rel_dir}/{d}" if rel_dir != "." else d)
             )
         ]
+        if rel_dir == ENVIRONMENTS_RELPATH:
+            dirnames[:] = [
+                name
+                for name in dirnames
+                if selected is not None and name == selected
+            ]
         dirnames.sort()
         for name in filenames:
             if name.startswith("."):
                 continue
             rel = nfc(f"{rel_dir}/{name}" if rel_dir != "." else name)
             if rel in (INDEX_RELPATH, EMBED_RELPATH):
+                continue
+            if not _environment_path_allowed(rel, selected):
                 continue
             if name.endswith(".md"):
                 notes.append(rel)
@@ -652,8 +1152,13 @@ def git_tracked(root: Path) -> set[str] | None:
 
 
 def index_corpus(root: Path) -> tuple[list[str], list[str]]:
-    """Index corpus (§2): working corpus restricted to git-tracked files."""
-    notes, assets = walk_corpus(root)
+    """Index corpus (§2): tracked shared content only.
+
+    The committed index must be byte-stable across clones. Environment notes
+    remain queryable at runtime for the selected environment, but never enter
+    this cross-environment generated artifact.
+    """
+    notes, assets = walk_corpus(root, selected_environment=None)
     tracked = git_tracked(root)
     if tracked is None:
         print(
@@ -1840,7 +2345,11 @@ def has_placeholder(value) -> bool:
     return False
 
 
-def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]:
+def run_validate(
+    root: Path,
+    check_index: bool,
+    requested_environment: str | None = None,
+) -> tuple[list[dict], list[dict]]:
     errors: list[dict] = []
     warnings: list[dict] = []
 
@@ -1850,7 +2359,26 @@ def run_validate(root: Path, check_index: bool) -> tuple[list[dict], list[dict]]
     def warn(path: str, rule: str, message: str, line: int | None = None):
         warnings.append({"line": line, "message": message, "path": path, "rule": rule})
 
-    notes, assets = walk_corpus(root)
+    _manifests, environment_findings = load_environment_manifests(root)
+    for finding in environment_findings:
+        err(
+            finding["path"],
+            finding["rule"],
+            finding["message"],
+        )
+    selected_environment: str | None = None
+    if not environment_findings:
+        try:
+            selected_environment = select_environment(
+                root, requested=requested_environment
+            )["slug"]
+        except EnvironmentSelectionError as exc:
+            err(
+                f"{ENVIRONMENTS_RELPATH}/",
+                "environment-selection",
+                f"current environment cannot be selected ({exc.code})",
+            )
+    notes, assets = walk_corpus(root, selected_environment=selected_environment)
     index = build_index(root, notes, assets)
     taxonomy = load_taxonomy(root)
     if taxonomy is None:
@@ -2712,7 +3240,14 @@ def cmd_embed(root: Path, args) -> int:
             )
             merged: dict[str, dict] = {}
         else:
-            merged = dict(store["notes"])
+            # Switching environments must also prune the ignored local
+            # sidecar: non-current vectors are derived content and cannot
+            # survive merely because they remain fresh on another machine.
+            merged = {
+                rel: entry
+                for rel, entry in store["notes"].items()
+                if rel in index["notes"] and not is_restricted(index["notes"][rel])
+            }
         for rel, vec in vectors.items():
             merged[rel] = {"hash": hashes[rel], "vector": vec}
         save_embeddings(
@@ -3317,6 +3852,134 @@ def cmd_tasks(root: Path, args) -> int:
     return 0
 
 
+def _environment_migration_preview(root: Path, source: str, target: str) -> dict:
+    if not _valid_environment_slug(source) or not _valid_environment_slug(target):
+        raise EnvironmentSelectionError("invalid-migration-slug")
+    if source == target:
+        raise EnvironmentSelectionError("migration-slugs-equal")
+    source_dir = _safe_environment_dir(root, source)
+    target_dir = _safe_environment_dir(root, target)
+    if not source_dir.is_dir():
+        raise EnvironmentSelectionError("migration-source-not-found")
+    if (source_dir / ENVIRONMENT_MANIFEST_NAME).exists():
+        raise EnvironmentSelectionError("migration-source-already-registered")
+    rows: list[dict[str, str]] = []
+    for dirpath, dirnames, filenames in os.walk(source_dir, followlinks=False):
+        if any((Path(dirpath) / d).is_symlink() for d in dirnames):
+            raise EnvironmentSelectionError("unsafe-migration-path")
+        dirnames[:] = sorted(dirnames)
+        for filename in sorted(filenames):
+            path = Path(dirpath) / filename
+            if path.is_symlink():
+                raise EnvironmentSelectionError("unsafe-migration-path")
+            rel_inside = path.relative_to(source_dir)
+            destination = target_dir / rel_inside
+            if destination.exists() or destination.is_symlink():
+                raise EnvironmentSelectionError("migration-target-collision")
+            rows.append(
+                {
+                    "from": path.relative_to(root).as_posix(),
+                    "to": destination.relative_to(root).as_posix(),
+                }
+            )
+    return {
+        "applySupported": False,
+        "files": rows,
+        "source": source,
+        "target": target,
+        "writesPerformed": False,
+    }
+
+
+def cmd_env(root: Path, args) -> int:
+    if args.env_command == "migrate":
+        try:
+            payload = _environment_migration_preview(root, args.source, args.target)
+        except EnvironmentSelectionError as exc:
+            print(f"error: environment migration refused ({exc.code})", file=sys.stderr)
+            return 1
+        lines = [
+            f"environment migration preview: {payload['source']} -> {payload['target']}",
+            *(f"  {row['from']} -> {row['to']}" for row in payload["files"]),
+            "writes performed: no (preview-only; apply the reviewed move with version control)",
+        ]
+        emit(payload, args.json, lines)
+        return 0
+
+    manifests, findings = load_environment_manifests(root)
+    if findings:
+        payload = {
+            "errors": [
+                {"path": row["path"], "rule": row["rule"]} for row in findings
+            ],
+            "schemaVersion": ENVIRONMENT_SCHEMA_VERSION,
+        }
+        emit(
+            payload,
+            args.json,
+            (f"ERROR {row['path']} {row['rule']}" for row in payload["errors"]),
+        )
+        return 1
+
+    if args.env_command == "list":
+        selected = None
+        selection_state = "unconfigured"
+        selection_source = "none"
+        try:
+            selection = select_environment(root, requested=args.requested_env)
+            selected = selection["slug"]
+            selection_state = selection["state"]
+            selection_source = selection["source"]
+        except EnvironmentSelectionError as exc:
+            selection_state = exc.code
+            selection_source = "error"
+        rows = [environment_metadata(data, selected) for data in manifests.values()]
+        payload = {
+            "environments": rows,
+            "schemaVersion": ENVIRONMENT_SCHEMA_VERSION,
+            "selectionSource": selection_source,
+            "selectionState": selection_state,
+        }
+        lines = [f"environment selection: {selection_state} ({selection_source})"]
+        for row in rows:
+            marker = "*" if row["status"] == "selected" else " "
+            lines.append(f"{marker} {row['slug']}  {row['status']}")
+        emit(payload, args.json, lines)
+        return 0
+
+    fingerprints = machine_fingerprints()
+    try:
+        selection = select_environment(
+            root,
+            requested=args.requested_env,
+            fingerprints=fingerprints,
+        )
+        code = 0
+        selection_error = None
+    except EnvironmentSelectionError as exc:
+        selection = {"slug": None, "source": "error", "state": "unmatched"}
+        selection_error = exc.code
+        code = 1
+    payload = {
+        "fingerprints": fingerprints,
+        "schemaVersion": ENVIRONMENT_SCHEMA_VERSION,
+        "selected": selection["slug"],
+        "selectionError": selection_error,
+        "selectionSource": selection["source"],
+        "selectionState": selection["state"],
+    }
+    lines = [
+        f"environment detection: {selection['state']}",
+        f"selection source: {selection['source']}",
+        f"selected slug: {selection['slug'] or '(none)'}",
+        "fingerprint evidence: SHA-256 only (raw machine identity suppressed)",
+    ]
+    if selection_error:
+        lines.append(f"selection error: {selection_error}")
+    emit(payload, args.json, lines)
+    return code
+
+
 def cmd_remote_safety(root: Path, args) -> int:
     result = evaluate_remote_safety(
         root,
@@ -3355,7 +4018,11 @@ def cmd_remote_safety(root: Path, args) -> int:
 
 
 def cmd_validate(root: Path, args) -> int:
-    errors, warnings = run_validate(root, args.check_index)
+    errors, warnings = run_validate(
+        root,
+        args.check_index,
+        requested_environment=getattr(args, "requested_env", None),
+    )
     if args.json:
         print(
             json.dumps(
@@ -3383,13 +4050,34 @@ def cmd_validate(root: Path, args) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    global _ACTIVE_ENVIRONMENT
     parser = argparse.ArgumentParser(prog="brain", description=__doc__)
+    parser.add_argument("--vault", type=Path, default=None, help="vault root override")
+    parser.add_argument(
+        "--env",
+        dest="requested_env",
+        default=None,
+        metavar="current|SLUG",
+        help="environment override (default: current selection precedence)",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     def add(name: str, **kwargs):
         p = sub.add_parser(name, **kwargs)
         p.add_argument("--json", action="store_true", help="machine-readable output")
-        p.add_argument("--vault", type=Path, default=None, help="vault root override")
+        p.add_argument(
+            "--vault",
+            type=Path,
+            default=argparse.SUPPRESS,
+            help="vault root override",
+        )
+        p.add_argument(
+            "--env",
+            dest="requested_env",
+            default=argparse.SUPPRESS,
+            metavar="current|SLUG",
+            help="environment override (default: current selection precedence)",
+        )
         return p
 
     add("index", help="rebuild and write the committed vault index")
@@ -3479,8 +4167,37 @@ def main(argv: list[str] | None = None) -> int:
         help="require connector-result persistence to be safe for this invocation",
     )
 
+    env_parser = sub.add_parser(
+        "env", help="detect, list, or preview migration of environment identity"
+    )
+    env_sub = env_parser.add_subparsers(dest="env_command", required=True)
+
+    def add_env(name: str, **kwargs):
+        p = env_sub.add_parser(name, **kwargs)
+        p.add_argument("--json", action="store_true", help="machine-readable output")
+        p.add_argument(
+            "--vault",
+            type=Path,
+            default=argparse.SUPPRESS,
+            help="vault root override",
+        )
+        p.add_argument(
+            "--env",
+            dest="requested_env",
+            default=argparse.SUPPRESS,
+            metavar="current|SLUG",
+            help="environment override",
+        )
+        return p
+
+    add_env("detect", help="hash local evidence and resolve the current environment")
+    add_env("list", help="show metadata-only records for every tracked environment")
+    p = add_env("migrate", help="preview moving an unregistered legacy environment")
+    p.add_argument("source")
+    p.add_argument("target")
+
     args = parser.parse_args(argv)
-    root = (args.vault or default_vault_root()).resolve()
+    root = (getattr(args, "vault", None) or default_vault_root()).resolve()
     handlers = {
         "index": cmd_index,
         "list": cmd_list,
@@ -3497,8 +4214,25 @@ def main(argv: list[str] | None = None) -> int:
         "tasks": cmd_tasks,
         "embed": cmd_embed,
         "remote-safety": cmd_remote_safety,
+        "env": cmd_env,
     }
-    return handlers[args.command](root, args)
+    previous_environment = _ACTIVE_ENVIRONMENT
+    try:
+        if args.command not in {"env", "validate", "index", "context", "config", "remote-safety"}:
+            try:
+                selection = select_environment(
+                    root, requested=getattr(args, "requested_env", None)
+                )
+            except EnvironmentSelectionError as exc:
+                print(
+                    f"error: environment selection failed ({exc.code})",
+                    file=sys.stderr,
+                )
+                return 1
+            _ACTIVE_ENVIRONMENT = selection["slug"]
+        return handlers[args.command](root, args)
+    finally:
+        _ACTIVE_ENVIRONMENT = previous_environment
 
 
 if __name__ == "__main__":

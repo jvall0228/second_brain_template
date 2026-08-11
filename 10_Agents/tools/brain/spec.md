@@ -451,6 +451,95 @@ The `tasks` config key (§15.3) holds the module's settings; its sole subkey `ca
 
 **Deferred surfacing (explicitly out of scope here):** VS Code task *views* and web-UI views (#27), notification/overdue digests (#21), external-tracker mirroring (#26 directionality).
 
+## 20. Environment identity and scoped retrieval
+
+Environment-scoped infrastructure is explicit, privacy-safe, and fail-closed.
+Shared vault content remains portable; live wiring belongs to exactly one
+owner-chosen environment.
+
+### 20.1 Tracked manifest
+
+Each registered environment is an immediate kebab-case directory at
+`10_Agents/environments/<slug>/`. It contains a tracked `environment.json` and
+a self-guarding `README.md`. The UTF-8 JSON manifest is at most 64 KiB and has
+this exact version-1 shape:
+
+```json
+{
+ "capabilities": {"computer-use": true},
+ "class": "laptop",
+ "fingerprints": [{"algorithm": "sha256", "digest": "<64 lowercase hex>", "source": "machine-v1"}],
+ "freshness": {"checkedAt": "2026-08-11", "expiresAt": "2026-11-11"},
+ "maintenance": {"inventory": "orientation-inventory.md", "ownerReviewRequired": true},
+ "schemaVersion": 1,
+ "slug": "work-laptop",
+ "surfaces": ["codex", "vscode"]
+}
+```
+
+`class` is `desktop`, `laptop`, `server`, `container`, `cloud`, or `other`.
+Surfaces are sorted unique kebab-case identifiers. Capabilities map sorted
+non-secret kebab-case names to booleans; identity, path, endpoint, and
+credential-shaped names are forbidden. Fingerprints are SHA-256 evidence over
+high-entropy OS machine identifiers consumed inside the hash boundary. A
+hostname/username fallback is forbidden because hashing low-entropy identity is
+dictionary-identifiable; when no high-entropy ID is available, automatic
+fingerprint matching is unavailable and explicit/selector selection is
+required. Raw hostname, username,
+home/repository path, credential, URL, and endpoint values never enter tracked
+data, output, logs, or errors. `freshness` dates are real and ordered. The
+maintenance record always points to the local inventory and requires owner
+review. Unknown keys or schema versions are errors.
+
+### 20.2 Clone-local state
+
+`.second-brain/environment` contains one selected slug. It and
+`.second-brain/environments/<slug>/` are gitignored. The latter is the only
+repository-local home for secrets-adjacent environment overlays such as
+integration settings, notification destinations, hosting configuration, and
+delivery state. Selectors/manifests may not be symlinks; directories must be
+immediate children of their declared roots. Inputs are length- and grammar-
+bounded before use.
+
+### 20.3 Selection
+
+Selection precedence is `--env <slug>` > `SECOND_BRAIN_ENV` > the selector > a
+unique local fingerprint match. `--env current` and the environment-variable
+value `current` request normal automatic selection. An invalid value, missing
+explicit/selected slug, invalid manifest, no fingerprint match, or multiple
+fingerprint matches fails closed with a stable reason code; lower-precedence
+sources are never consulted after a higher-precedence source is present. A
+vault with zero registered manifests is `unconfigured` and shared-only.
+
+All content-query consumers use the selected corpus: shared paths plus
+`10_Agents/environments/<selected>/`, never another environment. This includes
+list/search/links/tags/show/recent, report/curate/tasks, semantic embedding, and
+validation. The committed index deliberately contains shared tracked content
+only, so its bytes do not vary by clone; selected environment notes remain
+available through live commands. `brain env list` is the sole all-environment
+diagnostic and emits only slug, registered/selected status, and freshness. It
+never emits class, surfaces, capabilities, fingerprint counts/digests, or
+capability values.
+
+### 20.4 Commands and migration
+
+- `brain env detect` prints the selected slug/source plus SHA-256 evidence for
+  creating or refreshing a manifest. JSON never includes raw identity.
+- `brain env list` prints metadata-only records and remains usable when current
+  matching fails, so an owner can diagnose the selector safely.
+- `brain env migrate <source> <target>` is preview-only. It enumerates exact
+  vault-relative moves for an unregistered legacy directory, refuses symlinks,
+  registered sources, invalid slugs, and collisions, and performs zero writes.
+  The owner applies the reviewed move with version control, then creates the
+  target manifest/landing note through orientation.
+
+`agent-orientation` owns manifest creation/refresh and migration handoff.
+Bootstrap, maintenance, automation, sync reports, generated integrations, and
+personal-data tools must resolve the current environment first. Sync treats all
+environment directories and `.second-brain/` as owner-local: non-current
+contents are neither read nor serialized, and overlays are never proposed for
+commit.
+
 ## 18. Semantic search (QMD — issue #8)
 
 Natural-language, relevance-ranked retrieval over vault notes, layered **beside** the keyword machinery, never replacing it. Decided 2026-08-11 per the owner correction and accepted recommendation on issue #8 (QMD = **Query Markdown**, not Quarto). Two commands carry the whole feature: `brain embed` maintains a local vector store (§18.3), `brain search --semantic` queries it (§18.4). Every supported harness reaches it through the CLI — the universal layer (each `10_Agents/harnesses/*/wiring.md` documents invocation); no per-harness plugin is part of the compatibility contract.
