@@ -3158,6 +3158,346 @@
    "title": "Work",
    "updated": "2026-08-11"
   },
+  "02_Inbox/2026-08-11-feature-request-triage.md": {
+   "backlinks": [
+    "02_Inbox/2026-08-11-implementation-plan-m8-m12.md"
+   ],
+   "bodyTags": [
+    "13/",
+    "9/"
+   ],
+   "frontmatter": {
+    "author": "claude-code",
+    "session": "https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/log",
+     "topic/software",
+     "workflow/draft",
+     "status/active"
+    ],
+    "title": "Feature-request triage: scan, classification, and qualification of open issues",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 15,
+     "text": "Feature-Request Triage — 2026-08-11"
+    },
+    {
+     "level": 2,
+     "line": 19,
+     "text": "Headline findings"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "text": "Classification"
+    },
+    {
+     "level": 3,
+     "line": 35,
+     "text": "Bugs (fix first — all T1, all in `brain`/harness config)"
+    },
+    {
+     "level": 3,
+     "line": 43,
+     "text": "Features — T1 Ready"
+    },
+    {
+     "level": 3,
+     "line": 54,
+     "text": "Features — T2 Decision-gated"
+    },
+    {
+     "level": 3,
+     "line": 68,
+     "text": "Features — T3 Dependency-gated"
+    },
+    {
+     "level": 3,
+     "line": 81,
+     "text": "Features — T4 Scoping needed"
+    },
+    {
+     "level": 3,
+     "line": 88,
+     "text": "Meta / scope"
+    },
+    {
+     "level": 2,
+     "line": 94,
+     "text": "Qualification summary — suggested order of attack"
+    },
+    {
+     "level": 2,
+     "line": 102,
+     "text": "Milestone plan"
+    },
+    {
+     "level": 2,
+     "line": 122,
+     "text": "Flesh-out notes (defects found in issue bodies during scan)"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 12923,
+   "tasks": [],
+   "title": "Feature-request triage: scan, classification, and qualification of open issues",
+   "updated": "2026-08-11"
+  },
+  "02_Inbox/2026-08-11-implementation-plan-m8-m12.md": {
+   "backlinks": [],
+   "bodyTags": [
+    "12/",
+    "2/",
+    "3/",
+    "5/",
+    "6/",
+    "8/"
+   ],
+   "frontmatter": {
+    "author": "claude-code",
+    "session": "https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/reference",
+     "topic/software",
+     "workflow/draft",
+     "status/active"
+    ],
+    "title": "Implementation plan: M8–M12 (all non-deferred issues)",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 15,
+     "text": "Implementation Plan — M8–M12"
+    },
+    {
+     "level": 2,
+     "line": 30,
+     "text": "Execution mode (owner-approved 2026-08-11)"
+    },
+    {
+     "level": 3,
+     "line": 40,
+     "text": "Phase gate (mandatory between milestones)"
+    },
+    {
+     "level": 3,
+     "line": 50,
+     "text": "Orchestration (ultracode)"
+    },
+    {
+     "level": 3,
+     "line": 57,
+     "text": "Owner action queue"
+    },
+    {
+     "level": 3,
+     "line": 63,
+     "text": "Gate log"
+    },
+    {
+     "level": 2,
+     "line": 77,
+     "text": "Phase M8 — Hardening & test foundation"
+    },
+    {
+     "level": 3,
+     "line": 81,
+     "text": "M8.1 — #5 Test runner & TDD convention (M)"
+    },
+    {
+     "level": 3,
+     "line": 88,
+     "text": "M8.2 — #9 Unreadable note crashes brain (S)"
+    },
+    {
+     "level": 3,
+     "line": 94,
+     "text": "M8.3 — #10 `tags: []` passes validation (S)"
+    },
+    {
+     "level": 3,
+     "line": 99,
+     "text": "M8.4 — #11 Hook example swallows validation (S)"
+    },
+    {
+     "level": 3,
+     "line": 104,
+     "text": "M8.5 — #24 Secret scanning (M)"
+    },
+    {
+     "level": 3,
+     "line": 111,
+     "text": "M8.6 — #25 Merge drivers for generated files (S)"
+    },
+    {
+     "level": 3,
+     "line": 117,
+     "text": "M8.7 — #20 Adopter-flow smoke test (M)"
+    },
+    {
+     "level": 2,
+     "line": 126,
+     "text": "Phase M9 — Config & core conventions"
+    },
+    {
+     "level": 3,
+     "line": 130,
+     "text": "M9.1 — #2 Vault config file (M) — DECISION GATE"
+    },
+    {
+     "level": 3,
+     "line": 137,
+     "text": "M9.2 — #18 Provenance frontmatter (S)"
+    },
+    {
+     "level": 3,
+     "line": 143,
+     "text": "M9.3 — #17 restricted/* namespace (M)"
+    },
+    {
+     "level": 3,
+     "line": 151,
+     "text": "M9.4 — #12 Context-aware periodic templates (M)"
+    },
+    {
+     "level": 3,
+     "line": 157,
+     "text": "M9.5 — #16 brain report (M)"
+    },
+    {
+     "level": 2,
+     "line": 167,
+     "text": "Phase M10 — Orientation & onboarding"
+    },
+    {
+     "level": 3,
+     "line": 171,
+     "text": "M10.1 — #13 agent-orientation inventory contract (M)"
+    },
+    {
+     "level": 3,
+     "line": 177,
+     "text": "M10.2 — #14 onboard-owner: people map + role/intent (M) — depends M10.1"
+    },
+    {
+     "level": 3,
+     "line": 182,
+     "text": "M10.3 — #3 Per-harness overlays (L)"
+    },
+    {
+     "level": 3,
+     "line": 188,
+     "text": "M10.4 — #7 Recommended skills & user memory content (S)"
+    },
+    {
+     "level": 2,
+     "line": 196,
+     "text": "Phase M11 — Search & tasks"
+    },
+    {
+     "level": 3,
+     "line": 200,
+     "text": "M11.1 — #8 QMD semantic search (L) — DECISION GATE"
+    },
+    {
+     "level": 3,
+     "line": 208,
+     "text": "M11.2 — #28 Task module (L) — DECISION GATE"
+    },
+    {
+     "level": 2,
+     "line": 219,
+     "text": "Phase M12 — Sync & self-improvement"
+    },
+    {
+     "level": 3,
+     "line": 223,
+     "text": "M12.1 — #6 Upstream sync skill (L) — DECISION GATE"
+    },
+    {
+     "level": 3,
+     "line": 228,
+     "text": "M12.2 — #22 Self-improving loop (L) — depends #16, #6"
+    },
+    {
+     "level": 2,
+     "line": 237,
+     "text": "Sequencing summary"
+    }
+   ],
+   "links": [
+    {
+     "display": "the triage note",
+     "embed": false,
+     "fragment": null,
+     "line": 17,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-feature-request-triage|the triage note]]",
+     "resolved": "02_Inbox/2026-08-11-feature-request-triage.md",
+     "target": "02_Inbox/2026-08-11-feature-request-triage",
+     "warnings": []
+    },
+    {
+     "display": "the triage note",
+     "embed": false,
+     "fragment": null,
+     "line": 254,
+     "placeholder": false,
+     "raw": "[[02_Inbox/2026-08-11-feature-request-triage|the triage note]]",
+     "resolved": "02_Inbox/2026-08-11-feature-request-triage.md",
+     "target": "02_Inbox/2026-08-11-feature-request-triage",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 30812,
+   "tasks": [
+    {
+     "due": null,
+     "line": 58,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Enable GitHub secret scanning + push protection on the repo (M8.5 backstop): repo **Settings → Advanced Security → Secret Protection** — turn on *Secret scanning* and *Push protection*. `brain validate` secret scanning already enforces locally/CI; this is the GitHub-side layer only the owner can toggle."
+    },
+    {
+     "due": null,
+     "line": 59,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "(Optional, bookkeeping) Create milestone shells: all 20 M8–M12 issues are already closed with PR refs, so retroactive milestones are cosmetic. The one useful shell is **\"M13 — Deferred\"** for the 10 open issues (#4, #15, #19, #21, #23, #26, #27, #29, #31, #32) — create it in **Issues → Milestones → New milestone** and say the word; an agent session can then assign all ten via the API."
+    },
+    {
+     "due": null,
+     "line": 60,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Review the seven decision-gate recommendations at leisure (implemented as posted on #2, #6, #7, #8, #12, #17, #28; each closing PR records the adoption). Silence = accepted stands."
+    },
+    {
+     "due": null,
+     "line": 61,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "~~Verify and pin the two seeded recommended-skills items (#7)~~ — **done 2026-08-11 (PR #65):** i-have-adhd → `ayghri/i-have-adhd` @ `2ed0640` (MIT, ~19.6k★); karpathy → `multica-ai/andrej-karpathy-skills` @ `2c60614` (MIT, ~200k★, the former forrestchang viral repo). Both read and verified at the pin; per-item sign-off still applies at install time."
+    }
+   ],
+   "title": "Implementation plan: M8–M12 (all non-deferred issues)",
+   "updated": "2026-08-11"
+  },
   "02_Inbox/2026-08-11-para-operations-implementation-plan.md": {
    "backlinks": [
     "02_Inbox/2026-08-11-para-operations-skills-requirements.md"
