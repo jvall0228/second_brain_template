@@ -50,7 +50,7 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 ## Structure
 
 ```
-00_Meta/          Conventions, index, operating rules, changelog
+00_Meta/          Conventions, index, changelog, PRD, status
 01_Profile/       Identity, preferences, current focus (Now page)
 02_Inbox/         Raw capture + agent output (triage queue)
 03_Journal/       Daily/weekly logs, reviews, ideas, insights, people, plans

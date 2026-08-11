@@ -37,4 +37,4 @@ List the candidate options.
 
 ## Decision Record Link
 If this results in a decision, link to a decision record:
-- [[04_Projects/.../decision-records/YYYY-MM-DD-...]]
+- [[{{RELATED_DECISION_RECORD}}]]

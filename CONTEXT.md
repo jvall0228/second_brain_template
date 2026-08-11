@@ -31,6 +31,8 @@ After reading all four, the agent has enough context to begin work.
 
 All agent-generated output goes to **`02_Inbox/`** unless explicitly directed elsewhere. This is the **Inbox-first rule** — a human reviews and triages Inbox contents into the appropriate PARA directory.
 
+Standing exception: agents may append solution notes to `10_Agents/solutions/` — see [[10_Agents/README]].
+
 See [[02_Inbox/README]] for triage instructions.
 
 ## Tagging Rules (Summary)

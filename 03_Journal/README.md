@@ -4,12 +4,12 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-02-21
+updated: 2026-08-11
 ---
 
 # Journal
 
-Personal knowledge and experience — what you think, understand, and observe. Periodic notes (daily, weekly, monthly) are date-organized. Subdirectories capture durable understanding: ideas, insights, memories, people, and plans.
+Personal knowledge and experience — what you think, understand, and observe. Periodic notes (daily through yearly) are date-organized. Subdirectories capture durable understanding: ideas, insights, memories, people, and plans.
 
 The key distinction: **Journal is subjective** (your perspective), **Resources are objective** (shareable knowledge). A physics concept is a Resource; your idea for applying it is a Journal entry.
 

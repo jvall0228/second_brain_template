@@ -3,12 +3,16 @@ title: "Solutions"
 tags:
   - type/meta
   - audience/agent
-updated: 2026-02-22
+updated: 2026-08-11
 ---
 
 # Solutions
 
 Documented solutions to recurring problems. Organized by category.
+
+## Note Format
+
+Solution notes must carry required frontmatter with `type/solution` and `audience/agent` in their tags, use kebab-case filenames, and live in the matching category directory. See [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules|Wikilink Resolution Rules]] for a worked example.
 
 ## Contents
 

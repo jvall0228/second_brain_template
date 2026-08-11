@@ -38,10 +38,10 @@ A Git-synced, Markdown-first repository that acts as the canonical "personal con
 
 ## 5. Template phase
 This repository ships as a reusable, context-neutral template. The shipped state intentionally contains:
-- **Blank fill-in shells** for the profile notes (`01_Profile/now.md`, `preferences.md`, `defaults.md`, `identity.md`, `work.md`) with inline guidance.
+- **Blank fill-in shells** for the profile notes (`01_Profile/now.md`, `preferences.md`, `defaults.md`, `identity.md`, `work.md`, `tooling-stack.md`, `long-running-themes.md`) with inline guidance.
 - **One seeded example per section** (project, area, resource, person, idea, daily log, weekly review) — deleted by the adopter after seeing the pattern.
 
-The §10 "real content" requirements and the M0 success criterion (§19) apply to the **adopter's fork after completing the getting-started checklist** in [[00_Meta/status]], not to the shipped template itself.
+The §11.1 "real content" requirements and the M0 success criterion (§19) apply to the **adopter's fork after completing the getting-started checklist** in [[00_Meta/status]], not to the shipped template itself.
 
 ## 6. Key workflows
 ### 6.1 Universal agent bootstrap (must-read sequence)
@@ -113,7 +113,7 @@ Required content sections:
 Recommended frontmatter:
 ```yaml
 ---
-title: "Agent Context"
+title: "Context"
 tags:
   - audience/agent
   - type/meta
@@ -137,7 +137,7 @@ At repo root, `AGENTS.md` and `CLAUDE.md` must resolve to `CONTEXT.md` — eithe
 ```
 
 ### 9.2 Solutions knowledge base
-`10_Agents/solutions/` is a standing knowledge base of solutions to recurring problems, organized by category. Agents **may append** solution notes here whenever they solve something worth not re-deriving later — this is a deliberate, bounded carve-out from the Inbox-first rule. Solution notes must carry required frontmatter (including `audience/agent` and `type/solution`), use kebab-case filenames, and follow the category README. Agents add notes; restructuring or deleting within `solutions/` still requires human direction.
+`10_Agents/solutions/` is a standing knowledge base of solutions to recurring problems, organized by category. Agents **may append** solution notes here whenever they solve something worth not re-deriving later — this is a deliberate, bounded carve-out from the Inbox-first rule. Solution notes must carry required frontmatter (including `audience/agent` and `type/solution`), use kebab-case filenames, and follow the note format in `10_Agents/solutions/README.md`. Agents add notes; restructuring or deleting within `solutions/` still requires human direction.
 
 ### 9.3 M6 target structure (not built)
 At M6 the directory grows into a plugin library:
@@ -191,7 +191,7 @@ Tags signal **intent and handling, not access control**. Agents should assume al
 
 Canonical notes are read-only for agents except via the change-control process in §6.3.
 
-**Current canonical set:** `CONTEXT.md` (and its aliases), `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`.
+**Current canonical set:** `CONTEXT.md` (and its aliases), `00_Meta/conventions.md`, `00_Meta/index.md`, `00_Meta/changelog.md`, `00_Meta/prd.md` (this file), `01_Profile/now.md`, `01_Profile/preferences.md`, `01_Profile/defaults.md`, `10_Agents/README.md`, `10_Agents/docs/operating-rules.md`, `10_Agents/docs/task-patterns.md`.
 
 **Deliberately not canonical:** `00_Meta/status.md` is a living snapshot that agents may update directly (e.g. milestone status); this is recorded in the note itself.
 
@@ -313,4 +313,4 @@ Zero broken wikilinks (verified 2026-08-11; template placeholders exempt).
 - Whether/when to activate the expanded write ladder (§6.2 roadmap) and register `workflow/agent-writable`.
 - Whether to add automated enforcement (pre-commit/CI) beyond the planned `brain validate`.
 
-**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (five periodic review templates); alias approach → symlinks shipped (§8.2); Zettelkasten home → `06_Resources/` (§7).
+**Resolved since revision 1.x (decisions recorded in the body):** strict canonical change control → adopted (§6.3, [[10_Agents/docs/operating-rules]]); review cadence → adopted (four periodic review templates plus the daily log); alias approach → symlinks shipped (§8.2); Zettelkasten home → `06_Resources/` (§7).

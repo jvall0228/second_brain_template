@@ -1,11 +1,11 @@
 ---
 title: "Obsidian Wikilink Resolution Rules"
 tags:
-  - type/reference
+  - type/solution
   - topic/obsidian
   - topic/productivity
   - audience/agent
-updated: 2026-02-21
+updated: 2026-08-11
 ---
 
 # Obsidian Wikilink Resolution Rules
