@@ -1,0 +1,46 @@
+{
+  // VS Code counterpart to .obsidian/ — workspace settings that make this repo
+  // behave like a knowledge vault using built-in capabilities only (strict
+  // first-party trust policy; see extensions.json). Rationale + feature
+  // mapping: 02_Inbox/2026-08-11-vscode-editor-support.md (PRD §6.5 once
+  // triaged).
+
+  // --- Editing feel (matches Obsidian's editor defaults) ---
+  "files.autoSave": "onFocusChange",
+  "files.insertFinalNewline": true,
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.wrappingIndent": "indent",
+    "editor.lineHeight": 1.6,
+    "editor.minimap.enabled": false,
+    // Trailing double-space is a hard line break in markdown — never trim.
+    "files.trimTrailingWhitespace": false,
+    // Let path completions fire while typing prose.
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "on"
+    },
+    "editor.suggest.showWords": false
+  },
+
+  // --- Built-in markdown engine (no extension required) ---
+  // Validate standard markdown links and flag ones that point nowhere.
+  // [[Wikilinks]] are not parsed by VS Code and are neither validated nor
+  // flagged here — `brain links` / `brain validate` remain authoritative.
+  "markdown.validate.enabled": true,
+  "markdown.suggest.paths.enabled": true,
+  // Pasting/dropping an image into a note files it under 08_Assets/,
+  // matching the vault's asset rule (PRD §16.1).
+  "markdown.copyFiles.destination": {
+    "**/*": "/08_Assets/"
+  },
+
+  // --- Noise control ---
+  // Keep the generated index out of search results (it duplicates every
+  // note's content); the file itself stays visible and committed.
+  "search.exclude": {
+    "10_Agents/tools/brain/vault-index.json": true,
+    ".obsidian/**": true
+  }
+}

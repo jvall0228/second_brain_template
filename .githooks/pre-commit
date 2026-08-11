@@ -14,6 +14,14 @@ python3 "$brain" index >/dev/null || {
 }
 git add "$root/10_Agents/tools/brain/vault-index.json" || exit 1
 
+# Editor-surface parity (PRD §6.5): keep the generated VS Code snippets in
+# sync with 09_Templates/.
+python3 "$root/10_Agents/tools/vscode/gen_snippets.py" >/dev/null || {
+    echo "pre-commit: snippet generation failed — commit aborted" >&2
+    exit 1
+}
+git add "$root/.vscode/second-brain.code-snippets" || exit 1
+
 python3 "$brain" validate
 case $? in
     0|2) exit 0 ;;

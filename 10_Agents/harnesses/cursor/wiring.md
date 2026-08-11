@@ -34,6 +34,7 @@ python3 10_Agents/tools/brain/brain.py <command> --json
 
 ## Harness-specific notes
 
+- **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([[00_Meta/prd]] §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.
 - **The only harness with a real repo ignore file:** `.cursorignore` gives genuine access exclusion — the one place the vault's pending privacy policy (PRD §21) can be enforced natively today. `cursorignore-example.txt` shows the shape.
 - **Glob-scoped rules:** `.cursor/rules/*.mdc` can scope guidance per PARA directory (`rule-example.mdc`); use sparingly — `AGENTS.md` remains the portable rule layer.
 - **MCP:** `.cursor/mcp.json`; the vault ships none (M7 registers external sources here).

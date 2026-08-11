@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: snippet parity (PRD §6.5)
+        run: python3 10_Agents/tools/vscode/gen_snippets.py --check
       - name: brain validate --check-index
         run: |
           set +e

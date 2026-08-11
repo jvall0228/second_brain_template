@@ -1,0 +1,27 @@
+{
+  // Strict trust policy (owner decision, 2026-08-11): only extensions
+  // published by first-party organization accounts (Microsoft, Anthropic,
+  // GitHub) are recommended. Community and personal-publisher extensions —
+  // including Foam, the usual Obsidian-parity pick — are documented but
+  // deliberately not shipped. Rationale, tier model, and the .obsidian
+  // feature mapping: 02_Inbox/2026-08-11-vscode-editor-support.md
+  // (PRD §6.5 once triaged).
+  "recommendations": [
+    // Microsoft — Live Preview: renders HTML files (e.g. exports in
+    // 08_Assets/) in an embedded, auto-refreshing browser panel.
+    "ms-vscode.live-server",
+
+    // Anthropic — Claude Code in VS Code; P0 harness for this vault
+    // (PRD §8.3, wiring: 10_Agents/harnesses/claude-code/wiring.md).
+    "anthropic.claude-code",
+
+    // GitHub — Copilot; P0 harness for this vault
+    // (PRD §8.3, wiring: 10_Agents/harnesses/copilot/wiring.md).
+    "github.copilot"
+  ],
+  "unwantedRecommendations": [
+    // Prettier reformats markdown (line wrapping, list markers) and creates
+    // noisy diffs against the vault's diffability requirement (PRD §14).
+    "esbenp.prettier-vscode"
+  ]
+}

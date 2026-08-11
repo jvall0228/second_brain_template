@@ -28,7 +28,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 > **Prefer a guided setup?** Point an AI assistant (Claude Code, Codex, etc.) at your fork and ask it to *onboard me* — the [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) skill walks you through everything below conversationally, does the mechanical steps for you, and assumes no technical background.
 
 1. **Fork or clone** this repo (see *Personal vs work* below — you'll likely want one fork per context).
-2. Open the folder as an **Obsidian vault**, or just edit the Markdown.
+2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/prd.md` §6.5), or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
 4. Skim [`00_Meta/conventions.md`](00_Meta/conventions.md) to learn the naming and tagging rules.
 5. **Install the pre-commit hook** so every commit keeps the vault index fresh and the conventions enforced:
