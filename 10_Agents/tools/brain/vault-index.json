@@ -32,7 +32,7 @@
  ],
  "linkCounts": {
   "legacy": 0,
-  "markdown": 829,
+  "markdown": 833,
   "placeholder": 20,
   "unsupportedBlockReference": 0,
   "wikilink": 0
@@ -25959,12 +25959,12 @@
       "end": {
        "column": 157,
        "line": 77,
-       "offset": 3074
+       "offset": 3210
       },
       "start": {
        "column": 94,
        "line": 77,
-       "offset": 3011
+       "offset": 3147
       }
      },
      "raw": "[CONVENTIONS](../../00_Meta/CONVENTIONS.md#filename-convention)",
@@ -25982,7 +25982,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3274,
+   "sizeBytes": 3410,
    "tasks": [],
    "title": "Task Patterns",
    "updated": "2026-08-12"
@@ -30179,6 +30179,7 @@
     "00_Meta/CHANGELOG.md",
     "10_Agents/docs/OPERATING-RULES.md",
     "10_Agents/skills/README.md",
+    "10_Agents/solutions/platform-issues/writable-pathname-rollback-races.md",
     "AGENTS.md"
    ],
    "bodyTags": [],
@@ -30216,7 +30217,7 @@
     },
     {
      "level": 2,
-     "line": 47,
+     "line": 49,
      "slug": "real-provider-gate",
      "text": "Real-provider gate"
     }
@@ -30255,7 +30256,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4459,
+   "sizeBytes": 5766,
    "tasks": [],
    "title": "Skill: Configure Notifications",
    "updated": "2026-08-12"
@@ -35536,7 +35537,7 @@
      "audience/agent"
     ],
     "title": "Platform Solutions",
-    "updated": "2026-08-10"
+    "updated": "2026-08-12"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -35561,6 +35562,38 @@
    ],
    "links": [
     {
+     "destination": "writable-pathname-rollback-races.md",
+     "display": "Writable Pathname Rollback Races",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Writable Pathname Rollback Races",
+     "line": 15,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 73,
+       "line": 15,
+       "offset": 275
+      },
+      "start": {
+       "column": 2,
+       "line": 15,
+       "offset": 204
+      }
+     },
+     "raw": "[Writable Pathname Rollback Races](writable-pathname-rollback-races.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "10_Agents/solutions/platform-issues/writable-pathname-rollback-races.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "10_Agents/solutions/platform-issues/writable-pathname-rollback-races.md",
+     "target": "writable-pathname-rollback-races.md",
+     "warnings": []
+    },
+    {
      "destination": "../README.md",
      "display": "Solutions",
      "embed": false,
@@ -35573,12 +35606,12 @@
       "end": {
        "column": 27,
        "line": 19,
-       "offset": 349
+       "offset": 409
       },
       "start": {
        "column": 2,
        "line": 19,
-       "offset": 324
+       "offset": 384
       }
      },
      "raw": "[Solutions](../README.md)",
@@ -35593,10 +35626,171 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 371,
+   "sizeBytes": 431,
    "tasks": [],
    "title": "Platform Solutions",
-   "updated": "2026-08-10"
+   "updated": "2026-08-12"
+  },
+  "10_Agents/solutions/platform-issues/writable-pathname-rollback-races.md": {
+   "backlinks": [
+    "10_Agents/solutions/platform-issues/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "codex",
+    "session": "https://github.com/jvall0228/second_brain_template/pull/86",
+    "tags": [
+     "type/solution",
+     "audience/agent",
+     "topic/filesystems"
+    ],
+    "title": "Writable Pathname Rollback Races",
+    "updated": "2026-08-12"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 12,
+     "slug": "writable-pathname-rollback-races",
+     "text": "Writable Pathname Rollback Races"
+    },
+    {
+     "level": 2,
+     "line": 14,
+     "slug": "problem",
+     "text": "Problem"
+    },
+    {
+     "level": 2,
+     "line": 18,
+     "slug": "symptoms",
+     "text": "Symptoms"
+    },
+    {
+     "level": 2,
+     "line": 26,
+     "slug": "solution",
+     "text": "Solution"
+    },
+    {
+     "level": 2,
+     "line": 45,
+     "slug": "prevention",
+     "text": "Prevention"
+    },
+    {
+     "level": 2,
+     "line": 53,
+     "slug": "related",
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "destination": "../../tools/brain/notifications.py",
+     "display": "Notification implementation",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Notification implementation",
+     "line": 55,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 67,
+       "line": 55,
+       "offset": 3670
+      },
+      "start": {
+       "column": 2,
+       "line": 55,
+       "offset": 3605
+      }
+     },
+     "raw": "[Notification implementation](../../tools/brain/notifications.py)",
+     "resolution": {
+      "fragment": null,
+      "path": "10_Agents/tools/brain/notifications.py",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "10_Agents/tools/brain/notifications.py",
+     "target": "../../tools/brain/notifications.py",
+     "warnings": []
+    },
+    {
+     "destination": "../../tools/brain/spec.md",
+     "display": "Notification transaction contract",
+     "embed": false,
+     "format": "markdown",
+     "fragment": "263-preview-and-local-file-delivery",
+     "label": "Notification transaction contract",
+     "line": 56,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 100,
+       "line": 56,
+       "offset": 3771
+      },
+      "start": {
+       "column": 2,
+       "line": 56,
+       "offset": 3673
+      }
+     },
+     "raw": "[Notification transaction contract](../../tools/brain/spec.md#263-preview-and-local-file-delivery)",
+     "resolution": {
+      "fragment": {
+       "line": 880,
+       "slug": "263-preview-and-local-file-delivery"
+      },
+      "path": "10_Agents/tools/brain/spec.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "10_Agents/tools/brain/spec.md",
+     "target": "../../tools/brain/spec.md",
+     "warnings": []
+    },
+    {
+     "destination": "../../skills/configure-notifications/SKILL.md",
+     "display": "Configure Notifications",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Configure Notifications",
+     "line": 57,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 74,
+       "line": 57,
+       "offset": 3846
+      },
+      "start": {
+       "column": 2,
+       "line": 57,
+       "offset": 3774
+      }
+     },
+     "raw": "[Configure Notifications](../../skills/configure-notifications/SKILL.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "10_Agents/skills/configure-notifications/SKILL.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "10_Agents/skills/configure-notifications/SKILL.md",
+     "target": "../../skills/configure-notifications/SKILL.md",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 3847,
+   "tasks": [],
+   "title": "Writable Pathname Rollback Races",
+   "updated": "2026-08-12"
   },
   "10_Agents/solutions/vault-maintenance/README.md": {
    "backlinks": [
@@ -36177,6 +36371,7 @@
     "10_Agents/harnesses/opencode/wiring.md",
     "10_Agents/harnesses/pi/wiring.md",
     "10_Agents/skills/configure-notifications/SKILL.md",
+    "10_Agents/solutions/platform-issues/writable-pathname-rollback-races.md",
     "10_Agents/tools/README.md",
     "10_Agents/tools/brain/README.md",
     "README.md"
@@ -37156,7 +37351,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 118529,
+   "sizeBytes": 122062,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-12"

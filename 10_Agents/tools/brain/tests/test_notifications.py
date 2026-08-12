@@ -7,9 +7,11 @@ import copy
 import io
 import json
 import os
+import stat
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
@@ -95,6 +97,11 @@ def args(**changes):
     return SimpleNamespace(**value)
 
 
+def write_private(path: Path, data: bytes) -> None:
+    path.write_bytes(data)
+    path.chmod(0o600)
+
+
 class NotificationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="notifications-")
@@ -107,12 +114,24 @@ class NotificationTests(unittest.TestCase):
         value = value or config()
         directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
         directory.mkdir(parents=True)
+        output = directory / notifications.OUTBOX_DIR
+        output.mkdir(mode=0o700)
         raw = notifications.canonical_json(value) + b"\n"
-        (directory / notifications.CONFIG_NAME).write_bytes(raw)
+        write_private(directory / notifications.CONFIG_NAME, raw)
         return value, raw
 
     def selected(self) -> dict:
         return {"slug": "desk", "source": "cli", "state": "selected"}
+
+    def assert_delivery_state_retained(self, overlay: Path, safe: dict) -> None:
+        state = notifications.validate_state(
+            json.loads((overlay / notifications.STATE_NAME).read_text())
+        )
+        self.assertEqual(len(state["deliveries"]), 1)
+        self.assertEqual(
+            state["deliveries"][0]["dedupeDigest"],
+            notifications.hashlib.sha256(safe["dedupeKey"].encode()).hexdigest(),
+        )
 
     def test_versioned_fixture_is_canonical_and_byte_deterministic(self):
         fixture = Path(__file__).parent / "fixtures" / "notifications-envelope-v1.json"
@@ -316,6 +335,8 @@ class NotificationTests(unittest.TestCase):
 
     def test_setup_calls_remote_safety_before_any_write(self):
         calls = []
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        overlay.mkdir(parents=True, mode=0o700)
         setup_args = args(
             setup=True,
             requested_env="desk",
@@ -332,7 +353,7 @@ class NotificationTests(unittest.TestCase):
                 safety_guard=lambda root, persist: calls.append((persist, (root / ".second-brain").exists())),
             )
         self.assertEqual(rc, 0)
-        self.assertEqual(calls, [(True, False)])
+        self.assertEqual(calls, [(True, True)])
         path = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.CONFIG_NAME
         self.assertEqual(path.stat().st_mode & 0o777, 0o600)
 
@@ -355,6 +376,142 @@ class NotificationTests(unittest.TestCase):
         path = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.CONFIG_NAME
         self.assertEqual(json.loads(path.read_text())["destinationLabel"], "Replacement private room")
 
+    def test_machine_local_config_and_state_require_bounded_private_regular_files(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        cases = (
+            (
+                notifications.CONFIG_NAME,
+                notifications.MAX_CONFIG_BYTES,
+                notifications.canonical_json(config()) + b"\n",
+            ),
+            (
+                notifications.STATE_NAME,
+                notifications.MAX_STATE_BYTES,
+                notifications.canonical_json(notifications.empty_state()) + b"\n",
+            ),
+        )
+        for name, limit, valid in cases:
+            rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{name}"
+            path = directory / name
+            with self.subTest(name=name, attack="mode"):
+                path.write_bytes(valid)
+                path.chmod(0o644)
+                with self.assertRaises(notifications.NotificationError):
+                    notifications._read_optional(brain, self.root, rel, limit=limit)
+                path.unlink()
+            with self.subTest(name=name, attack="fifo"):
+                os.mkfifo(path, 0o600)
+                with self.assertRaises(notifications.NotificationError):
+                    notifications._read_optional(brain, self.root, rel, limit=limit)
+                path.unlink()
+            with self.subTest(name=name, attack="oversize"):
+                write_private(path, b"x" * (limit + 1))
+                with mock.patch.object(
+                    notifications.os,
+                    "read",
+                    side_effect=AssertionError("oversized local state must not be read"),
+                ):
+                    with self.assertRaises(notifications.NotificationError):
+                        notifications._read_optional(brain, self.root, rel, limit=limit)
+                path.unlink()
+            with self.subTest(name=name, attack="control"):
+                write_private(path, valid)
+                raw, value = notifications._read_optional(
+                    brain, self.root, rel, limit=limit
+                )
+                self.assertEqual(raw, valid)
+                self.assertIsInstance(value, dict)
+                path.unlink()
+
+    def test_private_state_and_directories_require_current_user_ownership(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.CONFIG_NAME}"
+        raw = notifications.canonical_json(config()) + b"\n"
+        write_private(directory / notifications.CONFIG_NAME, raw)
+        with mock.patch.object(notifications, "_private_owned", return_value=False):
+            with self.assertRaises(notifications.NotificationError):
+                notifications._read_optional(
+                    brain, self.root, rel, limit=notifications.MAX_CONFIG_BYTES
+                )
+            parent = os.open(
+                directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+            )
+            try:
+                with self.assertRaises(notifications.NotificationError):
+                    notifications._open_child_directory(
+                        parent, "missing", create=False, private=True
+                    )
+            finally:
+                os.close(parent)
+        if hasattr(os, "geteuid"):
+            with mock.patch.object(os, "geteuid", return_value=1000):
+                self.assertFalse(
+                    notifications._private_owned(SimpleNamespace(st_uid=1001))
+                )
+
+    def test_private_directory_creation_is_never_attempted(self):
+        directory = self.root / "directory-race"
+        directory.mkdir()
+        parent = os.open(
+            directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+        )
+        try:
+            with mock.patch.object(
+                notifications.os,
+                "mkdir",
+                side_effect=AssertionError("private directory must not be created"),
+            ):
+                with self.assertRaises(notifications.NotificationError):
+                    notifications._open_child_directory(
+                        parent, "private", create=True, private=True
+                    )
+        finally:
+            os.close(parent)
+        self.assertFalse((directory / "private").exists())
+
+    def test_state_cas_refuses_fifo_and_oversize_without_staging(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
+        path = directory / notifications.STATE_NAME
+        desired = notifications.canonical_json(notifications.empty_state()) + b"\n"
+        os.mkfifo(path, 0o600)
+        with self.assertRaises(notifications.NotificationError):
+            notifications._write_json_cas(
+                brain,
+                self.root,
+                rel,
+                desired,
+                None,
+                notifications.validate_state,
+            )
+        path.unlink()
+        write_private(path, b"x" * (notifications.MAX_STATE_BYTES + 1))
+        real_read = notifications.os.read
+
+        def reject_oversized_read(descriptor, size):
+            if os.fstat(descriptor).st_size > notifications.MAX_STATE_BYTES:
+                raise AssertionError("oversized state must not be read")
+            return real_read(descriptor, size)
+
+        with mock.patch.object(
+            notifications.os, "read", side_effect=reject_oversized_read
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications._write_json_cas(
+                    brain,
+                    self.root,
+                    rel,
+                    desired,
+                    None,
+                    notifications.validate_state,
+                )
+        self.assertEqual(
+            list(directory.glob(f".{notifications.STATE_NAME}.migrate-new-*")), []
+        )
+
     def test_blocked_remote_safety_means_zero_file_and_state_writes(self):
         current, raw = self.write_setup()
         safe = notifications.validate_envelope(brain, external_envelope())
@@ -370,7 +527,10 @@ class NotificationTests(unittest.TestCase):
                     envelope=safe, now=NOW, explicit_output=None, safety_guard=blocked,
                 )
         overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
-        self.assertEqual(sorted(path.name for path in overlay.iterdir()), [notifications.CONFIG_NAME])
+        self.assertEqual(
+            sorted(path.name for path in overlay.iterdir()),
+            [notifications.OUTBOX_DIR, notifications.CONFIG_NAME],
+        )
 
     def test_file_delivery_is_local_private_and_deduplicated(self):
         current, raw = self.write_setup()
@@ -414,11 +574,19 @@ class NotificationTests(unittest.TestCase):
             )
             notifications.deliver_file(
                 brain, self.root, selected=self.selected(), config=refreshed, config_raw=refreshed_raw,
-                envelope=safe, now=NOW + notifications.timedelta(hours=25), explicit_output=None,
+                envelope=safe, now=NOW + notifications.timedelta(hours=169), explicit_output=None,
+                safety_guard=lambda *_args, **_kwargs: None,
+            )
+            _selected, refreshed, refreshed_raw = notifications.load_setup(
+                brain, self.root, "desk"
+            )
+            notifications.deliver_file(
+                brain, self.root, selected=self.selected(), config=refreshed, config_raw=refreshed_raw,
+                envelope=safe, now=NOW + notifications.timedelta(hours=338), explicit_output=None,
                 safety_guard=lambda *_args, **_kwargs: None,
             )
         output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
-        self.assertEqual(len(list(output_dir.iterdir())), 2)
+        self.assertEqual(len(list(output_dir.iterdir())), 3)
 
     def test_explicit_temporary_file_delivery_succeeds_without_repo_write(self):
         current, raw = self.write_setup()
@@ -436,35 +604,374 @@ class NotificationTests(unittest.TestCase):
             self.assertTrue(target.is_file())
             self.assertEqual(target.stat().st_mode & 0o777, 0o600)
 
-    def test_file_failure_rolls_back_owned_output_exactly(self):
+    def test_explicit_temporary_output_failure_reserves_dedupe_before_retry(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        with tempfile.TemporaryDirectory(prefix="notification-output-") as outdir:
+            first = Path(outdir) / "one.json"
+            second = Path(outdir) / "two.json"
+            with mock.patch.object(
+                brain, "select_environment", return_value=self.selected()
+            ), mock.patch.object(
+                notifications, "_create_exact_at", side_effect=KeyboardInterrupt
+            ):
+                with self.assertRaises(notifications.NotificationError):
+                    notifications.deliver_file(
+                        brain, self.root, selected=self.selected(), config=current,
+                        config_raw=raw, envelope=safe, now=NOW,
+                        explicit_output=first,
+                        safety_guard=lambda *_args, **_kwargs: None,
+                    )
+            guard = mock.Mock()
+            with mock.patch.object(
+                brain, "select_environment", return_value=self.selected()
+            ):
+                with self.assertRaises(notifications.NotificationError):
+                    notifications.deliver_file(
+                        brain, self.root, selected=self.selected(), config=current,
+                        config_raw=raw, envelope=safe,
+                        now=NOW + notifications.timedelta(seconds=1),
+                        explicit_output=second, safety_guard=guard,
+                    )
+            guard.assert_not_called()
+            self.assertFalse(first.exists())
+            self.assertFalse(second.exists())
+
+    def test_concurrent_same_dedupe_serializes_before_output_publication(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real = notifications._write_json_cas
+        barrier = threading.Barrier(2)
+        outcomes = []
+
+        def synchronized(*call_args, **call_kwargs):
+            if call_args[2].endswith(notifications.STATE_NAME):
+                barrier.wait(timeout=5)
+            return real(*call_args, **call_kwargs)
+
+        def deliver(offset):
+            try:
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current,
+                    config_raw=raw, envelope=safe,
+                    now=NOW + notifications.timedelta(seconds=offset),
+                    explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+                outcomes.append("success")
+            except notifications.NotificationError:
+                outcomes.append("blocked")
+
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ), mock.patch.object(
+            notifications, "_write_json_cas", side_effect=synchronized
+        ):
+            threads = [threading.Thread(target=deliver, args=(offset,)) for offset in (0, 1)]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(timeout=10)
+            self.assertTrue(all(not thread.is_alive() for thread in threads))
+        self.assertEqual(sorted(outcomes), ["blocked", "success"])
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        output_dir = overlay / notifications.OUTBOX_DIR
+        self.assertEqual(len(list(output_dir.iterdir())), 1)
+        self.assertEqual(
+            list(overlay.glob(f".{notifications.STATE_NAME}.migrate-new-*")), []
+        )
+        self.assertEqual(
+            len(list(overlay.glob(f".{notifications.STATE_NAME}.migrate-old-*"))),
+            1,
+        )
+        different = notifications.validate_envelope(
+            brain,
+            external_envelope()
+            | {
+                "dedupeKey": "validation.2026-08-11.followup",
+                "event": "vault.validation.followup",
+            },
+        )
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ):
+            notifications.deliver_file(
+                brain, self.root, selected=self.selected(), config=current,
+                config_raw=raw, envelope=different,
+                now=NOW + notifications.timedelta(seconds=2),
+                explicit_output=None,
+                safety_guard=lambda *_args, **_kwargs: None,
+            )
+        self.assertEqual(len(list(output_dir.iterdir())), 2)
+
+    def test_state_claim_serializes_burst_without_generation_overflow(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
+        desired = notifications.canonical_json(notifications.empty_state()) + b"\n"
+        stage_entered = threading.Event()
+        release_stage = threading.Event()
+        real_stage = notifications._stage_exact
+        outcomes = []
+
+        def held_stage(*call_args, **call_kwargs):
+            stage_entered.set()
+            self.assertTrue(release_stage.wait(timeout=10))
+            return real_stage(*call_args, **call_kwargs)
+
+        def write_state():
+            try:
+                notifications._write_json_cas(
+                    brain,
+                    self.root,
+                    rel,
+                    desired,
+                    None,
+                    notifications.validate_state,
+                )
+                outcomes.append("success")
+            except notifications.NotificationError:
+                outcomes.append("blocked")
+
+        with mock.patch.object(
+            notifications, "_stage_exact", side_effect=held_stage
+        ):
+            winner = threading.Thread(target=write_state)
+            winner.start()
+            self.assertTrue(stage_entered.wait(timeout=10))
+            contenders = [threading.Thread(target=write_state) for _ in range(33)]
+            for contender in contenders:
+                contender.start()
+            for contender in contenders:
+                contender.join(timeout=10)
+            self.assertTrue(all(not contender.is_alive() for contender in contenders))
+            release_stage.set()
+            winner.join(timeout=10)
+            self.assertFalse(winner.is_alive())
+
+        self.assertEqual(outcomes.count("success"), 1)
+        self.assertEqual(outcomes.count("blocked"), 33)
+        self.assertEqual(
+            list(directory.glob(f".{notifications.STATE_NAME}.migrate-new-*")),
+            [],
+        )
+        self.assertFalse(
+            (directory / f".{notifications.STATE_NAME}.notify-claim").exists()
+        )
+        self.assertEqual(
+            len(list(directory.glob(f".{notifications.STATE_NAME}.migrate-old-*"))),
+            1,
+        )
+        self.assertEqual(
+            notifications.load_delivery_state(brain, self.root, "desk")[0],
+            notifications.empty_state(),
+        )
+
+    def test_claim_retirement_failure_blocks_success_and_preserves_evidence(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        guard = mock.Mock()
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ), mock.patch.object(
+            notifications, "_retire_cas_claim", return_value=False
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain,
+                    self.root,
+                    selected=self.selected(),
+                    config=current,
+                    config_raw=raw,
+                    envelope=safe,
+                    now=NOW,
+                    explicit_output=None,
+                    safety_guard=guard,
+                )
+        guard.assert_called_once()
+        self.assertEqual(
+            list((overlay / notifications.OUTBOX_DIR).iterdir()), []
+        )
+        self.assertTrue(
+            (overlay / f".{notifications.STATE_NAME}.notify-claim").is_file()
+        )
+        self.assert_delivery_state_retained(overlay, safe)
+
+        later_guard = mock.Mock()
+        different = notifications.validate_envelope(
+            brain,
+            external_envelope()
+            | {
+                "dedupeKey": "validation.2026-08-11.followup",
+                "event": "vault.validation.followup",
+            },
+        )
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain,
+                    self.root,
+                    selected=self.selected(),
+                    config=current,
+                    config_raw=raw,
+                    envelope=different,
+                    now=NOW + notifications.timedelta(seconds=1),
+                    explicit_output=None,
+                    safety_guard=later_guard,
+                )
+        later_guard.assert_not_called()
+
+    def test_output_parent_rename_after_state_reservation_is_refused(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        output_dir = overlay / notifications.OUTBOX_DIR
+        moved = overlay / "moved-output"
+        real = notifications._write_json_cas
+        swapped = False
+
+        def reserve_then_swap(*call_args, **call_kwargs):
+            nonlocal swapped
+            result = real(*call_args, **call_kwargs)
+            if call_args[2].endswith(notifications.STATE_NAME) and not swapped:
+                output_dir.rename(moved)
+                output_dir.mkdir(mode=0o700)
+                swapped = True
+            return result
+
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ), mock.patch.object(
+            notifications, "_write_json_cas", side_effect=reserve_then_swap
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current,
+                    config_raw=raw, envelope=safe, now=NOW,
+                    explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        self.assertTrue(swapped)
+        self.assertEqual(list(output_dir.iterdir()), [])
+        self.assertEqual(list(moved.iterdir()), [])
+        self.assert_delivery_state_retained(overlay, safe)
+
+    def test_output_parent_rename_after_creation_is_refused_with_evidence(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        output_dir = overlay / notifications.OUTBOX_DIR
+        moved = overlay / "moved-output"
+        real = notifications._create_exact_at
+
+        def create_then_swap(parent, name, data):
+            identity = real(parent, name, data)
+            output_dir.rename(moved)
+            output_dir.mkdir(mode=0o700)
+            return identity
+
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ), mock.patch.object(
+            notifications, "_create_exact_at", side_effect=create_then_swap
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current,
+                    config_raw=raw, envelope=safe, now=NOW,
+                    explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        self.assertEqual(list(output_dir.iterdir()), [])
+        self.assertEqual(len(list(moved.iterdir())), 1)
+        self.assert_delivery_state_retained(overlay, safe)
+
+    def test_output_creation_failure_preserves_state_reservation(self):
         current, raw = self.write_setup()
         safe = notifications.validate_envelope(brain, external_envelope())
         with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
-            notifications, "_write_json_cas", side_effect=KeyboardInterrupt
+            notifications, "_create_exact_at", side_effect=KeyboardInterrupt
         ):
-            with self.assertRaises(KeyboardInterrupt):
+            with self.assertRaises(notifications.NotificationError):
                 notifications.deliver_file(
                     brain, self.root, selected=self.selected(), config=current, config_raw=raw,
                     envelope=safe, now=NOW, explicit_output=None, safety_guard=lambda *_args, **_kwargs: None,
                 )
         output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
         self.assertEqual(list(output_dir.iterdir()), [])
+        self.assert_delivery_state_retained(
+            self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk", safe
+        )
 
-    def test_late_output_replacement_is_preserved_and_state_rolls_back(self):
+    def test_failed_delivery_blocks_later_automatic_retry_for_same_dedupe(self):
         current, raw = self.write_setup()
         safe = notifications.validate_envelope(brain, external_envelope())
-        real = notifications._write_json_cas
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ), mock.patch.object(
+            notifications, "_create_exact_at", side_effect=KeyboardInterrupt
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain,
+                    self.root,
+                    selected=self.selected(),
+                    config=current,
+                    config_raw=raw,
+                    envelope=safe,
+                    now=NOW,
+                    explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        guard = mock.Mock()
+        with mock.patch.object(
+            brain, "select_environment", return_value=self.selected()
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain,
+                    self.root,
+                    selected=self.selected(),
+                    config=current,
+                    config_raw=raw,
+                    envelope=safe,
+                    now=NOW + notifications.timedelta(seconds=1),
+                    explicit_output=None,
+                    safety_guard=guard,
+                )
+        guard.assert_not_called()
+        output_dir = (
+            self.root
+            / brain.ENVIRONMENT_OVERLAYS_RELPATH
+            / "desk"
+            / notifications.OUTBOX_DIR
+        )
+        self.assertEqual(list(output_dir.iterdir()), [])
+        self.assert_delivery_state_retained(
+            self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk", safe
+        )
 
-        def commit_then_replace(api, root, rel, desired, expected, validator):
-            real(api, root, rel, desired, expected, validator)
-            if rel.endswith(notifications.STATE_NAME):
-                output_dir = root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
-                output = next(output_dir.iterdir())
-                output.unlink()
-                output.write_bytes(b"foreign-output")
+    def test_late_same_inode_output_mutation_preserves_recovery_state(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real = notifications._create_exact_at
+
+        def create_then_mutate(parent, name, data):
+            identity = real(parent, name, data)
+            output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+            output = next(output_dir.iterdir())
+            original_identity = (output.stat().st_dev, output.stat().st_ino)
+            output.write_bytes(b"foreign-output")
+            self.assertEqual(
+                (output.stat().st_dev, output.stat().st_ino), original_identity
+            )
+            return identity
 
         with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
-            notifications, "_write_json_cas", side_effect=commit_then_replace
+            notifications, "_create_exact_at", side_effect=create_then_mutate
         ):
             with self.assertRaises(notifications.NotificationError):
                 notifications.deliver_file(
@@ -473,9 +980,378 @@ class NotificationTests(unittest.TestCase):
                     safety_guard=lambda *_args, **_kwargs: None,
                 )
         overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
-        self.assertFalse((overlay / notifications.STATE_NAME).exists())
+        self.assert_delivery_state_retained(overlay, safe)
         output = next((overlay / notifications.OUTBOX_DIR).iterdir())
         self.assertEqual(output.read_bytes(), b"foreign-output")
+
+    def test_late_output_path_replacement_preserves_recovery_state(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real = notifications._create_exact_at
+        held = []
+
+        def create_then_replace(parent, name, data):
+            identity = real(parent, name, data)
+            output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+            output = next(output_dir.iterdir())
+            held.append(output.open("rb"))
+            output.unlink()
+            output.write_bytes(b"foreign-output")
+            return identity
+
+        try:
+            with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
+                notifications, "_create_exact_at", side_effect=create_then_replace
+            ):
+                with self.assertRaises(notifications.NotificationError):
+                    notifications.deliver_file(
+                        brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                        envelope=safe, now=NOW, explicit_output=None,
+                        safety_guard=lambda *_args, **_kwargs: None,
+                    )
+        finally:
+            for descriptor in held:
+                descriptor.close()
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        self.assert_delivery_state_retained(overlay, safe)
+        output = next((overlay / notifications.OUTBOX_DIR).iterdir())
+        self.assertEqual(output.read_bytes(), b"foreign-output")
+
+    def test_late_output_symlink_preserves_state_and_target(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real = notifications._create_exact_at
+        foreign = self.root / "foreign-output"
+        foreign.write_bytes(b"foreign-target")
+
+        def create_then_replace(parent, name, data):
+            identity = real(parent, name, data)
+            output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+            output = next(output_dir.iterdir())
+            output.unlink()
+            output.symlink_to(foreign)
+            return identity
+
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
+            notifications, "_create_exact_at", side_effect=create_then_replace
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                    envelope=safe, now=NOW, explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        self.assert_delivery_state_retained(overlay, safe)
+        output = next((overlay / notifications.OUTBOX_DIR).iterdir())
+        self.assertTrue(output.is_symlink())
+        self.assertEqual(foreign.read_bytes(), b"foreign-target")
+
+    def test_late_output_mode_change_preserves_recovery_state(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real = notifications._create_exact_at
+
+        def create_then_chmod(parent, name, data):
+            identity = real(parent, name, data)
+            output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+            next(output_dir.iterdir()).chmod(0o644)
+            return identity
+
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
+            notifications, "_create_exact_at", side_effect=create_then_chmod
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                    envelope=safe, now=NOW, explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        self.assert_delivery_state_retained(overlay, safe)
+        output = next((overlay / notifications.OUTBOX_DIR).iterdir())
+        self.assertEqual(output.stat().st_mode & 0o777, 0o644)
+
+    def test_late_output_fifo_preserves_recovery_state_without_blocking(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real = notifications._create_exact_at
+
+        def create_then_fifo(parent, name, data):
+            identity = real(parent, name, data)
+            output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+            output = next(output_dir.iterdir())
+            output.unlink()
+            os.mkfifo(output, 0o600)
+            return identity
+
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
+            notifications, "_create_exact_at", side_effect=create_then_fifo
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                    envelope=safe, now=NOW, explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        self.assert_delivery_state_retained(overlay, safe)
+        output = next((overlay / notifications.OUTBOX_DIR).iterdir())
+        self.assertTrue(stat.S_ISFIFO(output.lstat().st_mode))
+
+    def test_late_oversized_output_preserves_recovery_state_without_reading(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        real_write = notifications._create_exact_at
+        real_read = notifications.os.read
+        foreign_descriptor = None
+
+        def create_then_oversize(parent, name, data):
+            identity = real_write(parent, name, data)
+            output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+            output = next(output_dir.iterdir())
+            output.unlink()
+            output.write_bytes(b"x" * (notifications.MAX_OUTPUT_BYTES + 1))
+            output.chmod(0o600)
+            return identity
+
+        def reject_oversized_read(descriptor, size):
+            nonlocal foreign_descriptor
+            info = os.fstat(descriptor)
+            if info.st_size > notifications.MAX_OUTPUT_BYTES:
+                foreign_descriptor = descriptor
+                raise AssertionError("oversized foreign output must not be read")
+            return real_read(descriptor, size)
+
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
+            notifications, "_create_exact_at", side_effect=create_then_oversize
+        ), mock.patch.object(notifications.os, "read", side_effect=reject_oversized_read):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                    envelope=safe, now=NOW, explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        self.assertIsNone(foreign_descriptor)
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        self.assert_delivery_state_retained(overlay, safe)
+        output = next((overlay / notifications.OUTBOX_DIR).iterdir())
+        self.assertEqual(output.stat().st_size, notifications.MAX_OUTPUT_BYTES + 1)
+
+    def test_missing_private_output_directory_fails_closed_without_creation(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+        output_dir.rmdir()
+        previous = os.umask(0o777)
+        try:
+            with mock.patch.object(brain, "select_environment", return_value=self.selected()):
+                with self.assertRaises(notifications.NotificationError):
+                    notifications.deliver_file(
+                        brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                        envelope=safe, now=NOW, explicit_output=None,
+                        safety_guard=lambda *_args, **_kwargs: None,
+                    )
+        finally:
+            os.umask(previous)
+        self.assertFalse(output_dir.exists())
+        self.assertFalse(
+            output_dir.parent.joinpath(notifications.STATE_NAME).exists()
+        )
+
+    def test_create_fsync_failure_preserves_same_inode_foreign_rewrite(self):
+        directory = self.root / "create-failure"
+        directory.mkdir()
+        parent = os.open(directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+        output = directory / "notification.json"
+        injected = False
+
+        def mutate_then_fail(descriptor):
+            nonlocal injected
+            if descriptor != parent and not injected:
+                injected = True
+                identity = (output.stat().st_dev, output.stat().st_ino)
+                output.write_bytes(b"foreign-during-create")
+                self.assertEqual(
+                    (output.stat().st_dev, output.stat().st_ino), identity
+                )
+                raise OSError("file durability failure")
+            return None
+
+        try:
+            with mock.patch.object(
+                notifications.os, "fsync", side_effect=mutate_then_fail
+            ):
+                with self.assertRaises(OSError):
+                    notifications._create_exact_at(
+                        parent, output.name, b"owned-output"
+                    )
+        finally:
+            os.close(parent)
+        self.assertEqual(output.read_bytes(), b"foreign-during-create")
+        self.assertEqual([item.name for item in directory.iterdir()], [output.name])
+
+    def test_output_parent_fsync_failure_preserves_output_and_state_reservation(self):
+        current, raw = self.write_setup()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
+        real_fsync = notifications.os.fsync
+        output_parent = None
+        injected = False
+
+        def fail_output_parent(descriptor):
+            nonlocal output_parent, injected
+            try:
+                descriptor_info = os.fstat(descriptor)
+                directory_info = output_dir.stat()
+            except OSError:
+                return real_fsync(descriptor)
+            if (
+                not injected
+                and stat.S_ISDIR(descriptor_info.st_mode)
+                and (descriptor_info.st_dev, descriptor_info.st_ino)
+                == (directory_info.st_dev, directory_info.st_ino)
+            ):
+                output_parent = descriptor
+                injected = True
+                raise OSError("output-directory durability failure")
+            return real_fsync(descriptor)
+
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
+            notifications.os, "fsync", side_effect=fail_output_parent
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                    envelope=safe, now=NOW, explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
+        self.assertTrue(injected)
+        self.assertIsNotNone(output_parent)
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        self.assert_delivery_state_retained(overlay, safe)
+        outputs = list(output_dir.iterdir())
+        self.assertEqual(len(outputs), 1)
+        self.assertEqual(outputs[0].stat().st_mode & 0o777, 0o600)
+
+    def test_state_stage_fsync_failure_preserves_recovery_evidence(self):
+        directory = self.root / "stage-failure"
+        directory.mkdir()
+        parent = os.open(directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+        injected = False
+
+        def mutate_then_fail(descriptor):
+            nonlocal injected
+            if descriptor != parent and not injected:
+                injected = True
+                stages = list(directory.iterdir())
+                self.assertEqual(len(stages), 1)
+                identity = (stages[0].stat().st_dev, stages[0].stat().st_ino)
+                stages[0].write_bytes(b"foreign-during-stage")
+                self.assertEqual(
+                    (stages[0].stat().st_dev, stages[0].stat().st_ino), identity
+                )
+                raise OSError("stage durability failure")
+            return None
+
+        try:
+            with mock.patch.object(
+                notifications.os, "fsync", side_effect=mutate_then_fail
+            ):
+                with self.assertRaises(OSError):
+                    notifications._stage_exact(
+                        brain, parent, notifications.STATE_NAME, b"owned-state"
+                    )
+        finally:
+            os.close(parent)
+        stages = list(directory.iterdir())
+        self.assertEqual(len(stages), 1)
+        self.assertEqual(stages[0].read_bytes(), b"foreign-during-stage")
+
+    def test_unfinished_update_stage_blocks_followup_operation(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
+        old = notifications.canonical_json(notifications.empty_state()) + b"\n"
+        write_private(directory / notifications.STATE_NAME, old)
+        desired_state = notifications.empty_state()
+        desired_state["deliveries"] = [
+            {
+                "category": "validation",
+                "dedupeDigest": notifications.hashlib.sha256(b"new").hexdigest(),
+                "deliveredAt": NOW.isoformat(),
+            }
+        ]
+        desired = notifications.canonical_json(desired_state) + b"\n"
+        real_fsync = notifications.os.fsync
+        stage_fsync_seen = False
+
+        def fail_stage_fsync(descriptor):
+            nonlocal stage_fsync_seen
+            info = os.fstat(descriptor)
+            if stat.S_ISREG(info.st_mode) and info.st_size == len(desired):
+                stage_fsync_seen = True
+                raise OSError("stage durability failure")
+            return real_fsync(descriptor)
+
+        with mock.patch.object(
+            notifications.os, "fsync", side_effect=fail_stage_fsync
+        ):
+            with self.assertRaises(OSError):
+                notifications._write_json_cas(
+                    brain,
+                    self.root,
+                    rel,
+                    desired,
+                    old,
+                    notifications.validate_state,
+                )
+        self.assertTrue(stage_fsync_seen)
+        self.assertEqual((directory / notifications.STATE_NAME).read_bytes(), old)
+        self.assertEqual(
+            len(list(directory.glob(f".{notifications.STATE_NAME}.migrate-new-*"))),
+            1,
+        )
+        with self.assertRaises(notifications.NotificationError):
+            notifications.load_delivery_state(brain, self.root, "desk")
+        with self.assertRaises(notifications.NotificationError):
+            notifications._write_json_cas(
+                brain,
+                self.root,
+                rel,
+                desired,
+                old,
+                notifications.validate_state,
+            )
+
+    def test_recovery_authentication_is_bounded_and_refuses_fifo(self):
+        directory = self.root / "output-auth"
+        directory.mkdir()
+        parent = os.open(directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+        try:
+            fifo = directory / "foreign.fifo"
+            os.mkfifo(fifo, 0o600)
+            self.assertFalse(
+                notifications._owned_output_at(
+                    brain, parent, fifo.name, (fifo.stat().st_dev, fifo.stat().st_ino), b""
+                )
+            )
+            large = directory / "foreign.json"
+            large.write_bytes(b"x" * (notifications.MAX_OUTPUT_BYTES + 1))
+            large.chmod(0o600)
+            identity = (large.stat().st_dev, large.stat().st_ino)
+            with mock.patch.object(
+                notifications.os,
+                "read",
+                side_effect=AssertionError("oversized foreign content must not be read"),
+            ):
+                self.assertFalse(
+                    notifications._owned_output_at(
+                        brain, parent, large.name, identity, b"owned"
+                    )
+                )
+        finally:
+            os.close(parent)
 
     def test_output_symlink_and_casefold_occupants_are_preserved(self):
         current, raw = self.write_setup()
@@ -483,6 +1359,7 @@ class NotificationTests(unittest.TestCase):
         overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
         foreign = self.root / "foreign"
         foreign.mkdir()
+        (overlay / notifications.OUTBOX_DIR).rmdir()
         (overlay / notifications.OUTBOX_DIR).symlink_to(foreign, target_is_directory=True)
         with mock.patch.object(brain, "select_environment", return_value=self.selected()):
             with self.assertRaises(notifications.NotificationError):
@@ -496,9 +1373,9 @@ class NotificationTests(unittest.TestCase):
         current, raw = self.write_setup()
         safe = notifications.validate_envelope(brain, external_envelope())
         output_dir = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk" / notifications.OUTBOX_DIR
-        output_dir.mkdir()
         key = f"{safe['dedupeKey']}\0{NOW.isoformat()}".encode()
-        expected = f"{notifications.hashlib.sha256(key).hexdigest()}.json"
+        dedupe = notifications.hashlib.sha256(safe["dedupeKey"].encode()).hexdigest()
+        expected = f"{dedupe}-{notifications.hashlib.sha256(key).hexdigest()}.json"
         occupant = output_dir / expected.upper()
         occupant.write_bytes(b"foreign")
         with mock.patch.object(brain, "select_environment", return_value=self.selected()):
@@ -513,7 +1390,7 @@ class NotificationTests(unittest.TestCase):
     def test_corrupt_state_fails_before_remote_guard_or_output(self):
         current, raw = self.write_setup()
         overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
-        (overlay / notifications.STATE_NAME).write_bytes(b"{bad")
+        write_private(overlay / notifications.STATE_NAME, b"{bad")
         safe = notifications.validate_envelope(brain, external_envelope())
         guard = mock.Mock()
         with mock.patch.object(brain, "select_environment", return_value=self.selected()):
@@ -523,84 +1400,243 @@ class NotificationTests(unittest.TestCase):
                     envelope=safe, now=NOW, explicit_output=None, safety_guard=guard,
                 )
         guard.assert_not_called()
-        self.assertFalse((overlay / notifications.OUTBOX_DIR).exists())
+        self.assertEqual(list((overlay / notifications.OUTBOX_DIR).iterdir()), [])
+
+    def test_generation_count_cap_blocks_before_remote_guard_or_output(self):
+        current, raw = self.write_setup()
+        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        state_raw = notifications.canonical_json(notifications.empty_state()) + b"\n"
+        write_private(overlay / notifications.STATE_NAME, state_raw)
+        for index in range(notifications.MAX_TRANSACTION_GENERATIONS):
+            generation = (
+                overlay
+                / f".{notifications.STATE_NAME}.migrate-old-{index:024x}"
+            )
+            write_private(generation, state_raw)
+        guard = mock.Mock()
+        safe = notifications.validate_envelope(brain, external_envelope())
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()):
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain,
+                    self.root,
+                    selected=self.selected(),
+                    config=current,
+                    config_raw=raw,
+                    envelope=safe,
+                    now=NOW,
+                    explicit_output=None,
+                    safety_guard=guard,
+                )
+        guard.assert_not_called()
+        self.assertEqual(list((overlay / notifications.OUTBOX_DIR).iterdir()), [])
+
+    def test_generation_byte_cap_accounts_for_pending_transaction(self):
+        directory = self.root / "generation-cap"
+        directory.mkdir()
+        parent = os.open(
+            directory, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+        )
+        try:
+            generation = (
+                directory
+                / f".{notifications.STATE_NAME}.migrate-old-{'0' * 24}"
+            )
+            generation_bytes = (
+                notifications.canonical_json(notifications.empty_state()) + b"\n"
+            )
+            write_private(generation, generation_bytes)
+            with mock.patch.object(
+                notifications,
+                "MAX_TRANSACTION_GENERATION_BYTES",
+                len(generation_bytes) + 2,
+            ):
+                with self.assertRaises(notifications.NotificationError):
+                    notifications._require_generation_capacity(
+                        parent,
+                        notifications.STATE_NAME,
+                        limit=notifications.MAX_STATE_BYTES,
+                        additional_count=1,
+                        additional_bytes=3,
+                    )
+        finally:
+            os.close(parent)
 
     def test_state_update_preserves_late_foreign_replacement(self):
         directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
         directory.mkdir(parents=True)
         rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
         old = notifications.canonical_json(notifications.empty_state()) + b"\n"
-        (directory / notifications.STATE_NAME).write_bytes(old)
+        write_private(directory / notifications.STATE_NAME, old)
         desired_state = copy.deepcopy(notifications.empty_state())
         desired_state["deliveries"].append(
             {"category": "validation", "dedupeDigest": notifications.hashlib.sha256(b"new").hexdigest(), "deliveredAt": NOW.isoformat()}
         )
         desired = notifications.canonical_json(desired_state) + b"\n"
-        real = brain._quarantine_migration_at
-        def replace_then_quarantine(parent, name, backup):
+        real = notifications._quarantine_no_replace
+        def replace_then_quarantine(api, parent, name, backup):
             os.unlink(name, dir_fd=parent)
             fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600, dir_fd=parent)
             os.write(fd, b"foreign")
             os.close(fd)
-            real(parent, name, backup)
-        with mock.patch.object(brain, "_quarantine_migration_at", side_effect=replace_then_quarantine):
+            real(api, parent, name, backup)
+        with mock.patch.object(notifications, "_quarantine_no_replace", side_effect=replace_then_quarantine):
             with self.assertRaises(notifications.NotificationError):
                 notifications._write_json_cas(brain, self.root, rel, desired, old, notifications.validate_state)
         self.assertEqual((directory / notifications.STATE_NAME).read_bytes(), b"foreign")
-        self.assertEqual(sorted(path.name for path in directory.iterdir()), [notifications.STATE_NAME])
+        stages = list(directory.glob(".notification-state.json.migrate-new-*"))
+        self.assertEqual(len(stages), 1)
+        self.assertEqual(stages[0].read_bytes(), desired)
 
-    def test_post_commit_directory_fsync_failure_never_removes_new_state(self):
+    def test_state_quarantine_refuses_concurrent_backup_occupant(self):
         directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
         directory.mkdir(parents=True)
         rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
         old = notifications.canonical_json(notifications.empty_state()) + b"\n"
-        (directory / notifications.STATE_NAME).write_bytes(old)
+        write_private(directory / notifications.STATE_NAME, old)
+        desired_state = notifications.empty_state()
+        desired_state["deliveries"].append(
+            {
+                "category": "validation",
+                "dedupeDigest": notifications.hashlib.sha256(b"new").hexdigest(),
+                "deliveredAt": NOW.isoformat(),
+            }
+        )
+        desired = notifications.canonical_json(desired_state) + b"\n"
+        real = notifications._quarantine_no_replace
+        inserted = []
+
+        def occupy_then_quarantine(api, parent, name, backup):
+            descriptor = os.open(
+                backup,
+                os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+                0o600,
+                dir_fd=parent,
+            )
+            os.write(descriptor, b"foreign-backup")
+            os.close(descriptor)
+            inserted.append(backup)
+            real(api, parent, name, backup)
+
+        with mock.patch.object(
+            notifications,
+            "_quarantine_no_replace",
+            side_effect=occupy_then_quarantine,
+        ):
+            with self.assertRaises(notifications.NotificationError):
+                notifications._write_json_cas(
+                    brain,
+                    self.root,
+                    rel,
+                    desired,
+                    old,
+                    notifications.validate_state,
+                )
+        self.assertEqual((directory / notifications.STATE_NAME).read_bytes(), old)
+        self.assertEqual(len(inserted), 1)
+        self.assertEqual((directory / inserted[0]).read_bytes(), b"foreign-backup")
+        stages = list(directory.glob(".notification-state.json.migrate-new-*"))
+        self.assertEqual(len(stages), 1)
+        self.assertEqual(stages[0].read_bytes(), desired)
+
+    def test_successful_state_update_retains_prior_generation(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
+        old = notifications.canonical_json(notifications.empty_state()) + b"\n"
+        write_private(directory / notifications.STATE_NAME, old)
         new_state = notifications.empty_state()
         new_state["deliveries"] = [
             {"category": "validation", "dedupeDigest": notifications.hashlib.sha256(b"new").hexdigest(), "deliveredAt": NOW.isoformat()}
         ]
         desired = notifications.canonical_json(new_state) + b"\n"
-        real_fsync = notifications.os.fsync
-        calls = 0
+        notifications._write_json_cas(
+            brain, self.root, rel, desired, old, notifications.validate_state
+        )
+        self.assertEqual((directory / notifications.STATE_NAME).read_bytes(), desired)
+        backups = list(directory.glob(".notification-state.json.migrate-old-*"))
+        self.assertEqual(len(backups), 2)
+        self.assertTrue(all(path.read_bytes() == old for path in backups))
+        self.assertEqual(
+            notifications.load_delivery_state(brain, self.root, "desk")[0],
+            notifications.validate_state(new_state),
+        )
 
-        def fail_fourth(descriptor):
-            nonlocal calls
-            calls += 1
-            if calls == 4:
-                raise OSError("simulated directory fsync failure")
+    def test_state_publish_fsync_failure_preserves_public_state(self):
+        directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
+        directory.mkdir(parents=True)
+        rel = f"{brain.ENVIRONMENT_OVERLAYS_RELPATH}/desk/{notifications.STATE_NAME}"
+        new_state = notifications.empty_state()
+        new_state["deliveries"] = [
+            {
+                "category": "validation",
+                "dedupeDigest": notifications.hashlib.sha256(b"new").hexdigest(),
+                "deliveredAt": NOW.isoformat(),
+            }
+        ]
+        desired = notifications.canonical_json(new_state) + b"\n"
+        real_rename = brain._rename_external_at
+        real_fsync = notifications.os.fsync
+        published = False
+        injected = False
+
+        def mark_publish(descriptor, source, target, *, exchange=False):
+            nonlocal published
+            result = real_rename(
+                descriptor, source, target, exchange=exchange
+            )
+            if target == notifications.STATE_NAME:
+                published = True
+            return result
+
+        def fail_after_publish(descriptor):
+            nonlocal injected
+            if published and not injected:
+                injected = True
+                raise OSError("state-directory durability failure")
             return real_fsync(descriptor)
 
-        with mock.patch.object(notifications.os, "fsync", side_effect=fail_fourth):
-            notifications._write_json_cas(
-                brain, self.root, rel, desired, old, notifications.validate_state
-            )
+        with mock.patch.object(
+            brain, "_rename_external_at", side_effect=mark_publish
+        ), mock.patch.object(
+            notifications.os, "fsync", side_effect=fail_after_publish
+        ):
+            with self.assertRaises(OSError):
+                notifications._write_json_cas(
+                    brain,
+                    self.root,
+                    rel,
+                    desired,
+                    None,
+                    notifications.validate_state,
+                )
+        self.assertTrue(injected)
         self.assertEqual((directory / notifications.STATE_NAME).read_bytes(), desired)
-        self.assertEqual(sorted(path.name for path in directory.iterdir()), [notifications.STATE_NAME])
+        self.assertEqual(
+            list(directory.glob(".notification-state.json.migrate-new-*")), []
+        )
 
-    def test_post_commit_fsync_failure_keeps_output_and_delivery_state_together(self):
+    def test_successful_delivery_consumes_stage_and_blocks_duplicate(self):
         current, raw = self.write_setup()
         safe = notifications.validate_envelope(brain, external_envelope())
-        real_fsync = notifications.os.fsync
-        calls = 0
-
-        def fail_fifth(descriptor):
-            nonlocal calls
-            calls += 1
-            if calls == 5:
-                raise OSError("simulated post-commit fsync failure")
-            return real_fsync(descriptor)
-
-        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
-            notifications.os, "fsync", side_effect=fail_fifth
-        ):
+        with mock.patch.object(brain, "select_environment", return_value=self.selected()):
             result = notifications.deliver_file(
                 brain, self.root, selected=self.selected(), config=current, config_raw=raw,
                 envelope=safe, now=NOW, explicit_output=None,
                 safety_guard=lambda *_args, **_kwargs: None,
             )
+            with self.assertRaises(notifications.NotificationError):
+                notifications.deliver_file(
+                    brain, self.root, selected=self.selected(), config=current, config_raw=raw,
+                    envelope=safe, now=NOW, explicit_output=None,
+                    safety_guard=lambda *_args, **_kwargs: None,
+                )
         self.assertTrue(result["delivered"])
         overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
         self.assertEqual(len(list((overlay / notifications.OUTBOX_DIR).iterdir())), 1)
+        self.assertEqual(
+            list(overlay.glob(f".{notifications.STATE_NAME}.migrate-new-*")), []
+        )
         state = notifications.validate_state(
             json.loads((overlay / notifications.STATE_NAME).read_text())
         )
@@ -609,49 +1645,16 @@ class NotificationTests(unittest.TestCase):
             notifications.hashlib.sha256(safe["dedupeKey"].encode()).hexdigest(),
         )
 
-    def test_post_commit_foreign_stage_is_preserved_without_output_rollback(self):
-        current, raw = self.write_setup()
-        safe = notifications.validate_envelope(brain, external_envelope())
-        real_remove = brain._remove_owned_migration_stage
-
-        def replace_stage_then_remove(item):
-            os.unlink(item["new"], dir_fd=item["parent"])
-            descriptor = os.open(
-                item["new"],
-                os.O_WRONLY | os.O_CREAT | os.O_EXCL,
-                0o600,
-                dir_fd=item["parent"],
-            )
-            try:
-                os.write(descriptor, b"foreign-stage")
-            finally:
-                os.close(descriptor)
-            real_remove(item)
-
-        with mock.patch.object(brain, "select_environment", return_value=self.selected()), mock.patch.object(
-            brain, "_remove_owned_migration_stage", side_effect=replace_stage_then_remove
-        ):
-            result = notifications.deliver_file(
-                brain, self.root, selected=self.selected(), config=current, config_raw=raw,
-                envelope=safe, now=NOW, explicit_output=None,
-                safety_guard=lambda *_args, **_kwargs: None,
-            )
-        self.assertTrue(result["delivered"])
-        overlay = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
-        self.assertEqual(len(list((overlay / notifications.OUTBOX_DIR).iterdir())), 1)
-        state = notifications.validate_state(
-            json.loads((overlay / notifications.STATE_NAME).read_text())
-        )
-        self.assertEqual(len(state["deliveries"]), 1)
-        residue = list(overlay.glob(f".{notifications.STATE_NAME}.migrate-new-*"))
-        self.assertEqual(len(residue), 1)
-        self.assertEqual(residue[0].read_bytes(), b"foreign-stage")
-
     def test_orphan_transaction_evidence_blocks_missing_state_as_recovery(self):
         directory = self.root / brain.ENVIRONMENT_OVERLAYS_RELPATH / "desk"
         directory.mkdir(parents=True)
-        residue = directory / f".{notifications.STATE_NAME}.migrate-old-deadbeef"
-        residue.write_bytes(notifications.canonical_json(notifications.empty_state()) + b"\n")
+        residue = directory / (
+            f".{notifications.STATE_NAME}.migrate-old-{'d' * 24}"
+        )
+        write_private(
+            residue,
+            notifications.canonical_json(notifications.empty_state()) + b"\n",
+        )
         with self.assertRaises(notifications.NotificationError):
             notifications.load_delivery_state(brain, self.root, "desk")
         self.assertTrue(residue.exists())

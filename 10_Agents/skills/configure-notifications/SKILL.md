@@ -32,7 +32,7 @@ Configure operational notifications without turning the vault into a messaging c
    brain notify --setup --provider file --destination-label "Private local notification test" --private-destination-ack --enable-category validation --quiet-start 22:00 --quiet-end 07:00 --timezone America/New_York --rate-limit 6 --dedupe-hours 24 --json
    ```
 
-   Use `fake` for preview-only evaluation. Repeat `--enable-category` and `--allow-https-host` as needed. Setup writes only `.second-brain/environments/<slug>/notifications.json`, which is ignored and mode `0600`; it sends nothing.
+   Before setup, the selected environment overlay directory must already exist and be owned by the current user. Use `fake` for preview-only evaluation. Repeat `--enable-category` and `--allow-https-host` as needed. Setup writes the ignored mode-`0600` `.second-brain/environments/<slug>/notifications.json`; a safe update or interrupted write may also retain authenticated ignored `.notifications.json.{notify-claim,migrate-{old,new}-*}` generation/recovery evidence. It sends nothing.
 4. Run `brain notify --check --json`. Confirm the destination is private, only intended categories are enabled, and `testSendRequired` is false for the local path.
 5. Prepare a version-1 JSON envelope and preview it with `brain notify --input PATH --json` or `brain notify --input - --json`. Preview is the default no-write path. Review the normalized envelope, provider payload, policy reason codes, and `writesPerformed: false`.
 6. For an owner-approved file test only, run:
@@ -41,7 +41,9 @@ Configure operational notifications without turning the vault into a messaging c
    brain notify --input PATH --deliver-file --approve-private-send --json
    ```
 
-   Use `--output PATH` only for a new file under the system temporary directory and outside the repository. Otherwise the tool creates a private file in the selected environment's ignored notification-output directory. Never overwrite or reuse an occupied path.
+   Use `--output PATH` only for a new file under the system temporary directory and outside the repository. Otherwise first create and review a current-user-owned mode-`0700` `notification-output/` directory in the selected overlay outside this transaction; the tool creates a private file there but never creates or repairs the directory. Never overwrite or reuse an occupied path.
+   If delivery reports a safe failure, do not infer success and do not resend automatically. The tool reserves the dedupe state before publishing any default or explicit-temporary output, so concurrent attempts serialize and an output failure remains at-most-once for the configured dedupe window. It deliberately retains installed state, any created private output, and authenticated ignored `.notification-state.json.{notify-claim,migrate-{old,new}-*}` evidence needed for safe recovery; inspect that evidence manually and choose whether to wait, remove confirmed-obsolete generations, or use a new owner-approved dedupe key.
+   Transaction generations are capped at 32 files and 2 MiB for each canonical config/state family. At the cap, stop scheduled notification runs; inspect the ignored mode-`0600` exact-prefix generations, preserve anything uncertain, and delete only owner-confirmed obsolete generations before retrying.
 7. Re-run `brain notify --check --json` and report the provider, enabled categories, policy outcome, and whether a local test file was created. Do not quote notification payload text in the report.
 
 ## Real-provider gate

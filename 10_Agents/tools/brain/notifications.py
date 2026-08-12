@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import errno
 import hashlib
 import json
 import os
@@ -62,10 +63,20 @@ RETRY_DELAYS_SECONDS = (5, 30, 120)
 MAX_STATE_ROWS = 256
 MAX_INPUT_BYTES = 64 * 1024
 MAX_OUTPUT_BYTES = 128 * 1024
+MAX_CONFIG_BYTES = 64 * 1024
+MAX_STATE_BYTES = 256 * 1024
+MAX_TRANSACTION_GENERATIONS = 32
+MAX_TRANSACTION_GENERATION_BYTES = 2 * 1024 * 1024
 
 
 class NotificationError(RuntimeError):
     """Stable, redacted notification-boundary refusal."""
+
+
+def _private_owned(info: os.stat_result) -> bool:
+    """Require current-user ownership where the runtime exposes POSIX uid."""
+    geteuid = getattr(os, "geteuid", None)
+    return geteuid is None or not hasattr(info, "st_uid") or info.st_uid == geteuid()
 
 
 def canonical_json(value: object) -> bytes:
@@ -547,23 +558,206 @@ def _optional_selected(api, root: Path, requested: str | None) -> dict | None:
     return selected
 
 
-def _read_optional(api, root: Path, rel: str, *, limit: int) -> tuple[bytes | None, dict | None]:
+def _read_private_at(parent: int, name: str, *, limit: int) -> tuple[bytes, os.stat_result]:
+    """Read a stable, bounded, private regular file without following links."""
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0)
+        | getattr(os, "O_NONBLOCK", 0)
+    )
     try:
-        raw = api._read_nofollow_bytes(root, rel, max_bytes=limit)
+        descriptor = os.open(name, flags, dir_fd=parent)
     except FileNotFoundError:
-        try:
-            parent, name = api._open_migration_parent(root, rel)
-        except (FileNotFoundError, OSError, api.LinkMigrationError):
-            return None, None
-        try:
-            prefix = f".{name}.migrate-"
-            if any(entry.startswith(prefix) for entry in os.listdir(parent)):
-                raise NotificationError("notification local state needs recovery")
-        finally:
-            os.close(parent)
-        return None, None
+        raise
     except OSError:
         raise NotificationError("notification local state is unsafe") from None
+    try:
+        before = os.fstat(descriptor)
+        if not (
+            stat.S_ISREG(before.st_mode)
+            and stat.S_IMODE(before.st_mode) == 0o600
+            and _private_owned(before)
+            and 0 <= before.st_size <= limit
+        ):
+            raise NotificationError("notification local state is unsafe")
+        chunks = []
+        remaining = limit + 1
+        while remaining:
+            chunk = os.read(descriptor, min(64 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        after = os.fstat(descriptor)
+        stable = (
+            before.st_dev,
+            before.st_ino,
+            stat.S_IFMT(before.st_mode),
+            stat.S_IMODE(before.st_mode),
+            getattr(before, "st_uid", None),
+            before.st_size,
+            before.st_mtime_ns,
+            before.st_ctime_ns,
+        ) == (
+            after.st_dev,
+            after.st_ino,
+            stat.S_IFMT(after.st_mode),
+            stat.S_IMODE(after.st_mode),
+            getattr(after, "st_uid", None),
+            after.st_size,
+            after.st_mtime_ns,
+            after.st_ctime_ns,
+        )
+        raw = b"".join(chunks)
+        if not stable or len(raw) != before.st_size or len(raw) > limit:
+            raise NotificationError("notification local state changed; preserved")
+        return raw, before
+    except OSError:
+        raise NotificationError("notification local state is unsafe") from None
+    finally:
+        os.close(descriptor)
+
+
+def _generation_inventory(
+    parent: int, name: str, *, limit: int, active_claim: bool = False
+) -> tuple[int, int, int]:
+    """Validate and bound ignored transaction generations for one canonical file."""
+    prefix = f".{name}.migrate-"
+    claim = f".{name}.notify-claim"
+    try:
+        os.stat(claim, dir_fd=parent, follow_symlinks=False)
+    except FileNotFoundError:
+        pass
+    except OSError:
+        raise NotificationError("notification local state needs recovery") from None
+    else:
+        if active_claim:
+            pass
+        else:
+            raise NotificationError("notification local state needs recovery")
+    pattern = re.compile(
+        rf"^{re.escape(prefix)}(?:new|old)-[0-9a-f]{{24}}$"
+    )
+    count = 0
+    total = 0
+    unfinished = 0
+    for entry in os.listdir(parent):
+        if not entry.startswith(prefix):
+            continue
+        if not pattern.fullmatch(entry):
+            raise NotificationError("notification local state needs recovery")
+        try:
+            info = os.stat(entry, dir_fd=parent, follow_symlinks=False)
+        except OSError:
+            raise NotificationError("notification local state needs recovery") from None
+        if not (
+            stat.S_ISREG(info.st_mode)
+            and stat.S_IMODE(info.st_mode) == 0o600
+            and _private_owned(info)
+            and 0 <= info.st_size <= limit
+        ):
+            raise NotificationError("notification local state needs recovery")
+        count += 1
+        total += info.st_size
+        if entry.startswith(f".{name}.migrate-new-"):
+            unfinished += 1
+            continue
+        try:
+            raw, _generation_info = _read_private_at(
+                parent, entry, limit=limit
+            )
+            validator = validate_config if name == CONFIG_NAME else validate_state
+            validator(strict_json(raw))
+        except NotificationError:
+            raise NotificationError("notification local state needs recovery") from None
+    if (
+        count > MAX_TRANSACTION_GENERATIONS
+        or total > MAX_TRANSACTION_GENERATION_BYTES
+    ):
+        raise NotificationError("notification local state needs maintenance")
+    return count, total, unfinished
+
+
+def _require_generation_capacity(
+    parent: int,
+    name: str,
+    *,
+    limit: int,
+    additional_count: int,
+    additional_bytes: int,
+    active_claim: bool = False,
+) -> None:
+    count, total, unfinished = _generation_inventory(
+        parent, name, limit=limit, active_claim=active_claim
+    )
+    if unfinished:
+        raise NotificationError("notification local state needs recovery")
+    if (
+        count + additional_count > MAX_TRANSACTION_GENERATIONS
+        or total + additional_bytes > MAX_TRANSACTION_GENERATION_BYTES
+    ):
+        raise NotificationError("notification local state needs maintenance")
+
+
+def _require_generation_capacity_for(
+    api,
+    root: Path,
+    rel: str,
+    *,
+    limit: int,
+    additional_count: int,
+    additional_bytes: int,
+) -> None:
+    try:
+        parent, name = api._open_migration_parent(root, rel)
+    except FileNotFoundError:
+        return
+    except OSError as error:
+        if error.errno == errno.ENOENT:
+            return
+        raise NotificationError("notification local state is unsafe") from None
+    except api.LinkMigrationError:
+        raise NotificationError("notification local state is unsafe") from None
+    try:
+        _require_generation_capacity(
+            parent,
+            name,
+            limit=limit,
+            additional_count=additional_count,
+            additional_bytes=additional_bytes,
+        )
+    finally:
+        os.close(parent)
+
+
+def _read_optional(api, root: Path, rel: str, *, limit: int) -> tuple[bytes | None, dict | None]:
+    try:
+        parent, name = api._open_migration_parent(root, rel)
+    except FileNotFoundError:
+        return None, None
+    except OSError as error:
+        if error.errno == errno.ENOENT:
+            return None, None
+        raise NotificationError("notification local state is unsafe") from None
+    except api.LinkMigrationError:
+        raise NotificationError("notification local state is unsafe") from None
+    try:
+        if not _private_owned(os.fstat(parent)):
+            raise NotificationError("notification local state is unsafe")
+        generations, _generation_bytes, unfinished = _generation_inventory(
+            parent, name, limit=limit
+        )
+        if unfinished:
+            raise NotificationError("notification local state needs recovery")
+        try:
+            raw, _info = _read_private_at(parent, name, limit=limit)
+        except FileNotFoundError:
+            if generations:
+                raise NotificationError("notification local state needs recovery")
+            return None, None
+    finally:
+        os.close(parent)
     try:
         value = strict_json(raw)
     except NotificationError:
@@ -574,13 +768,13 @@ def _read_optional(api, root: Path, rel: str, *, limit: int) -> tuple[bytes | No
 def load_setup(api, root: Path, requested: str | None) -> tuple[dict, dict | None, bytes | None]:
     selected = _safe_selected(api, root, requested)
     rel = _overlay_rel(api, selected["slug"], CONFIG_NAME)
-    raw, value = _read_optional(api, root, rel, limit=64 * 1024)
+    raw, value = _read_optional(api, root, rel, limit=MAX_CONFIG_BYTES)
     return selected, None if value is None else validate_config(value), raw
 
 
 def load_delivery_state(api, root: Path, slug: str) -> tuple[dict, bytes | None]:
     rel = _overlay_rel(api, slug, STATE_NAME)
-    raw, value = _read_optional(api, root, rel, limit=256 * 1024)
+    raw, value = _read_optional(api, root, rel, limit=MAX_STATE_BYTES)
     return (empty_state() if value is None else validate_state(value)), raw
 
 
@@ -614,15 +808,13 @@ def _casefold_conflict(parent: int, name: str) -> bool:
     return any(entry.casefold() == folded and entry != name for entry in os.listdir(parent))
 
 
-def _open_child_directory(parent: int, name: str, *, create: bool) -> int:
+def _open_child_directory(
+    parent: int, name: str, *, create: bool, private: bool = False
+) -> int:
     if _casefold_conflict(parent, name):
         raise NotificationError("notification local state is unsafe")
     if create:
-        try:
-            os.mkdir(name, 0o700, dir_fd=parent)
-            os.fsync(parent)
-        except FileExistsError:
-            pass
+        raise NotificationError("notification private directory must already exist")
     flags = (
         os.O_RDONLY
         | getattr(os, "O_DIRECTORY", 0)
@@ -633,7 +825,13 @@ def _open_child_directory(parent: int, name: str, *, create: bool) -> int:
         child = os.open(name, flags, dir_fd=parent)
     except OSError:
         raise NotificationError("notification local state is unsafe") from None
-    if not stat.S_ISDIR(os.fstat(child).st_mode):
+    info = os.fstat(child)
+    if not stat.S_ISDIR(info.st_mode):
+        os.close(child)
+        raise NotificationError("notification local state is unsafe")
+    if private and (
+        stat.S_IMODE(info.st_mode) != 0o700 or not _private_owned(info)
+    ):
         os.close(child)
         raise NotificationError("notification local state is unsafe")
     return child
@@ -650,7 +848,15 @@ def _open_overlay_directory(api, root: Path, slug: str, *, output: bool) -> int:
         if output:
             components.append(OUTBOX_DIR)
         for component in components:
-            child = _open_child_directory(descriptor, component, create=True)
+            child = _open_child_directory(
+                descriptor,
+                component,
+                create=False,
+                private=output and component == OUTBOX_DIR,
+            )
+            if not _private_owned(os.fstat(child)):
+                os.close(child)
+                raise NotificationError("notification local state is unsafe")
             os.close(descriptor)
             descriptor = child
         return descriptor
@@ -669,28 +875,142 @@ def _stage_exact(api, parent: int, basename: str, data: bytes) -> tuple[str, dic
         | getattr(os, "O_CLOEXEC", 0)
     )
     descriptor = os.open(name, flags, 0o600, dir_fd=parent)
-    identity = api._link_migration_identity(os.fstat(descriptor))
+    identity = None
     try:
         offset = 0
         while offset < len(data):
             offset += os.write(descriptor, data[offset:])
         os.fchmod(descriptor, 0o600)
         os.fsync(descriptor)
-    except BaseException:
-        try:
-            current = os.stat(name, dir_fd=parent, follow_symlinks=False)
-            if api._link_migration_identity(current) == identity:
-                os.unlink(name, dir_fd=parent)
-                os.fsync(parent)
-        except FileNotFoundError:
-            pass
-        raise
+        info = os.fstat(descriptor)
+        if not _private_owned(info):
+            raise NotificationError("notification local state is unsafe")
+        identity = api._link_migration_identity(info)
     finally:
         os.close(descriptor)
+    if identity is None:
+        raise NotificationError("notification local state is unsafe")
+    os.fsync(parent)
     return name, {"identity": identity}
 
 
-def _create_exact_at(parent: int, name: str, data: bytes) -> tuple[int, int]:
+def _quarantine_no_replace(
+    api, parent: int, name: str, backup: str
+) -> None:
+    """Atomically move state to an absent transaction name or fail closed."""
+    try:
+        api._rename_external_at(parent, name, backup)
+        os.fsync(parent)
+    except (OSError, api.InstallError):
+        raise NotificationError(
+            "notification local state changed; preserved"
+        ) from None
+
+
+def _acquire_cas_claim(
+    api, parent: int, name: str, data: bytes
+) -> tuple[str, dict, bytes]:
+    """Atomically serialize capacity checking and staging for one state file."""
+    claim = f".{name}.notify-claim"
+    flags = (
+        os.O_WRONLY
+        | os.O_CREAT
+        | os.O_EXCL
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0)
+    )
+    try:
+        descriptor = os.open(claim, flags, 0o600, dir_fd=parent)
+    except FileExistsError:
+        raise NotificationError("notification local state needs recovery") from None
+    try:
+        offset = 0
+        while offset < len(data):
+            offset += os.write(descriptor, data[offset:])
+        os.fchmod(descriptor, 0o600)
+        os.fsync(descriptor)
+        info = os.fstat(descriptor)
+        if not _private_owned(info):
+            raise NotificationError("notification local state is unsafe")
+        identity = api._link_migration_identity(info)
+    finally:
+        os.close(descriptor)
+    os.fsync(parent)
+    return claim, {"identity": identity}, data
+
+
+def _retire_cas_claim(
+    api,
+    parent: int,
+    name: str,
+    claim: str,
+    ownership: dict,
+    data: bytes,
+    validator,
+    *,
+    limit: int,
+) -> bool:
+    """Relabel an exact owned claim to retained old evidence; never unlink it."""
+    try:
+        raw, info = _read_private_at(parent, claim, limit=limit)
+        if raw != data or api._link_migration_identity(info) != ownership["identity"]:
+            return False
+        retained = api._unused_migration_name(parent, name, "old")
+        api._rename_external_at(parent, claim, retained)
+        os.fsync(parent)
+        retained_raw, retained_info = _read_private_at(parent, retained, limit=limit)
+        return (
+            retained_raw == data
+            and api._link_migration_identity(retained_info) == ownership["identity"]
+        )
+    except (OSError, NotificationError, api.InstallError):
+        return False
+
+
+def _retain_cas_loser_generation(
+    api,
+    parent: int,
+    name: str,
+    item: dict,
+    expected: bytes | None,
+    validator,
+    *,
+    limit: int,
+) -> bool:
+    """Relabel a complete superseded stage; ambiguous stages remain `new`."""
+    stage = item.get("new")
+    identity = item.get("stage_ownership", {}).get("identity")
+    if not stage or identity is None:
+        return False
+    try:
+        current, _current_info = _read_private_at(parent, name, limit=limit)
+        if current == expected:
+            return False
+        validator(strict_json(current))
+        staged, staged_info = _read_private_at(parent, stage, limit=limit)
+        if (
+            staged != item["desired"]
+            or api._link_migration_identity(staged_info) != identity
+        ):
+            return False
+        retained = api._unused_migration_name(parent, name, "old")
+        api._rename_external_at(parent, stage, retained)
+        os.fsync(parent)
+        retained_raw, retained_info = _read_private_at(
+            parent, retained, limit=limit
+        )
+        if (
+            retained_raw != item["desired"]
+            or api._link_migration_identity(retained_info) != identity
+        ):
+            return False
+        item["new"] = retained
+        return True
+    except (OSError, NotificationError, api.InstallError):
+        return False
+
+
+def _create_exact_at(parent: int, name: str, data: bytes) -> tuple[int, int, int | None]:
     if len(data) > MAX_OUTPUT_BYTES:
         raise NotificationError("notification output is too large")
     if _casefold_conflict(parent, name):
@@ -701,35 +1021,80 @@ def _create_exact_at(parent: int, name: str, data: bytes) -> tuple[int, int]:
         offset = 0
         while offset < len(data):
             offset += os.write(descriptor, data[offset:])
+        os.fchmod(descriptor, 0o600)
         os.fsync(descriptor)
         info = os.fstat(descriptor)
-        return info.st_dev, info.st_ino
-    except BaseException:
-        try:
-            info = os.stat(name, dir_fd=parent, follow_symlinks=False)
-            opened = os.fstat(descriptor)
-            if (info.st_dev, info.st_ino) == (opened.st_dev, opened.st_ino):
-                os.unlink(name, dir_fd=parent)
-                os.fsync(parent)
-        except OSError:
-            pass
-        raise
+        if not _private_owned(info):
+            raise NotificationError("notification output is unsafe")
     finally:
         os.close(descriptor)
+    os.fsync(parent)
+    return info.st_dev, info.st_ino, getattr(info, "st_uid", None)
 
 
-def _remove_created_at(parent: int, name: str, identity: tuple[int, int]) -> bool:
+def _owned_output_at(
+    api,
+    parent: int,
+    name: str,
+    identity: tuple[int, int, int | None],
+    expected: bytes,
+) -> bool:
+    """Authenticate the exact transaction output without mutating its path."""
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0)
+        | getattr(os, "O_NONBLOCK", 0)
+    )
     try:
-        info = os.stat(name, dir_fd=parent, follow_symlinks=False)
-        if (info.st_dev, info.st_ino) != identity or not stat.S_ISREG(info.st_mode):
-            return False
-        os.unlink(name, dir_fd=parent)
-        os.fsync(parent)
-        return True
-    except FileNotFoundError:
-        return True
+        descriptor = os.open(name, flags, dir_fd=parent)
     except OSError:
         return False
+    try:
+        before = os.fstat(descriptor)
+        if not (
+            stat.S_ISREG(before.st_mode)
+            and stat.S_IMODE(before.st_mode) == 0o600
+            and _private_owned(before)
+            and (before.st_dev, before.st_ino, getattr(before, "st_uid", None))
+            == identity
+            and before.st_size == len(expected)
+            and len(expected) <= MAX_OUTPUT_BYTES
+        ):
+            return False
+        chunks = []
+        remaining = len(expected) + 1
+        while remaining:
+            chunk = os.read(descriptor, min(64 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        after = os.fstat(descriptor)
+        stable = (
+            before.st_dev,
+            before.st_ino,
+            stat.S_IFMT(before.st_mode),
+            stat.S_IMODE(before.st_mode),
+            getattr(before, "st_uid", None),
+            before.st_size,
+            before.st_mtime_ns,
+            before.st_ctime_ns,
+        ) == (
+            after.st_dev,
+            after.st_ino,
+            stat.S_IFMT(after.st_mode),
+            stat.S_IMODE(after.st_mode),
+            getattr(after, "st_uid", None),
+            after.st_size,
+            after.st_mtime_ns,
+            after.st_ctime_ns,
+        )
+        return stable and b"".join(chunks) == expected
+    except OSError:
+        return False
+    finally:
+        os.close(descriptor)
 
 
 def _write_json_cas(
@@ -739,35 +1104,71 @@ def _write_json_cas(
     desired: bytes,
     expected: bytes | None,
     validator,
+    *,
+    limit: int = MAX_STATE_BYTES,
 ) -> None:
     _require_mutation(api)
+    if len(desired) > limit:
+        raise NotificationError("notification local state is unsafe")
     parent, name = api._open_migration_parent(root, rel)
     item = {"desired": desired, "name": name, "new": None, "parent": parent, "stage_ownership": {}}
+    claim = None
+    claim_ownership = {}
+    claim_data = b""
+    claim_retirable = False
     backup = None
     installed = False
     committed = False
     try:
+        if not _private_owned(os.fstat(parent)):
+            raise NotificationError("notification local state is unsafe")
+        claim, claim_ownership, claim_data = _acquire_cas_claim(
+            api, parent, name, expected if expected is not None else desired
+        )
         try:
-            current, current_info = api._read_migration_at(parent, name)
+            current, current_info = _read_private_at(parent, name, limit=limit)
         except FileNotFoundError:
             current = current_info = None
-        if current != expected:
-            raise NotificationError("notification delivery state changed; preserved")
         if current is not None:
             try:
                 validator(strict_json(current))
             except NotificationError:
                 raise NotificationError("notification delivery state needs recovery") from None
+        if current != expected:
+            if current is not None:
+                _require_generation_capacity(
+                    parent,
+                    name,
+                    limit=limit,
+                    additional_count=1,
+                    additional_bytes=len(claim_data),
+                    active_claim=True,
+                )
+                claim_retirable = True
+            raise NotificationError("notification delivery state changed; preserved")
+        _require_generation_capacity(
+            parent,
+            name,
+            limit=limit,
+            additional_count=3 if current is not None else 2,
+            additional_bytes=(
+                len(desired)
+                + len(claim_data)
+                + (len(current) if current is not None else 0)
+            ),
+            active_claim=True,
+        )
+        claim_retirable = True
         item["new"], item["stage_ownership"] = _stage_exact(api, parent, name, desired)
         if current is not None:
-            again, again_info = api._read_migration_at(parent, name)
+            again, again_info = _read_private_at(parent, name, limit=limit)
             if again != current or api._link_migration_identity(again_info) != api._link_migration_identity(current_info):
                 raise NotificationError("notification delivery state changed; preserved")
             backup = api._unused_migration_name(parent, name, "old")
             # Register the rollback name before rename so caught interruption can restore it.
-            api._quarantine_migration_at(parent, name, backup)
+            _quarantine_no_replace(api, parent, name, backup)
             try:
-                backup_raw, backup_info = api._read_migration_at(parent, backup)
+                backup_raw, backup_info = _read_private_at(parent, backup, limit=limit)
             except FileNotFoundError:
                 backup_raw = backup_info = None
             if (
@@ -777,28 +1178,38 @@ def _write_json_cas(
                 != api._link_migration_identity(current_info)
             ):
                 if backup_raw is not None:
-                    if api._restore_quarantined_at(parent, backup, name):
-                        os.unlink(backup, dir_fd=parent)
-                        backup = None
-                        os.fsync(parent)
+                    # Restore only by create-if-absent hard link and retain the
+                    # generation as recovery evidence; never unlink a writable
+                    # pathname after authentication.
+                    api._restore_quarantined_at(parent, backup, name)
                 raise NotificationError("notification local state changed; preserved")
         if _casefold_conflict(parent, name):
             raise NotificationError("notification local state changed; preserved")
-        staged_raw, staged_info = api._read_migration_at(parent, item["new"])
+        staged_raw, staged_info = _read_private_at(parent, item["new"], limit=limit)
         if (
             staged_raw != desired
             or api._link_migration_identity(staged_info)
             != item["stage_ownership"]["identity"]
         ):
             raise NotificationError("notification local state changed; preserved")
-        api._install_migration_at(parent, item["new"], name)
+        try:
+            api._rename_external_at(parent, item["new"], name)
+        except (OSError, api.InstallError):
+            raise NotificationError(
+                "notification local state changed; preserved"
+            ) from None
         installed = True
-        actual, actual_info = api._read_migration_at(parent, name)
-        stage_info = os.stat(item["new"], dir_fd=parent, follow_symlinks=False)
-        if actual != desired or stat.S_IMODE(actual_info.st_mode) != 0o600 or (actual_info.st_dev, actual_info.st_ino) != (stage_info.st_dev, stage_info.st_ino):
+        os.fsync(parent)
+        actual, actual_info = _read_private_at(parent, name, limit=limit)
+        if (
+            actual != desired
+            or stat.S_IMODE(actual_info.st_mode) != 0o600
+            or api._link_migration_identity(actual_info)
+            != item["stage_ownership"]["identity"]
+        ):
             raise NotificationError("notification delivery state changed; preserved")
         if backup is not None:
-            backup_raw, backup_info = api._read_migration_at(parent, backup)
+            backup_raw, backup_info = _read_private_at(parent, backup, limit=limit)
             if (
                 backup_raw != current
                 or api._link_migration_identity(backup_info)
@@ -806,111 +1217,67 @@ def _write_json_cas(
             ):
                 raise NotificationError("notification delivery state changed; preserved")
         committed = True
-        if backup is not None:
-            os.unlink(backup, dir_fd=parent)
-            backup = None
-            os.fsync(parent)
     except BaseException:
         if committed:
             try:
-                final_raw, final_info = api._read_migration_at(parent, name)
-                stage_info = os.stat(
-                    item["new"], dir_fd=parent, follow_symlinks=False
-                )
-            except OSError:
+                final_raw, final_info = _read_private_at(parent, name, limit=limit)
+            except (OSError, NotificationError):
                 pass
             else:
                 if (
                     final_raw == desired
-                    and (final_info.st_dev, final_info.st_ino)
-                    == (stage_info.st_dev, stage_info.st_ino)
+                    and api._link_migration_identity(final_info)
+                    == item["stage_ownership"]["identity"]
                 ):
                     return
-        if installed and not committed:
+        if backup is not None and not committed and not installed:
             try:
-                _actual, actual_info = api._read_migration_at(parent, name)
-                stage_info = os.stat(item["new"], dir_fd=parent, follow_symlinks=False)
-                if (actual_info.st_dev, actual_info.st_ino) == (stage_info.st_dev, stage_info.st_ino):
-                    os.unlink(name, dir_fd=parent)
+                # Restore a missing public name with a create-if-absent hard
+                # link, but retain the private backup as recovery evidence.
+                api._restore_quarantined_at(parent, backup, name)
             except OSError:
                 pass
-        if backup is not None and not committed:
-            try:
-                if api._restore_quarantined_at(parent, backup, name):
-                    os.unlink(backup, dir_fd=parent)
-                    backup = None
-            except OSError:
-                pass
+        if not installed:
+            _retain_cas_loser_generation(
+                api,
+                parent,
+                name,
+                item,
+                expected,
+                validator,
+                limit=limit,
+            )
         raise
     finally:
-        try:
-            if item["new"] is not None:
-                try:
-                    api._remove_owned_migration_stage(item)
-                except (OSError, api.LinkMigrationError):
-                    try:
-                        final_raw, final_info = api._read_migration_at(
-                            parent, name
-                        )
-                    except OSError:
-                        final_raw = None
-                        final_info = None
-                    if not (
-                        committed
-                        and final_raw == desired
-                        and final_info is not None
-                        and stat.S_IMODE(final_info.st_mode) == 0o600
-                    ):
-                        raise
-        finally:
-            os.close(parent)
-
-
-def _delete_json_cas(api, root: Path, rel: str, expected: bytes) -> None:
-    """Delete only an authenticated current JSON file, preserving any replacement."""
-    parent, name = api._open_migration_parent(root, rel)
-    backup = None
-    current_info = None
-    try:
-        current, current_info = api._read_migration_at(parent, name)
-        if current != expected:
-            raise NotificationError("notification delivery state changed; preserved")
-        backup = api._unused_migration_name(parent, name, "old")
-        api._quarantine_migration_at(parent, name, backup)
-        backup_raw, backup_info = api._read_migration_at(parent, backup)
-        if (
-            backup_raw != expected
-            or api._link_migration_identity(backup_info)
-            != api._link_migration_identity(current_info)
-        ):
-            if api._restore_quarantined_at(parent, backup, name):
-                os.unlink(backup, dir_fd=parent)
-                backup = None
-                os.fsync(parent)
-            raise NotificationError("notification delivery state changed; preserved")
-        os.unlink(backup, dir_fd=parent)
-        backup = None
-        os.fsync(parent)
-    except BaseException:
-        if backup is not None:
-            try:
-                if api._restore_quarantined_at(parent, backup, name):
-                    os.unlink(backup, dir_fd=parent)
-                    backup = None
-                    os.fsync(parent)
-            except OSError:
-                pass
-        raise
-    finally:
+        retirement_failed = False
+        if claim is not None and claim_retirable:
+            retirement_failed = not _retire_cas_claim(
+                api,
+                parent,
+                name,
+                claim,
+                claim_ownership,
+                claim_data,
+                validator,
+                limit=limit,
+            )
         os.close(parent)
-
-
+        if retirement_failed:
+            raise NotificationError("notification local state needs recovery")
 def write_setup(api, root: Path, selected: dict, payload: dict, prior: bytes | None) -> None:
     parent = _open_overlay_directory(api, root, selected["slug"], output=False)
     os.close(parent)
     rel = _overlay_rel(api, selected["slug"], CONFIG_NAME)
     desired = canonical_json(payload) + b"\n"
-    _write_json_cas(api, root, rel, desired, prior, validate_config)
+    _write_json_cas(
+        api,
+        root,
+        rel,
+        desired,
+        prior,
+        validate_config,
+        limit=MAX_CONFIG_BYTES,
+    )
 
 
 def _output_target(
@@ -953,7 +1320,9 @@ def _output_target(
         descriptor = os.open(temp_root, flags)
         try:
             for component in relative_parent.parts:
-                child = _open_child_directory(descriptor, component, create=False)
+                child = _open_child_directory(
+                    descriptor, component, create=False
+                )
                 os.close(descriptor)
                 descriptor = child
         except BaseException:
@@ -961,9 +1330,49 @@ def _output_target(
             raise
         return descriptor, target.name, "external-temporary"
     descriptor = _open_overlay_directory(api, root, slug, output=True)
+    dedupe_digest = hashlib.sha256(dedupe.encode()).hexdigest()
     output_key = f"{dedupe}\0{occurred.isoformat()}".encode()
-    name = f"{hashlib.sha256(output_key).hexdigest()}.json"
+    name = f"{dedupe_digest}-{hashlib.sha256(output_key).hexdigest()}.json"
     return descriptor, name, "selected-environment-overlay"
+
+
+def _output_parent_identity(parent: int) -> tuple[int, int, int, int, int | None]:
+    info = os.fstat(parent)
+    return (
+        info.st_dev,
+        info.st_ino,
+        stat.S_IFMT(info.st_mode),
+        stat.S_IMODE(info.st_mode),
+        getattr(info, "st_uid", None),
+    )
+
+
+def _output_parent_matches(
+    api,
+    root: Path,
+    slug: str,
+    dedupe: str,
+    occurred: datetime,
+    explicit: Path | None,
+    expected_identity: tuple[int, int, int, int, int | None],
+    expected_name: str,
+    expected_scope: str,
+) -> bool:
+    """Reopen the requested path and bind it to the held output parent."""
+    try:
+        reopened, name, scope = _output_target(
+            api, root, slug, dedupe, occurred, explicit
+        )
+    except (OSError, NotificationError):
+        return False
+    try:
+        return (
+            name == expected_name
+            and scope == expected_scope
+            and _output_parent_identity(reopened) == expected_identity
+        )
+    finally:
+        os.close(reopened)
 
 
 def deliver_file(
@@ -984,7 +1393,6 @@ def deliver_file(
     decision = delivery_decision(config, state, envelope, now)
     if not decision["allowed"]:
         raise NotificationError("notification delivery is not allowed")
-    safety_guard(root, persist=True)
     selected_again, config_again, config_raw_again = load_setup(api, root, selected["slug"])
     if selected_again["slug"] != selected["slug"] or config_again != config or config_raw_again != config_raw:
         raise NotificationError("notification setup changed; preserved")
@@ -999,6 +1407,35 @@ def deliver_file(
     )
     if envelope_again != envelope:
         raise NotificationError("notification source authority changed; preserved")
+    rows = [
+        row for row in state["deliveries"]
+        if _timestamp(row["deliveredAt"]) >= now - timedelta(hours=168)
+    ]
+    rows.append({
+        "category": envelope["category"],
+        "dedupeDigest": hashlib.sha256(
+            envelope["dedupeKey"].encode()
+        ).hexdigest(),
+        "deliveredAt": now.isoformat(),
+    })
+    desired_state = canonical_json({
+        "deliveries": rows[-MAX_STATE_ROWS:],
+        "owner": OWNER,
+        "schemaVersion": STATE_SCHEMA_VERSION,
+    }) + b"\n"
+    state_rel = _overlay_rel(api, selected["slug"], STATE_NAME)
+    _require_generation_capacity_for(
+        api,
+        root,
+        state_rel,
+        limit=MAX_STATE_BYTES,
+        additional_count=3 if state_raw is not None else 2,
+        additional_bytes=(
+            len(desired_state)
+            + (2 * len(state_raw) if state_raw is not None else len(desired_state))
+        ),
+    )
+    safety_guard(root, persist=True)
     output_parent, output_name, output_scope = _output_target(
         api,
         root,
@@ -1008,6 +1445,7 @@ def deliver_file(
         explicit_output,
     )
     payload = {
+        "deliveredAt": now.isoformat(),
         "destinationLabel": config["destinationLabel"],
         "owner": OWNER,
         "payload": format_provider("file", envelope),
@@ -1015,51 +1453,56 @@ def deliver_file(
         "schemaVersion": SCHEMA_VERSION,
     }
     output_bytes = canonical_json(payload) + b"\n"
+    output_parent_identity = _output_parent_identity(output_parent)
     try:
-        identity = _create_exact_at(output_parent, output_name, output_bytes)
+        # Reserve the dedupe/rate state before publishing the output. This CAS
+        # is the serialization point for concurrent same-dedupe deliveries,
+        # including explicit temporary outputs. A later output failure keeps
+        # the reservation and therefore remains at-most-once.
+        _write_json_cas(
+            api,
+            root,
+            state_rel,
+            desired_state,
+            state_raw,
+            validate_state,
+            limit=MAX_STATE_BYTES,
+        )
         try:
-            rows = [
-                row for row in state["deliveries"]
-                if _timestamp(row["deliveredAt"]) >= now - timedelta(hours=168)
-            ]
-            rows.append({
-                "category": envelope["category"],
-                "dedupeDigest": hashlib.sha256(
-                    envelope["dedupeKey"].encode()
-                ).hexdigest(),
-                "deliveredAt": now.isoformat(),
-            })
-            desired_state = canonical_json({"deliveries": rows[-MAX_STATE_ROWS:], "owner": OWNER, "schemaVersion": STATE_SCHEMA_VERSION}) + b"\n"
-            state_rel = _overlay_rel(api, selected["slug"], STATE_NAME)
-            _write_json_cas(api, root, state_rel, desired_state, state_raw, validate_state)
-            try:
-                output_again, output_info = api._read_migration_at(
-                    output_parent, output_name
-                )
-            except FileNotFoundError:
-                output_again = None
-                output_info = None
-            if (
-                output_again != output_bytes
-                or output_info is None
-                or (output_info.st_dev, output_info.st_ino) != identity
+            if not _output_parent_matches(
+                api,
+                root,
+                selected["slug"],
+                envelope["dedupeKey"],
+                now,
+                explicit_output,
+                output_parent_identity,
+                output_name,
+                output_scope,
             ):
-                if state_raw is None:
-                    _delete_json_cas(api, root, state_rel, desired_state)
-                else:
-                    _write_json_cas(
-                        api,
-                        root,
-                        state_rel,
-                        state_raw,
-                        desired_state,
-                        validate_state,
-                    )
+                raise NotificationError("notification output parent changed; preserved")
+            identity = _create_exact_at(output_parent, output_name, output_bytes)
+            if not _owned_output_at(
+                api, output_parent, output_name, identity, output_bytes
+            ):
                 raise NotificationError("notification output changed; preserved")
+            if not _output_parent_matches(
+                api,
+                root,
+                selected["slug"],
+                envelope["dedupeKey"],
+                now,
+                explicit_output,
+                output_parent_identity,
+                output_name,
+                output_scope,
+            ):
+                raise NotificationError("notification output parent changed; preserved")
         except BaseException:
-            if not _remove_created_at(output_parent, output_name, identity):
-                raise NotificationError("notification transaction needs recovery") from None
-            raise
+            # State is a durable at-most-once reservation. Never roll it back:
+            # a concurrent delivery could otherwise publish after this output
+            # has already become observable. Any created output is preserved.
+            raise NotificationError("notification transaction needs recovery") from None
     finally:
         os.close(output_parent)
     return {"delivered": True, "output": output_scope, "provider": "file"}
@@ -1100,7 +1543,7 @@ def command(api, root: Path, args, *, safety_guard=None, stdin=None) -> int:
         if args.setup:
             selected = _safe_selected(api, root, args.requested_env)
             rel = _overlay_rel(api, selected["slug"], CONFIG_NAME)
-            prior, current = _read_optional(api, root, rel, limit=64 * 1024)
+            prior, current = _read_optional(api, root, rel, limit=MAX_CONFIG_BYTES)
             if current is not None:
                 validate_config(current)
             payload = setup_payload(args)
@@ -1115,7 +1558,9 @@ def command(api, root: Path, args, *, safety_guard=None, stdin=None) -> int:
                     raise NotificationError("notification environment is unavailable")
             else:
                 rel = _overlay_rel(api, selected["slug"], CONFIG_NAME)
-                config_raw, config_value = _read_optional(api, root, rel, limit=64 * 1024)
+                config_raw, config_value = _read_optional(
+                    api, root, rel, limit=MAX_CONFIG_BYTES
+                )
                 config = None if config_value is None else validate_config(config_value)
             if args.check:
                 if config is None:
