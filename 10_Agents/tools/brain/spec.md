@@ -464,6 +464,134 @@ The `tasks` config key (§15.3) holds the module's settings; its sole subkey `ca
 
 **Deferred surfacing (explicitly out of scope here):** VS Code task *views* and web-UI views (#27), notification/overdue digests (#21), external-tracker mirroring (#26 directionality).
 
+## 18. Semantic search (QMD — issue #8)
+
+Natural-language, relevance-ranked retrieval over vault notes, layered **beside** the keyword machinery, never replacing it. Decided 2026-08-11 per the owner correction and accepted recommendation on issue #8 (QMD = **Query Markdown**, not Quarto). Two commands carry the whole feature: `brain embed` maintains a local vector store (§18.3), `brain search --semantic` queries it (§18.4). Every supported harness reaches it through the CLI — the universal layer (each `10_Agents/harnesses/*/wiring.md` documents invocation); no per-harness plugin is part of the compatibility contract.
+
+### 18.1 Embeddings sidecar
+
+- **Location:** `10_Agents/tools/brain/vault-embeddings.json`, beside the committed index but — unlike it — **gitignored** (a `.gitignore` entry ships with this section). Vectors are large, model-dependent, and environment-specific: each clone regenerates its own sidecar incrementally, and the #25 committed-generated-file machinery (merge driver, freshness CI) never applies to it. The path is pruned from the §2 corpus the same way the index file is, so the sidecar can never appear as an asset, enter the committed index, or be content-scanned by `validate`.
+- **Shape** (serialized like §8.2 — `json.dumps(store, ensure_ascii=False, indent=1, sort_keys=True)` + trailing `\n`, UTF-8/LF — except that **floats are allowed** here; the §8.2 no-floats rule protects the *committed* index only):
+
+```json
+{
+ "dim": 384,
+ "model": "all-MiniLM-L6-v2",
+ "notes": {
+  "04_Projects/example.md": {"hash": "<sha256 hex>", "vector": [0.1, -0.2]}
+ },
+ "schemaVersion": 1
+}
+```
+
+- **Granularity is per-note** in v1 (`notes` keys are §2 vault-relative note paths). Per-section vectors are an anticipated refinement: `schemaVersion` bumps if the record shape changes, and consumers must check it — an unknown `schemaVersion` is treated as an absent store (§18.2).
+- **Keying:** each entry carries `hash` — the SHA-256 hex digest of the note's full **normalized text** (§3, frontmatter included), computed at embed time. `model` and `dim` are store-global: vectors from different models are not comparable, so one sidecar holds exactly one model's vectors (§18.3 replacement rule). Every stored vector's length must equal `dim`.
+- **Restricted containment:** a note whose frontmatter tags contain `restricted/private` (§8.3's trigger, frontmatter tags only) **never enters the sidecar**. `embed` skips such entries with a stderr notice (never an error — pipelines may blindly embed everything), and `search --semantic` ignores any sidecar entry whose note is *currently* restricted, so tagging a note restricted immediately removes it from semantic ranking even before the sidecar is regenerated. Embedding vectors are body-derived data in a queryable store; the §8.3 containment posture applies. Restricted notes can still surface through the keyword component — the same exposure §8.3 deliberately accepts for local query commands. As there, this is leak resistance, not access control.
+
+### 18.2 Staleness and store loading
+
+- A sidecar entry is **fresh** for a note iff the note exists in the working corpus, its recomputed content hash equals the stored `hash`, and the vector length equals `dim`. Anything else — edited note (hash mismatch), deleted/renamed note (no such path), wrong-length vector — makes the entry **stale**, and stale entries are **excluded** from semantic ranking (never re-ranked, never partially trusted): the note participates through the keyword component only, exactly as if it had no vector. Incremental re-embedding (`embed --local`, or a harness re-piping changed notes) restores freshness at cost proportional to edits.
+- **Loading is best-effort, never fatal** (§4 posture): a missing sidecar yields an empty store; an unreadable, non-UTF-8, non-JSON, wrong-`schemaVersion`, or shape-invalid file is treated as **absent** with a one-line stderr notice naming the fix (`brain embed`). No command ever crashes on sidecar content.
+
+### 18.3 `brain embed`
+
+Maintains the sidecar. §9 conventions apply (`--json`, exit `0` success / `1` operational error). Exactly one mode flag is required:
+
+- **`--stdin-json`** — the harness/API ingestion interface. Stdin is one JSON object: `{"model": "<non-empty string>", "vectors": {"<note path>": [<numbers>], …}}`. Validation (any violation is an operational error — message on stderr, exit 1, **sidecar untouched**): top level must be an object with exactly those two keys; `model` a non-empty string; `vectors` a non-empty object; every value a non-empty array of finite numbers (booleans are not numbers), all the same length; every key a working-corpus note path (§2 normalization applies) — unknown paths are reported and fail the whole call (all-or-nothing, so a typo cannot half-apply). Entries for restricted notes are **skipped with a stderr notice** per §18.1 (not an error), as are entries for notes whose content cannot be read or decoded (§3) — there is no text to hash. **Partial-update semantics:** when the incoming `model` and vector length match the existing store's `model`/`dim`, entries merge over it (each ingested note's `hash` recomputed from its current normalized text; unmentioned notes keep their entries); when either differs, the store is **replaced wholesale** with a stderr notice — mixed-model stores are never representable. Output: a summary — `{"dim", "model", "path", "skippedRestricted", "skippedUnreadable", "stored"}` under `--json`, the same facts as text otherwise (`--local` emits the analogous `{"dim", "embedded", "model", "path", "total"}`).
+- **`--local [--model NAME]`** — the offline path, and the **one sanctioned optional non-stdlib dependency** in the vault: `sentence-transformers`, imported lazily inside this feature only, never at module import time, never required. When the import (or model load) fails, `embed --local` exits 1 with a message naming the three alternatives (install the optional package, pipe vectors via `--stdin-json`, or use keyword search) — a clean degradation message, never a traceback. When available: embed every non-restricted, readable note whose entry is missing or stale (incremental by hash; fresh entries untouched), under the model named by `--model`, else the store's recorded `model`, else the default constant (`EMBED_LOCAL_MODEL_DEFAULT`); a model different from the store's replaces the store wholesale, as above. When there is nothing to embed **and** nothing retained (an empty vault, or every note restricted/unreadable), the command reports and exits 0 **without writing** — a `{"dim": null}` store would violate the §18.1 shape.
+- **`--status`** — coverage report, no writes, no model needed: `{"dim", "embedded", "missing", "model", "notes", "present", "stale"}` — total corpus notes (restricted and unreadable notes excluded from the embeddable universe), fresh/stale/missing counts, and whether the sidecar file exists.
+- **External embedding APIs** are supported as **adapters outside `brain`**: a thin script (harness-side or personal) calls the API and pipes the result through `--stdin-json` / `--query-vector` — the same interface as harness-computed vectors. `brain` itself never takes an API key, endpoint, or credential in any form (PRD §16.2); no such adapter ships in the template.
+
+### 18.4 `brain search --semantic <query>`
+
+Ranks whole notes by a hybrid of vector similarity and keyword match. `--tag` filters (effective-tag semantics, §9) restrict the note universe for **both** components. Exit `0` on success — including every degraded case; `1` only for operational errors (malformed `--query-vector` input).
+
+- **Query embedding sourcing**, in order: (1) `--query-vector` — read one JSON array of finite numbers from stdin (the harness/API path: whatever computed the note vectors embeds the query too); its length must equal the store's `dim`, else an operational error (exit 1). (2) Otherwise, the optional local model (§18.3), loaded with the store's recorded `model` — best-effort: any import/load/encode failure yields no query vector, silently eligible for (3). (3) Otherwise **no query embedding exists** → keyword degradation, below.
+- **Keyword degradation:** when semantic ranking is impossible — no usable query vector, or the fresh-entry set (§18.2, restricted excluded) is empty (no sidecar, empty store, everything stale) — the command behaves **exactly** like plain `search` (§9): same rows, same human and `--json` output shape, exit 0, plus a one-line stderr notice naming the cause and the fix. `--semantic` must never hard-fail on a vectorless vault.
+- **Hybrid ranking rule** (exact): for each note `n` in the (tag-filtered) universe, let `sem(n) = (cos(q, v_n) + 1) / 2` when `n` has a fresh vector `v_n` (cosine similarity, stdlib `math`; zero-magnitude vectors give `cos = 0`), else `sem(n) = 0`; let `kw(n) = 1` if the note has at least one plain-`search` hit (title, heading, or body) for the query, else `0`. Then `score(n) = round(0.7 · sem(n) + 0.3 · kw(n), 6)` — the weights are the module constants `SEMANTIC_WEIGHT` / `KEYWORD_WEIGHT`. A note enters the results iff it has a fresh vector or a keyword hit; results sort by `score` descending, then path ascending, truncated to `--top N` (default 10). Rounding before sorting makes ranking a pure function of the stored vectors, the query vector, the tree, and the flags — **deterministic given fixed vectors**.
+- **Output** (semantic mode): JSON — an array of `{"keywordHits": int, "path", "score": float, "semanticScore": float|null, "title"}` rows in rank order (`semanticScore` is the rounded `sem(n)`, `null` when the note has no fresh vector); human — one `score  path  (title)` line per row. This intentionally ranks *notes* where plain `search` lists *hits*; the degraded mode keeps plain `search`'s shape so a vectorless vault still gets exactly the §9 contract.
+
+### 18.5 Determinism and invariants
+
+- The sidecar never influences `index` output, `validate` findings, or any command other than `embed` and `search --semantic` — the committed index stays a pure function of tracked content (§8.2) with or without embeddings present.
+- Given a fixed sidecar and query vector, `search --semantic` output is byte-identical across runs and platforms (IEEE-754 arithmetic over identical inputs, rounded per §18.4; all ordering is explicit). No timestamps, mtimes, or environment data appear in the sidecar or in query output.
+- Stdlib-only holds everywhere outside the §18.3 optional-import boundary: every other path of `embed` and all of `search --semantic` run with no third-party code, and the optional dependency's absence is never an import-time or default-path failure.
+
+## 19. Remote safety (`brain remote-safety`) — issue #83
+
+`remote-safety` is the mandatory preflight before a skill or tool reads personal
+data from email, calendar, contacts, chat, drive, task, transcript, or similar
+accounts. Capability inventory (which CLIs/connectors exist and which scopes they
+claim) is harmless and stays separate; account data is not read until this gate
+allows it.
+
+### 19.1 Push-target discovery and normalization
+
+- Discovery uses `git remote` plus `git remote get-url --push --all <remote>` and
+  therefore evaluates every effective **push** URL, never fetch URLs alone. Exact
+  `DISABLED`, `NO_PUSH`, and `no-push`/`no_push` sentinel values are treated as a
+  deliberately fetch-only remote. A discovery failure is `unknown`, not local-only.
+- Repository-local `include.path` and `includeIf.*.path` directives are also
+  `unknown` (`unsafe-local-config-include`). They can expand through ambient
+  HOME or another path outside the clone and substitute a target, so discovery
+  reads the raw local config with includes disabled and refuses the indirection.
+- Discovery evaluates the union of a sanitized repository-local view and the
+  current invocation's ambient-effective Git view. The latter accounts for
+  global/system `remote.*.pushurl`, `url.*.insteadOf`/`pushInsteadOf`, HOME, and
+  `GIT_CONFIG_*` controls that a later Git invocation would honor; the union
+  prevents either view from replacing and hiding a target in the other.
+- GitHub HTTPS and SSH (`ssh://` or SCP-style) URLs on their default ports
+  normalize to a provider key without userinfo, query, fragment, or `.git`.
+  Insecure transports, nonstandard ports, malformed URLs, and non-GitHub hosts
+  are `unknown`.
+- Output never includes raw URLs, credentials, hostnames other than the provider
+  class, owner/repository names, local paths, provider stderr, OS errors, or hashes
+  derived from sensitive URL text. Targets are represented only by
+  `github.com/<redacted>` (or `<redacted>`) and evaluation-local ordinal identifiers.
+
+### 19.2 Provider boundary and decisions
+
+The default injectable provider runs `gh repo view OWNER/REPO --json
+visibility,isPrivate,isTemplate,templateRepository` with prompting disabled and a
+bounded timeout. It pins `GH_HOST=github.com` and removes debug/trace sinks and Git
+control/config-injection variables from provider child environments. Git target
+discovery separately evaluates both repository-local and ambient-effective config;
+local config that delegates to another file is rejected as described in §19.1.
+Missing `gh`, auth/access
+failures, timeouts, malformed JSON, and missing or inconsistent fields are stable
+`unknown` reason codes; subprocess text is never forwarded.
+
+Per target, verified `isTemplate: true` or consistent non-private metadata is
+`block`; only `visibility: PRIVATE`, `isPrivate: true`, and `isTemplate: false` is
+`pass`. Missing or inconsistent fields are `unknown`. `templateRepository` is
+queried for provenance but does not make an otherwise private generated repository
+a template destination. The combined verified state is `block` if any target
+blocks, else `unknown` if any target is unknown, else `pass`.
+
+`--acknowledge-unknown` changes the effective state from `unknown` to `pass` for
+that process invocation only and records `verifiedState: unknown` plus the
+`unknown-acknowledged` reason. It is never persisted. A verified block remains a
+block even with the flag. With no push targets the result is a local-only pass:
+personal-data reads may occur in memory, but connector-derived data must not be
+written anywhere in the vault.
+
+### 19.3 Output, exit status, and shared guard
+
+Human and `--json` output carry the same stable facts: `schemaVersion`, effective
+`state` (`pass|block|unknown`), `verifiedState`, sorted reason codes, target summaries,
+`localOnly`, `personalDataAllowed`, `persistenceAllowed`, and
+`unknownAcknowledged`. The command adds `persistenceRequested` and
+`operationAllowed`. Without `--persist`, operation permission follows the guarded
+read; with `--persist`, local-only mode makes `operationAllowed` false. Exit is `0`
+only when the requested operation is allowed and `1` otherwise.
+
+All personal-data adapters must call `require_remote_safety(...)` immediately
+before the connector and before opening an output file, passing `persist=True`
+for capture/write flows. Process-boundary adapters use `remote-safety --persist
+--json` and require both zero exit and `operationAllowed: true`. The helper raises
+`RemoteSafetyError` on blocked/unknown access and on persistence in local-only
+mode; `guarded_personal_data_call(...)` is the reference sequencing wrapper.
+
 ## 20. Environment identity and scoped retrieval
 
 Environment-scoped infrastructure is explicit, privacy-safe, and fail-closed.
@@ -732,134 +860,6 @@ No mode is a read-only preview; `--json` exposes the same stable plan. `--check`
 On supported POSIX runtimes the writer holds each output parent, rejects case-fold collisions and foreign/edited/linked/mode-changed occupants, rechecks case-fold siblings before every forward mutation and commit, stages and fsyncs exact bytes, re-authenticates every final immediately before mutation, quarantines recognized prior outputs, and publishes with create-if-absent hard links. Stage cleanup removes only the inode created by the staging descriptor, so a replacement at its reserved name survives even when interruption precedes the normal ownership handoff. Before rollback evidence retires, the command rebuilds the complete plan and then the writer reauthenticates every created, replaced, or unchanged output's held-parent case state, exact bytes, mode, and inode; a late foreign replacement fails generically, remains untouched, and leaves verified prior recovery evidence where restoration would collide. A caught exception, `KeyboardInterrupt`, `SystemExit`, or trapped `SIGTERM` removes only authenticated stages/results and restores verified prior files without overwriting a concurrent final. A concurrent insertion or replacement is preserved. Identical files are inode-preserving no-ops. Unsupported safe-mutation runtimes remain preview/check-only. Because all three outputs are reproducible and source-free, a process crash may leave authenticated `.migrate-{new,old}` recovery evidence; a fresh plan remains fail-closed on final ownership and regeneration is the recovery path.
 
 `--open` is explicit and opens only fresh local `file:` URIs for the two HTML files. Each URI names a mode-0400 temporary snapshot whose bytes are re-authenticated against the owned artifact before browser dispatch, so a late redirect of the canonical pathname cannot change what is opened; the snapshots are removed after dispatch or refusal. Tests inject a browser spy and never open a real browser. Hosting, upload, public URLs, credentials, and notifications are absent from this package. Any future hosting is a separate opt-in feature requiring environment-scoped configuration, explicit owner consent, and privacy review.
-
-## 18. Semantic search (QMD — issue #8)
-
-Natural-language, relevance-ranked retrieval over vault notes, layered **beside** the keyword machinery, never replacing it. Decided 2026-08-11 per the owner correction and accepted recommendation on issue #8 (QMD = **Query Markdown**, not Quarto). Two commands carry the whole feature: `brain embed` maintains a local vector store (§18.3), `brain search --semantic` queries it (§18.4). Every supported harness reaches it through the CLI — the universal layer (each `10_Agents/harnesses/*/wiring.md` documents invocation); no per-harness plugin is part of the compatibility contract.
-
-### 18.1 Embeddings sidecar
-
-- **Location:** `10_Agents/tools/brain/vault-embeddings.json`, beside the committed index but — unlike it — **gitignored** (a `.gitignore` entry ships with this section). Vectors are large, model-dependent, and environment-specific: each clone regenerates its own sidecar incrementally, and the #25 committed-generated-file machinery (merge driver, freshness CI) never applies to it. The path is pruned from the §2 corpus the same way the index file is, so the sidecar can never appear as an asset, enter the committed index, or be content-scanned by `validate`.
-- **Shape** (serialized like §8.2 — `json.dumps(store, ensure_ascii=False, indent=1, sort_keys=True)` + trailing `\n`, UTF-8/LF — except that **floats are allowed** here; the §8.2 no-floats rule protects the *committed* index only):
-
-```json
-{
- "dim": 384,
- "model": "all-MiniLM-L6-v2",
- "notes": {
-  "04_Projects/example.md": {"hash": "<sha256 hex>", "vector": [0.1, -0.2]}
- },
- "schemaVersion": 1
-}
-```
-
-- **Granularity is per-note** in v1 (`notes` keys are §2 vault-relative note paths). Per-section vectors are an anticipated refinement: `schemaVersion` bumps if the record shape changes, and consumers must check it — an unknown `schemaVersion` is treated as an absent store (§18.2).
-- **Keying:** each entry carries `hash` — the SHA-256 hex digest of the note's full **normalized text** (§3, frontmatter included), computed at embed time. `model` and `dim` are store-global: vectors from different models are not comparable, so one sidecar holds exactly one model's vectors (§18.3 replacement rule). Every stored vector's length must equal `dim`.
-- **Restricted containment:** a note whose frontmatter tags contain `restricted/private` (§8.3's trigger, frontmatter tags only) **never enters the sidecar**. `embed` skips such entries with a stderr notice (never an error — pipelines may blindly embed everything), and `search --semantic` ignores any sidecar entry whose note is *currently* restricted, so tagging a note restricted immediately removes it from semantic ranking even before the sidecar is regenerated. Embedding vectors are body-derived data in a queryable store; the §8.3 containment posture applies. Restricted notes can still surface through the keyword component — the same exposure §8.3 deliberately accepts for local query commands. As there, this is leak resistance, not access control.
-
-### 18.2 Staleness and store loading
-
-- A sidecar entry is **fresh** for a note iff the note exists in the working corpus, its recomputed content hash equals the stored `hash`, and the vector length equals `dim`. Anything else — edited note (hash mismatch), deleted/renamed note (no such path), wrong-length vector — makes the entry **stale**, and stale entries are **excluded** from semantic ranking (never re-ranked, never partially trusted): the note participates through the keyword component only, exactly as if it had no vector. Incremental re-embedding (`embed --local`, or a harness re-piping changed notes) restores freshness at cost proportional to edits.
-- **Loading is best-effort, never fatal** (§4 posture): a missing sidecar yields an empty store; an unreadable, non-UTF-8, non-JSON, wrong-`schemaVersion`, or shape-invalid file is treated as **absent** with a one-line stderr notice naming the fix (`brain embed`). No command ever crashes on sidecar content.
-
-### 18.3 `brain embed`
-
-Maintains the sidecar. §9 conventions apply (`--json`, exit `0` success / `1` operational error). Exactly one mode flag is required:
-
-- **`--stdin-json`** — the harness/API ingestion interface. Stdin is one JSON object: `{"model": "<non-empty string>", "vectors": {"<note path>": [<numbers>], …}}`. Validation (any violation is an operational error — message on stderr, exit 1, **sidecar untouched**): top level must be an object with exactly those two keys; `model` a non-empty string; `vectors` a non-empty object; every value a non-empty array of finite numbers (booleans are not numbers), all the same length; every key a working-corpus note path (§2 normalization applies) — unknown paths are reported and fail the whole call (all-or-nothing, so a typo cannot half-apply). Entries for restricted notes are **skipped with a stderr notice** per §18.1 (not an error), as are entries for notes whose content cannot be read or decoded (§3) — there is no text to hash. **Partial-update semantics:** when the incoming `model` and vector length match the existing store's `model`/`dim`, entries merge over it (each ingested note's `hash` recomputed from its current normalized text; unmentioned notes keep their entries); when either differs, the store is **replaced wholesale** with a stderr notice — mixed-model stores are never representable. Output: a summary — `{"dim", "model", "path", "skippedRestricted", "skippedUnreadable", "stored"}` under `--json`, the same facts as text otherwise (`--local` emits the analogous `{"dim", "embedded", "model", "path", "total"}`).
-- **`--local [--model NAME]`** — the offline path, and the **one sanctioned optional non-stdlib dependency** in the vault: `sentence-transformers`, imported lazily inside this feature only, never at module import time, never required. When the import (or model load) fails, `embed --local` exits 1 with a message naming the three alternatives (install the optional package, pipe vectors via `--stdin-json`, or use keyword search) — a clean degradation message, never a traceback. When available: embed every non-restricted, readable note whose entry is missing or stale (incremental by hash; fresh entries untouched), under the model named by `--model`, else the store's recorded `model`, else the default constant (`EMBED_LOCAL_MODEL_DEFAULT`); a model different from the store's replaces the store wholesale, as above. When there is nothing to embed **and** nothing retained (an empty vault, or every note restricted/unreadable), the command reports and exits 0 **without writing** — a `{"dim": null}` store would violate the §18.1 shape.
-- **`--status`** — coverage report, no writes, no model needed: `{"dim", "embedded", "missing", "model", "notes", "present", "stale"}` — total corpus notes (restricted and unreadable notes excluded from the embeddable universe), fresh/stale/missing counts, and whether the sidecar file exists.
-- **External embedding APIs** are supported as **adapters outside `brain`**: a thin script (harness-side or personal) calls the API and pipes the result through `--stdin-json` / `--query-vector` — the same interface as harness-computed vectors. `brain` itself never takes an API key, endpoint, or credential in any form (PRD §16.2); no such adapter ships in the template.
-
-### 18.4 `brain search --semantic <query>`
-
-Ranks whole notes by a hybrid of vector similarity and keyword match. `--tag` filters (effective-tag semantics, §9) restrict the note universe for **both** components. Exit `0` on success — including every degraded case; `1` only for operational errors (malformed `--query-vector` input).
-
-- **Query embedding sourcing**, in order: (1) `--query-vector` — read one JSON array of finite numbers from stdin (the harness/API path: whatever computed the note vectors embeds the query too); its length must equal the store's `dim`, else an operational error (exit 1). (2) Otherwise, the optional local model (§18.3), loaded with the store's recorded `model` — best-effort: any import/load/encode failure yields no query vector, silently eligible for (3). (3) Otherwise **no query embedding exists** → keyword degradation, below.
-- **Keyword degradation:** when semantic ranking is impossible — no usable query vector, or the fresh-entry set (§18.2, restricted excluded) is empty (no sidecar, empty store, everything stale) — the command behaves **exactly** like plain `search` (§9): same rows, same human and `--json` output shape, exit 0, plus a one-line stderr notice naming the cause and the fix. `--semantic` must never hard-fail on a vectorless vault.
-- **Hybrid ranking rule** (exact): for each note `n` in the (tag-filtered) universe, let `sem(n) = (cos(q, v_n) + 1) / 2` when `n` has a fresh vector `v_n` (cosine similarity, stdlib `math`; zero-magnitude vectors give `cos = 0`), else `sem(n) = 0`; let `kw(n) = 1` if the note has at least one plain-`search` hit (title, heading, or body) for the query, else `0`. Then `score(n) = round(0.7 · sem(n) + 0.3 · kw(n), 6)` — the weights are the module constants `SEMANTIC_WEIGHT` / `KEYWORD_WEIGHT`. A note enters the results iff it has a fresh vector or a keyword hit; results sort by `score` descending, then path ascending, truncated to `--top N` (default 10). Rounding before sorting makes ranking a pure function of the stored vectors, the query vector, the tree, and the flags — **deterministic given fixed vectors**.
-- **Output** (semantic mode): JSON — an array of `{"keywordHits": int, "path", "score": float, "semanticScore": float|null, "title"}` rows in rank order (`semanticScore` is the rounded `sem(n)`, `null` when the note has no fresh vector); human — one `score  path  (title)` line per row. This intentionally ranks *notes* where plain `search` lists *hits*; the degraded mode keeps plain `search`'s shape so a vectorless vault still gets exactly the §9 contract.
-
-### 18.5 Determinism and invariants
-
-- The sidecar never influences `index` output, `validate` findings, or any command other than `embed` and `search --semantic` — the committed index stays a pure function of tracked content (§8.2) with or without embeddings present.
-- Given a fixed sidecar and query vector, `search --semantic` output is byte-identical across runs and platforms (IEEE-754 arithmetic over identical inputs, rounded per §18.4; all ordering is explicit). No timestamps, mtimes, or environment data appear in the sidecar or in query output.
-- Stdlib-only holds everywhere outside the §18.3 optional-import boundary: every other path of `embed` and all of `search --semantic` run with no third-party code, and the optional dependency's absence is never an import-time or default-path failure.
-
-## 19. Remote safety (`brain remote-safety`) — issue #83
-
-`remote-safety` is the mandatory preflight before a skill or tool reads personal
-data from email, calendar, contacts, chat, drive, task, transcript, or similar
-accounts. Capability inventory (which CLIs/connectors exist and which scopes they
-claim) is harmless and stays separate; account data is not read until this gate
-allows it.
-
-### 19.1 Push-target discovery and normalization
-
-- Discovery uses `git remote` plus `git remote get-url --push --all <remote>` and
-  therefore evaluates every effective **push** URL, never fetch URLs alone. Exact
-  `DISABLED`, `NO_PUSH`, and `no-push`/`no_push` sentinel values are treated as a
-  deliberately fetch-only remote. A discovery failure is `unknown`, not local-only.
-- Repository-local `include.path` and `includeIf.*.path` directives are also
-  `unknown` (`unsafe-local-config-include`). They can expand through ambient
-  HOME or another path outside the clone and substitute a target, so discovery
-  reads the raw local config with includes disabled and refuses the indirection.
-- Discovery evaluates the union of a sanitized repository-local view and the
-  current invocation's ambient-effective Git view. The latter accounts for
-  global/system `remote.*.pushurl`, `url.*.insteadOf`/`pushInsteadOf`, HOME, and
-  `GIT_CONFIG_*` controls that a later Git invocation would honor; the union
-  prevents either view from replacing and hiding a target in the other.
-- GitHub HTTPS and SSH (`ssh://` or SCP-style) URLs on their default ports
-  normalize to a provider key without userinfo, query, fragment, or `.git`.
-  Insecure transports, nonstandard ports, malformed URLs, and non-GitHub hosts
-  are `unknown`.
-- Output never includes raw URLs, credentials, hostnames other than the provider
-  class, owner/repository names, local paths, provider stderr, OS errors, or hashes
-  derived from sensitive URL text. Targets are represented only by
-  `github.com/<redacted>` (or `<redacted>`) and evaluation-local ordinal identifiers.
-
-### 19.2 Provider boundary and decisions
-
-The default injectable provider runs `gh repo view OWNER/REPO --json
-visibility,isPrivate,isTemplate,templateRepository` with prompting disabled and a
-bounded timeout. It pins `GH_HOST=github.com` and removes debug/trace sinks and Git
-control/config-injection variables from provider child environments. Git target
-discovery separately evaluates both repository-local and ambient-effective config;
-local config that delegates to another file is rejected as described in §19.1.
-Missing `gh`, auth/access
-failures, timeouts, malformed JSON, and missing or inconsistent fields are stable
-`unknown` reason codes; subprocess text is never forwarded.
-
-Per target, verified `isTemplate: true` or consistent non-private metadata is
-`block`; only `visibility: PRIVATE`, `isPrivate: true`, and `isTemplate: false` is
-`pass`. Missing or inconsistent fields are `unknown`. `templateRepository` is
-queried for provenance but does not make an otherwise private generated repository
-a template destination. The combined verified state is `block` if any target
-blocks, else `unknown` if any target is unknown, else `pass`.
-
-`--acknowledge-unknown` changes the effective state from `unknown` to `pass` for
-that process invocation only and records `verifiedState: unknown` plus the
-`unknown-acknowledged` reason. It is never persisted. A verified block remains a
-block even with the flag. With no push targets the result is a local-only pass:
-personal-data reads may occur in memory, but connector-derived data must not be
-written anywhere in the vault.
-
-### 19.3 Output, exit status, and shared guard
-
-Human and `--json` output carry the same stable facts: `schemaVersion`, effective
-`state` (`pass|block|unknown`), `verifiedState`, sorted reason codes, target summaries,
-`localOnly`, `personalDataAllowed`, `persistenceAllowed`, and
-`unknownAcknowledged`. The command adds `persistenceRequested` and
-`operationAllowed`. Without `--persist`, operation permission follows the guarded
-read; with `--persist`, local-only mode makes `operationAllowed` false. Exit is `0`
-only when the requested operation is allowed and `1` otherwise.
-
-All personal-data adapters must call `require_remote_safety(...)` immediately
-before the connector and before opening an output file, passing `persist=True`
-for capture/write flows. Process-boundary adapters use `remote-safety --persist
---json` and require both zero exit and `operationAllowed: true`. The helper raises
-`RemoteSafetyError` on blocked/unknown access and on persistence in local-only
-mode; `guarded_personal_data_call(...)` is the reference sequencing wrapper.
 
 ## 26. Push-only owner notifications (`brain notify`) — issue #21
 

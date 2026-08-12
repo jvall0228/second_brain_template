@@ -8,8 +8,8 @@ tags:
 updated: 2026-08-12
 expires: 2026-08-13
 generated: brain-home-v1
-input-digest: "3376f5323452dae22aa6c74ed88adf15763d12f1a1def19f0203371f43257b6a"
-content-digest: "34afca173e935e85fca2b373ff6c8640591c6adf64fd7a25b97460b24313f911"
+input-digest: "ca5b9bdc3cd9037b019886c12b6175c81acbef3318b20cbfefa2ca28a9d49f3d"
+content-digest: "668331d92092c7f48e0a15cee6a915b200af86ef0e1a44b92fb0f2fa1cea9fb8"
 ---
 
 <!-- generated-by: brain home v1; do not edit -->
@@ -28,7 +28,7 @@ A deterministic, local navigation surface. Refresh it explicitly; it does not au
 
 ### Triage the Inbox
 
-- **Why now:** The tracked Inbox contains 5 notes; 0 exceed the triage threshold.
+- **Why now:** The tracked Inbox contains 6 notes; 0 exceed the triage threshold.
 - **Next step:** Run triage-inbox and review the oldest actionable capture first.
 - **Sources:** [Inbox](../02_Inbox/README.md)
 
@@ -44,7 +44,7 @@ _No tracked safe task has a machine-readable due date._
 
 ## Inbox
 
-- **Tracked safe notes:** 5; **triage debt:** 0
+- **Tracked safe notes:** 6; **triage debt:** 0
 - [02_Inbox/2026-08-11-feature-request-triage.md](../02_Inbox/2026-08-11-feature-request-triage.md) — 1 days old
 - [02_Inbox/2026-08-11-implementation-plan-m8-m12.md](../02_Inbox/2026-08-11-implementation-plan-m8-m12.md) — 1 days old
 - [02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md](../02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md) — 1 days old

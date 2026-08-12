@@ -32,7 +32,7 @@
  ],
  "linkCounts": {
   "legacy": 0,
-  "markdown": 826,
+  "markdown": 829,
   "placeholder": 20,
   "unsupportedBlockReference": 0,
   "wikilink": 0
@@ -47,10 +47,10 @@
    ],
    "bodyTags": [],
    "frontmatter": {
-    "content-digest": "ec62222cdabe0fc1d78a825f6c236e2b553ddeb50395bdbfa6baf20ffc562446",
+    "content-digest": "5b57f4b8197719b2a4d9e7c38745bb079e7207aad1a9a003309c7eb6e099d049",
     "expires": "2026-08-13",
     "generated": "brain-aymt-v1",
-    "input-digest": "c78f89605ac68d8deb9bb8cb0d74f74f2f35b81e745866d00cc99f87e1d95fd5",
+    "input-digest": "3b975e29d159ad89af3439643be368c5c31f1f3c08c4c50bb4ef0c4926aed680",
     "tags": [
      "audience/agent",
      "audience/human",
@@ -4517,10 +4517,10 @@
    ],
    "bodyTags": [],
    "frontmatter": {
-    "content-digest": "34afca173e935e85fca2b373ff6c8640591c6adf64fd7a25b97460b24313f911",
+    "content-digest": "668331d92092c7f48e0a15cee6a915b200af86ef0e1a44b92fb0f2fa1cea9fb8",
     "expires": "2026-08-13",
     "generated": "brain-home-v1",
-    "input-digest": "3376f5323452dae22aa6c74ed88adf15763d12f1a1def19f0203371f43257b6a",
+    "input-digest": "ca5b9bdc3cd9037b019886c12b6175c81acbef3318b20cbfefa2ca28a9d49f3d",
     "tags": [
      "audience/agent",
      "audience/human",
@@ -9683,7 +9683,8 @@
     "00_Meta/HOME.md",
     "00_Meta/PRD.md",
     "00_Meta/STATUS.md",
-    "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md"
+    "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md",
+    "02_Inbox/2026-08-12-ready-backlog-completion-audit.md"
    ],
    "bodyTags": [
     "15/",
@@ -9700,7 +9701,7 @@
      "status/active"
     ],
     "title": "Ready backlog implementation plan",
-    "updated": "2026-08-11"
+    "updated": "2026-08-12"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -9880,31 +9881,37 @@
     },
     {
      "level": 3,
-     "line": 273,
+     "line": 274,
      "slug": "final-gate",
      "text": "Final gate"
     },
     {
      "level": 2,
-     "line": 291,
+     "line": 292,
      "slug": "risk-and-rollback-register",
      "text": "Risk and rollback register"
     },
     {
      "level": 2,
-     "line": 305,
+     "line": 306,
      "slug": "owner-action-queue",
      "text": "Owner action queue"
     },
     {
      "level": 2,
-     "line": 314,
+     "line": 315,
      "slug": "progress-ledger",
      "text": "Progress ledger"
     },
     {
      "level": 2,
-     "line": 328,
+     "line": 329,
+     "slug": "execution-evidence-and-requirement-map",
+     "text": "Execution evidence and requirement map"
+    },
+    {
+     "level": 2,
+     "line": 333,
      "slug": "immediate-next-action",
      "text": "Immediate next action"
     }
@@ -9941,16 +9948,48 @@
      "resolved": "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md",
      "target": "2026-08-11-ready-backlog-requirements-brainstorm.md",
      "warnings": []
+    },
+    {
+     "destination": "2026-08-12-ready-backlog-completion-audit.md",
+     "display": "the completion audit",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "the completion audit",
+     "line": 331,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 161,
+       "line": 331,
+       "offset": 19824
+      },
+      "start": {
+       "column": 93,
+       "line": 331,
+       "offset": 19756
+      }
+     },
+     "raw": "[the completion audit](2026-08-12-ready-backlog-completion-audit.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "02_Inbox/2026-08-12-ready-backlog-completion-audit.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "02_Inbox/2026-08-12-ready-backlog-completion-audit.md",
+     "target": "2026-08-12-ready-backlog-completion-audit.md",
+     "warnings": []
     }
    ],
-   "sizeBytes": 19437,
+   "sizeBytes": 19927,
    "tasks": [
     {
      "due": null,
      "line": 70,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Refresh Project 3 and record any Ready-set change instead of silently changing scope."
     },
     {
@@ -9958,7 +9997,7 @@
      "line": 71,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Record `main` SHA, Python/Git versions, filesystem case behavior, and editor versions used for smoke tests."
     },
     {
@@ -9966,7 +10005,7 @@
      "line": 72,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Preserve unrelated work, including untracked `02_Inbox/2026-08-11-triage-report-2.md`."
     },
     {
@@ -9974,7 +10013,7 @@
      "line": 73,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Ensure hooks/merge driver are armed: `core.hooksPath=.githooks`, `merge.regenerate.driver=true`."
     },
     {
@@ -9982,7 +10021,7 @@
      "line": 74,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Baseline all Python tests, `brain validate`, index/snippet freshness, `adopt_check.py`, link metrics, repo-skill count, and long-form brain invocations."
     },
     {
@@ -9990,7 +10029,7 @@
      "line": 75,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Map every `R…` and `X…` requirement to a WP and verification check."
     },
     {
@@ -10006,7 +10045,7 @@
      "line": 86,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Specify `brain remote-safety` states/reason codes and injectable provider boundary."
     },
     {
@@ -10014,7 +10053,7 @@
      "line": 87,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Enumerate push URLs; normalize/redact GitHub URL forms; query repository privacy/template metadata."
     },
     {
@@ -10022,7 +10061,7 @@
      "line": 88,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Fail closed on public/template/unknown before personal-data connector calls. Keep capability inventory separate."
     },
     {
@@ -10030,7 +10069,7 @@
      "line": 89,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Support local-only/no-push behavior and one-session unknown acknowledgment; verified public/template remains unoverrideable."
     },
     {
@@ -10038,7 +10077,7 @@
      "line": 90,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Integrate the shared guard into orientation, onboarding, and future personal-data adapters."
     },
     {
@@ -10046,7 +10085,7 @@
      "line": 91,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test all URL/state/auth/provider/no-push cases in temporary repos; spy connectors must receive zero blocked calls."
     },
     {
@@ -10054,7 +10093,7 @@
      "line": 99,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Derive adapter catalog from canonical skill frontmatter; mirror name/description and point to canonical SKILL.md."
     },
     {
@@ -10062,7 +10101,7 @@
      "line": 100,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Generate text adapters (no symlinks), version markers, `--check`, and missing/extra/collision/parity checks."
     },
     {
@@ -10070,7 +10109,7 @@
      "line": 101,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Enforce freshness in pre-commit/CI."
     },
     {
@@ -10078,7 +10117,7 @@
      "line": 102,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Make project verification the onboarding default. Global mode previews exact paths and writes only after consent."
     },
     {
@@ -10086,7 +10125,7 @@
      "line": 103,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add fake-home canary; project/dry-run modes must make zero external writes."
     },
     {
@@ -10094,7 +10133,7 @@
      "line": 104,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Publish tested compatibility/trust table; leave Copilot on its current user-copy route until proven."
     },
     {
@@ -10102,7 +10141,7 @@
      "line": 112,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add four starter intents, conditional recommendation, free-form answer, and change-later wording."
     },
     {
@@ -10110,7 +10149,7 @@
      "line": 113,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Remove selective example deletion; manifest becomes the sole bundle authority."
     },
     {
@@ -10118,7 +10157,7 @@
      "line": 114,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add atomic plan/apply with exact deletions/reference edits, stale/dirty/unmarked-reference refusal, and post-apply validation."
     },
     {
@@ -10126,7 +10165,7 @@
      "line": 115,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test the four reported dangling links, aliases, unmarked references, dirty files, and skill-contract wording."
     },
     {
@@ -10134,7 +10173,7 @@
      "line": 127,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Inventory PRD/status/conventions/rules/config/spec claims as current, stale, historical, duplicate, or unresolved."
     },
     {
@@ -10142,7 +10181,7 @@
      "line": 128,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Rewrite current claims in place; move meaningful history to one changelog entry; remove revision banners/addenda/resolved narrative."
     },
     {
@@ -10150,7 +10189,7 @@
      "line": 129,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Replace M0–M7-only and shipped-as-planned language."
     },
     {
@@ -10158,7 +10197,7 @@
      "line": 130,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Make Obsidian and VS Code contract-level throughout; separate editor-neutral integrity from enhancements."
     },
     {
@@ -10166,7 +10205,7 @@
      "line": 131,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add the edit-in-place PRD maintenance rule and reconcile all current contracts."
     },
     {
@@ -10174,7 +10213,7 @@
      "line": 132,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Search for stale phrases and run a cross-document consistency/adversarial omission review."
     },
     {
@@ -10182,7 +10221,7 @@
      "line": 142,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Specify versioned `environment.json`, privacy-safe fingerprinting, ignored selector/overlay, and selection precedence."
     },
     {
@@ -10190,7 +10229,7 @@
      "line": 143,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Implement `brain env detect|list` and `--env current|slug`; ambiguity/no match fails closed."
     },
     {
@@ -10198,7 +10237,7 @@
      "line": 144,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Apply current-only filtering to bootstrap, search/report, maintenance, sync, and generated integrations."
     },
     {
@@ -10206,7 +10245,7 @@
      "line": 145,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Keep all-environment diagnostic metadata-only; never emit raw identity/path/secret."
     },
     {
@@ -10214,7 +10253,7 @@
      "line": 146,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Update orientation to generate/maintain the selected slug safely; preview migration of existing notes."
     },
     {
@@ -10222,7 +10261,7 @@
      "line": 147,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test zero/one/two environments, all selection routes, conflicting infrastructure, sync classification, and privacy snapshots."
     },
     {
@@ -10230,7 +10269,7 @@
      "line": 153,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Implement resolver precedence: `--vault`, `BRAIN_VAULT`, upward CWD walk for AGENTS + brain.py."
     },
     {
@@ -10238,7 +10277,7 @@
      "line": 154,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Preserve arguments/output/exit code; reject invalid/ambiguous roots."
     },
     {
@@ -10246,7 +10285,7 @@
      "line": 155,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add install preview/apply, doctor, uninstall, recognized-overwrite protection, and reversible external manifest."
     },
     {
@@ -10254,7 +10293,7 @@
      "line": 156,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Prefer existing writable PATH directory; never edit shell rc automatically."
     },
     {
@@ -10262,7 +10301,7 @@
      "line": 157,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test root/subdir, spaces/Unicode, nested/sibling forks, overrides, missing Python/tool, POSIX/Windows behavior."
     },
     {
@@ -10270,7 +10309,7 @@
      "line": 158,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Prefer `brain` in active docs after support lands, retaining long Python fallback."
     },
     {
@@ -10278,7 +10317,7 @@
      "line": 159,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Record current plugin-bin capability as unavailable; do not add a nonstandard manifest field."
     },
     {
@@ -10286,7 +10325,7 @@
      "line": 169,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Freeze the 14-file manifest from the requirements note and enumerate all references/constants/allowlists/tests."
     },
     {
@@ -10294,7 +10333,7 @@
      "line": 170,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Use two-step `git mv` for every case-only rename."
     },
     {
@@ -10302,7 +10341,7 @@
      "line": 171,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Update links, bootstrap budgets, code constants, settings/permissions, tests, tasks, and docs from one manifest where possible."
     },
     {
@@ -10310,7 +10349,7 @@
      "line": 172,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Regenerate index/snippets/adapters; add exact-case and filename-validation tests."
     },
     {
@@ -10318,7 +10357,7 @@
      "line": 173,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Require `git ls-files` exact final casing and no active old-case paths outside fixtures."
     },
     {
@@ -10326,7 +10365,7 @@
      "line": 174,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Smoke test bootstrap and navigation on case-sensitive and case-insensitive environments where CI permits."
     },
     {
@@ -10334,7 +10373,7 @@
      "line": 184,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Specify generic link records, source ranges, resolution/encoding/fragments/images/placeholders/block refs."
     },
     {
@@ -10342,7 +10381,7 @@
      "line": 185,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Parse Markdown while excluding YAML, fenced/inline code, escapes, and external URLs; retain legacy wikilinks with counts."
     },
     {
@@ -10350,7 +10389,7 @@
      "line": 186,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Resolve source-relative paths and tested heading slugs; report ambiguity instead of guessing."
     },
     {
@@ -10358,7 +10397,7 @@
      "line": 187,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Implement `brain migrate-links`: preview default, `--check`, `--json`, explicit `--write`, source hashes, deterministic atomic writes."
     },
     {
@@ -10366,7 +10405,7 @@
      "line": 188,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Preserve labels, fragments, self-links, images, encoding, and line endings; refuse stale/dirty/ambiguous/unsupported plans."
     },
     {
@@ -10374,7 +10413,7 @@
      "line": 189,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test syntax/false positives, legacy import, idempotence, rollback, and a ≥ current-corpus performance fixture."
     },
     {
@@ -10382,7 +10421,7 @@
      "line": 193,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Generate a complete categorized plan on merged WP8; manually sample each link class before apply."
     },
     {
@@ -10390,7 +10429,7 @@
      "line": 194,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Convert maintained content once; update conventions/templates/skills/examples/spec/solutions/tests to make relative Markdown canonical."
     },
     {
@@ -10398,7 +10437,7 @@
      "line": 195,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Regenerate snippets/index/adapters; configure/document Obsidian relative Markdown new links."
     },
     {
@@ -10406,7 +10445,7 @@
      "line": 196,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Retain only named legacy fixtures and run a second no-op migration."
     },
     {
@@ -10414,7 +10453,7 @@
      "line": 197,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Verify same/parent/child, spaces/Unicode, display label, heading, self-link, image, and placeholder in GitHub, VS Code, Obsidian, and brain."
     },
     {
@@ -10422,7 +10461,7 @@
      "line": 209,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Define deterministic candidate schema and local collectors; GitHub is optional/authenticated."
     },
     {
@@ -10430,7 +10469,7 @@
      "line": 210,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Score urgency/leverage/effort/confidence/dependency/staleness, dedupe outcomes, cap at 5–7."
     },
     {
@@ -10438,7 +10477,7 @@
      "line": 211,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Render Do next / Unblock or decide / Keep warm with sources, why-now, next step, and caveat."
     },
     {
@@ -10446,7 +10485,7 @@
      "line": 212,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Apply restriction/current-environment filtering before candidate creation."
     },
     {
@@ -10454,7 +10493,7 @@
      "line": 213,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add local-only, JSON explanation, preview/write/`--check`, stable-output tests."
     },
     {
@@ -10462,7 +10501,7 @@
      "line": 214,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add a narrow generated-write exception only after canonical approval."
     },
     {
@@ -10470,7 +10509,7 @@
      "line": 220,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Disposable-vault spike: toggle Obsidian 1.11 native default file and diff settings. Commit only a stable repository key; otherwise document setup + CLI fallback."
     },
     {
@@ -10478,7 +10517,7 @@
      "line": 221,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Generate Home separately from canonical INDEX using AYMT, tasks, Inbox, projects/areas, reviews, Now/status/changelog, expiry/health, and environment."
     },
     {
@@ -10486,7 +10525,7 @@
      "line": 222,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Keep maintainer GitHub backlog optional; omit missed-automation claims until a run-log contract exists."
     },
     {
@@ -10494,7 +10533,7 @@
      "line": 223,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Preserve VS Code's folder-open task; document trust/automatic-task recovery."
     },
     {
@@ -10502,7 +10541,7 @@
      "line": 224,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test empty/adopted/stale/overdue/environment states, restriction filtering, deterministic check, startup, and navigation."
     },
     {
@@ -10510,7 +10549,7 @@
      "line": 234,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Define deterministic manifest/naming/scope and implement link-graph + health-dashboard data."
     },
     {
@@ -10518,7 +10557,7 @@
      "line": 235,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Filter restricted/non-current/secrets/absolute paths/raw bodies before serialization."
     },
     {
@@ -10526,7 +10565,7 @@
      "line": 236,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Generate offline HTML with escaped JSON, safe DOM text APIs, hashed CSP or local bundle, and zero CDN/runtime network."
     },
     {
@@ -10534,7 +10573,7 @@
      "line": 237,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add static/JS-off summary, keyboard/accessibility/reduced-motion/empty states."
     },
     {
@@ -10542,7 +10581,7 @@
      "line": 238,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Document local browser/VS Code opening; define but disable hosting until environment configuration + owner consent."
     },
     {
@@ -10550,7 +10589,7 @@
      "line": 239,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Test golden bytes, injection, CSP/offline, privacy, accessibility, large-vault budget, and browser opening."
     },
     {
@@ -10558,7 +10597,7 @@
      "line": 251,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Define versioned provider-neutral envelope and privacy class; implement fake/file transport first."
     },
     {
@@ -10574,7 +10613,7 @@
      "line": 253,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Keep credentials in ignored current-environment overlay/external manager; redact all boundaries."
     },
     {
@@ -10590,7 +10629,7 @@
      "line": 255,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Implement category opt-ins, owner-timezone quiet hours, rate limit, dedupe, bounded transient retry, and ignored delivery state."
     },
     {
@@ -10598,15 +10637,15 @@
      "line": 256,
      "malformed": [],
      "priority": null,
-     "status": "open",
-     "text": "Route producers through the envelope; buttons are safe links only—no inbound mutation endpoint."
+     "status": "done",
+     "text": "Route producer payloads through the envelope contract; buttons are safe links only—no inbound mutation endpoint."
     },
     {
      "due": null,
      "line": 257,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Add narrow owner-authorized operational-notification exception to “agents never ship.”"
     },
     {
@@ -10622,7 +10661,7 @@
      "line": 266,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Update PRD/status once with final current behavior; add concise changelog entries, not implementation diaries."
     },
     {
@@ -10630,7 +10669,7 @@
      "line": 267,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Reconcile conventions, config, operating rules, task patterns, brain spec, environment/artifact/editor docs."
     },
     {
@@ -10638,7 +10677,7 @@
      "line": 268,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Regenerate index, snippets, and project skill adapters."
     },
     {
@@ -10646,7 +10685,7 @@
      "line": 269,
      "malformed": [],
      "priority": null,
-     "status": "open",
+     "status": "done",
      "text": "Search for old-case paths, maintained wikilinks, hardcoded deprecated invocations, secrets, hostnames, usernames, and absolute paths."
     },
     {
@@ -10654,8 +10693,8 @@
      "line": 270,
      "malformed": [],
      "priority": null,
-     "status": "open",
-     "text": "Re-run every requirement against merged `main`; record honest final test/link/skill metrics."
+     "status": "done",
+     "text": "Re-run every requirement against the integrated branch; record honest test/link/skill metrics."
     },
     {
      "due": null,
@@ -10663,23 +10702,23 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "For each issue, comment with merged PR/commit, acceptance evidence, adopted decisions, and limitations; then update project status and close."
+     "text": "Re-run the final gate against merged `main` before issue closure."
     },
     {
      "due": null,
-     "line": 307,
+     "line": 272,
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Approve protected canonical changes and narrow generated HOME/AYMT exceptions."
+     "text": "For each issue, comment with merged PR/commit, acceptance evidence, adopted decisions, and limitations; then update project status and close."
     },
     {
      "due": null,
      "line": 308,
      "malformed": [],
      "priority": null,
-     "status": "open",
-     "text": "Select a private notification provider/destination or accept that #21 remains open after fake/file infrastructure."
+     "status": "done",
+     "text": "Approve protected canonical changes and narrow generated HOME/AYMT exceptions."
     },
     {
      "due": null,
@@ -10687,7 +10726,7 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Store the selected credential outside git for the smoke test."
+     "text": "Select a private notification provider/destination or accept that #21 remains open after fake/file infrastructure."
     },
     {
      "due": null,
@@ -10695,15 +10734,15 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Opt into user-global harness discovery only if skills are needed outside this repo; default no."
+     "text": "Store the selected credential outside git for the smoke test."
     },
     {
      "due": null,
      "line": 311,
      "malformed": [],
      "priority": null,
-     "status": "open",
-     "text": "Choose/add a PATH directory manually if no existing writable PATH directory exists; installer will not edit shell rc."
+     "status": "done",
+     "text": "Retain the default of no user-global harness installation; repository-local discovery is active."
     },
     {
      "due": null,
@@ -10711,17 +10750,26 @@
      "malformed": [],
      "priority": null,
      "status": "open",
-     "text": "Resolve any unknown remote state before real personal-data access; public/template cannot be bypassed."
+     "text": "Choose/add a PATH directory manually if no existing writable PATH directory exists; installer will not edit shell rc."
+    },
+    {
+     "due": null,
+     "line": 313,
+     "malformed": [],
+     "priority": null,
+     "status": "done",
+     "text": "Keep real personal-data access disabled; live remote safety blocks this public template and cannot be bypassed."
     }
    ],
    "title": "Ready backlog implementation plan",
-   "updated": "2026-08-11"
+   "updated": "2026-08-12"
   },
   "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md": {
    "backlinks": [
     "00_Meta/HOME.md",
     "00_Meta/PRD.md",
-    "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md"
+    "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md",
+    "02_Inbox/2026-08-12-ready-backlog-completion-audit.md"
    ],
    "bodyTags": [
     "71/"
@@ -10942,6 +10990,128 @@
    "tasks": [],
    "title": "Ready backlog requirements brainstorm",
    "updated": "2026-08-11"
+  },
+  "02_Inbox/2026-08-12-ready-backlog-completion-audit.md": {
+   "backlinks": [
+    "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "author": "codex",
+    "tags": [
+     "audience/agent",
+     "audience/human",
+     "type/reference",
+     "topic/software",
+     "workflow/draft",
+     "status/active"
+    ],
+    "title": "Ready backlog completion audit",
+    "updated": "2026-08-12"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 14,
+     "slug": "ready-backlog-completion-audit",
+     "text": "Ready Backlog Completion Audit"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "slug": "scope-and-rebaseline",
+     "text": "Scope and rebaseline"
+    },
+    {
+     "level": 2,
+     "line": 24,
+     "slug": "requirement-to-evidence-matrix",
+     "text": "Requirement-to-evidence matrix"
+    },
+    {
+     "level": 2,
+     "line": 43,
+     "slug": "current-integrated-evidence",
+     "text": "Current integrated evidence"
+    },
+    {
+     "level": 2,
+     "line": 55,
+     "slug": "open-boundary",
+     "text": "Open boundary"
+    }
+   ],
+   "links": [
+    {
+     "destination": "2026-08-11-ready-backlog-implementation-plan.md",
+     "display": "Ready backlog implementation plan",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Ready backlog implementation plan",
+     "line": 18,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 120,
+       "line": 18,
+       "offset": 381
+      },
+      "start": {
+       "column": 36,
+       "line": 18,
+       "offset": 297
+      }
+     },
+     "raw": "[Ready backlog implementation plan](2026-08-11-ready-backlog-implementation-plan.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "02_Inbox/2026-08-11-ready-backlog-implementation-plan.md",
+     "target": "2026-08-11-ready-backlog-implementation-plan.md",
+     "warnings": []
+    },
+    {
+     "destination": "2026-08-11-ready-backlog-requirements-brainstorm.md",
+     "display": "requirements brainstorm",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "requirements brainstorm",
+     "line": 18,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 207,
+       "line": 18,
+       "offset": 468
+      },
+      "start": {
+       "column": 129,
+       "line": 18,
+       "offset": 390
+      }
+     },
+     "raw": "[requirements brainstorm](2026-08-11-ready-backlog-requirements-brainstorm.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md",
+     "target": "2026-08-11-ready-backlog-requirements-brainstorm.md",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 4706,
+   "tasks": [],
+   "title": "Ready backlog completion audit",
+   "updated": "2026-08-12"
   },
   "02_Inbox/README.md": {
    "backlinks": [
@@ -36359,212 +36529,212 @@
     {
      "level": 2,
      "line": 467,
-     "slug": "20-environment-identity-and-scoped-retrieval",
-     "text": "20. Environment identity and scoped retrieval"
-    },
-    {
-     "level": 3,
-     "line": 473,
-     "slug": "201-tracked-manifest",
-     "text": "20.1 Tracked manifest"
-    },
-    {
-     "level": 3,
-     "line": 513,
-     "slug": "202-clone-local-state",
-     "text": "20.2 Clone-local state"
-    },
-    {
-     "level": 3,
-     "line": 528,
-     "slug": "203-selection",
-     "text": "20.3 Selection"
-    },
-    {
-     "level": 3,
-     "line": 551,
-     "slug": "204-commands-and-migration",
-     "text": "20.4 Commands and migration"
-    },
-    {
-     "level": 2,
-     "line": 573,
-     "slug": "21-portable-brain-resolver-and-installer",
-     "text": "21. Portable `brain` resolver and installer"
-    },
-    {
-     "level": 3,
-     "line": 575,
-     "slug": "211-repository-launchers",
-     "text": "21.1 Repository launchers"
-    },
-    {
-     "level": 3,
-     "line": 598,
-     "slug": "212-managed-path-installation",
-     "text": "21.2 Managed PATH installation"
-    },
-    {
-     "level": 3,
-     "line": 637,
-     "slug": "213-host-capability-boundary",
-     "text": "21.3 Host capability boundary"
-    },
-    {
-     "level": 2,
-     "line": 645,
-     "slug": "22-legacy-link-migration-brain-migrate-links-issue-74",
-     "text": "22. Legacy link migration (`brain migrate-links`) — issue #74"
-    },
-    {
-     "level": 3,
-     "line": 647,
-     "slug": "221-preview-and-plan",
-     "text": "22.1 Preview and plan"
-    },
-    {
-     "level": 3,
-     "line": 655,
-     "slug": "222-write-refusal-and-transaction",
-     "text": "22.2 Write refusal and transaction"
-    },
-    {
-     "level": 3,
-     "line": 661,
-     "slug": "223-crash-recovery-and-idempotence",
-     "text": "22.3 Crash recovery and idempotence"
-    },
-    {
-     "level": 2,
-     "line": 667,
-     "slug": "23-actions-you-may-take-brain-aymt-issue-79",
-     "text": "23. Actions You May Take (`brain aymt`) — issue #79"
-    },
-    {
-     "level": 3,
-     "line": 669,
-     "slug": "231-inputs-and-privacy-boundary",
-     "text": "23.1 Inputs and privacy boundary"
-    },
-    {
-     "level": 3,
-     "line": 675,
-     "slug": "232-candidates-scoring-and-selection",
-     "text": "23.2 Candidates, scoring, and selection"
-    },
-    {
-     "level": 3,
-     "line": 683,
-     "slug": "233-rendering-freshness-and-write-ownership",
-     "text": "23.3 Rendering, freshness, and write ownership"
-    },
-    {
-     "level": 2,
-     "line": 689,
-     "slug": "24-home-brain-home-issue-78",
-     "text": "24. Home (`brain home`) — issue #78"
-    },
-    {
-     "level": 3,
-     "line": 691,
-     "slug": "241-inputs-sections-and-privacy",
-     "text": "24.1 Inputs, sections, and privacy"
-    },
-    {
-     "level": 3,
-     "line": 699,
-     "slug": "242-output-and-editor-surfaces",
-     "text": "24.2 Output and editor surfaces"
-    },
-    {
-     "level": 3,
-     "line": 705,
-     "slug": "243-freshness-and-exact-file-ownership",
-     "text": "24.3 Freshness and exact-file ownership"
-    },
-    {
-     "level": 2,
-     "line": 710,
-     "slug": "25-local-offline-artifacts-brain-artifacts-issue-23",
-     "text": "25. Local offline artifacts (`brain artifacts`) — issue #23"
-    },
-    {
-     "level": 3,
-     "line": 712,
-     "slug": "251-authenticated-source-and-derived-data-boundary",
-     "text": "25.1 Authenticated source and derived-data boundary"
-    },
-    {
-     "level": 3,
-     "line": 720,
-     "slug": "252-offline-rendering-and-manifest",
-     "text": "25.2 Offline rendering and manifest"
-    },
-    {
-     "level": 3,
-     "line": 728,
-     "slug": "253-modes-ownership-and-local-opening",
-     "text": "25.3 Modes, ownership, and local opening"
-    },
-    {
-     "level": 2,
-     "line": 736,
      "slug": "18-semantic-search-qmd-issue-8",
      "text": "18. Semantic search (QMD — issue #8)"
     },
     {
      "level": 3,
-     "line": 740,
+     "line": 471,
      "slug": "181-embeddings-sidecar",
      "text": "18.1 Embeddings sidecar"
     },
     {
      "level": 3,
-     "line": 760,
+     "line": 491,
      "slug": "182-staleness-and-store-loading",
      "text": "18.2 Staleness and store loading"
     },
     {
      "level": 3,
-     "line": 765,
+     "line": 496,
      "slug": "183-brain-embed",
      "text": "18.3 `brain embed`"
     },
     {
      "level": 3,
-     "line": 774,
+     "line": 505,
      "slug": "184-brain-search---semantic",
      "text": "18.4 `brain search --semantic <query>`"
     },
     {
      "level": 3,
-     "line": 783,
+     "line": 514,
      "slug": "185-determinism-and-invariants",
      "text": "18.5 Determinism and invariants"
     },
     {
      "level": 2,
-     "line": 789,
+     "line": 520,
      "slug": "19-remote-safety-brain-remote-safety-issue-83",
      "text": "19. Remote safety (`brain remote-safety`) — issue #83"
     },
     {
      "level": 3,
-     "line": 797,
+     "line": 528,
      "slug": "191-push-target-discovery-and-normalization",
      "text": "19.1 Push-target discovery and normalization"
     },
     {
      "level": 3,
-     "line": 821,
+     "line": 552,
      "slug": "192-provider-boundary-and-decisions",
      "text": "19.2 Provider boundary and decisions"
     },
     {
      "level": 3,
-     "line": 847,
+     "line": 578,
      "slug": "193-output-exit-status-and-shared-guard",
      "text": "19.3 Output, exit status, and shared guard"
+    },
+    {
+     "level": 2,
+     "line": 595,
+     "slug": "20-environment-identity-and-scoped-retrieval",
+     "text": "20. Environment identity and scoped retrieval"
+    },
+    {
+     "level": 3,
+     "line": 601,
+     "slug": "201-tracked-manifest",
+     "text": "20.1 Tracked manifest"
+    },
+    {
+     "level": 3,
+     "line": 641,
+     "slug": "202-clone-local-state",
+     "text": "20.2 Clone-local state"
+    },
+    {
+     "level": 3,
+     "line": 656,
+     "slug": "203-selection",
+     "text": "20.3 Selection"
+    },
+    {
+     "level": 3,
+     "line": 679,
+     "slug": "204-commands-and-migration",
+     "text": "20.4 Commands and migration"
+    },
+    {
+     "level": 2,
+     "line": 701,
+     "slug": "21-portable-brain-resolver-and-installer",
+     "text": "21. Portable `brain` resolver and installer"
+    },
+    {
+     "level": 3,
+     "line": 703,
+     "slug": "211-repository-launchers",
+     "text": "21.1 Repository launchers"
+    },
+    {
+     "level": 3,
+     "line": 726,
+     "slug": "212-managed-path-installation",
+     "text": "21.2 Managed PATH installation"
+    },
+    {
+     "level": 3,
+     "line": 765,
+     "slug": "213-host-capability-boundary",
+     "text": "21.3 Host capability boundary"
+    },
+    {
+     "level": 2,
+     "line": 773,
+     "slug": "22-legacy-link-migration-brain-migrate-links-issue-74",
+     "text": "22. Legacy link migration (`brain migrate-links`) — issue #74"
+    },
+    {
+     "level": 3,
+     "line": 775,
+     "slug": "221-preview-and-plan",
+     "text": "22.1 Preview and plan"
+    },
+    {
+     "level": 3,
+     "line": 783,
+     "slug": "222-write-refusal-and-transaction",
+     "text": "22.2 Write refusal and transaction"
+    },
+    {
+     "level": 3,
+     "line": 789,
+     "slug": "223-crash-recovery-and-idempotence",
+     "text": "22.3 Crash recovery and idempotence"
+    },
+    {
+     "level": 2,
+     "line": 795,
+     "slug": "23-actions-you-may-take-brain-aymt-issue-79",
+     "text": "23. Actions You May Take (`brain aymt`) — issue #79"
+    },
+    {
+     "level": 3,
+     "line": 797,
+     "slug": "231-inputs-and-privacy-boundary",
+     "text": "23.1 Inputs and privacy boundary"
+    },
+    {
+     "level": 3,
+     "line": 803,
+     "slug": "232-candidates-scoring-and-selection",
+     "text": "23.2 Candidates, scoring, and selection"
+    },
+    {
+     "level": 3,
+     "line": 811,
+     "slug": "233-rendering-freshness-and-write-ownership",
+     "text": "23.3 Rendering, freshness, and write ownership"
+    },
+    {
+     "level": 2,
+     "line": 817,
+     "slug": "24-home-brain-home-issue-78",
+     "text": "24. Home (`brain home`) — issue #78"
+    },
+    {
+     "level": 3,
+     "line": 819,
+     "slug": "241-inputs-sections-and-privacy",
+     "text": "24.1 Inputs, sections, and privacy"
+    },
+    {
+     "level": 3,
+     "line": 827,
+     "slug": "242-output-and-editor-surfaces",
+     "text": "24.2 Output and editor surfaces"
+    },
+    {
+     "level": 3,
+     "line": 833,
+     "slug": "243-freshness-and-exact-file-ownership",
+     "text": "24.3 Freshness and exact-file ownership"
+    },
+    {
+     "level": 2,
+     "line": 838,
+     "slug": "25-local-offline-artifacts-brain-artifacts-issue-23",
+     "text": "25. Local offline artifacts (`brain artifacts`) — issue #23"
+    },
+    {
+     "level": 3,
+     "line": 840,
+     "slug": "251-authenticated-source-and-derived-data-boundary",
+     "text": "25.1 Authenticated source and derived-data boundary"
+    },
+    {
+     "level": 3,
+     "line": 848,
+     "slug": "252-offline-rendering-and-manifest",
+     "text": "25.2 Offline rendering and manifest"
+    },
+    {
+     "level": 3,
+     "line": 856,
+     "slug": "253-modes-ownership-and-local-opening",
+     "text": "25.3 Modes, ownership, and local opening"
     },
     {
      "level": 2,

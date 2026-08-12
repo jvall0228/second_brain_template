@@ -8,8 +8,8 @@ tags:
 updated: 2026-08-12
 expires: 2026-08-13
 generated: brain-aymt-v1
-input-digest: "c78f89605ac68d8deb9bb8cb0d74f74f2f35b81e745866d00cc99f87e1d95fd5"
-content-digest: "ec62222cdabe0fc1d78a825f6c236e2b553ddeb50395bdbfa6baf20ffc562446"
+input-digest: "3b975e29d159ad89af3439643be368c5c31f1f3c08c4c50bb4ef0c4926aed680"
+content-digest: "5b57f4b8197719b2a4d9e7c38745bb079e7207aad1a9a003309c7eb6e099d049"
 ---
 
 <!-- generated-by: brain aymt v1; do not edit -->
@@ -40,7 +40,7 @@ A deterministic local brief. It suggests options; it does not authorize external
 
 ### Triage the Inbox
 
-- **Why now:** The tracked Inbox contains 5 notes; 0 exceed the triage threshold.
+- **Why now:** The tracked Inbox contains 6 notes; 0 exceed the triage threshold.
 - **Next step:** Run triage-inbox and review the oldest actionable capture first.
 - **Caveat:** The count excludes untracked and restricted material by design.
 - **Sources:** [Inbox](../02_Inbox/README.md)

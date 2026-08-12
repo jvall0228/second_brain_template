@@ -5,7 +5,7 @@ Structured, queryable access to the vault for agents and humans.
 Behavior is governed by spec.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
-Usage: python 10_Agents/tools/brain/brain.py <command> [options]
+Usage: ./brain <command> [options]
 Commands: index, list, search, links, migrate-links, aymt, home, artifacts, notify, tags, show, recent,
           validate, curate, context, config, report, tasks, embed,
           remote-safety, env
