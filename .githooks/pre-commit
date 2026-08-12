@@ -8,6 +8,62 @@
 root="$(git rev-parse --show-toplevel)" || exit 1
 brain="$root/10_Agents/tools/brain/brain.py"
 
+# This is the first operation after resolving the repository. It is read-only
+# and authenticates the complete existing adapter tree, so a foreign collision
+# aborts before any generated file is mutated or staged.
+python3 "$root/10_Agents/tools/skill_adapters/gen_skill_adapters.py" --preflight >/dev/null || {
+    echo "pre-commit: skill-adapter preflight failed — commit aborted before mutation" >&2
+    exit 1
+}
+
+# The adapter generator reads canonical skill files from the working tree and
+# stages its output. Refuse a partially staged canonical catalog so an
+# unstaged description/name can never leak into an otherwise unrelated commit.
+canonical="10_Agents/skills"
+if ! git -C "$root" diff --quiet -- "$canonical"; then
+    echo "pre-commit: unstaged canonical skill changes would corrupt staged adapters — commit aborted" >&2
+    exit 1
+fi
+if test -n "$(git -C "$root" ls-files --others --exclude-standard -- "$canonical")"; then
+    echo "pre-commit: unstaged canonical skill files would corrupt staged adapters — commit aborted" >&2
+    exit 1
+fi
+
+# From this point on every operation may change both generated working files
+# and the Git index. Snapshot both layers before the first mutation and restore
+# them together on any later failure or caught interruption. This preserves a
+# pre-existing staged generated version even when it differs from the working
+# copy; a failed hook must be observationally equivalent to never having run.
+hook_transaction=""
+hook_completed=0
+hook_cleanup() {
+    hook_status=$?
+    trap - EXIT HUP INT TERM
+    if test -n "$hook_transaction"; then
+        if test "$hook_status" -eq 0 && test "$hook_completed" -eq 1; then
+            if ! python3 "$root/10_Agents/tools/skill_adapters/hook_transaction.py" \
+                discard "$root" "$hook_transaction"; then
+                echo "pre-commit: could not discard generated-file transaction" >&2
+                hook_status=1
+            fi
+        else
+            if ! python3 "$root/10_Agents/tools/skill_adapters/hook_transaction.py" \
+                restore "$root" "$hook_transaction"; then
+                echo "pre-commit: generated files or Git index may need manual recovery from $hook_transaction" >&2
+                hook_status=1
+            fi
+        fi
+    fi
+    exit "$hook_status"
+}
+trap 'hook_cleanup' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+hook_transaction="$(
+    python3 "$root/10_Agents/tools/skill_adapters/hook_transaction.py" begin "$root"
+)" || exit 1
+
 python3 "$brain" index >/dev/null || {
     echo "pre-commit: brain index failed — commit aborted" >&2
     exit 1
@@ -22,11 +78,33 @@ python3 "$root/10_Agents/tools/vscode/gen_snippets.py" >/dev/null || {
 }
 git add "$root/.vscode/second-brain.code-snippets" || exit 1
 
+# Repository-local harness discovery (issue #82): adapters are derived from
+# canonical SKILL.md frontmatter and must never drift or become symlinks.
+python3 "$root/10_Agents/tools/skill_adapters/gen_skill_adapters.py" >/dev/null || {
+    echo "pre-commit: skill-adapter generation failed — commit aborted" >&2
+    exit 1
+}
+git add "$root/.agents/skills" "$root/.claude/skills" || exit 1
+
 python3 "$brain" validate
 case $? in
-    0|2) exit 0 ;;
+    0|2)
+        ;;
     *)
         echo "pre-commit: brain validate found errors — commit aborted" >&2
         exit 1
         ;;
 esac
+
+# Local artifacts are explicit-write generated files, not hook-owned output.
+# Refuse stale bytes without mutating them; refresh deliberately with
+# `brain artifacts --write` before retrying the commit. Keep this after
+# validation so validation failures retain their precise diagnostic while the
+# hook transaction still rolls back all earlier generated mutations.
+python3 "$brain" artifacts --check >/dev/null || {
+    echo "pre-commit: local artifacts are stale — run brain artifacts --write" >&2
+    exit 1
+}
+
+hook_completed=1
+exit 0

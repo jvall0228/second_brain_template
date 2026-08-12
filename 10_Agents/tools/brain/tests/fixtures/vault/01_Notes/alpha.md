@@ -9,12 +9,12 @@ expires: 2027-01-01
 
 # Alpha
 
-Good link [[beta]]; heading link [[01_Notes/beta#Alpha Section|B]].
-Embed: ![[pic.png]]
-Span `[[not-a-link]]` stays out.
+Good link [beta](beta.md); heading link [B](beta.md#alpha-section).
+Embed: ![pic](../08_Assets/pic.png)
+Span `[not a link](not-a-link.md)` stays out.
 
 ```text
-[[fenced-away]]
+[fenced away](fenced-away.md)
 ```
 
-Escaped pipe in a table: [[beta\|Beta]].
+Display label in a table: [Beta](beta.md).

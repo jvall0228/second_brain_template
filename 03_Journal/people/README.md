@@ -23,9 +23,9 @@ Use kebab-case, typically the person's first name: `alex.md`, `sam.md`
 
 ## Contents
 
-- [[03_Journal/people/example-person|Example Person]] — Sample person note. Delete once you've seen the pattern.
+- [Example Person](example-person.md) — Sample person note. Delete once you've seen the pattern.
 
 ## Related
 
-- [[03_Journal/README]] — Parent directory
-- [[03_Journal/insights/README]] — For general reflections not centered on a specific person
+- [README](../README.md) — Parent directory
+- [README](../insights/README.md) — For general reflections not centered on a specific person

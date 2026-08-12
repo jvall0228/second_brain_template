@@ -10,4 +10,4 @@ updated: 2026-08-11
 
 Solved problems involving the vault's own tooling — the `brain` CLI, the committed index, the pre-commit hook, and CI.
 
-- [[10_Agents/solutions/vault-tooling/index-merge-conflicts|Index Merge Conflicts]] — never hand-merge `vault-index.json`
+- [Index Merge Conflicts](index-merge-conflicts.md) — never hand-merge `vault-index.json`

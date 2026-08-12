@@ -26,4 +26,4 @@ updated: {{date}}
 
 ## Related
 
-- [[{{RELATED_NOTE}}]]
+- [Related note]({{RELATED_NOTE}})

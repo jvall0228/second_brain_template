@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[4]
 SHARED = "~/.agents/second-brain/AGENTS.md"
 ONBOARD = ROOT / "10_Agents/skills/onboard-harness/SKILL.md"
 HARNESS_DIR = ROOT / "10_Agents/harnesses"
+HARNESS_README = HARNESS_DIR / "README.md"
+ONBOARD_OWNER = ROOT / "10_Agents/skills/onboard-owner/SKILL.md"
 HARNESS_WIRING = {
     "claude-code": HARNESS_DIR / "claude-code/wiring.md",
     "codex": HARNESS_DIR / "codex/wiring.md",
@@ -32,6 +34,28 @@ def read(path: Path) -> str:
 
 
 class SharedRegistrationContractTests(unittest.TestCase):
+    def test_project_verification_is_default_and_external_write_free(self):
+        text = read(ONBOARD)
+        self.assertIn("Project verification (default)", text)
+        self.assertIn("zero writes outside the clone", text)
+        self.assertIn("**`global-preview` (read-only):**", text)
+        self.assertIn("approves that exact preview", text)
+        self.assertIn("stale previews are invalid", text)
+
+    def test_owner_onboarding_frames_global_setup_as_optional(self):
+        text = read(ONBOARD_OWNER)
+        self.assertIn("read-only **project** mode", text)
+        self.assertIn("outside this repository", text)
+        self.assertIn("exact external-path preview", text)
+
+    def test_compatibility_table_covers_all_harnesses_and_pi_trust(self):
+        text = read(HARNESS_README)
+        for name in ("Claude Code", "Codex", "opencode", "Pi", "Cursor", "Copilot", "Muse Code"):
+            with self.subTest(harness=name):
+                self.assertIn(f"| {name} |", text)
+        self.assertIn("headless runs silently omit untrusted project skills", text)
+        self.assertIn("do not use symlinks", text)
+
     def test_onboard_harness_defines_shared_registration_and_portability(self):
         text = read(ONBOARD)
         self.assertIn(SHARED, text)

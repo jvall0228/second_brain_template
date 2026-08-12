@@ -8,4 +8,4 @@ updated: {{date}}
 
 # {{title}}
 
-Link placeholder: [[{{target}}]]
+Link placeholder: [Target]({{target}})

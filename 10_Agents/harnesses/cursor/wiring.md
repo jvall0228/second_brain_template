@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Cursor Wiring
 
-Facts verified 2026-08-11 against [cursor.com/docs](https://cursor.com/docs) (see [[06_Resources/harness-cursor|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [cursor.com/docs](https://cursor.com/docs) (see [research](../../../06_Resources/harness-cursor.md)); re-verify before relying on paths.
 
 ## Entrypoint loading
 
@@ -20,7 +20,7 @@ Cursor reads **`AGENTS.md` natively** (IDE: root and nested levels; CLI also rea
 
 ## Skills
 
-Cursor supports Agent Skills and scans `.cursor/skills/`, the shared `.agents/skills/`, and Claude-compat paths — the `~/.agents/skills/<name>` symlinks cover it. Commands are deprecated in favor of skills; ship none.
+Cursor supports Agent Skills and scans `.cursor/skills/`, `.agents/skills/`, and Claude-compat paths. A clean clone includes generated text adapters in `.agents/skills/` and `.claude/skills/`, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Commands are deprecated in favor of skills; ship none.
 
 ## Hook installation
 
@@ -29,14 +29,14 @@ Cursor supports Agent Skills and scans `.cursor/skills/`, the shared `.agents/sk
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 
-- **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([[00_Meta/prd]] §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.
+- **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([PRD](../../../00_Meta/PRD.md) §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.
 - **The only harness with a real repo ignore file:** `.cursorignore` gives genuine access exclusion — the one place the vault's privacy marking (`restricted/private`, issue #17 closing PRD §21's open question) can be enforced natively today — see the Restricted content section below. `overlay/cursorignore-template.txt` shows the shape.
 - **Glob-scoped rules:** `.cursor/rules/*.mdc` can scope guidance per PARA directory (`overlay/rules/inbox-conventions.mdc`); use sparingly — `AGENTS.md` remains the portable rule layer.
 - **MCP:** `.cursor/mcp.json`; the vault ships none (M7 registers external sources here).
@@ -44,14 +44,14 @@ python3 10_Agents/tools/brain/brain.py <command> --json
 
 ## Restricted content → `.cursorignore`
 
-The vault's privacy marking is the `restricted/private` tag ([[00_Meta/conventions#Tag Namespaces]], issue #17) — advisory everywhere except mechanically-enforced surfaces, and Cursor is the one harness where real enforcement exists. Generate `.cursorignore` entries from the restricted-tagged paths:
+The vault's privacy marking is the `restricted/private` tag ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#tag-namespaces), issue #17) — advisory everywhere except mechanically-enforced surfaces, and Cursor is the one harness where real enforcement exists. Generate `.cursorignore` entries from the restricted-tagged paths:
 
 ```
-python3 10_Agents/tools/brain/brain.py list --tag restricted/private
+brain list --tag restricted/private
 ```
 
 Rewrite the managed block between the `# BEGIN second-brain restricted/private (generated)` and `# END` markers in the vault-root `.cursorignore` wholesale with one line per printed path (create the file from `overlay/cursorignore-template.txt` if absent; owner lines outside the markers are never touched). Rewriting the whole block is what makes the sync idempotent and lets a note that *loses* the tag drop back out. This is a documented manual step — run it during `onboard-harness` and re-run it whenever notes gain or lose the tag; nothing regenerates the file for you, so a stale `.cursorignore` silently under-excludes. Only path-listed notes are excluded: Cursor knows nothing about tags, so the tag alone protects nothing here until its path lands in the file.
 
 ## Reference configs
 
-The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [[10_Agents/harnesses/README]]; [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`), `overlay/cursorignore-template.txt` (seed for `.cursorignore` — the `restricted/private` generation step above is the shipping privacy policy since 2026-08-11).
+The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); [onboard-harness](../../skills/onboard-harness/SKILL.md) performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`), `overlay/cursorignore-template.txt` (seed for `.cursorignore` — the `restricted/private` generation step above is the shipping privacy policy since 2026-08-11).

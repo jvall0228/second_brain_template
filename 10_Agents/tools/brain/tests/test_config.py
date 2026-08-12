@@ -21,7 +21,7 @@ from test_brain import FIXTURE, make_vault, note  # noqa: E402
 
 def vault(td: Path, files: dict) -> Path:
     return make_vault(
-        td, {"00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(), **files}
+        td, {"00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(), **files}
     )
 
 
@@ -125,7 +125,7 @@ class WriteExceptionTests(unittest.TestCase):
             ("02_Outbox/packet.md", True),
             ("10_Agents/solutions/fix.md", True),
             ("06_Resources/topic.md", False),
-            ("00_Meta/conventions.md", False),
+            ("00_Meta/CONVENTIONS.md", False),
             ("02_Inboxes/sneaky.md", False),
         ]:
             self.assertEqual(brain.agent_write_allowed(rel, {}), ok, rel)
@@ -149,7 +149,7 @@ class WriteExceptionTests(unittest.TestCase):
         )
         # The rest of the directory stays gated.
         self.assertFalse(
-            brain.agent_write_allowed("10_Agents/docs/operating-rules.md", {})
+            brain.agent_write_allowed("10_Agents/docs/OPERATING-RULES.md", {})
         )
         # Traversal into the allowed file still fails closed.
         self.assertFalse(

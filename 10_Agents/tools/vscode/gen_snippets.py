@@ -61,7 +61,7 @@ def build_snippets() -> dict:
         "Second Brain: frontmatter": {
             "prefix": "sb-frontmatter",
             "scope": "markdown",
-            "description": "Required note frontmatter (00_Meta/conventions)",
+            "description": "Required note frontmatter (00_Meta/CONVENTIONS)",
             "body": [
                 "---",
                 "title: \"${1:Title}\"",

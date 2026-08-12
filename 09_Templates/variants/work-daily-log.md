@@ -11,8 +11,8 @@ updated: {{date}}
 
 ## Related
 
-- Weekly review: [[{{RELATED_WEEKLY_REVIEW}}]]
-- Yesterday: [[{{PREVIOUS_DAILY_NOTE}}]]
+- Weekly review: [Current weekly review]({{RELATED_WEEKLY_REVIEW}})
+- Yesterday: [Previous daily note]({{PREVIOUS_DAILY_NOTE}})
 
 ## Preview
 
@@ -69,7 +69,7 @@ What is blocked, who or what unblocks it, and what needs escalating?
 
 ### Decisions
 
-What was decided (or observed being decided) today, and why? Promote anything durable to a decision record ([[09_Templates/template-decision-record]]).
+What was decided (or observed being decided) today, and why? Promote anything durable to a decision record ([template-decision-record](../template-decision-record.md)).
 
 -
 

@@ -16,11 +16,11 @@ expires: 2027-08-11
 
 Map what this environment can reach, agree on what's worth ingesting, and generate the access layer — the vault reaches outward from here.
 
-Orientation is not open-ended discovery: it produces a **structured inventory note** with the required sections defined in [[#Required output contract]] below. Infer as much as possible from the environment itself (installed CLIs, MCP/connector lists, config files); interview the owner only for what can't be observed.
+Orientation is not open-ended discovery: it produces a **structured inventory note** with the required sections defined in [Required output contract](#required-output-contract) below. Infer as much as possible from the environment itself (installed CLIs, MCP/connector lists, config files); interview the owner only for what can't be observed.
 
 ## Interface ranking ladder (apply to every inventory entry)
 
-When a source needs access tooling, prefer in this order (PRD §19 M7, decision #9; extended per #13):
+When a source needs access tooling, prefer in this order (PRD §8.4, decision #9; extended per #13):
 
 1. **Environment-specific custom tooling** — a CLI script or MCP integration built for this environment
 2. **The vendor's first-party CLI** (e.g. `gh`, `gcloud`, `m365`, mail/calendar CLIs)
@@ -30,6 +30,26 @@ When a source needs access tooling, prefer in this order (PRD §19 M7, decision 
 6. **None** — recorded explicitly. "None identified" is a valid, recorded outcome — never an omission.
 
 **Credentials never enter the repo** (PRD §16.2): auth lives in local CLI sessions, keychains, or environment variables — a generated tool reads `$SOURCE_TOKEN`, it never contains one. Refuse to write any secret into a committed file.
+
+## Remote-safety boundary
+
+Keep capability inventory separate from data access. Detecting that a CLI or
+connector exists, inspecting its documented scopes, and recording the interface
+rung is safe. Immediately before the first email, calendar, contacts, chat, drive,
+task, transcript, or similar personal-data read, run `brain remote-safety --persist --json`
+(long-form fallback: `python3 10_Agents/tools/brain/brain.py remote-safety --persist --json`).
+
+- `block` or `unknown` means stop before calling the connector and before opening
+  any output file. An owner may use `--acknowledge-unknown` for the current
+  invocation only; public/non-private and template targets are never overrideable.
+- A no-push vault is local-only. Personal-data results may be inspected in memory,
+  but must not be written to the inventory, generated tooling, notes, or artifacts.
+- Every generated personal-data adapter uses the shared `require_remote_safety`
+  guard immediately before its request, with `persist=True` for capture or other
+  write flows. A process-boundary adapter invokes the JSON command with `--persist`
+  and proceeds only when its exit status is zero and `operationAllowed` is true.
+  Its tests use connector and output-open spies and prove zero calls for
+  blocked/unknown and local-only persistence paths.
 
 ## Required output contract
 
@@ -75,7 +95,23 @@ Environment facts (not harness or vault facts):
 
 ## Where the inventory lands
 
-One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [[10_Agents/environments/README]] for the convention: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment. Full environment-scoping machinery (fingerprinting, automatic detection) is deferred to #15 — this is the minimal landing convention only.
+One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [README](../../environments/README.md) for the contract: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment.
+
+Before reading or writing an inventory, resolve the current environment with
+`brain env detect --json`. If a legacy unregistered directory exists, run
+`brain env migrate <old-slug> <owner-chosen-slug>` and show the preview; never
+move it until the owner accepts the exact plan. For a new environment, ask the
+owner for a stable kebab-case slug, then create:
+
+- the version-1 `environment.json` from the hashed fingerprint evidence and
+  confirmed non-secret capability booleans (brain spec §20.1); and
+- a `README.md` whose first body block says it applies only to that slug and
+  other environments must ignore the directory.
+
+Write the clone-local slug to `.second-brain/environment` only after previewing
+that ignored path. Secrets, endpoints, generated wiring, and delivery/hosting
+state go only under `.second-brain/environments/<slug>/`; never put raw machine
+identity or secrets in the manifest, landing note, inventory, output, or logs.
 
 ## Inventory note template
 
@@ -129,6 +165,7 @@ session: <session-or-pr-ref>
 - Computer use (CUA): <available | none | unknown>
 - Browser: <headless | GUI | none>, auth state: <logged-in-as | none>
 - Permission envelope: <packages / provenance / egress / sandbox gates; unknown = ask owner>
+- Remote safety: <pass | block | unknown>, mode: <private-push | local-only>, checked without persisting personal data
 
 ## Owner decisions
 
@@ -137,19 +174,20 @@ session: <session-or-pr-ref>
 
 ## Steps
 
-1. **Detect the ecosystem first** (contract §3) — the productivity suite is the prior for most solution-inventory answers.
+1. **Detect the ecosystem first** (contract §3) — the productivity suite is the prior for most solution-inventory answers. This is capability inventory only; do not list account records or people.
 2. **Introspect the harness and environment** (contract §2 and §4): harness-provided tools and MCP servers/connectors, CLIs on PATH, schedulers (see `recommended-automations`), the wiring doc in `10_Agents/harnesses/<name>/wiring.md`, browser/CUA availability, and the permission envelope.
 3. **Fill the solution inventory** (contract §1) per category, ranking each entry on the ladder. Record "none" explicitly.
-4. **Interview the owner** for what can't be observed: which sources carry real context, per-source value, sensitivity (some sources shouldn't enter the vault at all — PRD §16.2), and desired freshness. Source priorities are the owner's call, decided here.
-5. **Write the inventory note** to `10_Agents/environments/<env-slug>/orientation-inventory.md` using the template above (`workflow/draft`; the self-guarding preamble is mandatory). If the environment directory doesn't exist yet, create it with the owner's chosen slug.
-6. **Generate the access layer for each adopted source:**
+4. **Run the remote-safety preflight** before any personal-data read, following the boundary above. Requesting permission from the owner does not replace this gate.
+5. **Interview the owner** for what can't be observed: which sources carry real context, per-source value, sensitivity (some sources shouldn't enter the vault at all — PRD §16.2), and desired freshness. Source priorities are the owner's call, decided here.
+6. **Register and write the selected environment:** preview any legacy migration; create or refresh the versioned manifest and self-guarding landing note; preview the ignored selector write; then write `10_Agents/environments/<env-slug>/orientation-inventory.md` using the template above (`workflow/draft`; the self-guarding preamble is mandatory). Record `fingerprints: []` when `brain env detect` has no acceptable native machine ID, and require explicit or selector selection for that environment—never substitute hostname, username, or path material. In local-only mode, include capability facts and the safety state only—never connector-derived data.
+7. **Generate the access layer for each adopted source:**
    - **Tooling** under `10_Agents/tools/<source>/` — a script (stdlib-first, config via env vars) where the rung is a CLI or wrapped API; an access doc naming the exact harness tools where the rung is MCP/connector.
    - **A paired skill** at `10_Agents/skills/<source>-capture/SKILL.md` describing when and how to pull from the source and capture into the vault **via the `inbox-capture` rules**.
-   - Both tagged `workflow/draft` (agent-generated; the owner promotes — PRD §9.3). Everything must pass `python3 10_Agents/tools/brain/brain.py validate`.
-7. **Hand off:** propose recurring flows to `recommended-automations` (it reads this environment's inventory note); register everything generated for `self-maintenance` audits (it probes the inventory's recorded sources on its cycle).
+   - The inventory, capture skill, and any Markdown tool documentation are tagged `workflow/draft` (agent-generated; the owner promotes — PRD §§6.2 and 11). Non-note scripts/config inherit the paired documentation's draft state; placement under `10_Agents/` does not make them canonical-by-policy. Everything must pass `brain validate`.
+8. **Hand off:** propose recurring flows to `recommended-automations` (it reads this environment's inventory note); register everything generated for `self-maintenance` audits (it probes the inventory's recorded sources on its cycle).
 
 ## References
 
-- [[10_Agents/environments/README]] — the environment-scoped landing convention (minimal slice of #15)
+- [README](../../environments/README.md) — the environment-scoped landing convention (minimal slice of #15)
 - `10_Agents/harnesses/<name>/wiring.md` — what this harness can reach and how (static; verify live)
-- `00_Meta/prd.md` §19 M7, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers
+- `00_Meta/PRD.md` §8.4, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers

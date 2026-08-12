@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Pi Wiring
 
-Facts verified 2026-08-11 against the [pi-mono docs](https://github.com/badlogic/pi-mono) (see [[06_Resources/harness-pi|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against the [pi-mono docs](https://github.com/badlogic/pi-mono) (see [research](../../../06_Resources/harness-pi.md)); re-verify before relying on paths.
 
 ## Entrypoint loading
 
@@ -20,7 +20,7 @@ Pi reads **`AGENTS.md` natively** (with `CLAUDE.md` fallback), walking parent di
 
 ## Skills
 
-Pi supports Agent Skills and scans `.pi/skills/`, the shared `.agents/skills/`, and user-scope equivalents — the `~/.agents/skills/<name>` symlinks cover it. **Trust gate:** project-scope `.pi/` and `.agents/skills/` resources load only after the adopter runs `/trust` on the vault once (or sets `defaultProjectTrust` globally); headless runs silently ignore them otherwise — the single most common Pi setup miss.
+Pi supports Agent Skills and scans `.pi/skills/`, `.agents/skills/`, and user-scope equivalents. A clean clone includes generated text adapters in `.agents/skills/`, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. **Trust gate:** project-scope `.pi/` and `.agents/skills/` resources load only after the adopter runs `/trust` on the vault once (or sets `defaultProjectTrust` globally); headless runs silently ignore them otherwise — the single most common Pi setup miss. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
 
 ## Hook installation
 
@@ -29,16 +29,16 @@ Pi supports Agent Skills and scans `.pi/skills/`, the shared `.agents/skills/`, 
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
 Pi shells out normally; no approval config needed beyond project trust.
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 
-- **No MCP support** — Pi extends via TypeScript extensions instead. This is exactly the preference ladder's first rung (PRD §19 M7): any M7 external-source access for Pi is a custom extension or CLI, never an MCP server.
+- **No MCP support** — Pi extends via TypeScript extensions instead. This is exactly the preference ladder's first rung (PRD §8.4): external-source access for Pi is a custom extension or CLI, never an MCP server.
 - **No ignore mechanism** of any kind — feeds the open privacy-policy decision (PRD §21).
 - Prompt templates (`.pi/prompts/*.md`) exist, but skills are the portable unit — ship none.
 

@@ -1,0 +1,22 @@
+{
+  "artifact": null,
+  "category": "validation",
+  "dedupeKey": "validation.2026-08-11",
+  "event": "vault.validation",
+  "occurredAt": "2026-08-11T16:00:00+00:00",
+  "privacyClass": "operational",
+  "schemaVersion": 1,
+  "severity": "warning",
+  "sources": [
+    {
+      "label": "Validation report",
+      "link": "00_Meta/STATUS.md"
+    },
+    {
+      "label": "Issue",
+      "link": "https://github.com/acme/brain/issues/21"
+    }
+  ],
+  "summary": "Two bounded checks need attention.",
+  "title": "Vault validation needs attention"
+}

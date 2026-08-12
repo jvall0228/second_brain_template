@@ -1,5 +1,5 @@
 #!/bin/sh
-# Post-merge hook (issue #25): regenerate the two committed generated files
+# Post-merge hook (issues #25/#82): regenerate committed generated files
 # after any merge, closing the stale window left by the merge=regenerate
 # driver (which keeps "ours" and defers correctness to regeneration).
 # Best-effort — a merge has already succeeded, so this hook never fails it;
@@ -11,6 +11,7 @@
 root="$(git rev-parse --show-toplevel)" || exit 0
 brain="$root/10_Agents/tools/brain/brain.py"
 snippets="$root/10_Agents/tools/vscode/gen_snippets.py"
+skill_adapters="$root/10_Agents/tools/skill_adapters/gen_skill_adapters.py"
 
 if [ -f "$brain" ]; then
     python3 "$brain" index >/dev/null 2>&1 ||
@@ -20,6 +21,11 @@ fi
 if [ -f "$snippets" ]; then
     python3 "$snippets" >/dev/null 2>&1 ||
         echo "post-merge: warning — snippet generation failed; run: python3 10_Agents/tools/vscode/gen_snippets.py" >&2
+fi
+
+if [ -f "$skill_adapters" ]; then
+    python3 "$skill_adapters" >/dev/null 2>&1 ||
+        echo "post-merge: warning — skill-adapter generation failed; run: python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py" >&2
 fi
 
 exit 0

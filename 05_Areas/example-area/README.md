@@ -26,5 +26,5 @@ What's the priority right now? — *Rebuild a consistent morning workout routine
 
 ## Related
 
-- Projects: [[04_Projects/example-project/README|Example Project]]
-- Resources: [[06_Resources/example-resource|Example Resource]]
+- Projects: [Example Project](../../04_Projects/example-project/README.md)
+- Resources: [Example Resource](../../06_Resources/example-resource.md)

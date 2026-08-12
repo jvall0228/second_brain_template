@@ -43,6 +43,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 ## How it works
 
 - **You** open this repo as an Obsidian vault (or edit the Markdown directly) to capture, organize, and review notes.
+- **Home** (`00_Meta/HOME.md`) is the generated local startup surface; preview with `brain home` and refresh it explicitly with `brain home --write`.
 - **Agents** read a [bootstrap sequence](AGENTS.md) to learn who you are, what you're working on, and how to behave — then write output to `02_Inbox/` for you to triage.
 - **Git** tracks every change, making agent contributions auditable and reversible.
 
@@ -51,27 +52,38 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 > **Prefer a guided setup?** Point an AI assistant (Claude Code, Codex, etc.) at your fork and ask it to *onboard me* — the [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) skill walks you through everything below conversationally, does the mechanical steps for you, and assumes no technical background.
 
 1. **Fork or clone** this repo (see *Personal vs work* below — you'll likely want one fork per context).
-2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/prd.md` §6.5), or just edit the Markdown.
+2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/PRD.md` §6.5), or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
-4. Skim [`00_Meta/conventions.md`](00_Meta/conventions.md) to learn the naming and tagging rules.
-5. **Install the pre-commit hook** so every commit keeps the vault index fresh and the conventions enforced, and **the merge driver** so the two committed generated files (the vault index and the VS Code snippets) never need hand-merging:
+4. Skim [`00_Meta/CONVENTIONS.md`](00_Meta/CONVENTIONS.md) to learn the naming and tagging rules.
+5. **Install the pre-commit hook** so every commit keeps the vault index, VS Code snippets, and repository skill adapters fresh, verifies the explicit-write local artifacts, and enforces conventions; install **the merge driver** so hook-generated files never need hand-merging:
    ```
    git config core.hooksPath .githooks
    git config merge.regenerate.driver true
    ```
-   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild both files, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
-6. **Delete the seeded examples** once you've seen the pattern:
-   - `04_Projects/example-project/`
-   - `05_Areas/example-area/`
-   - `06_Resources/example-resource.md`
-   - `03_Journal/people/example-person.md`
-   - `03_Journal/ideas/example-idea.md`
-   - `03_Journal/periodic/daily/2025-01-15.md`
-   - `03_Journal/periodic/weekly/2025-W03-review.md`
-   - `02_Inbox/2026-08-11-para-operations-implementation-plan.md` — shipped development capture, not structure
-   - `02_Inbox/2026-08-11-para-operations-skills-requirements.md` — shipped development capture, not structure
+   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild the index, snippets, and adapters, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
+6. **Remove the seeded examples as one bundle** once you've seen the pattern.
+   `10_Agents/tools/adopt_examples.json` is the sole bundle authority; never
+   delete an example selectively. Preview every deletion and marked reference
+   edit, save that machine-readable plan outside the vault, then apply the
+   exact approved plan:
 
-   Index and README bullets pointing at an example are marked *"Delete once you've seen the pattern"* — drop those lines along with the note they point to. This list is mirrored machine-readably in `10_Agents/tools/adopt_examples.json`; CI's adopter-flow smoke test (`10_Agents/tools/adopt_check.py`) replays this whole section — delete the examples, fill `01_Profile/`, make a first capture — and fails if the list drifts or the post-adoption vault stops validating clean.
+   ```sh
+   # macOS/Linux: keep the plan outside the vault
+   python3 10_Agents/tools/adopt_check.py plan --output "${TMPDIR:-/tmp}/second-brain-adopt-plan.json"
+   python3 10_Agents/tools/adopt_check.py apply "${TMPDIR:-/tmp}/second-brain-adopt-plan.json"
+   ```
+
+   On Windows PowerShell, use
+   `$env:TEMP\second-brain-adopt-plan.json` for the same external plan path.
+
+   Apply refuses missing examples, ignored or untracked occupants, unmarked
+   surviving links, dirty or changed inputs (including the validator), unsafe
+   paths, and stale plans. It rolls back the whole bundle if index regeneration
+   or independent post-apply verification fails. If an interruption leaves the
+   durable cleanup lock in place, run `python3 10_Agents/tools/adopt_check.py recover`
+   rather than deleting recovery state by hand. CI's no-argument adopter smoke test replays the
+   atomic cleanup, fills `01_Profile/`, makes a first capture, and requires zero
+   validation errors.
 7. Start capturing into `02_Inbox/` and triage from there.
 
 ## Validation and the vault index
@@ -79,8 +91,8 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 The vault ships a zero-dependency CLI, [`brain`](10_Agents/tools/brain/spec.md), that indexes every note and enforces the conventions (Python 3.10+, stdlib only):
 
 ```
-python3 10_Agents/tools/brain/brain.py validate   # frontmatter, tags, filenames, wikilinks
-python3 10_Agents/tools/brain/brain.py search <q> # plus: list, links, tags, show, recent
+./brain validate   # frontmatter, tags, filenames, and relative Markdown links
+./brain search <q> # plus: list, links, tags, show, recent
 ```
 
 The committed index at `10_Agents/tools/brain/vault-index.json` gives agents structured vault access without running anything. The pre-commit hook (step 5 above) regenerates it on every commit and blocks commits that break the conventions; a GitHub Actions workflow re-checks both on push as a backstop.
@@ -128,6 +140,6 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 - All agent output goes to `02_Inbox/` unless explicitly directed elsewhere.
 - Every note must have YAML frontmatter with `title`, `tags`, and `updated`.
 - Tags use slash-delimited namespaces (e.g. `type/meta`, `audience/agent`).
-- Files marked `workflow/canonical` require a PR or explicit human approval to change — agents propose edits via an Inbox note (see [operating rules](10_Agents/docs/operating-rules.md)).
+- Files marked `workflow/canonical` require a PR or explicit human approval to change — agents propose edits via an Inbox note (see [operating rules](10_Agents/docs/OPERATING-RULES.md)).
 
-See [Conventions](00_Meta/conventions.md) for full details.
+See [Conventions](00_Meta/CONVENTIONS.md) for full details.

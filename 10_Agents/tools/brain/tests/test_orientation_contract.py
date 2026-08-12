@@ -9,11 +9,14 @@ Run from the vault root:
 """
 
 import re
+import sys
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(ROOT / "10_Agents" / "tools" / "brain"))
+import brain  # noqa: E402
 ORIENTATION = ROOT / "10_Agents/skills/agent-orientation/SKILL.md"
 ENVIRONMENTS_README = ROOT / "10_Agents/environments/README.md"
 RECOMMENDED_AUTOMATIONS = ROOT / "10_Agents/skills/recommended-automations/SKILL.md"
@@ -77,7 +80,7 @@ class OrientationOutputContractTests(unittest.TestCase):
 
 
 class EnvironmentsConventionTests(unittest.TestCase):
-    """Minimal landing convention (#13's slice of deferred #15)."""
+    """Versioned environment contract (#15)."""
 
     def test_environments_readme_exists_with_frontmatter(self):
         self.assertTrue(ENVIRONMENTS_README.is_file())
@@ -86,25 +89,27 @@ class EnvironmentsConventionTests(unittest.TestCase):
         for key in ("title:", "tags:", "updated:"):
             self.assertIn(key, text.split("---", 2)[1])
 
-    def test_environments_readme_records_deferral(self):
-        # Structural: the deferred-machinery marker (#15) must be referenced.
-        self.assertIn("#15", read(ENVIRONMENTS_README))
+    def test_environments_readme_records_selection_contract(self):
+        text = read(ENVIRONMENTS_README)
+        self.assertIn("environment.json", text)
+        self.assertIn(".second-brain/environment", text)
+        self.assertIn("unique fingerprint", text)
 
 
 class InventoryFeedTests(unittest.TestCase):
     """Downstream skills read the environment inventory note."""
 
     def test_recommended_automations_reads_inventory(self):
-        self.assertIn(
-            "10_Agents/environments/<env-slug>/orientation-inventory.md",
-            read(RECOMMENDED_AUTOMATIONS),
-        )
+        text = read(RECOMMENDED_AUTOMATIONS)
+        self.assertIn("brain env detect --json", text)
+        self.assertIn("orientation inventory", text)
+        self.assertIn("only that environment", text)
 
     def test_self_maintenance_reads_inventory(self):
-        self.assertIn(
-            "10_Agents/environments/<env-slug>/orientation-inventory.md",
-            read(SELF_MAINTENANCE),
-        )
+        text = read(SELF_MAINTENANCE)
+        self.assertIn("brain env detect --json", text)
+        self.assertIn("orientation-inventory.md", text)
+        self.assertIn("never use it to read another environment", text)
 
 
 class NeverBootstrapLinkedTests(unittest.TestCase):
@@ -113,21 +118,25 @@ class NeverBootstrapLinkedTests(unittest.TestCase):
 
     BOOTSTRAP_DOCS = [
         ROOT / "AGENTS.md",
-        ROOT / "00_Meta" / "index.md",
-        ROOT / "00_Meta" / "conventions.md",
-        ROOT / "01_Profile" / "now.md",
-        ROOT / "01_Profile" / "preferences.md",
-        ROOT / "01_Profile" / "defaults.md",
+        ROOT / "00_Meta" / "INDEX.md",
+        ROOT / "00_Meta" / "CONVENTIONS.md",
+        ROOT / "01_Profile" / "NOW.md",
+        ROOT / "01_Profile" / "PREFERENCES.md",
+        ROOT / "01_Profile" / "DEFAULTS.md",
     ]
 
-    def test_no_bootstrap_wikilinks_into_environments(self):
+    def test_no_bootstrap_links_into_environments(self):
+        notes, assets = brain.walk_corpus(ROOT)
+        index = brain.build_index(ROOT, notes, assets)
         for doc in self.BOOTSTRAP_DOCS:
             if not doc.exists():
                 continue
-            for match in re.findall(r"\[\[([^\]|#]+)", doc.read_text(encoding="utf-8")):
+            rel = doc.relative_to(ROOT).as_posix()
+            for link in index["notes"][rel]["links"]:
+                target = link.get("resolved") or link.get("destination") or ""
                 self.assertFalse(
-                    match.strip().startswith("10_Agents/environments/"),
-                    f"{doc.name} wikilinks into 10_Agents/environments/ — "
+                    target.startswith("10_Agents/environments/"),
+                    f"{doc.name} links into 10_Agents/environments/ — "
                     "environment notes must never be bootstrap-linked",
                 )
 

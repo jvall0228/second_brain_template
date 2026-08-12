@@ -23,5 +23,5 @@ Use kebab-case: `my-memory-title.md`
 
 ## Related
 
-- [[03_Journal/README]] — Parent directory
-- [[03_Journal/insights/README]] — For reflections and wisdom (not event accounts)
+- [README](../README.md) — Parent directory
+- [README](../insights/README.md) — For reflections and wisdom (not event accounts)

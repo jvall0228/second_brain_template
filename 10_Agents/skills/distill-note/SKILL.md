@@ -18,18 +18,18 @@ Distillation here is structural, not decorative: a captured note becomes an atom
 
 ## Steps
 
-1. **Read the source note and find the atomic claim** — the one idea the note exists to carry. If it carries several independent claims, it needs atomizing first (one claim per note; at triage that's [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]]'s job), then distill each piece.
-2. **Check for an existing home:** `python3 10_Agents/tools/brain/brain.py search "<claim terms>"` — if a zettel or resource note already covers this claim, merge into it (update by replacement) instead of minting a duplicate. One topic, one note. If that existing note is `workflow/canonical`, propose the merge via Inbox rather than editing it directly (canonical change control still applies, even on the owner-direct path).
-3. **Reshape onto [[09_Templates/template-zettel|template-zettel]]:**
+1. **Read the source note and find the atomic claim** — the one idea the note exists to carry. If it carries several independent claims, it needs atomizing first (one claim per note; at triage that's [triage-inbox](../triage-inbox/SKILL.md)'s job), then distill each piece.
+2. **Check for an existing home:** `brain search "<claim terms>"` — if a zettel or resource note already covers this claim, merge into it (update by replacement) instead of minting a duplicate. One topic, one note. If that existing note is `workflow/canonical`, propose the merge via Inbox rather than editing it directly (canonical change control still applies, even on the owner-direct path).
+3. **Reshape onto [template-zettel](../../../09_Templates/template-zettel.md):**
    - Title = the claim itself, stated declaratively ("Index-first retrieval beats embeddings at personal scale"), never a topic label ("Retrieval notes").
    - The body opens with a **summary layer**: 1–3 sentences stating the claim and why it matters, readable entirely on its own.
    - Below it, supporting detail — evidence, examples, caveats — distilled from the source, not pasted wholesale.
-   - `## Source`: where the claim came from — a wikilink if the originating note survives, external sources with retrieval dates otherwise.
-4. **Wire links:** `## Related` wikilinks to notes this claim supports, contradicts, or depends on; add the reverse links in those notes where they're non-canonical.
+   - `## Source`: where the claim came from — a source-relative Markdown link if the originating note survives, external sources with retrieval dates otherwise.
+4. **Wire links:** add source-relative Markdown links under `## Related` to notes this claim supports, contradicts, or depends on; add the reverse links in those notes where they're non-canonical.
 5. **Supersede by replacement** — never leave two notes claiming authority over the same idea:
    - An Inbox capture fully absorbed by the zettel is done: propose archiving it in the triage report.
-   - A graduating Journal entry stays (logs are events, not claims) but gains a wikilink to the zettel; the zettel now owns the claim.
-6. **Frontmatter and destination:** `type/zettel`, `workflow/draft` until reviewed, filed to `06_Resources/` (the zettel home) through normal triage approval. Then `python3 10_Agents/tools/brain/brain.py validate`.
+   - A graduating Journal entry stays (logs are events, not claims) but gains a link to the zettel; the zettel now owns the claim.
+6. **Frontmatter and destination:** `type/zettel`, `workflow/draft` until reviewed, filed to `06_Resources/` (the zettel home) through normal triage approval. Then `brain validate`.
 
 ## Rules
 
@@ -39,7 +39,7 @@ Distillation here is structural, not decorative: a captured note becomes an atom
 
 ## References
 
-- [[09_Templates/template-zettel]] — the target shape
-- [[10_Agents/skills/triage-inbox/SKILL|triage-inbox]] — the main caller
-- [[10_Agents/skills/research-to-resource/SKILL|research-to-resource]] — distills at research time; this skill distills after capture
-- [[10_Agents/docs/operating-rules]] — update by replacement
+- [template-zettel](../../../09_Templates/template-zettel.md) — the target shape
+- [triage-inbox](../triage-inbox/SKILL.md) — the main caller
+- [research-to-resource](../research-to-resource/SKILL.md) — distills at research time; this skill distills after capture
+- [OPERATING-RULES](../../docs/OPERATING-RULES.md) — update by replacement

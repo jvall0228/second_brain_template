@@ -1,7 +1,7 @@
 # .cursorignore — privacy exclusions for restricted/private-tagged notes.
 # Shipping policy since 2026-08-11 (issue #17 closed PRD section 21's open
 # question): the managed block below is rewritten from
-#   python3 10_Agents/tools/brain/brain.py list --tag restricted/private
+#   brain list --tag restricted/private
 # by the onboard-harness overlay step — do not hand-edit inside the markers.
 # Lines outside the markers are yours (add extra owner exclusions freely).
 # See 10_Agents/harnesses/cursor/wiring.md (Restricted content).

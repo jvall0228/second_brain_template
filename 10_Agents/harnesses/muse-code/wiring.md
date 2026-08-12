@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Muse Code Wiring
 
-**Volatile adapter.** Muse Code (Meta) launched 2026-08-05 — six days before this doc. Facts verified 2026-08-11 (see [[06_Resources/harness-muse-code|research]]); its SKILL.md frontmatter spec is unpublished and paths are undocumented in places. This doc stays `workflow/draft` (unlike the other adapters) until the surface stabilizes — **re-verify everything before relying on it.**
+**Volatile adapter.** Muse Code (Meta) launched 2026-08-05 — six days before this doc. Facts verified 2026-08-11 (see [research](../../../06_Resources/harness-muse-code.md)); its SKILL.md frontmatter spec is unpublished and paths are undocumented in places. This doc stays `workflow/draft` (unlike the other adapters) until the surface stabilizes — **re-verify everything before relying on it.**
 
 ## Entrypoint loading
 
@@ -20,7 +20,7 @@ Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.
 
 ## Skills
 
-Muse scans the shared `.agents/skills/` (plus compat paths) — the `~/.agents/skills/<name>` symlinks cover it. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
+Muse scans `.agents/skills/` (plus compat paths). A clean clone includes generated text adapters there, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
 
 ## Hook installation
 
@@ -29,10 +29,10 @@ Muse scans the shared `.agents/skills/` (plus compat paths) — the `~/.agents/s
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 

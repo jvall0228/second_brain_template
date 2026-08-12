@@ -35,9 +35,9 @@ What does "done" look like? — *The new website design is live on the domain, r
 
 ## Related
 
-- Area: [[05_Areas/example-area/README|Example Area]]
-- Resources: [[06_Resources/example-resource|Example Resource]]
-- Decisions: [[04_Projects/example-project/decision-records/README|Decision Records]]
+- Area: [Example Area](../../05_Areas/example-area/README.md)
+- Resources: [Example Resource](../../06_Resources/example-resource.md)
+- Decisions: [Decision Records](decision-records/README.md)
 
 ## Log
 

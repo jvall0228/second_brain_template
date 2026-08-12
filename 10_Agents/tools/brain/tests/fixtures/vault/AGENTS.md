@@ -9,4 +9,4 @@ expires: 2027-01-01
 
 # Fixture Entrypoint
 
-Links: [[alpha]] and [[00_Meta/conventions]].
+Links: [alpha](01_Notes/alpha.md) and [CONVENTIONS](00_Meta/CONVENTIONS.md).

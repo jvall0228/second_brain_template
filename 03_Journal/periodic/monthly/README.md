@@ -17,5 +17,5 @@ _Empty — add your first monthly review when you have one._
 
 ## Related
 
-- [[03_Journal/periodic/README|Periodic Notes]] — Parent hub
-- [[09_Templates/template-monthly-review]] — Monthly review template
+- [Periodic Notes](../README.md) — Parent hub
+- [template-monthly-review](../../../09_Templates/template-monthly-review.md) — Monthly review template

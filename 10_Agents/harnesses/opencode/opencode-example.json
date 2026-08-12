@@ -1,8 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": [
-    "01_Profile/now.md",
-    "01_Profile/preferences.md",
-    "00_Meta/conventions.md"
+    "01_Profile/NOW.md",
+    "01_Profile/PREFERENCES.md",
+    "00_Meta/CONVENTIONS.md"
   ]
 }

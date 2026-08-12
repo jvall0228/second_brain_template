@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 SKILL = ROOT / "10_Agents/skills/self-improve/SKILL.md"
 REJECTED = ROOT / "10_Agents/docs/rejected-proposals.md"
-OPERATING_RULES = ROOT / "10_Agents/docs/operating-rules.md"
+OPERATING_RULES = ROOT / "10_Agents/docs/OPERATING-RULES.md"
 SKILLS_README = ROOT / "10_Agents/skills/README.md"
 AUTOMATIONS = ROOT / "10_Agents/skills/recommended-automations/SKILL.md"
 

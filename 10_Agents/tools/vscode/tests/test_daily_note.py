@@ -23,8 +23,8 @@ updated: {{date}}
 
 # {{date}}
 
-- Weekly review: [[{{RELATED_WEEKLY_REVIEW}}]]
-- Yesterday: [[{{PREVIOUS_DAILY_NOTE}}]]
+- Weekly review: [Current weekly review]({{RELATED_WEEKLY_REVIEW}})
+- Yesterday: [Previous daily note]({{PREVIOUS_DAILY_NOTE}})
 
 ### Backlog
 
@@ -54,7 +54,7 @@ class RenderTests(unittest.TestCase):
         self.assertIn("# 2026-08-11", content)
 
     def test_missing_related_notes_degrade_to_plain_text(self):
-        # Unresolved wikilinks are brain-validate errors, so absent notes must
+        # Unresolved links are brain-validate errors, so absent notes must
         # not be linked.
         with tempfile.TemporaryDirectory() as tmp:
             root = make_root(tmp)
@@ -71,8 +71,8 @@ class RenderTests(unittest.TestCase):
             daily = root / "03_Journal" / "periodic" / "daily"
             (daily / "2026-08-10.md").write_text("y\n", encoding="utf-8")
             content = daily_note.render_note(root, datetime.date(2026, 8, 11))
-        self.assertIn("[[03_Journal/periodic/weekly/2026-W33-review]]", content)
-        self.assertIn("[[2026-08-10]]", content)
+        self.assertIn("[2026-W33 review](../weekly/2026-W33-review.md)", content)
+        self.assertIn("[2026-08-10](2026-08-10.md)", content)
 
     def test_iso_week_year_boundary(self):
         # 2027-01-01 falls in ISO week 2026-W53 — the weekly path must use the
@@ -84,7 +84,7 @@ class RenderTests(unittest.TestCase):
             weekly_dir.mkdir(parents=True)
             (weekly_dir / "2026-W53-review.md").write_text("w\n", encoding="utf-8")
             content = daily_note.render_note(root, datetime.date(2027, 1, 1))
-        self.assertIn("[[03_Journal/periodic/weekly/2026-W53-review]]", content)
+        self.assertIn("[2026-W53 review](../weekly/2026-W53-review.md)", content)
 
 
 class EnsureNoteTests(unittest.TestCase):

@@ -7,62 +7,94 @@
     {
       "label": "Brain: Validate Vault",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py validate",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py validate" },
+      "command": "\"${workspaceFolder}/brain\" validate",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" validate" },
       "group": { "kind": "test", "isDefault": true },
       "problemMatcher": []
     },
     {
       "label": "Brain: Rebuild Index",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py index",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py index" },
+      "command": "\"${workspaceFolder}/brain\" index",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" index" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Links for Current Note",
       "detail": "Outgoing links, backlinks, and unresolved targets — the backlinks-panel substitute",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py links \"${relativeFile}\"",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py links \"${relativeFile}\"" },
+      "command": "\"${workspaceFolder}/brain\" links \"${relativeFile}\"",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" links \"${relativeFile}\"" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Search Vault",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py search \"${input:brainQuery}\"",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py search \"${input:brainQuery}\"" },
+      "command": "\"${workspaceFolder}/brain\" search \"${input:brainQuery}\"",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" search \"${input:brainQuery}\"" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Semantic Search",
       "detail": "Relevance-ranked notes via the embeddings sidecar (spec \u00a718); degrades to keyword search when no vectors exist",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py search --semantic \"${input:brainSemanticQuery}\"" },
+      "command": "\"${workspaceFolder}/brain\" search --semantic \"${input:brainSemanticQuery}\"",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" search --semantic \"${input:brainSemanticQuery}\"" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Recent Notes",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py recent",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py recent" },
+      "command": "\"${workspaceFolder}/brain\" recent",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" recent" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Health Report",
       "detail": "Stale-active notes, orphans, Inbox aging, tag drift, and unresolved links (spec §16)",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py report",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py report" },
+      "command": "\"${workspaceFolder}/brain\" report",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" report" },
       "problemMatcher": []
     },
     {
       "label": "Brain: Tasks (open)",
       "detail": "Open checkbox tasks across the vault, due-date first (spec §17)",
       "type": "shell",
-      "command": "python3 10_Agents/tools/brain/brain.py tasks --open",
-      "windows": { "command": "python 10_Agents/tools/brain/brain.py tasks --open" },
+      "command": "\"${workspaceFolder}/brain\" tasks --open",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" tasks --open" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Actions You May Take",
+      "detail": "Read-only preview of the deterministic local AYMT brief (spec §23)",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/brain\" aymt",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" aymt" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Home Preview",
+      "detail": "Read-only preview of the deterministic local Home (spec §24)",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/brain\" home",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" home" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Preview Artifacts",
+      "detail": "Read-only plan for the deterministic offline link graph and health dashboard (spec §25)",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/brain\" artifacts",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" artifacts" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Open Artifacts",
+      "detail": "Open both fresh generated HTML views locally; refuses stale or foreign files",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/brain\" artifacts --open",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" artifacts --open" },
       "problemMatcher": []
     },
     {
@@ -74,13 +106,13 @@
       "problemMatcher": []
     },
     {
-      "label": "Homepage: Open Vault Index",
-      "detail": "Opens 00_Meta/index.md on folder open (VS Code asks once to allow automatic tasks)",
+      "label": "Homepage: Open Home",
+      "detail": "Opens committed 00_Meta/HOME.md read-only on folder open (VS Code asks once to allow automatic tasks)",
       "type": "shell",
       // Best-effort: needs the `code` CLI on PATH; silently no-ops otherwise.
       // (sh syntax; the windows variant avoids `||`, which old PowerShell rejects)
-      "command": "code -r 00_Meta/index.md || true",
-      "windows": { "command": "cmd /c \"code -r 00_Meta/index.md & exit 0\"" },
+      "command": "code -r 00_Meta/HOME.md || true",
+      "windows": { "command": "cmd /c \"code -r 00_Meta/HOME.md & exit 0\"" },
       "runOptions": { "runOn": "folderOpen" },
       "presentation": {
         "reveal": "never",

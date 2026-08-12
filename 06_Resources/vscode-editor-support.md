@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # VS Code as Alternative Editor: Requirements, Trust Policy, and Config
 
-Owner-directed (2026-08-11): the vault spec supports **VS Code as an alternative editor** for when Obsidian is not available. This note records the requirements brainstorm, the extension **trust policy the owner set**, the online research behind the candidates, and the mapping from the shipped `.obsidian/` config to the shipped `.vscode/` config. The working config lives at `.vscode/settings.json` + `.vscode/extensions.json` (root-scope dot-path, outside the note corpus — the `.github/` / `CLAUDE.md` precedent from [[00_Meta/prd]] §9.3). Spec change: [[00_Meta/prd]] §6.5.
+Owner-directed (2026-08-11): the vault spec supports **VS Code as an alternative editor** for when Obsidian is not available. This note records the requirements brainstorm, the extension **trust policy the owner set**, the online research behind the candidates, and the mapping from the shipped `.obsidian/` config to the shipped `.vscode/` config. The working config lives at `.vscode/settings.json` + `.vscode/extensions.json` (root-scope dot-path, outside the note corpus — the `.github/` / `CLAUDE.md` precedent from [PRD](../00_Meta/PRD.md) §9.3). Spec change: [PRD](../00_Meta/PRD.md) §6.5.
 
 ## Trust policy (owner decision, 2026-08-11)
 
@@ -38,19 +38,19 @@ Extensions must run locally, require no account for core function, and must not 
 **Tier 1 — first-party extensions (shipped via `extensions.json`):**
 
 8. **HTML rendering** — Microsoft **Live Preview** (`ms-vscode.live-server`): embedded auto-refreshing browser panel for HTML files (exports, `08_Assets/` artifacts). Obsidian has no equivalent in our config (`webviewer` disabled).
-9. **P0 harness companions** (PRD §8.3): **Claude Code** (`anthropic.claude-code`) and **Copilot** (`github.copilot`) — the two P0 harnesses with VS Code surfaces; wiring docs under `10_Agents/harnesses/`. With a harness attached, agent-mediated workflows (daily log via the [[10_Agents/skills/daily-log/SKILL|daily-log]] skill, link queries via `brain`) partially compensate for the excluded community features below.
+9. **P0 harness companions** (PRD §8.3): **Claude Code** (`anthropic.claude-code`) and **Copilot** (`github.copilot`) — the two P0 harnesses with VS Code surfaces; wiring docs under `10_Agents/harnesses/`. With a harness attached, agent-mediated workflows (daily log via the [daily-log](../10_Agents/skills/daily-log/SKILL.md) skill, link queries via `brain`) partially compensate for the excluded community features below.
 
 **Tier 2 — full Obsidian parity — evaluated and NOT shipped (fails trust policy):**
 
-10. Wikilink click-through/completion, backlinks panel, graph view, tag explorer, daily-note command. Only community extensions provide these (see research below). Owner reviewed and declined; accepted gaps with mitigations:
+10. Backlinks panel, graph view, tag explorer, and daily-note command. Only community extensions provide the missing rich views (see research below). Canonical relative Markdown click-through, path completion, and validation are built in and shipped; the owner reviewed and declined the remaining extensions.
 
 | Gap (Obsidian plugin) | Mitigation in VS Code |
 |---|---|
-| Wikilink navigation | `Ctrl/Cmd+P` / search on the target name; `brain links <note>` for outgoing/backlinks; `brain validate` catches broken links |
-| Backlinks (`backlink`, `outgoing-link`) | `brain links --json`; workspace search for `[[target` |
-| Graph (`graph`) | none (accepted) |
+| Relative Markdown navigation | Built-in click-through, path completion, and `markdown.validate`; `brain validate` adds fragment/encoding/case checks |
+| Backlinks (`backlink`, `outgoing-link`) | `brain links --json`; workspace search for the target path |
+| Graph (`graph`) | `brain artifacts --open` opens the deterministic offline link graph; use the VS Code task |
 | Tag pane (`tag-pane`) | `brain tags`; workspace search for the tag string |
-| Daily notes (`daily-notes`) | [[10_Agents/skills/daily-log/SKILL|daily-log]] skill via an attached harness, or copy `09_Templates/template-daily-log.md` |
+| Daily notes (`daily-notes`) | [daily-log](../10_Agents/skills/daily-log/SKILL.md) skill via an attached harness, or copy `09_Templates/template-daily-log.md` |
 | Mermaid in preview | renders on GitHub and in Obsidian; not in VS Code preview (accepted) |
 | Canvas, `bases` | Obsidian-proprietary; accepted (template ships neither) |
 
@@ -61,7 +61,7 @@ Extensions must run locally, require no account for core function, and must not 
 | Live Preview (`ms-vscode.live-server`) | Microsoft org | **Shipped** |
 | Claude Code (`anthropic.claude-code`) | Anthropic org | **Shipped** |
 | Copilot (`github.copilot`) | GitHub org | **Shipped** |
-| Foam (`foam.foam-vscode`) | Community (MIT, 17.3k★, 133 contributors, ~268k installs, 5.0★) | Excluded — best-in-class for wikilinks/backlinks/graph/tags/daily notes, and the closest Obsidian equivalent, but community-published with no org backing. Documented as the owner-optional upgrade if the policy is ever relaxed. |
+| Foam (`foam.foam-vscode`) | Community (MIT, 17.3k★, 133 contributors, ~268k installs, 5.0★) | Excluded — best-in-class for backlinks/graph/tags/daily notes, and a close Obsidian equivalent, but community-published with no org backing. Documented as the owner-optional upgrade if the policy is ever relaxed. |
 | Markdown All in One (`yzhang`) | Personal (5M+ installs) | Excluded — personal publisher |
 | markdownlint (`DavidAnson`) | Personal (author is a Microsoft engineer; publishes from a personal account) | Excluded — personal publisher; `brain validate` is the vault's real linter anyway |
 | Markdown Mermaid (`bierner`) | Personal (author maintains VS Code's built-in markdown at Microsoft; personal account) | Excluded — personal publisher |
@@ -89,21 +89,22 @@ Sources:
 | `sync`, `file-recovery` | Git (built-in SCM) | 0 |
 | — (no Obsidian equivalent) | HTML rendering via Live Preview | 1 |
 | Agent workflows | Claude Code / Copilot extensions | 1 |
-| Wikilinks, `backlink`, `outgoing-link`, `graph`, `tag-pane`, `page-preview`, `daily-notes`, `templates`, `note-composer` | not shipped — see gap table above | 2 (declined) |
+| Relative Markdown links | built-in click-through, path completion, validation | 0 |
+| `backlink`, `outgoing-link`, `graph`, `tag-pane`, `page-preview`, `daily-notes`, `templates`, `note-composer` | not shipped — see gap table above | 2 (declined) |
 | `canvas`, `bases`, `appearance.json` font | not shipped | — |
 
 ## Round-two decisions (owner, 2026-08-11) and what shipped
 
-1. **Trust policy scope:** strict first-party is the *template default*, overridable per fork. The structured vault-config file for such overrides shipped as `00_Meta/config.yaml` (issue #2): set `extension_trust: relaxed` there to record that a fork admits community extensions such as Foam — see [[10_Agents/tools/brain/spec]] §15 and `brain config`.
+1. **Trust policy scope:** strict first-party is the *template default*, overridable per fork. The structured vault-config file for such overrides shipped as `00_Meta/config.yaml` (issue #2): set `extension_trust: relaxed` there to record that a fork admits community extensions such as Foam — see [spec](../10_Agents/tools/brain/spec.md) §15 and `brain config`.
 2. **AI harness extensions:** kept (Claude Code, Copilot) — the vault is agent-oriented and both are P0 harnesses.
-3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute), all built-in task machinery, `python3` the only requirement.
+3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute) / health / tasks / read-only AYMT and Home previews / artifact preview and local open, all built-in task machinery, `python3` the only requirement.
 4. **Snippets over raw templates as the user-facing surface:** shipped `.vscode/second-brain.code-snippets`, **generated** from `09_Templates/` by `10_Agents/tools/vscode/gen_snippets.py` and kept in sync automatically by the pre-commit hook (`--check` mode available). `{{date}}` maps to VS Code's auto-filling date variables; other tokens become tabstops. Plus an `sb-frontmatter` snippet for bare capture.
-5. **Cursor synergy:** noted in [[10_Agents/harnesses/cursor/wiring]] — the whole `.vscode/` surface works in Cursor unchanged.
+5. **Cursor synergy:** noted in [wiring](../10_Agents/harnesses/cursor/wiring.md) — the whole `.vscode/` surface works in Cursor unchanged.
 6. **Acceptance criteria:** written into PRD §6.5. Config is script-verified in this environment (snippet generation deterministic + valid JSON, daily-note output passes `brain validate`, tasks reference real commands); the open-in-real-VS-Code acceptance pass was waived by the owner at merge (2026-08-11).
-7. **Homepage on open:** shipped as a `folderOpen` automatic task opening [[00_Meta/index]] (VS Code prompts once to allow automatic tasks; needs the `code` CLI on PATH, silently no-ops without it). Obsidian core has no auto-open equivalent — a community "Homepage" plugin exists but fails the trust posture; gap noted in the mapping.
+7. **Homepage on open:** shipped as a `folderOpen` automatic task opening generated [Home](../00_Meta/HOME.md) without writing (VS Code prompts once to allow automatic tasks; needs the `code` CLI on `PATH`, silently no-ops without it). Recovery is **Tasks: Manage Automatic Tasks in Folder**, trust/allow, reopen; otherwise open Home manually or run read-only `brain home`. Obsidian uses its native tracked `openBehavior: file:00_Meta/HOME.md` setting, grounded in the installed 1.12.7 implementation and the official [1.11.4 setting release](https://obsidian.md/changelog/2026-01-12-desktop-v1.11.4/) plus [1.11.5 extension fix](https://obsidian.md/changelog/2026-01-20-desktop-v1.11.5/).
 8. **Old duplicate branch:** ignore/delete note stands (below).
 
-**Spec-parity mechanism (owner follow-up):** two layers. (a) *Automated:* the snippet surface regenerates from templates on every commit — template changes cannot leave VS Code behind. (b) *Procedural:* a new **editor-surface parity** checklist item in [[10_Agents/docs/operating-rules]] requires any structural/navigation/template change (e.g. a future "homepage" note) to update `.obsidian/`, `.vscode/`, and the §6.5 mapping in the same change. Obsidian-side note for the homepage example: core Obsidian cannot auto-open a note, so a homepage would be a convention there (pinned/first link in [[00_Meta/index]]) but an actual auto-open in VS Code.
+**Spec-parity mechanism (owner follow-up):** two layers. (a) *Automated:* the snippet surface regenerates from templates on every commit — template changes cannot leave VS Code behind. (b) *Procedural:* the **editor-surface parity** checklist item in [OPERATING-RULES](../10_Agents/docs/OPERATING-RULES.md) requires structural/navigation/template changes to update `.obsidian/`, `.vscode/`, and the §6.5 mapping together. Generated Home now has native Obsidian startup behavior and a read-only VS Code folder-open route; explicit `brain home --write` remains the editor-neutral refresh path.
 
 ## Verification and adversarial review (2026-08-11)
 

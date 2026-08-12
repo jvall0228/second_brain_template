@@ -6,13 +6,13 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2026-11-11
 ---
 
 # Copilot Wiring
 
-Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [[06_Resources/harness-copilot|the harness research's Copilot section]] (sources linked there; it absorbed the same-day deep-dive). Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
+Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [the harness research's Copilot section](../../../06_Resources/harness-copilot.md) (sources linked there; it absorbed the same-day deep-dive). Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
 
 ## Entrypoint loading
 
@@ -26,14 +26,14 @@ Surfaces that **never read `AGENTS.md`** — github.com Copilot Chat, Eclipse, V
 
 ## Skills
 
-Copilot supports Agent Skills on the cloud agent, code review, the CLI, the Copilot app, and agent mode in VS Code/JetBrains. Project discovery paths are `.github/skills/`, `.claude/skills/`, `.agents/skills/` — the vault deliberately ships **none** of these (in-repo symlinks were retired at PRD §8.2, and [copilot-cli#1021](https://github.com/github/copilot-cli/issues/1021) reports symlinked skills are ignored anyway). In-repo, agents reach `10_Agents/skills/` as plain content via the `AGENTS.md` bootstrap.
+Copilot supports Agent Skills on the cloud agent, code review, the CLI, the Copilot app, and agent mode in VS Code/JetBrains. Project discovery paths are `.github/skills/`, `.claude/skills/`, `.agents/skills/`. The vault ships generated **text adapters** (never symlinks) in `.claude/skills/` and `.agents/skills/`; each mirrors the canonical discovery metadata and points to `10_Agents/skills/<name>/SKILL.md`. A clean clone therefore needs no onboarding write for project use. [copilot-cli#1021](https://github.com/github/copilot-cli/issues/1021) still makes symlinks unsuitable, so optional user scope keeps the existing copy/CLI registration route below.
 
 User scope (what `onboard-harness` does for Copilot — **not** the `~/.agents/skills/` symlinks, which the CLI does not reliably discover):
 
 - **CLI:** the first registered second-brain vault that provides the global skill set becomes the manifest-recorded provider; register that real directory with `copilot skill add <vault>/10_Agents/skills` (in-session: `/skills add`). Additional registered vaults with the same skill names become consumers rather than adding duplicate directories. Compare recorded hashes; if another vault's copies differ, report managed version drift and keep the current provider until the owner explicitly chooses a global version. Provider removal follows the generic `onboard-harness` transfer/preflight rule. Reversible with `copilot skill remove` / `/skills remove`; where the registration persists is undocumented.
 - **VS Code / fallback:** **copy** skill folders into `~/.copilot/skills/` (a documented personal path; copies, not symlinks) and treat those copies as shared manifest-owned resources with provider/consumer references and content hashes. Do not overwrite them merely because another vault is onboarded. `chat.agentSkillsLocations` is documented for *project* locations; treating it as user-scope config is unverified.
 
-Caveats: the CLI ships nine built-in skills (`analyze`, `design`, `document`, `fix`, `investigate`, `research`, `security`, `test`, `verify`) that can override same-named user skills — none of the vault's twelve collide; keep it that way. The vault's superset SKILL.md frontmatter (`title`/`tags`/`updated` beyond `name`/`description`) is tolerated in practice (GitHub's own `gh skill install` writes extra frontmatter) but officially undefined — the spec's `metadata:` map is the sanctioned home if a surface ever objects.
+Caveats: the CLI ships nine built-in skills (`analyze`, `design`, `document`, `fix`, `investigate`, `research`, `security`, `test`, `verify`) that can override same-named user skills — none of the vault's twenty-four canonical skill names collide; keep it that way. The canonical files' superset frontmatter (`title`/`tags`/`updated` beyond `name`/`description`) is tolerated in practice, while generated project adapters expose only discovery metadata plus a sanctioned `metadata:` map and canonical pointer.
 
 ## Enforcement chain
 
@@ -50,18 +50,18 @@ General hook facts: config schema `{"version": 1, "hooks": {...}}`, camelCase ev
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
-CLI pre-approval: `--allow-tool='shell(python3 10_Agents/tools/brain/brain.py)'` matches the **exact** bare command only (argument matching is undocumented); `--allow-tool='shell(python3:*)'` covers all python3 invocations (the colon wildcard is shell's only wildcard). Interactive approvals persist per-directory in `~/.copilot/permissions-config.json`. Deny rules always beat allow rules, even under `--allow-all`/`--yolo`. The cloud agent runs brain fine offline — the egress firewall (default-on) only affects network access, which brain never uses.
+CLI pre-approval: `--allow-tool='shell(brain:*)'` covers managed `brain` invocations (the colon wildcard is shell's only wildcard). Without managed installation, approve the repository launcher or long-form fallback narrowly. Interactive approvals persist per-directory in `~/.copilot/permissions-config.json`. Deny rules always beat allow rules, even under `--allow-all`/`--yolo`. The cloud agent runs brain fine offline — the egress firewall (default-on) only affects network access, which brain never uses.
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 
 - **MCP is per-surface:** `.vscode/mcp.json` (VS Code workspace), `~/.copilot/mcp-config.json` (CLI, `/mcp add`), and the cloud agent's JSON config lives in **repository settings on github.com** (shared with code review — cannot be committed as a file). The vault ships no servers (vault MCP is permanently out of scope, PRD §19); M7 external-source servers register per-surface.
 - **Secrets:** the cloud agent has a dedicated **Agents** secrets/variables store (Settings → Secrets and variables → Agents), exposed as env vars; names prefixed `COPILOT_MCP_` go only to MCP servers. Credentials never enter the repo (PRD §16.2).
-- **Automation:** headless `copilot -p "<prompt>"`; cloud tasks via `gh agent-task` (gh ≥ 2.80), the Agent tasks REST API (public preview, user-to-server tokens only), or scheduled [gh-aw](https://github.github.com/gh-aw/reference/copilot-cloud-agent/) workflows — see [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]].
+- **Automation:** headless `copilot -p "<prompt>"`; cloud tasks via `gh agent-task` (gh ≥ 2.80), the Agent tasks REST API (public preview, user-to-server tokens only), or scheduled [gh-aw](https://github.github.com/gh-aw/reference/copilot-cloud-agent/) workflows — see [recommended-automations](../../skills/recommended-automations/SKILL.md).
 - **VS Code reads Claude Code hook config** (`.claude/settings.json`[`.local`]) but **ignores matchers** — the Claude Code adapter's PostToolUse validate example would fire on *every* tool call under VS Code Copilot. Fine at ~1–2 s per validate, but know it's there.
 - **Content-exclusion is org-managed** (and ignored by the CLI/agent surfaces — M6 research) — no repo-level privacy mechanism; feeds the open policy decision (PRD §21).
 - Glob-scoped instruction files (`.github/instructions/*.instructions.md`, `applyTo` frontmatter) exist but add nothing here: `AGENTS.md` already reaches every agent surface they reach. Prompt files and custom agents likewise are not shipped — skills are the vault's portable unit.
@@ -73,4 +73,4 @@ CLI pre-approval: `--allow-tool='shell(python3 10_Agents/tools/brain/brain.py)'`
 
 ## Reference config
 
-None to copy — the working config ships in the repo itself: `.github/copilot-instructions.md` (IDE/web bootstrap shim), `.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh` (cloud-agent enforcement). All three sit outside the note corpus (dot-paths are pruned), so `brain` never validates or indexes them. They are catalogued as `shipped-in-repo` artifacts in `overlay/manifest.json` — the Copilot **overlay** (see the Overlays section of [[10_Agents/harnesses/README]]): present in every clone, so [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] installs and removes nothing for them.
+None to copy — the working config ships in the repo itself: `.github/copilot-instructions.md` (IDE/web bootstrap shim), `.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh` (cloud-agent enforcement). All three sit outside the note corpus (dot-paths are pruned), so `brain` never validates or indexes them. They are catalogued as `shipped-in-repo` artifacts in `overlay/manifest.json` — the Copilot **overlay** (see the Overlays section of [README](../README.md)): present in every clone, so [onboard-harness](../../skills/onboard-harness/SKILL.md) installs and removes nothing for them.

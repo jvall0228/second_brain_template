@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -14,14 +14,14 @@ expires: 2027-08-11
 
 ## 1. Scope and status
 
-This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, index-schema, and command-semantics rules that `brain.py` implements. [[00_Meta/prd]] §19 M5 requires these rules to be specified in a spec note before implementation; the implementation plan's Phase M5.0 additionally required owner review before the Indexer phase (M5.1). **Reviewed and promoted to canonical by the owner on 2026-08-11** — changes now follow §6.3 change control.
+This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, index-schema, and command-semantics rules that `brain.py` implements. [PRD](../../../00_Meta/PRD.md) §19 M5 requires these rules to be specified in a spec note before implementation; the implementation plan's Phase M5.0 additionally required owner review before the Indexer phase (M5.1). **Reviewed and promoted to canonical by the owner on 2026-08-11** — changes now follow §6.3 change control.
 
-Design inspiration is Obsidian's MetadataCache; the starting point is [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]. Where this spec deliberately diverges from Obsidian or from the implementation plan, the divergence is listed in §11 and §12.
+Design inspiration is Obsidian's MetadataCache; the portable authoring contract is [Relative Markdown Link Rules](../../solutions/obsidian-issues/wikilink-resolution-rules.md). Where this spec deliberately diverges from Obsidian or from the implementation plan, the divergence is listed in §11 and §12.
 
-**Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([[00_Meta/prd]] §6.5) — and `brain` is the compatibility keystone between them:
+**Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([PRD](../../../00_Meta/PRD.md) §6.5) — and `brain` is the compatibility keystone between them:
 - The **link-resolution model (§6) tracks Obsidian's**: a link that resolves differently in `brain` than in Obsidian is a bug in one of them, and every intentional divergence must be recorded in §11.
 - The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, `report`, `tasks`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
-- Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [[10_Agents/docs/operating-rules]] (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
+- Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [OPERATING-RULES](../../docs/OPERATING-RULES.md) (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
 
 Normative language: **must** = required behavior; **records an error/warning** = the finding is stored in the index or produced by `validate` (§10), never silently dropped.
 
@@ -44,7 +44,7 @@ Normative language: **must** = required behavior; **records an error/warning** =
 
 ## 4. Frontmatter grammar
 
-`brain` parses the YAML **subset** implied by the §10.1 contract of [[00_Meta/prd]] — not full YAML. Notes whose frontmatter falls outside the subset are **still indexed**; each violation is recorded in that note's `frontmatterErrors` for `validate` to surface (parsing is best-effort, never fatal).
+`brain` parses the YAML **subset** implied by the §10.1 contract of [PRD](../../../00_Meta/PRD.md) — not full YAML. Notes whose frontmatter falls outside the subset are **still indexed**; each violation is recorded in that note's `frontmatterErrors` for `validate` to surface (parsing is best-effort, never fatal).
 
 ### 4.1 Block detection
 
@@ -92,19 +92,18 @@ The full parsed map is preserved as-is under `frontmatter` (values: string, list
 
 Template placeholders (`{{…}}`) are ordinary strings to the parser; the `09_Templates/` exemption is applied by `validate`, not the parser (§10.3).
 
-## 5. Wikilink grammar
+## 5. Generic link grammar
 
-### 5.1 Recognized forms
+### 5.1 Recognized forms and records
 
-`[[target]]`, `[[target|display]]`, `[[target#fragment]]`, `[[target#fragment|display]]`, and the embed variants prefixed `!`. Parsing inside the brackets:
+The schema-v2 extractor reads the maintained format plus one import-only legacy format into one record shape:
 
-1. Split at the **first display separator**: a `|`, optionally preceded by a backslash which is consumed — Obsidian requires the escaped form `[[target\|Display]]` inside markdown tables, and both forms mean the same link. Left of the separator is the link path, right is the display text.
-2. Split the link path at the **first `#`** → target / fragment. A fragment beginning `^` is a block reference; otherwise a heading reference. Fragments are recorded but **never affect resolution** (§6).
-3. Trim surrounding whitespace from target, fragment, and display.
-4. A target ending `.md` has **exactly one** such extension stripped (`[[foo.md]]` → `foo`; `[[foo.md.md]]` → `foo.md`). An **empty** target (`[[#heading]]`) is a self-reference and resolves to the containing note.
-5. A target containing `{{` is a **placeholder link**: recorded with `placeholder: true`, exempt from resolution (`resolved: null`, not counted as unresolved).
+- **Standard inline Markdown:** `[label](destination)`, `![alt](destination)`, angle-bracket destinations, balanced parentheses, escaped delimiters, one optional fully quoted/parenthesized ignored title, URL-encoded paths/fragments, and fragment-only self-links. Arbitrary text after a destination is invalid rather than silently discarded. Reference-style and multiline links are intentionally not recognized.
+- **Legacy import format:** `[[target]]`, `[[target|label]]`, `[[target#fragment]]`, `[[target#fragment|label]]`, and the `!` embed forms. The first `|` (or table-safe `\|`) separates the label; the first `#` separates the fragment; one final `.md` is stripped only from the compatibility `target` field. Odd backslash parity escapes either link syntax; even parity does not.
 
-The bracket body must be non-empty and may not contain `[`, `]`, or a newline. A `[[` preceded by a backslash is not a link.
+Each record always carries `raw`, `range`, `line`, `label`, `destination`, `fragment`, `format` (`markdown|wikilink`), `embed`, `placeholder`, and `resolution`. `range.start.offset`/`range.end.offset` are a half-open range in **normalized UTF-8 bytes**; endpoints also carry 1-based line and 0-based character column. `resolution` is `{status, path, fragment, warnings}`. `display`, `target`, `resolved`, and top-level `warnings` remain schema-v1 compatibility aliases for consumers. `format: wikilink` is the authoritative import-debt count; the index also exposes aggregate `linkCounts`. A maintained repository has zero such records.
+
+A destination or fragment containing `{{` is a placeholder: indexed with `status: placeholder`, counted, and exempt from normal resolution/validation. A fragment beginning `^` is an unsupported block reference: its path may resolve for backlink structure, but the record status/warning is explicit and migration refuses it. Raw/bare URLs and Markdown destinations with a URI scheme or `//` are external and excluded. A leading `/` Markdown destination is recorded as unsupported rather than treated as repository-relative; portable vault links are source-relative.
 
 ### 5.2 Exclusion zones
 
@@ -116,13 +115,9 @@ Links (and inline tags, §7.2) are **not** extracted from:
 
 This removes the known false-positive source from the M4 link check. Indented (4-space) code blocks, HTML comments, and Obsidian `%%` comments are **not** excluded in v1 (§11).
 
-### 5.3 Recorded fields
+## 6. Link and fragment resolution
 
-Each link is recorded in document order with: `raw` (full matched text), `target`, `fragment` (or `null`), `display` (or `null`), `embed` (bool), `placeholder` (bool), `line`, `resolved` (vault path or `null`), and `warnings` (list of strings, §6.5).
-
-## 6. Link resolution
-
-Mirrors Obsidian's filename-first model with **one deliberate omission: no title-based resolution.** The solutions note marks title matching unreliable, so a link that only matches some note's `title:` stays **unresolved** and `validate` flags it (with a repair hint, §6.5).
+Markdown links use source-relative explicit paths compatible with GitHub, VS Code, and Obsidian. Legacy imports retain Obsidian's filename-first model until `migrate-links` converts them. Title matching remains a hint only.
 
 **Folding rule:** every case-insensitive comparison in this section means NFC normalization followed by `str.casefold()`. (For vaults conforming to the §10.2 filename rules this reduces to ASCII case-insensitivity, making behavior independent of the interpreter's Unicode database version.)
 
@@ -130,33 +125,41 @@ Mirrors Obsidian's filename-first model with **one deliberate omission: no title
 
 From the note corpus: **basename** (final path component minus `.md`) → list of paths, keyed by the folding rule with original case retained for mismatch detection.
 
-### 6.2 Algorithm
+### 6.2 Legacy algorithm
 
 For a target `T` (post §5.1 normalization), resolution tries **notes first, then assets**:
 
 1. **Self:** `T` is empty → resolves to the containing note.
 2. **Bare name** (`T` contains no `/`): look up the note basename table.
    - one candidate → resolved;
-   - multiple → **ambiguous**: resolve to the candidate with the fewest path segments, tie-broken by code-point path order; warning `ambiguous`;
+   - multiple → **ambiguous**: `path: null`, status `ambiguous`, and deterministic candidate warnings; never guess;
    - none → step 4.
 3. **Path** (`T` contains `/`): exact match against note path `T + ".md"`, case-sensitively; failing that, by the folding rule (unique hit → resolved; multiple hits → ambiguity rule above; none → step 4). Partial path *suffix* matching is **not** supported (§11).
-4. **Asset fallback:** if `T`'s final component has an extension — it matches `\.[A-Za-z0-9]+$` and the suffix is not `md` — resolve against the **asset list** with the same branch structure as steps 2–3 (bare name → asset basename table, *including* the extension; path → exact asset path; same ambiguity and case rules). Trying notes first means `[[web-2.0]]` finds a note named `web-2.0.md` even though `.0` looks like an extension; `![[img.png]]` finds the asset.
-5. **Unresolved:** `resolved: null`. If some note's `title` equals `T` under the folding rule, each such path is recorded as a `title-match:<path>` warning — the repair hint for the future `link-repair` skill.
+4. **Asset fallback:** if `T`'s final component has an extension — it matches `\.[A-Za-z0-9]+$` and the suffix is not `md` — resolve against the **asset list** with the same branch structure as steps 2–3 (bare name → asset basename table, *including* the extension; path → exact asset path; same ambiguity and case rules). Trying notes first means the legacy target `web-2.0` finds a note named `web-2.0.md` even though `.0` looks like an extension; an imported image target `img.png` finds the asset.
+5. **Unresolved:** `path: null`. If some note's `title` equals `T` under the folding rule, each such path is recorded as a `title-match:<path>` repair hint.
 
-### 6.3 Case mismatches
+### 6.3 Markdown algorithm
+
+Percent-decode with UTF-8 semantics (`+` stays literal), normalize NFC, then repeat external-scheme/protocol-relative classification so encoding cannot disguise a URI as a local path. Join local destinations to the containing note's parent with POSIX separators. Reject a leading `/`, a normalized path that escapes the vault, external schemes, protocol-relative URLs, and unsafe/unsupported destinations. An explicit `.md` resolves as a note; an extensionless destination may resolve as a note for import tolerance; other extensions resolve as assets. Exact case wins, a unique folded match carries `case-mismatch`, and multiple folded candidates remain unresolved/ambiguous. Fragment-only destinations resolve to the containing note.
+
+### 6.4 Heading fragments and slugs
+
+ATX headings receive GitHub-compatible slugs in document order from their rendered inline text: inline link/image markup contributes its label/alt text rather than its destination, raw HTML tags are removed, and HTML entities are decoded before NFC + casefold. Inline punctuation/format marks (including `_`) are removed, whitespace collapses to `-`, Unicode letters/numbers/marks are preserved, and duplicate bases receive `-1`, `-2`, and so on. Markdown fragments match these unique slugs. Legacy fragments match heading text under the folding rule; duplicate text is ambiguous and leaves the whole link unresolved. A missing legacy fragment is recorded as `unresolved-fragment` while retaining the resolved path/backlink so WP8 can read the unchanged corpus honestly; migration still refuses it. A successful fragment resolution records `{line, slug}`.
+
+### 6.5 Case mismatches
 
 Any difference between the link text and the actual filename/path casing on a resolved link records the warning `case-mismatch` — the repo lives on case-sensitive filesystems where such links are latent breakage even though Obsidian resolves them.
 
-### 6.4 Backlinks and warnings
+### 6.6 Backlinks and warnings
 
 - **Backlinks:** for every resolved note-target link (embed or not), the containing note's path is added to the target's `backlinks` (sorted, de-duplicated).
-- Per-link `warnings` carry `ambiguous`, `case-mismatch`, and `title-match:<path>` entries; `validate` maps them to severities (§10).
+- Per-link warnings carry ambiguity candidates, case/fragment-case mismatches, title hints, unresolved fragments, and unsupported block/destination states; `validate` maps the blocking path states while import previews report legacy fragment debt before any write.
 
 ## 7. Body extraction
 
 ### 7.1 Headings
 
-ATX headings only: 1–6 `#` characters at the start of a line (up to 3 leading spaces allowed), followed by a space and text; trailing closing-`#` sequences are stripped. Recorded in document order as `{level, line, text}` (`line` per §3, needed for `search` heading hits). Setext (underline) headings are not recognized (§11); the vault uses ATX exclusively. Exclusion zones (§5.2) apply.
+ATX headings only: 1–6 `#` characters at the start of a line (up to 3 leading spaces allowed), followed by a space and text; trailing closing-`#` sequences are stripped. Recorded in document order as `{level, line, slug, text}` (`line` per §3; `slug` per §6.4). Setext headings are not recognized (§11). Exclusion zones (§5.2) apply.
 
 ### 7.2 Inline tags
 
@@ -172,16 +175,22 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
 {
  "assets": ["08_Assets/example.png"],
  "notes": {
-  "00_Meta/prd.md": {
+  "00_Meta/PRD.md": {
    "backlinks": ["AGENTS.md"],
    "bodyTags": [],
    "frontmatter": {"tags": ["type/meta"], "title": "PRD", "updated": "2026-08-11"},
    "frontmatterErrors": [],
-   "headings": [{"level": 1, "line": 8, "text": "PRD"}],
+   "headings": [{"level": 1, "line": 8, "slug": "prd", "text": "PRD"}],
    "links": [
-    {"display": null, "embed": false, "fragment": null, "line": 12,
-     "placeholder": false, "raw": "[[AGENTS]]", "resolved": "AGENTS.md",
-     "target": "AGENTS", "warnings": []}
+    {"destination": "../AGENTS.md", "display": "AGENTS", "embed": false,
+     "format": "markdown", "fragment": null, "label": "AGENTS", "line": 12,
+     "placeholder": false,
+     "range": {"start": {"column": 0, "line": 12, "offset": 200},
+               "end": {"column": 22, "line": 12, "offset": 222}},
+     "raw": "[AGENTS](../AGENTS.md)",
+     "resolution": {"fragment": null, "path": "AGENTS.md",
+                    "status": "resolved", "warnings": []},
+     "resolved": "AGENTS.md", "target": "../AGENTS.md", "warnings": []}
    ],
    "sizeBytes": 12345,
    "tasks": [
@@ -192,11 +201,13 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
    "updated": "2026-08-11"
   }
  },
- "schemaVersion": 1
+ "linkCounts": {"legacy": 0, "markdown": 1, "placeholder": 0,
+                "unsupportedBlockReference": 0, "wikilink": 0},
+ "schemaVersion": 2
 }
 ```
 
-Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is always present (empty lists/`null` rather than omitted keys) so the shape is predictable for consumers reading the JSON directly — the committed index is the primary discovery mechanism per PRD §9.4, usable without running Python.
+Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is always present (empty lists/`null` rather than omitted keys). `linkCounts` is the deterministic aggregate over every indexed record; `legacy` currently equals `wikilink` and remains named explicitly for migration/report consumers.
 
 `schemaVersion` bumps on any breaking change to this shape; consumers must check it.
 
@@ -204,7 +215,7 @@ Field meanings are as defined in §3–§7 and §17 (`tasks`). Every field is al
 
 The committed index must be a **pure function of tracked file contents** — a fresh CI clone rebuild must be byte-identical to the committed copy. Hence the index corpus in §2, plus:
 
-- Serialized exactly as Python's `json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True)` plus a single trailing `\n`, written as UTF-8 with LF endings. Only strings, integers, booleans, `null`, objects, and arrays appear (no floats), so output is stable across Python ≥ 3.10. (The §8.1 example shows the real emitted key order: `sort_keys` puts `assets` < `notes` < `schemaVersion`.)
+- Serialized exactly as Python's `json.dumps(index, ensure_ascii=False, indent=1, sort_keys=True)` plus a single trailing `\n`, written as UTF-8 with LF endings. Only strings, integers, booleans, `null`, objects, and arrays appear (no floats), so output is stable across Python ≥ 3.10. (The §8.1 example shows the real emitted key order: `assets` < `linkCounts` < `notes` < `schemaVersion`.)
 - Object keys sort via `sort_keys`; every array is either **document order** (links, headings — deterministic from file content) or **explicitly sorted** (assets, backlinks, bodyTags, and the `notes` keys via key sort).
 - **No timestamps, no mtimes, no absolute paths, no environment data, no tool-version stamp.** In particular, **file mtime is excluded** even though the plan's extraction-scope bullet listed it: git does not preserve mtimes, so a fresh clone would always produce a different index and the CI freshness check could never pass. The `recent` command's mtime tiebreak stats the working tree at query time instead (§9). *(Deviation from the plan — flagged for owner review, §12.)*
 - `sizeBytes` is the UTF-8 byte length of the **normalized** text (§3; byte-level normalization for `not-utf8` files), not the on-disk size, for the same reason.
@@ -215,22 +226,23 @@ The committed index must be a **pure function of tracked file contents** — a f
 
 A note whose **frontmatter tags** contain `restricted/private` (bodyTags are informal and never trigger this, matching §10.2's posture) is **reduced** in the committed index rather than excluded — decided 2026-08-11 per the accepted triage recommendation on issue #17. The committed index is the vault's most-copied artifact (PRD §9.4); without reduction it would re-leak the very content the tag marks.
 
-- **Kept:** path (the `notes` key), `title`, `frontmatter` (including `tags` — consumers must be able to see *why* the record is reduced), `updated`, `sizeBytes`, `frontmatterErrors`, `links`, and `backlinks`. Links and backlinks stay so restricted notes remain discoverable and the §10.2 containment check has structure to work with — but only their **structure**: on a reduced record each link's `display` and `fragment` are nulled and `raw` is rewritten to the canonical `[[target]]` / `![[target]]` form, so alias text and verbatim body markup (which are body prose) never reach the committed index.
-- **Dropped (emptied/nulled, not omitted — §8.1's every-field-present shape holds, so no `schemaVersion` bump):** `headings: []`, `bodyTags: []`, and `tasks: []` (issue #28: task text and metadata are body prose) — the body-derived fields the index would otherwise publish — plus the link-record prose fields above.
+- **Kept:** path (the `notes` key), `title`, `frontmatter` (including `tags` — consumers must be able to see *why* the record is reduced), `updated`, `sizeBytes`, `frontmatterErrors`, `links`, and `backlinks`. Links/backlinks stay so containment and discovery retain structure. On a reduced link, `label`/`display` and `fragment` are nulled, the nested fragment resolution is nulled, and `raw` is rewritten to a label-free canonical form for its format, so link prose never reaches the committed index.
+- **Dropped (emptied/nulled, not omitted):** `headings: []`, `bodyTags: []`, and `tasks: []` — body-derived fields — plus the link-record prose fields above.
 - The reduction applies to the **committed index only**: `brain index` output and the `validate --check-index` rebuild (both serialize the reduced form, so the byte-compare stays consistent). Query commands (§9) keep the full in-memory record — they run against the local working tree, where the note body sits right beside them; reducing them would cost the owner `search`/`show` utility while protecting nothing.
 - This is a **sanctioned, tag-driven exception** to the spirit of the §15.1 config/index invariant: index output varies with note *content* (the tag), never with `00_Meta/config.yaml`. The committed index remains a pure function of tracked file contents (§8.2).
 - Honest framing (conventions § restricted/private): reduction is leak resistance, not access control — the note body is still in the repo, readable by anything that reads files.
 
 ## 9. CLI command semantics
 
-Invocation: `python 10_Agents/tools/brain/brain.py <command> [args]`, or directly as `./10_Agents/tools/brain/brain.py <command>` — the file is executable with a `#!/usr/bin/env python3` shebang (a shell alias is documented in the tool README at M5.5; a PATH install remains deferred, issue #4). Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4.
+Invocation: `brain <command> [args]`. A clean checkout can use the root resolver (`./brain` on POSIX, `brain.cmd` on Windows); the universal long-form fallback is `python3 10_Agents/tools/brain/brain.py <command> [args]`. Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4. Resolver-specific failures use §21.1.
 
-Where a command takes a `<note>` argument, it accepts a vault-relative path or a bare name; the argument gets §5.1 target normalization (one trailing `.md` stripped — so `brain show 00_Meta/prd.md` works) and then the §6 ladder.
+Where a command takes a `<note>` argument, it accepts a vault-relative path or a bare name; the argument gets §5.1 target normalization (one trailing `.md` stripped — so `brain show 00_Meta/PRD.md` works) and then the §6 ladder.
 
 - **`index`** — rebuild from the index corpus and write `vault-index.json` per §8; print the path written.
 - **`list`** — note paths, sorted. Filters (ANDed): `--dir PREFIX` (path prefix), `--tag TAG` repeatable (effective-tag exact match; a trailing `/*` matches the whole namespace), `--type X` (sugar for `--tag type/X`). JSON: array of `{path, title, updated}`.
 - **`search <query>`** — case-insensitive substring over title, heading texts, and body (body searched in full, code blocks included); combinable with `--tag`. Human: `path:line: snippet` for body/heading hits, `path: title: <title>` for title hits. JSON: array of `{path, field, line, snippet}` (`field` ∈ `title` | `heading` | `body`; `line` is `null` for title hits). With `--semantic`, the command instead ranks whole notes by the §18.4 hybrid rule (degrading to exactly this keyword behavior when semantic ranking is impossible — §18.4 defines both modes).
-- **`links <note>`** — the note's outgoing links (with resolution state and warnings), its backlinks, and its unresolved targets. JSON: `{path, outgoing, backlinks, unresolved}` drawn from the index record.
+- **`links <note>`** — the note's outgoing generic records, backlinks, unresolved targets, and explicit `legacyCount`/`placeholderCount`. JSON: `{path, outgoing, backlinks, unresolved, legacyCount, placeholderCount}`.
+- **`migrate-links`** — §22: source-hashed preview by default; `--check` exits 1 while any legacy link (including a placeholder) or blocker remains; explicit `--write` performs recovery and the crash-recoverable transaction. `--check` and `--write` are mutually exclusive; all modes support `--json`.
 - **`tags`** — effective-tag usage counts grouped by namespace (text before the first `/`; tags without `/` group under `(none)`), sorted by namespace then value. JSON: `{namespace: {value: count}}`.
 - **`show <note>`** — the full §8.1 record for one note (human output: a readable summary of the same fields).
 - **`recent [n]`** — `n` (default 10) notes by `updated` descending; ties broken by working-tree mtime descending, then path ascending; notes with `updated: null` sort last (per PRD §15, `updated` is the primary recency signal and day-granular). JSON: array of `{path, title, updated}`.
@@ -240,22 +252,23 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 - **`report`** — §16: the five-section vault-health synthesis (stale-active, orphans, Inbox aging, tag drift, unresolved links); `--since YYYY-MM-DD` scopes the two change-attributable sections per §16.3. Thresholds come from the `report` config key (§15.3) with built-in defaults.
 - **`tasks`** — §17.3: checkbox tasks across the vault, filterable by `--open`, `--due <date|today>`, `--overdue`, `--project PREFIX`.
 - **`embed`** — §18.3: maintain the semantic-search embeddings sidecar. `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional local model, `--status` reports coverage.
+- **`notify`** — §26: configure/check an ignored selected-environment notification boundary or validate/format a strict push-only envelope. Preview is the default zero-write mode; actual delivery is limited to `--deliver-file --approve-private-send`.
 
 ## 10. Validate semantics
 
 ### 10.1 Rule sources
 
-Tag namespace membership is read **at runtime** from the authoritative table in [[00_Meta/conventions#Tag Namespaces]] — `brain` hardcodes no taxonomy. Mechanically: take the first markdown table after the `## Tag Namespaces` heading; skip the header and separator rows; for each data row, the **namespace** is the first backtick-quoted token in column 1 with any trailing `/*` removed; if column 3's cell text begins with `Free-form` (case-insensitive), the namespace is **open** (any value passes); otherwise the namespace is **closed** and its value list is the backtick-quoted tokens in column 3. Applied to the current table this yields closed `audience`, `type`, `workflow`, `status` and open `topic` — and if the owner adds or re-marks a namespace, `brain` follows the table with no code change. A missing or unparseable table, or a row yielding no namespace, is a validate **error** (`conventions-table-unreadable`), never a silent pass.
+Tag namespace membership is read **at runtime** from the authoritative table in [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#tag-namespaces) — `brain` hardcodes no taxonomy. Mechanically: take the first markdown table after the `## Tag Namespaces` heading; skip the header and separator rows; for each data row, the **namespace** is the first backtick-quoted token in column 1 with any trailing `/*` removed; if column 3's cell text begins with `Free-form` (case-insensitive), the namespace is **open** (any value passes); otherwise the namespace is **closed** and its value list is the backtick-quoted tokens in column 3. Applied to the current table this yields closed `audience`, `type`, `workflow`, `status` and open `topic` — and if the owner adds or re-marks a namespace, `brain` follows the table with no code change. A missing or unparseable table, or a row yielding no namespace, is a validate **error** (`conventions-table-unreadable`), never a silent pass.
 
 ### 10.2 Checks
 
-**Errors** (exit 1): missing frontmatter; missing/null `title` or `updated`; a missing, null, or **empty** `tags` list (`tags: []` declares no tags and fails the same `missing-tags` check; the §10.3 template-placeholder exemption is per-value, and an empty list has no values to exempt, so it fires in `09_Templates/` too); `not-readable` (§3 read failure — `validate` reports it as the note's only finding, suppressing the derived frontmatter-field checks, and `not-utf8` behaves the same way; every other command skips the file); `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved wikilink (placeholder links exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems. Secret-scanning findings (§10.5) are also errors.
+**Errors** (exit 1): missing frontmatter; missing/null `title` or `updated`; a missing, null, or **empty** `tags` list (`tags: []` declares no tags and fails the same `missing-tags` check; the §10.3 template-placeholder exemption is per-value, and an empty list has no values to exempt, so it fires in `09_Templates/` too); `not-readable` (§3 read failure — `validate` reports it as the note's only finding, suppressing the derived frontmatter-field checks, and `not-utf8` behaves the same way; every other command skips the file); `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved or ambiguous internal link (placeholders exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems. Secret-scanning findings (§10.5) are also errors.
 
-**Filename convention:** applies to the **basename** of note files only (directories and assets are not checked). A note basename must match `^[a-z0-9]+(-[a-z0-9]+)*\.md$` — all-digit segments are allowed, so dated notes like `2025-01-15.md` and `2024-01-review.md` pass. Exceptions per [[00_Meta/conventions]]: `AGENTS.md`, `CLAUDE.md`, `README.md` at any level; periodic tokens `YYYY-W##-review.md` and `YYYY-Q#-review.md`; `SKILL.md` inside `10_Agents/skills/` (Agent Skills format, M6).
+**Filename convention:** applies to the **basename** of note files only (directories and assets are not checked). A note basename must match `^[a-z0-9]+(-[a-z0-9]+)*\.md$` — all-digit segments are allowed, so dated notes like `2025-01-15.md` and `2024-01-review.md` pass. Exceptions per [CONVENTIONS](../../../00_Meta/CONVENTIONS.md): `AGENTS.md`, `CLAUDE.md`, `README.md` at any level; the 14 exact-case framework paths registered in `CORE_FRAMEWORK_PATHS`; periodic tokens `YYYY-W##-review.md` and `YYYY-Q#-review.md`; `SKILL.md` inside `10_Agents/skills/` (Agent Skills format, M6). Case variants of a registered framework path fail even when the lowercase basename would otherwise match kebab-case; the exception does not apply to an identically named note elsewhere.
 
 **Agent Skills contract (`10_Agents/skills/`, added at M6 per the implementation plan):** every skill directory (a direct child of `10_Agents/skills/` containing notes) must hold a `SKILL.md` whose frontmatter carries — in addition to the vault contract — an Agent Skills `name` equal to the directory name (`skill-name-mismatch`) and a non-empty `description` string (`skill-missing-description`); a skill directory without a `SKILL.md` is `skill-missing`. All three are errors.
 
-**Warnings** (exit 2 if no errors): `ambiguous` links; `case-mismatch` links; `tags-not-a-list`; `duplicate-key`; `restricted-link` — a note **without** `restricted/private` in its frontmatter tags links to or embeds a resolved note **with** it (context bleed, issue #17: the linking note's prose tends to carry a summary of what it links; restricted → restricted links are clean). Advisory by design — a warning, never an error, because linking restricted content can be legitimate; the duty not to quote/summarize it lives in [[10_Agents/docs/operating-rules]]. `missing-author` — a `02_Inbox/` note whose frontmatter tags include **both** `audience/agent` and `workflow/draft` but whose frontmatter has no non-empty `author:` value (issue #18 provenance; field semantics — harness-level `author:`, optional `session:` reference — are defined in [[00_Meta/conventions]] § Provenance; templates are exempt per the §10.3 placeholder pattern, a placeholder `author:` value counting as present); a `title-match:` hint accompanies its unresolved-link error message. `task-invalid-date` — a date-bearing task emoji whose value is missing or not a real `YYYY-MM-DD` date (§17.2; tasks are informal body content, matching the `bodyTags` posture, so this never blocks a commit; a template task whose text contains `{{` is exempt per the §10.3 placeholder pattern). With the §14 curation gate on: `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget`, and `bootstrap-budget-total`. `invalid-expires` (an `expires:` value that is not a real `YYYY-MM-DD`) is an **error**, with the same template-placeholder exemption as `invalid-updated`.
+**Warnings** (exit 2 if no errors): `case-mismatch`; `unsupported-block-reference`; `tags-not-a-list`; `duplicate-key`; `restricted-link` — a note **without** `restricted/private` in its frontmatter tags links to or embeds a resolved note **with** it. Legacy `unresolved-fragment` remains visible in records/migration blockers without a validate finding during the WP8 compatibility window. `missing-author` — a `02_Inbox/` agent draft with no non-empty `author:`; `task-invalid-date`; and the §14 curation signals. `invalid-expires` remains an error. Placeholders are counted/reported but exempt.
 
 **`--check-index`:** re-serialize the index corpus per §8.2 and byte-compare against the committed `vault-index.json`; a mismatch or missing file is an error ("stale index — run `brain index`").
 
@@ -287,7 +300,7 @@ PRD §16.2's never-commit-credentials rule is enforced by `validate` itself, so 
 | `generic-credential` | literal credential assignments | a key named like api-key / secret / token / password (case-insensitive), then `:` or `=`, then a **quoted** literal of 12+ token characters containing at least one digit |
 | `high-entropy-string` | long opaque literals (the one conservative entropy heuristic) | `:` or `=`, then a **quoted** run of 40+ base64 characters containing lowercase, uppercase, and a digit (padding `=` allowed) |
 
-The two assignment rules require the value to be *entirely* quoted token characters, and the entropy heuristic requires mixed case plus a digit — so prose, wikilinks, bare git SHAs (lowercase hex has no uppercase), and long URLs (contain `:`/`.`/`?` outside the charset) never flag; tuned to zero false positives on this repo's own tree, which the test suite pins with a repo self-scan.
+The two assignment rules require the value to be *entirely* quoted token characters, and the entropy heuristic requires mixed case plus a digit — so prose, link markup, bare git SHAs (lowercase hex has no uppercase), and long URLs (contain `:`/`.`/`?` outside the charset) never flag; tuned to zero false positives on this repo's own tree, which the test suite pins with a repo self-scan.
 
 **Allowlist.** A line is exempt when it carries an HTML comment containing the token `brain:allow-secret-pattern` — marker and pattern on the **same line**. The committed marker is the audit trail: documentation *about* token shapes stays possible, and every suppression is greppable. There is no file- or directory-level allowlist.
 
@@ -298,13 +311,13 @@ The two assignment rules require the value to be *entirely* quoted token charact
 ## 11. Divergences from Obsidian and known limitations
 
 - **No title-based resolution** (deliberate; §6). Title matches become repair hints, not links.
-- **No partial path-suffix matching** (`[[to/foo]]` matching `a/to/foo.md`): full path or bare name only — the plan's three-step ladder is the whole ladder.
-- Block references (`#^id`) and heading fragments parse but are never verified against the target (deferred, §13).
+- **No partial path-suffix matching for legacy imports** (`to/foo` matching `a/to/foo.md`): full path or bare name only — the plan's three-step ladder is the whole ladder.
+- Block references (`#^id`) are explicitly unsupported and migration-blocking; heading fragments are verified per §6.4.
 - Inline code spans are line-scoped; CommonMark multi-line spans are not recognized (§5.2).
 - Indented code blocks, HTML comments, and `%%` comments are scanned for links/tags (only fenced blocks and inline spans are excluded).
 - Setext headings are not recognized.
 - Quoted-scalar escape sequences are not processed (§4.3).
-- Ambiguous bare links resolve deterministically (fewest segments, then path order) — an approximation of Obsidian's "shortest path" pick — and always warn, so ambiguity never persists silently.
+- Ambiguous path or legacy-heading matches remain unresolved; migration never guesses.
 
 ## 12. Decisions this spec makes beyond the plan (review focus)
 
@@ -313,7 +326,7 @@ The two assignment rules require the value to be *entirely* quoted token charact
 3. **`sizeBytes` measures normalized text**, not on-disk bytes — same determinism argument against `autocrlf` checkouts. §8.2, §3.
 4. **Query commands always rebuild in memory** rather than reading the committed index. §9.
 5. **Folding-rule matching (NFC + casefold) with `case-mismatch` warnings**; all paths NFC-normalized. §2, §6.
-6. **Assets are recorded (path-only)** so `![[embeds]]` can resolve; resolution tries notes first, then assets. §2, §6.2.
+6. **Assets are recorded (path-only)** so Markdown images and imported embeds can resolve; legacy resolution tries notes first, then assets. §2, §6.2.
 7. **Validate's tag checks cover frontmatter tags only**; inline `#tags` are informal. §10.2.
 8. **The template-placeholder exemption is per-value**, so real notes in `09_Templates/` (its README) stay fully checked. §10.3.
 9. **Warnings never block commits** (exit 2 passes the hook); only errors do. §10.4.
@@ -322,19 +335,19 @@ The two assignment rules require the value to be *entirely* quoted token charact
 ## 13. Future considerations (out of M5 scope)
 
 - Verifying heading/block fragments against the target's indexed headings.
-- Indexing markdown-style relative links (`[text](path)`) — today only wikilinks are the navigation contract.
+- Reference-style and multiline Markdown links remain future parser work; inline source-relative Markdown is the maintained authoring contract, with legacy parsing retained only for imports.
 - Excluding HTML/`%%` comments from extraction.
 - ~~A `restricted/*`-aware output filter~~ — adopted 2026-08-11 (issue #17): tag-only `restricted/private`, index reduction in §8.3, `restricted-link` warning in §10.2. Still future: directory-based restriction and finer-grained values, revisited only if tag-only proves insufficient.
 
 ## 14. Curation signals (ops plan Phase 4)
 
-Detection lives in `brain`; the judgment lives in the `curate` skill; findings needing owner decisions land as Inbox proposals. Every tunable is a module constant in one block at the top of `brain.py` — `CURATE_MAX_LINES`/`CURATE_MAX_BYTES` (oversized), `CURATE_STALE_DAYS`, `EXPIRES_CAP_DAYS`, the exemption sets, and the `BOOTSTRAP_BUDGETS` map with `BOOTSTRAP_TOTAL_BUDGET`. Policy prose (TTL defaults, what's exempt and why) lives in [[00_Meta/conventions]] § Expiration; the constants are authoritative for values.
+Detection lives in `brain`; the judgment lives in the `curate` skill; findings needing owner decisions land as Inbox proposals. Every tunable is a module constant in one block at the top of `brain.py` — `CURATE_MAX_LINES`/`CURATE_MAX_BYTES` (oversized), `CURATE_STALE_DAYS`, `EXPIRES_CAP_DAYS`, the exemption sets, and the `BOOTSTRAP_BUDGETS` map with `BOOTSTRAP_TOTAL_BUDGET`. Policy prose (TTL defaults, what's exempt and why) lives in [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Expiration; the constants are authoritative for values.
 
-- **`expires:`** — optional frontmatter date (`YYYY-MM-DD`). Malformed → `invalid-expires` error (§10.2). Present and past → **expired** (curate report only). More than `EXPIRES_CAP_DAYS` after `updated:` → **expires-beyond-cap**. Absent on a note that should carry one → **missing-expires**; exempt by path: `02_Inbox/` (zero-friction capture; assigned at triage), `02_Outbox/` (ephemeral packets; lifecycle is the archive path), `03_Journal/`, `07_Archives/`, `09_Templates/`, `10_Agents/solutions/`, the changelog, `00_Meta/status.md`, and `CLAUDE.md`; exempt by type tag: `type/decision` (event records, via `EXPIRES_EXEMPT_TYPE_TAGS`). The orphan check uses the path exemptions only — a decision record still wants inbound links.
+- **`expires:`** — optional frontmatter date (`YYYY-MM-DD`). Malformed → `invalid-expires` error (§10.2). Present and past → **expired** (curate report only). More than `EXPIRES_CAP_DAYS` after `updated:` → **expires-beyond-cap**. Absent on a note that should carry one → **missing-expires**; exempt by path: `02_Inbox/` (zero-friction capture; assigned at triage), `02_Outbox/` (ephemeral packets; lifecycle is the archive path), `03_Journal/`, `07_Archives/`, `09_Templates/`, `10_Agents/solutions/`, the changelog, `00_Meta/STATUS.md`, and `CLAUDE.md`; exempt by type tag: `type/decision` (event records, via `EXPIRES_EXEMPT_TYPE_TAGS`). The orphan check uses the path exemptions only — a decision record still wants inbound links.
 - **oversized** — normalized size or line count over the constants; exempt `07_Archives/` and the changelog (frozen/append-only content is never a split candidate).
 - **stale** — `updated:` older than `CURATE_STALE_DAYS`; score = days-old × (1 + backlink count), sorted worst-first, so heavily-referenced stale notes surface first.
 - **orphans** — zero backlinks; exempt the expires-exempt set plus `AGENTS.md`, `CLAUDE.md`, and the root `README.md`.
-- **unreferenced assets** — `08_Assets/` files no resolved link or embed points at (only `08_Assets/`: reference configs elsewhere are cited by backticked path, not wikilink).
+- **unreferenced assets** — `08_Assets/` files no resolved generic link or embed points at.
 - **dead URLs** — `--check-urls` only: HEAD each distinct `http(s)` URL (10s timeout); 403/405 responses are HEAD-hostile hosts, not dead links. Network access makes this opt-in forever: never run by `validate`, the pre-commit hook, or CI.
 
 `validate` surfaces only the free, offline, low-noise subset as warnings — `missing-expires`, `expires-beyond-cap`, `oversized`, `bootstrap-budget[-total]` — gated behind `VALIDATE_CURATION_WARNINGS` (flipped on with the one-time backfill). Warnings never block commits (§10.4); expired/stale/orphan findings stay report-only because they demand judgment, not mechanical fixes.
@@ -363,15 +376,15 @@ Top-level keys are registered here so later issues cannot collide:
 | Key | Status | Meaning |
 |-----|--------|---------|
 | `write_exceptions` | **implemented** | List of vault-relative directory paths agents may write to **in addition to** the Inbox-first defaults (`02_Inbox/`, `02_Outbox/`, `10_Agents/solutions/` — `AGENT_WRITE_DEFAULT_PREFIXES`). Config only ever widens the set; entries are normalized to a trailing `/`. The enforcement point is `agent_write_allowed(rel, config)`, for harness write-gates and skills; it also allows the built-in single-file exceptions in `AGENT_WRITE_DEFAULT_FILES` (append-only agent logs inside otherwise PR-only prefixes — currently `10_Agents/docs/rejected-proposals.md`, per conventions § Agent Write Rules). Session-scoped carve-outs (onboard-owner, agent-generated skills/tools per PRD §6.2) remain policy prose, not paths. |
-| `extension_trust` | **implemented** | VS Code extension trust policy (PRD §6.5): `first-party` (default) or `relaxed`. A documented override consumed by the editor docs ([[06_Resources/vscode-editor-support]]) — `brain` exposes the effective value via `extension_trust(config)` and `brain config`; it drives no `brain` behavior itself. |
-| `context` | **implemented** (#12) | Fork context recorded by [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]'s specialization step: **one scalar**, `personal` (the default when absent) or `work`. Beyond parsing and reporting it — `vault_context(config)` and `brain config` expose the effective value — `brain` acts on it in no way yet: specialization happens at onboarding time by rewriting the periodic templates in `09_Templates/` in place from `09_Templates/variants/`, not at read time, so the key is a record for tooling and future skills, not a switch. |
+| `extension_trust` | **implemented** | VS Code extension trust policy (PRD §6.5): `first-party` (default) or `relaxed`. A documented override consumed by the editor docs ([vscode-editor-support](../../../06_Resources/vscode-editor-support.md)) — `brain` exposes the effective value via `extension_trust(config)` and `brain config`; it drives no `brain` behavior itself. |
+| `context` | **implemented** (#12) | Fork context recorded by [onboard-owner](../../skills/onboard-owner/SKILL.md)'s specialization step: **one scalar**, `personal` (the default when absent) or `work`. Beyond parsing and reporting it — `vault_context(config)` and `brain config` expose the effective value — `brain` acts on it in no way yet: specialization happens at onboarding time by rewriting the periodic templates in `09_Templates/` in place from `09_Templates/variants/`, not at read time, so the key is a record for tooling and future skills, not a switch. |
 | `environments` | reserved (#15) | — |
 | `modules` | reserved (#32) | — |
 | `provenance` | reserved (#18) | — |
 | `report` | **implemented** (#16) | Health-report thresholds (§16.4): a one-level nested mapping under `report:` whose subkeys are `stale_days` (stale-active threshold, default `30`) and `inbox_days` (Inbox triage-debt threshold, default `14`). Values are non-negative-integer scalars (digits only — §4.3 stores strings; `report_thresholds(config)` converts). A `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `brain report` only — never by `index`, and it moves no `validate` severity. |
 | `sync` | reserved (#26) | — |
 | `tasks` | **implemented** (#28) | Task-module settings (§17.4): a one-level nested mapping under `tasks:` whose sole subkey is `carry_over` (`on` \| `off`, default `on`) — whether daily-note instantiation carries yesterday's unchecked tasks into the new note's Backlog section (§17.5). `tasks_carry_over(config)` converts; a `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `daily_note.py` only — never by `index`, and it moves no `validate` severity. |
-| `template_version` | **implemented** (#6) | Upstream template version record (issue #6): **one scalar**, a free-form version string (by convention the upstream release tag, e.g. `template-v1.2.0`), or absent when the fork has never recorded one. Written by the [[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] skill after a completed sync; that skill compares the recorded value against upstream release tags to find pending releases. A record, not a switch — `template_version(config)` and `brain config` expose the effective value (`null` when unset); `brain` drives no behavior from it and it never influences `index` output. |
+| `template_version` | **implemented** (#6) | Upstream template version record (issue #6): **one scalar**, a free-form version string (by convention the upstream release tag, e.g. `template-v1.2.0`), or absent when the fork has never recorded one. Written by the [sync-upstream](../../skills/sync-upstream/SKILL.md) skill after a completed sync; that skill compares the recorded value against upstream release tags to find pending releases. A record, not a switch — `template_version(config)` and `brain config` expose the effective value (`null` when unset); `brain` drives no behavior from it and it never influences `index` output. |
 
 Reserved keys parse and are **tolerated silently** whatever their shape. **Unknown** keys (neither implemented nor reserved) are tolerated too — forward compatibility — at the cost of a validate **warning** (`config-unknown-key`), never an error.
 
@@ -392,7 +405,7 @@ A read-only synthesis of the in-memory index (§9's usual `walk_corpus` + `build
 All tag reads in this section are **frontmatter tags only** (a bare-scalar `tags:` coerced to one element per §4.5; body `#tags` are informal, mirroring §10.2), and values containing `{{` (template placeholders) are ignored.
 
 1. **Stale-active** (`staleActive`): notes carrying the frontmatter tag `status/active` whose `updated:` is **strictly more than** `stale_days` days (default 30) before today. Notes with `updated: null` cannot be aged and are skipped (`validate` already flags `missing-updated`/`invalid-updated`). Rows `{daysOld, path, title, updated}`, sorted oldest-first (`daysOld` descending, then path).
-2. **Orphans** (`orphans`): notes with **zero backlinks and zero outgoing wikilinks** (placeholder links don't count as outgoing) — fully disconnected, per the issue's definition. Excluded as legitimately leaf-like: any note whose basename is `README.md`, `AGENTS.md`, or `CLAUDE.md`, and everything under `07_Archives/` or `09_Templates/`. Sorted path list. (Distinct from `curate`'s inbound-only orphan signal, which serves the curation charter; this section measures disconnection.)
+2. **Orphans** (`orphans`): notes with **zero backlinks and zero outgoing non-placeholder links** — fully disconnected, per the issue's definition. Excluded as legitimately leaf-like: any note whose basename is `README.md`, `AGENTS.md`, or `CLAUDE.md`, and everything under `07_Archives/` or `09_Templates/`. Sorted path list. (Distinct from `curate`'s inbound-only orphan signal, which serves the curation charter; this section measures disconnection.)
 3. **Inbox aging** (`inboxAging`): every note under `02_Inbox/` except its `README.md`, bucketed by age in days. A note's **capture date** is the `YYYY-MM-DD` filename prefix of its basename when present and a valid calendar date (`source: "filename"`), else its `updated:` value (`source: "updated"`), else unknown (`source: "unknown"`, `ageDays: null`). Age = today − capture date, floored at 0. Buckets, fixed order: `0-7d` (≤ 7), `8-30d`, `31-90d`, `90+d`, `unknown`; each holds `{ageDays, path, source}` rows sorted by path. `triageDebt` additionally lists the paths whose age is strictly greater than `inbox_days` (default 14).
 4. **Tag drift** (`tagDrift`): frontmatter tag usage vs the §10.1 conventions taxonomy, read by the **same** `load_taxonomy` machinery `validate` uses (consistency by construction). Tags are counted once per note that carries them, over the §16.3 note universe. `taxonomyReadable: false` (with all three lists empty) when the table is unreadable — `validate` owns that error. Otherwise: `unknown` — rows `{count, reason, tag}` sorted by tag, `reason` ∈ `not-namespaced` | `unknown-namespace` | `unknown-value` (closed namespaces only); `singleUse` — sorted tags in **open** namespaces used by exactly one note (near-duplicate bait, e.g. `topic/sw`); `nearDuplicates` — rows `{namespace, values: [shorter, longer]}` for pairs of distinct open-namespace values where, under the §6 folding rule, the shorter (≥ 2 chars, strictly shorter) shares its first character with the longer and is an in-order subsequence of it — catching both prefixes (`tool`/`tools`) and abbreviations (the issue's `sw`/`software`); sorted by namespace then value pair.
 5. **Unresolved links** (`unresolvedLinks`): `{count, links}` where `links` rows are `{line, path, target}` for every non-placeholder link with `resolved: null`, over the §16.3 note universe, sorted by path, line, target — the same population `validate` errors on, given trend context here.
@@ -411,7 +424,7 @@ Review-period scoping. `--since` restricts **exactly two** sections — **tag dr
 
 ## 17. Task tracking (`brain tasks`) — issue #28
 
-Markdown-native checkbox tasks, adopted 2026-08-11 per the accepted triage recommendation on issue #28: **Obsidian Tasks emoji grammar is the canonical inline metadata**, so Obsidian users get the native plugin experience with zero vault changes while `brain` answers the same queries on every other surface. The conventions entry ([[00_Meta/conventions]] § Tasks) carries the human-facing emoji ↔ meaning table and the location rule: tasks live where their context lives (any note); there is no central task file.
+Markdown-native checkbox tasks, adopted 2026-08-11 per the accepted triage recommendation on issue #28: **Obsidian Tasks emoji grammar is the canonical inline metadata**, so Obsidian users get the native plugin experience with zero vault changes while `brain` answers the same queries on every other surface. The conventions entry ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Tasks) carries the human-facing emoji ↔ meaning table and the location rule: tasks live where their context lives (any note); there is no central task file.
 
 ### 17.1 Recognition
 
@@ -503,3 +516,375 @@ Ranks whole notes by a hybrid of vector similarity and keyword match. `--tag` fi
 - The sidecar never influences `index` output, `validate` findings, or any command other than `embed` and `search --semantic` — the committed index stays a pure function of tracked content (§8.2) with or without embeddings present.
 - Given a fixed sidecar and query vector, `search --semantic` output is byte-identical across runs and platforms (IEEE-754 arithmetic over identical inputs, rounded per §18.4; all ordering is explicit). No timestamps, mtimes, or environment data appear in the sidecar or in query output.
 - Stdlib-only holds everywhere outside the §18.3 optional-import boundary: every other path of `embed` and all of `search --semantic` run with no third-party code, and the optional dependency's absence is never an import-time or default-path failure.
+
+## 19. Remote safety (`brain remote-safety`) — issue #83
+
+`remote-safety` is the mandatory preflight before a skill or tool reads personal
+data from email, calendar, contacts, chat, drive, task, transcript, or similar
+accounts. Capability inventory (which CLIs/connectors exist and which scopes they
+claim) is harmless and stays separate; account data is not read until this gate
+allows it.
+
+### 19.1 Push-target discovery and normalization
+
+- Discovery uses `git remote` plus `git remote get-url --push --all <remote>` and
+  therefore evaluates every effective **push** URL, never fetch URLs alone. Exact
+  `DISABLED`, `NO_PUSH`, and `no-push`/`no_push` sentinel values are treated as a
+  deliberately fetch-only remote. A discovery failure is `unknown`, not local-only.
+- Repository-local `include.path` and `includeIf.*.path` directives are also
+  `unknown` (`unsafe-local-config-include`). They can expand through ambient
+  HOME or another path outside the clone and substitute a target, so discovery
+  reads the raw local config with includes disabled and refuses the indirection.
+- Discovery evaluates the union of a sanitized repository-local view and the
+  current invocation's ambient-effective Git view. The latter accounts for
+  global/system `remote.*.pushurl`, `url.*.insteadOf`/`pushInsteadOf`, HOME, and
+  `GIT_CONFIG_*` controls that a later Git invocation would honor; the union
+  prevents either view from replacing and hiding a target in the other.
+- GitHub HTTPS and SSH (`ssh://` or SCP-style) URLs on their default ports
+  normalize to a provider key without userinfo, query, fragment, or `.git`.
+  Insecure transports, nonstandard ports, malformed URLs, and non-GitHub hosts
+  are `unknown`.
+- Output never includes raw URLs, credentials, hostnames other than the provider
+  class, owner/repository names, local paths, provider stderr, OS errors, or hashes
+  derived from sensitive URL text. Targets are represented only by
+  `github.com/<redacted>` (or `<redacted>`) and evaluation-local ordinal identifiers.
+
+### 19.2 Provider boundary and decisions
+
+The default injectable provider runs `gh repo view OWNER/REPO --json
+visibility,isPrivate,isTemplate,templateRepository` with prompting disabled and a
+bounded timeout. It pins `GH_HOST=github.com` and removes debug/trace sinks and Git
+control/config-injection variables from provider child environments. Git target
+discovery separately evaluates both repository-local and ambient-effective config;
+local config that delegates to another file is rejected as described in §19.1.
+Missing `gh`, auth/access
+failures, timeouts, malformed JSON, and missing or inconsistent fields are stable
+`unknown` reason codes; subprocess text is never forwarded.
+
+Per target, verified `isTemplate: true` or consistent non-private metadata is
+`block`; only `visibility: PRIVATE`, `isPrivate: true`, and `isTemplate: false` is
+`pass`. Missing or inconsistent fields are `unknown`. `templateRepository` is
+queried for provenance but does not make an otherwise private generated repository
+a template destination. The combined verified state is `block` if any target
+blocks, else `unknown` if any target is unknown, else `pass`.
+
+`--acknowledge-unknown` changes the effective state from `unknown` to `pass` for
+that process invocation only and records `verifiedState: unknown` plus the
+`unknown-acknowledged` reason. It is never persisted. A verified block remains a
+block even with the flag. With no push targets the result is a local-only pass:
+personal-data reads may occur in memory, but connector-derived data must not be
+written anywhere in the vault.
+
+### 19.3 Output, exit status, and shared guard
+
+Human and `--json` output carry the same stable facts: `schemaVersion`, effective
+`state` (`pass|block|unknown`), `verifiedState`, sorted reason codes, target summaries,
+`localOnly`, `personalDataAllowed`, `persistenceAllowed`, and
+`unknownAcknowledged`. The command adds `persistenceRequested` and
+`operationAllowed`. Without `--persist`, operation permission follows the guarded
+read; with `--persist`, local-only mode makes `operationAllowed` false. Exit is `0`
+only when the requested operation is allowed and `1` otherwise.
+
+All personal-data adapters must call `require_remote_safety(...)` immediately
+before the connector and before opening an output file, passing `persist=True`
+for capture/write flows. Process-boundary adapters use `remote-safety --persist
+--json` and require both zero exit and `operationAllowed: true`. The helper raises
+`RemoteSafetyError` on blocked/unknown access and on persistence in local-only
+mode; `guarded_personal_data_call(...)` is the reference sequencing wrapper.
+
+## 20. Environment identity and scoped retrieval
+
+Environment-scoped infrastructure is explicit, privacy-safe, and fail-closed.
+Shared vault content remains portable; live wiring belongs to exactly one
+owner-chosen environment.
+
+### 20.1 Tracked manifest
+
+Each registered environment is an immediate kebab-case directory at
+`10_Agents/environments/<slug>/`. It contains a tracked `environment.json` and
+a self-guarding `README.md`. The UTF-8 JSON manifest is at most 64 KiB and has
+this exact version-1 shape:
+
+```json
+{
+ "capabilities": {"computer-use": true},
+ "class": "laptop",
+ "fingerprints": [{"algorithm": "sha256", "digest": "<64 lowercase hex>", "source": "machine-v1"}],
+ "freshness": {"checkedAt": "2026-08-11", "expiresAt": "2026-11-11"},
+ "maintenance": {"inventory": "orientation-inventory.md", "ownerReviewRequired": true},
+ "schemaVersion": 1,
+ "slug": "work-laptop",
+ "surfaces": ["codex", "vscode"]
+}
+```
+
+`class` is `desktop`, `laptop`, `server`, `container`, `cloud`, or `other`.
+Surfaces are sorted unique kebab-case identifiers. Capabilities map sorted
+non-secret kebab-case names to booleans; identity, path, endpoint, and
+credential-shaped names are forbidden. Fingerprints are SHA-256 evidence over
+high-entropy, platform-native OS machine identifiers consumed inside the hash
+boundary; malformed, nil, weak, and placeholder identifiers are rejected
+before hashing. The list may be empty when the OS supplies no acceptable
+identifier; that environment remains selectable explicitly or by selector. A
+hostname/username fallback is forbidden because hashing low-entropy identity is
+dictionary-identifiable; when no high-entropy ID is available, automatic
+fingerprint matching is unavailable and explicit/selector selection is
+required. Raw hostname, username,
+home/repository path, credential, URL, and endpoint values never enter tracked
+data, output, logs, or errors. `freshness` dates are real and ordered. The
+maintenance record always points to the local inventory and requires owner
+review. JSON field types are exact: schema version is integer `1` (never a
+boolean/float), and every fingerprint component is a string before duplicate
+or digest checks. Malformed values produce redacted findings rather than an
+exception. Unknown keys or schema versions are errors.
+
+### 20.2 Clone-local state
+
+`.second-brain/environment` contains one selected slug. It and
+`.second-brain/environments/<slug>/` are gitignored. The latter is the only
+repository-local home for secrets-adjacent environment overlays such as
+integration settings, notification destinations, hosting configuration, and
+delivery state. Selectors/manifests may not be symlinks; directories must be
+immediate children of their declared roots. Inputs are length- and grammar-
+bounded before use.
+
+Environment files are re-confined when opened, not merely when discovered.
+Every child component and the final file must remain a non-link/reparse-point
+path inside the vault; an identity change or race fails closed before content
+can reach a result.
+
+### 20.3 Selection
+
+Selection precedence is `--env <slug>` > `SECOND_BRAIN_ENV` > the selector > a
+unique local fingerprint match. `--env current` and the environment-variable
+value `current` request normal automatic selection. An invalid value, missing
+explicit/selected slug, invalid manifest, no fingerprint match, or multiple
+fingerprint matches fails closed with a stable reason code; lower-precedence
+sources are never consulted after a higher-precedence source is present. A
+vault with zero registered manifests is `unconfigured` and shared-only.
+
+All content-query consumers use the selected corpus: shared paths plus
+`10_Agents/environments/<selected>/`, never another environment. This includes
+list/search/links/tags/show/recent, report/curate/tasks, semantic embedding, and
+current-scoped maintenance. Generic `brain validate` is intentionally
+environment-neutral for CI and foreign clones: it validates every manifest
+envelope, validates shared content, and does not select or read any environment
+note body. The committed index deliberately contains shared tracked content
+only, so its bytes do not vary by clone; selected environment notes remain
+available through live commands. `brain env list` is the sole all-environment
+diagnostic and emits only slug, registered/selected status, and freshness. It
+never emits class, surfaces, capabilities, fingerprint counts/digests, or
+capability values.
+
+### 20.4 Commands and migration
+
+- `brain env detect` prints the selected slug/source plus SHA-256 evidence for
+  creating or refreshing a manifest. JSON never includes raw identity.
+- `brain env list` prints metadata-only records and remains usable when current
+  matching fails, so an owner can diagnose the selector safely.
+- `brain env migrate <source> <target>` is preview-only. It enumerates exact
+  vault-relative moves for an unregistered legacy directory, refuses symlinks,
+  registered sources, invalid slugs, any existing target directory, and
+  collisions, and performs zero writes. Traversal binds source directories and
+  regular files without following links; any identity change discards the
+  entire in-memory preview before a row can be emitted.
+  The owner applies the reviewed move with version control, then creates the
+  target manifest/landing note through orientation.
+
+`agent-orientation` owns manifest creation/refresh and migration handoff.
+Bootstrap, maintenance, automation, sync reports, generated integrations, and
+personal-data tools must resolve the current environment first. Sync treats all
+environment directories and `.second-brain/` as owner-local: non-current
+contents are neither read nor serialized, and overlays are never proposed for
+commit.
+
+## 21. Portable `brain` resolver and installer
+
+### 21.1 Repository launchers
+
+The tracked root `brain` is a POSIX `sh` resolver; `brain.cmd` is its Windows
+`cmd.exe` counterpart. They are location-independent copies: neither embeds the
+checkout that supplied it. Resolution precedence is one CLI `--vault PATH` (or
+`--vault=PATH`) > `BRAIN_VAULT` > the nearest ancestor of the physical CWD that
+contains both a regular `AGENTS.md` and
+`10_Agents/tools/brain/brain.py`. Missing values, repeated CLI overrides,
+invalid roots, symlinked markers/tools, and no ancestor match are rejected
+without printing the candidate path. A higher-precedence invalid input never
+falls through. This gives nested vaults nearest-root behavior and keeps sibling
+forks isolated. The Windows resolver uses `cmd.exe`'s built-in file-attribute
+expansion for every trusted component and fails closed if attributes cannot be
+verified; it does not depend on optional `fsutil` behavior.
+
+After resolution, the launcher invokes that checkout's Python 3 tool with the
+original argument vector. It does not capture or transform stdout/stderr and
+returns the exact child exit status. POSIX requires `python3` and returns 127
+when it is unavailable. Windows prefers `py -3`, then `python3`, then `python`,
+and forwards `%ERRORLEVEL%`. Paths containing spaces and Unicode are quoted;
+the launchers never evaluate arguments, source shell files, honor a `PYTHON`
+override, or modify the environment.
+
+### 21.2 Managed PATH installation
+
+`brain install` is preview-only by default. It selects the first existing,
+absolute, non-symlinked, writable directory in `PATH`; `--target DIRECTORY`
+selects another existing writable directory explicitly. It never creates a PATH
+directory or edits shell/profile/registry configuration. `--apply` copies the
+platform launcher with a final-component compare-and-swap. `--doctor` is
+read-only. `--uninstall` previews;
+`--uninstall --apply` removes only the recognized managed launcher.
+
+Ownership lives in a version-1 external manifest: POSIX defaults to
+`$XDG_STATE_HOME/second-brain/brain-install.json` or
+`~/.local/state/second-brain/brain-install.json`; Windows defaults under
+`%LOCALAPPDATA%\second-brain`. `--state-file` or `BRAIN_INSTALL_STATE` may
+override it with an absolute path. The manifest is outside the vault and stores
+one artifact per platform: absolute target, platform, and installed SHA-256.
+Install output previews the exact target and manifest paths. Unknown schemas,
+foreign shapes, symlinked state/targets, targets inside the vault, stale hashes,
+and a requested target different from the recorded target are refusals.
+
+An absent target or a byte-identical current launcher is safe to record. A
+different target is replaceable only when its digest matches this manifest's
+recorded digest. POSIX apply publishes absent files with create-if-absent and
+replaces existing files with an atomic exchange whose displaced object is
+digest-verified before removal. POSIX uninstall first moves the final component
+to a no-replace quarantine name and verifies it there. Windows holds every
+verified non-reparse parent-chain handle without delete sharing and performs
+create/open/delete through a bound final handle; the digest is checked on that
+handle before mutation. If manifest update fails after a target mutation, the
+old target is restored (or the new target removed). Uninstall likewise refuses
+drift and restores a removed target if manifest cleanup fails. Platforms without
+the required parent-bound mutation primitives fail closed. State directories
+created for an attempted install are identity-bound and removed in reverse order
+on rollback, restoring the pre-transaction directory state. A `KeyboardInterrupt` during target mutation or
+before the ownership-manifest commit rolls the mutation back before propagating;
+an already committed target/manifest pair remains consistent. Preview, doctor,
+and refused operations make zero writes. Tests use fake PATH/state/home
+directories exclusively.
+
+### 21.3 Host capability boundary
+
+The current official Codex plugin manifest schema does not document a `bin` or
+executable-export field. This repository therefore does not invent plugin
+metadata; project and managed PATH launchers are the supported surfaces. Revisit
+plugin exposure only after an official host schema documents it and an
+end-to-end compatibility test passes.
+
+## 22. Legacy link migration (`brain migrate-links`) — issue #74
+
+### 22.1 Preview and plan
+
+No flag is a read-only preview. The migrator scans tracked working-corpus notes, parses raw UTF-8 bytes without newline conversion, resolves each legacy record through the same §6 engine, and emits a deterministic version-1 plan. The envelope is `{schemaVersion, planId, status, summary, edits, blockers, regenerateRequired}`. Each path-sorted edit carries `path`, `restricted`, preserved `mode`, raw `sourceSha256`/`resultSha256`, and ordered replacements with raw-byte half-open `range`, `line`, `before`, `after`, and `resolved`. `planId` is SHA-256 over canonical compact JSON excluding the ID. The summary counts scanned/changed files, legacy/Markdown links, conversions, placeholders, and unsupported block refs. A second identical preview is byte-stable. Internal exact replacement text remains available for apply, but every serialized CLI plan nulls `before`/`after` and sets `redacted: true` for `restricted/private` sources so migration diagnostics do not republish protected body prose.
+
+Placeholders stay unchanged and counted. Ambiguous paths/headings, unresolved targets/fragments, block refs, unsafe sources, stale ranges, and overlapping edits are blockers; a plan with any blocker is never writable. Rendering uses the resolved target rather than regex text: notes keep explicit `.md`, paths are relative to the source and URL-encoded, heading links use §6.4 slugs, aliases become escaped labels, self-headings stay fragment-only, and embeds become Markdown images with a meaningful alt label. Splicing operates on raw byte ranges, preserving UTF-8 BOM, LF/CRLF/mixed endings, final-newline state, unrelated bytes, and file mode.
+
+`--check` is read-only and exits 1 while **any legacy record** (placeholders included), edit, or blocker remains, otherwise 0. It is the zero-legacy acceptance gate rather than merely an automatic-edit-complete signal. `--json` exposes the same complete plan. Explicit `--write` is the only mutation mode; every successful write reports that the index, snippets, and skill adapters require immediate regeneration. The shipped corpus itself has zero legacy records; this command remains available for importing older vaults.
+
+### 22.2 Write refusal and transaction
+
+Write requires Git to establish that every **planned source path** is clean; unrelated owner edits do not block and are never touched. Before mutation the plan ID/shape, source hash, mode, replacement text/ranges, result hash, regular-file type, parent chain, and final identity are rechecked. Symlink/reparse paths, stale content/mode, unsupported mutation primitives, a foreign journal, or concurrent activity fail closed before overwrite.
+
+On POSIX, every source parent is opened component-by-component with directory descriptors and no-follow flags and held through the transaction. Random same-directory stage names are journaled durably before creation, then desired files are fsynced there. Stage ownership identity is recorded before the staging helper returns, so an interruption at the return boundary still authenticates/removes that stage before the journal can retire; a concurrent occupant at the reserved name is preserved. Originals are descriptor-relatively quarantined and hash/mode/identity-verified, then desired files are installed with hard-link create-if-absent, so a concurrent final-component insertion is preserved and refused rather than overwritten. Publication attempts are rollback-tracked before the directory fsync, every containing directory is fsynced before the durable commit marker, and installed bytes/mode/inode are re-authenticated after that marker before success can remove recovery evidence. Any ordinary exception, `KeyboardInterrupt`, `SystemExit`, or trapped `SIGTERM` removes only authenticated staged outputs and restores quarantined originals without overwriting concurrent content. Platforms without the required held-parent descriptor operations (including the current unimplemented Win32 mutation path) are preview/check-only and fail before any write.
+
+### 22.3 Crash recovery and idempotence
+
+The O_EXCL lock and recovery journal is `.brain-link-migration.json` at the vault root (dot-pruned from the corpus, mode 0600). It records only authenticated transaction names, source/result hashes, modes, plan ID, PID, and commit state — no note bodies. Creation returns a held descriptor/inode/content guard; later states are complete append-only JSON lines written and fsynced through that descriptor, never path-replaced. Every update verifies the path still names the held inode with the expected mode/content before and after append. Cleanup descriptor-relatively quarantines the pathname, authenticates the moved inode, and deletes only that owned journal. A foreign replacement or in-place mutation is never overwritten or removed: it is preserved byte-for-byte with its mode and the operation fails closed. A second starter receives a stable active-migration refusal. The root journal and per-directory `.NAME.migrate-{new,old}-*` recovery artifacts are gitignored so a crash cannot make them accidental commit candidates; their existence remains visible to the recovery detector.
+
+Preview and `--check` never recover: if a journal exists they report `interrupted-migration`, exit nonzero, and make zero writes. Explicit `--write` recovers a dead transaction before planning. If `committed: false`, recovery removes only verified installed results and restores verified backups; foreign final content is preserved and the backup retained for explicit manual recovery. If `committed: true`, recovery finishes the commit by verifying current results and removing verified backup/stage artifacts. Malformed/unsafe journals, live owning PIDs, hash drift, or missing evidence fail closed. Once complete, the journal disappears. A successful second automatic migration has zero edits; `--check` reaches 0 only after placeholders and every other maintained legacy record are also gone.
+
+## 23. Actions You May Take (`brain aymt`) — issue #79
+
+### 23.1 Inputs and privacy boundary
+
+AYMT is a deterministic local next-action brief built from the **Git-tracked shared corpus only**: concrete Now focus/projects/key dates, open tasks and due metadata, aggregate Inbox/triage debt, active projects and their first explicit next action, exact cadence windows, and metadata for the selected environment. Every shared note is opened without following links and captured once; privacy classification, link restriction, report inputs, and candidate extraction consume that same authenticated byte snapshot. Unsafe or unreadable paths contribute no content. Restricted notes, any note targeting restricted content, generated AYMT/Home, Archives, Templates, the authoritative `adopt_examples.json` seeded-example bundle, and all `10_Agents/environments/**` note bodies are removed before candidate construction. The seed inventory itself must be Git-tracked and is read once through the same confined, no-follow stable-file boundary; an untracked/missing/unsafe inventory fails closed before examples can become candidates. Untracked files never affect candidates, counts, output, or `inputDigest`. Open tasks with due/priority/malformed action metadata are eligible from any remaining safe note; plain undated tasks are limited to Journal/Projects/Areas so canonical and Inbox planning checklists do not masquerade as owner commitments. Malformed task dates create a bounded Unblock or decide repair action without repeating task text. Environment contribution is only `{state, slug, selection source, freshness dates}` from the validated selected manifest; unrelated environment manifests are not loaded for an explicit/environment/selector-selected current slug and cannot block it. Unconfigured is a useful shared-only state, while malformed or ambiguous current selection fails with one redacted error. Expired environment metadata yields Do next; expiry within 14 days yields Keep warm, citing only the shared environments README.
+
+The optional `--github-input PATH|-` boundary reads at most 64 KiB from a no-follow, identity-checked regular file or stdin. Version 1 accepts exactly a validated `repository`, issue `number`, `title`, `status`, `updated`, and bounded labels. URLs and score fields are forbidden; effort/dependency are derived from allowlisted labels/status, and the source URL is computed as `https://github.com/OWNER/REPO/issues/N`. Brain never invokes `gh`, a connector, or the network.
+
+### 23.2 Candidates, scoring, and selection
+
+Each bounded candidate exposes `id` (full SHA-256), `kind`, exact normalized `outcome`, `section`, integer `score`, six `signals`, `whyNow`, `nextStep`, `caveat`, and at most three safe sources. All text is NFC, single-line, control-stripped, bounded, and Markdown-escaped at render. Signals are integers 0–4; dependency is blocker severity (`0` ready, `4` hard-blocked). The exact score is:
+
+`6*urgency + 4*leverage + 3*confidence + 2*staleness + 2*(4-effort) - 5*dependency`.
+
+Exact NFC/case-folded outcomes dedupe before selection; highest score then stable ID wins. Stable ordering is section order, descending score, folded outcome, ID. The initial soft caps are Do next 3, Unblock or decide 2, Keep warm 2; a second global fill reaches `min(7, eligible)` and at least 5 whenever five eligible candidates exist. JSON includes `{collected,deduplicated,selected,truncated}` plus every selected candidate/signals/source so ranking is auditable. Cadence appears only when the period's tracked note is missing: daily today; weekly Friday–Sunday; monthly final three calendar days; quarterly final seven calendar days; yearly December 26–31.
+
+### 23.3 Rendering, freshness, and write ownership
+
+The canonical rendering is `00_Meta/AYMT.md`: fixed generated marker; canonical frontmatter; `updated` as local date; `expires` the next calendar day; input/content SHA-256 digests; Do next / Unblock or decide / Keep warm sections; and environment context. Vault sources are source-relative URL-encoded Markdown links; computed GitHub sources are canonical HTTPS Markdown links. Empty sections state that no safe concrete suggestion exists.
+
+No flag is a zero-write Markdown preview; `--json` is the zero-write explanation surface. `--check` also writes nothing and exits 1 unless exact bytes, regular-file type, no-follow path, generated marker/content digest, and mode 0644 are fresh. Explicit `--write` is the sole narrow canonical exception and may mutate **only** AYMT; `agent_write_allowed()` remains false so agents cannot hand-edit it. Existing content is owned only when marker, content digest, regular type, and mode match. Foreign, edited, linked, mode-changed, or concurrently replaced content is preserved and refused. On supported POSIX runtimes the dedicated writer holds the parent descriptor, stages/fsyncs with authenticated ownership, performs atomic create-if-absent or quarantine/install CAS, verifies before retiring rollback evidence, cleans authenticated artifacts under `BaseException`, and treats identical bytes as a no-op. Unsupported safe-mutation runtimes are preview/check-only. AYMT is intentionally excluded from automatic hooks and the merge driver because date/environment are local inputs.
+
+## 24. Home (`brain home`) — issue #78
+
+### 24.1 Inputs, sections, and privacy
+
+Home is a generated local startup and navigation surface at `00_Meta/HOME.md`; canonical `00_Meta/INDEX.md` remains the stable human map and is never dynamically rewritten. Home constructs one authenticated Git-tracked safe context and passes that same object to the structured `build_aymt()` API for its globally ranked top three selected actions; it never parses AYMT Markdown or takes a second corpus snapshot. Before returning, Home re-queries the exact Git tracked-path set and reauthenticates every consumed note and non-Markdown authority byte snapshot — including the committed index, seed inventory, tracked config, and selected environment manifest — through the confined no-follow reader. Any late set, path, or byte change fails closed behind the generic Home error. The same context supplies due/overdue tasks, aggregate Inbox age/debt, active Projects/Areas, existing current-period review-note links plus exact-window missing cadence suggestions, current Now/Status/Changelog links, expiry/health, selected environment metadata/freshness, and fixed navigation.
+
+Before any Home body-derived action work, generated Home/AYMT, authoritative seed paths, untracked files, and every environment body are removed. Remaining notes are opened without following links and captured once; privacy classification and link resolution share those immutable bytes, then Archives, Templates, restricted notes, and notes resolving to restricted targets are removed before task extraction, detailed health reporting, or rendering. Excluded sources cannot influence fields, counts, safe backlinks, or `inputDigest`; their only permitted signal is the generic committed-index freshness boolean described below. Git discovery failure is a refusal, never a working-tree fallback. Only the selected tracked environment manifest contributes `{state, slug, selection source, freshness dates}`; unconfigured is useful and unrelated manifests cannot block a valid selected one. Home makes no missed-automation claim because no run-log contract exists.
+
+Optional GitHub data is absent by default. `--github-input PATH|-` delegates only to AYMT's strict local snapshot boundary (§23.1); brain never invokes `gh`, a connector, or the network. GitHub sources, when present, are computed canonical HTTPS links.
+
+### 24.2 Output and editor surfaces
+
+Markdown and `--json` are deterministic from schema version, local date, safe inputs, and selected environment metadata. Fields and lists are bounded with stable ordering; internal citations are source-relative URL-encoded Markdown links and maintained output contains no legacy syntax. Health exposes bounded generic safe-validation error/warning rule counts, tracked-safe committed-index freshness, expired and next-14-day expiry rows, stale-active/orphan/unresolved counts, and no unsafe body text. Freshness compares the canonical committed bytes with a separately built complete authenticated tracked shared index after standard restricted-note reduction; a transition into or out of an excluded/restricted state can therefore change only the generic freshness boolean, never disclose its title, body, or path. Rendering has a fixed marker/frontmatter, next-day expiry, input/content SHA-256 digests, useful empty states, and sections in the order named above.
+
+Obsidian's tracked native `openBehavior: file:00_Meta/HOME.md` setting opens the committed Home. VS Code's folder-open task best-effort opens the same file without regenerating it; it requires workspace trust, one-time automatic-task approval, and `code` on `PATH`, with manual open/`brain home` as recovery. A separate VS Code task previews Home read-only. These startup paths never write.
+
+### 24.3 Freshness and exact-file ownership
+
+No flag is a portable, zero-write Markdown preview; `--json` is the equivalent structured view. `--check` makes zero writes and exits 1 unless exact rendered bytes, a safe no-follow regular path, generated marker/content digest, and platform-appropriate writable mode are fresh. `--write` is the sole narrow exception and may mutate only exact `00_Meta/HOME.md`; `agent_write_allowed()` remains false, no config exception exists, and hand edits are foreign.
+
+The dedicated writer uses the §23 descriptor-bound stage/quarantine/install transaction: marker/digest/mode ownership, casefold-collision refusal, held parent, authenticated final/stage identities, create-if-absent publication, rollback evidence, directory fsync, post-publication verification, `BaseException` cleanup, foreign/concurrent occupant preservation, and identical-byte no-op. Unsupported safe mutation runtimes remain preview/check-only. Home stays outside hooks and the merge driver because date/environment are clone-local; it refreshes only on explicit command or skill invocation.
+## 25. Local offline artifacts (`brain artifacts`) — issue #23
+
+### 25.1 Authenticated source and derived-data boundary
+
+The version-1 artifact pipeline emits exactly `08_Assets/artifacts/link-graph.html`, `health-dashboard.html`, and `manifest.json`. Its only input is the Git-tracked shared corpus from §2. Git unavailability is a refusal, never a working-tree fallback. Each candidate note is opened once through the no-follow descriptor reader and supplied to the shared index builder as an authenticated snapshot, so privacy classification, link resolution, titles, tags, tasks, and report metrics cannot observe different file versions. Symlinks/reparse paths, unreadable files, untracked files, `10_Agents/environments/**`, and the artifact directory itself contribute nothing.
+
+Before derivation, the pipeline removes `restricted/private` notes, every note targeting one, and every note containing a recognized credential or webhook-like value. Serialized data is bounded metadata only: safe title, vault-relative note path, allowlisted tag shape, safe relative href, numeric link edges, and aggregate link/Inbox/task/freshness/expiry counts. Raw bodies, headings, task text, asset content, environment bodies or metadata, absolute paths, owner/host names, credentials, webhook values, and privacy-filter counts are never serialized. A title with unsafe metadata falls back to its relative basename; an unsafe note is excluded. The output is therefore a private local summary, not an access-control surface.
+
+The graph ranks nodes by degree and stable folded title/path, then caps display at 500 nodes and 2,000 path-sorted edges; truncation counts are explicit. Layout uses deterministic bounded concentric rings, suppressing visual labels above 80 nodes while preserving every accessible link in the keyboard list. Search and tag filters re-render the bounded graph; navigation stays relative and safe. Health metrics reuse the shared index/report/task/expiry semantics and expose counts only. The default controlled `asOf` date is the newest valid `updated` date in the already-filtered source, or `1970-01-01` for an empty vault. `--as-of YYYY-MM-DD` sets it explicitly. `generatedAt` is deterministically that date at `T00:00:00Z`; wall clock and current environment never influence bytes.
+
+### 25.2 Offline rendering and manifest
+
+Both UTF-8/LF HTML files are self-contained and contain no CDN, remote font, telemetry, `fetch`, XHR, WebSocket, EventSource, or runtime network URL. The CSP is `default-src 'none'` with `connect-src 'none'`, no `unsafe-inline`, and SHA-256 sources for the exact inline style, JSON data block, and executable script. Canonical JSON is escaped for `&`, `<`, `>`, U+2028, and U+2029 before entering the script context. Dynamic values are written with `textContent` or safe DOM attributes; raw note HTML is never inserted.
+
+Each document includes a useful static summary and note links or metrics before JavaScript runs, an explicit `noscript` explanation, labels and live counts, native/explicit keyboard operation, visible focus, responsive layout, reduced-motion behavior, empty states, and light/dark colors. Local note navigation is source-relative and percent-encoded under the repository Markdown-link contract.
+
+The canonical JSON manifest records schema/generator/owner, controlled source time, scope/filter policy, source `inputDigest`, exact HTML paths, sizes, and SHA-256 values. Each HTML file has a generated marker and a digest over its complete bytes with the digest field neutralized; the manifest has the equivalent canonical content digest. Output bytes are deterministic for identical authenticated inputs and `asOf`.
+
+### 25.3 Modes, ownership, and local opening
+
+No mode is a read-only preview; `--json` exposes the same stable plan. `--check` is also zero-write and exits 1 unless all three exact files are recognized mode-0644 regular files with fresh bytes. Explicit `--write` is the sole write lane. It never grants generic authority over `08_Assets/`: the documented README is human-maintained, and the writer refuses an unexpected inventory.
+
+On supported POSIX runtimes the writer holds each output parent, rejects case-fold collisions and foreign/edited/linked/mode-changed occupants, rechecks case-fold siblings before every forward mutation and commit, stages and fsyncs exact bytes, re-authenticates every final immediately before mutation, quarantines recognized prior outputs, and publishes with create-if-absent hard links. Stage cleanup removes only the inode created by the staging descriptor, so a replacement at its reserved name survives even when interruption precedes the normal ownership handoff. Before rollback evidence retires, the command rebuilds the complete plan and then the writer reauthenticates every created, replaced, or unchanged output's held-parent case state, exact bytes, mode, and inode; a late foreign replacement fails generically, remains untouched, and leaves verified prior recovery evidence where restoration would collide. A caught exception, `KeyboardInterrupt`, `SystemExit`, or trapped `SIGTERM` removes only authenticated stages/results and restores verified prior files without overwriting a concurrent final. A concurrent insertion or replacement is preserved. Identical files are inode-preserving no-ops. Unsupported safe-mutation runtimes remain preview/check-only. Because all three outputs are reproducible and source-free, a process crash may leave authenticated `.migrate-{new,old}` recovery evidence; a fresh plan remains fail-closed on final ownership and regeneration is the recovery path.
+
+`--open` is explicit and opens only fresh local `file:` URIs for the two HTML files. Each URI names a mode-0400 temporary snapshot whose bytes are re-authenticated against the owned artifact before browser dispatch, so a late redirect of the canonical pathname cannot change what is opened; the snapshots are removed after dispatch or refusal. Tests inject a browser spy and never open a real browser. Hosting, upload, public URLs, credentials, and notifications are absent from this package. Any future hosting is a separate opt-in feature requiring environment-scoped configuration, explicit owner consent, and privacy review.
+
+## 26. Push-only owner notifications (`brain notify`) — issue #21
+
+`notify` is a provider-neutral, push-only boundary for small operational events. It does not read a notification provider, open a notification-provider connection, receive callbacks, accept interaction payloads, or ship Outbox content. The shipped transport surface is a zero-write `fake` preview plus explicit local `file` delivery. Slack, Google Chat, and Teams payload formatters are present only to review the future wire shape; real transport and test send are unimplemented, so #21 remains open until the owner selects and verifies a private destination.
+
+### 26.1 Version-1 envelope and privacy filter
+
+Input is UTF-8 JSON from `--input PATH|-`, capped at 64 KiB. The object has exactly these fields: `schemaVersion: 1`; `event`; `category`; `severity`; `privacyClass`; `title`; `summary`; `occurredAt`; `dedupeKey`; `sources`; and nullable `artifact`. Categories are `automation`, `inbox-review`, `maintenance`, `pr-review`, and `validation`; severities are `info`, `warning`, `error`, and `critical`; deliverable privacy classes are `operational` and `private-owner`. `restricted/private` always fails before formatting.
+
+`sources` contains at most five exact `{label, link}` records; `artifact` is null or the same shape. Links are limited to authenticated Git-tracked, non-restricted shared-vault note paths; exact GitHub issue/pull URLs; and query/fragment-free HTTPS URLs on setup allowlisted hosts. Environment-note links, untracked paths, and secret-bearing note targets fail closed. The central validator normalizes text and timestamps and rejects unknown fields, credentials/secret patterns, absolute paths, tracking-query parameters, control characters, embedded markup links, unsafe links, and oversized values. Provider code receives only the normalized envelope. Errors cross the CLI boundary only as the stable `notification operation failed safely`; payload/provider details and local paths are not echoed.
+
+### 26.2 Selected-environment setup
+
+`--setup` requires a uniquely selected environment (§20), `--provider`, `--destination-label`, and `--private-destination-ack`. `--enable-category` and `--allow-https-host` repeat; all categories default off. Quiet hours are configured by `--quiet-start`, `--quiet-end`, and IANA `--timezone`; `--rate-limit` accepts 1–60 per hour and `--dedupe-hours` accepts 1–168. Providers are `fake`, `file`, `slack`, `google-chat`, and `teams`. A real-provider record additionally requires `--secret-env` with an uppercase environment-variable name; the credential value never enters an argument, config, state, output, or tracked file.
+
+Setup is an explicit write but never a send. The selected environment overlay must already exist and be current-user-owned. Directory provisioning and review occur outside this writer: `notify` never creates, chmods, or repairs a private directory, avoiding an unbindable `mkdir`-to-open race. It calls the shared §19 guard with `persist=True`, then compare-and-swap writes canonical JSON at mode `0600` to ignored `.second-brain/environments/<slug>/notifications.json`. An atomic mode-`0600` `.notifications.json.notify-claim` serializes capacity checking and staging; success must authenticate and atomically relabel it as a retained old generation before returning. A crash or failed retirement leaves the claim as explicit recovery evidence and blocks later work. A safe update retains its prior generation as authenticated ignored `.notifications.json.migrate-old-*` evidence; an interrupted prepublication write may retain `.notifications.json.migrate-new-*` recovery evidence. The v1 config contains exactly `schemaVersion`, `provider`, `destinationLabel`, `privateDestinationAcknowledged`, `categories`, `quietHours`, `rateLimitPerHour`, `dedupeHours`, `allowedHttpsHosts`, and `secretEnvironmentVariable`. Config and state reads are bounded, nonblocking, no-follow snapshots of stable regular mode-`0600` files. Symlinks, special files, wrong modes, oversized/malformed/unknown schema, unsafe parents, concurrent replacement, and ambiguous environment selection fail closed without overwriting foreign content. `--check` is read-only and reports readiness, provider, enabled categories, delivery-state row count, and whether a real-provider test send is still required.
+
+### 26.3 Preview and local file delivery
+
+With `--input` and no delivery flag, `notify` validates the envelope, loads selected-environment policy when available, formats a fake/file/future-provider payload, and returns a send plan with `direction: push-only`, `inboundCallbacks: false`, policy reason codes, a `deliveryAvailable` capability flag, and `writesPerformed: false`. Only a genuinely unconfigured environment may fall back to that fake plan; invalid explicit selection, corrupt selector/manifests, and ambiguous identity fail closed. Preview evaluates policy against `occurredAt` for deterministic bytes. Missing setup still permits a fake preview but marks policy blocked. `--json` is supported in every mode.
+
+Actual delivery requires provider `file`, an enabled matching category, acknowledged private destination, policy allowance, and both `--deliver-file` and `--approve-private-send`. Immediately before persistence it calls §19 with `persist=True`, reauthenticates the selected environment/config/state, and re-evaluates quiet hours, dedupe, and the hourly rate against current UTC, never the caller-controlled event time. `--now` is preview-only and refused with delivery. It opens and authenticates the pre-existing output parent, then atomically reserves the dedupe/rate state before publishing any output. This state CAS is the serialization point for concurrent same-dedupe calls and applies equally to default and explicit-temporary output; only its winner can create a delivery file. An output failure never rolls back the reservation, so immediate automatic retry is blocked for the configured dedupe window while legitimate later cadence remains possible after state pruning. Default output requires a separately provisioned current-user-owned exact mode-`0700` ignored `.second-brain/environments/<slug>/notification-output/` directory and creates a new mode-`0600` JSON file there; a missing directory, unsafe ownership, or wrong mode fails closed without publishing a file. `--output` is accepted only for a new direct child beneath the system temporary directory and outside the repository. Existing paths and symlinks are never followed or overwritten.
+
+Delivery state is bounded to 256 `{category, dedupeDigest, deliveredAt}` rows in ignored `notification-state.json`; it never stores envelope text, destination labels, or raw dedupe keys. Output creation is exclusive; output/config/state files are forced to mode `0600`, independent of process umask, and each file plus containing-directory entry is fsynced before the next transaction phase. Private files and environment-overlay directories must be owned by the current user where the runtime exposes ownership. A single atomic `.notification-state.json.notify-claim` serializes capacity checking and the complete CAS; contenders fail before staging. Successful claim retirement is part of commit and becomes a bounded old generation, so an ordinary loser cannot leave unfinished global recovery state. State uses compare-and-swap replacement with atomic no-replace renames: successful publication consumes `.notification-state.json.migrate-new-*`, while an update retains the prior state at an unpredictable ignored `.notification-state.json.migrate-old-*` name instead of performing an unsafe cleanup unlink. Config and state transaction generations are independently capped at 32 files and 2 MiB per canonical family; serialized capacity is checked before delivery persistence and again before staging. Reaching either cap fails closed and requires the owner to stop scheduled runs, inspect the ignored mode-`0600` exact-prefix evidence, preserve anything uncertain, and remove only confirmed-obsolete generations. Any `notify-claim` or `migrate-new` evidence blocks automatic work even when a canonical file remains; bounded, strict-schema `migrate-old` generations may coexist with it. A write, file-fsync, directory-fsync, or interruption failure preserves installed state, any exclusively created public output, and private stages as recovery evidence and never rolls the reservation back. Once a public state pathname has been installed, failure handling never deletes or replaces it: safely deleting a writable pathname cannot be proven against an already-open concurrent writer. An output-verification failure therefore retains both state and output and returns a recovery-required error. The tool boundedly authenticates exact bytes, regular type, mode, ownership, and inode only to classify owned recovery evidence versus a replacement; it never mutates either one in this failure path. Quiet hours, duplicate keys within the configured window, disabled categories, and six-or-fewer-by-default hourly limits block before output. The plan exposes future transient retry delays of 5, 30, and 120 seconds; no real transport consumes them yet.
+
+### 26.4 Closure gate
+
+The fake/file foundation is shipped and testable without selecting a real provider. It does not satisfy the real-send acceptance gate. A future issue-closing change must add an owner-selected provider transport, keep credentials external, verify the destination is private, perform an owner-approved test send before live delivery, preserve the same envelope/filter/policy/transaction boundaries, and add no inbound or interactive surface.

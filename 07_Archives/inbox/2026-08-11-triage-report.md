@@ -10,16 +10,16 @@ updated: 2026-08-11
 
 # Inbox Triage Report — 2026-08-11
 
-Owner-requested triage of the four notes in `02_Inbox/` (README excluded). Per [[10_Agents/skills/triage-inbox/SKILL|the triage skill]], these are **proposals** — moves happen only after explicit approval.
+Owner-requested triage of the four notes in `02_Inbox/` (README excluded). Per [the triage skill](../../10_Agents/skills/triage-inbox/SKILL.md), these are **proposals** — moves happen only after explicit approval.
 
 ## Proposals
 
 | Note | What it is | Proposed destination | Proposed filename | Tag changes | Links to update on move |
 |------|-----------|---------------------|-------------------|-------------|------------------------|
-| `2026-08-11-harness-primitives-research.md` | Verified per-harness primitive specs + overlap matrix for all seven harnesses; actively cited as grounding by every wiring doc | `06_Resources/` | `harness-primitives-research.md` | drop `workflow/draft` | 7 wiring docs (`10_Agents/harnesses/*/wiring.md`, incl. `#Section` anchors), `10_Agents/harnesses/README.md`, `10_Agents/skills/onboard-harness/SKILL.md` (plain path), `00_Meta/changelog.md` (plain path), its own link exchange with the M5–M7 plan |
-| `2026-08-11-copilot-harness-deep-dive.md` | Verified Copilot surface reference (supersedes the note above's Copilot section); grounds the P0 wiring doc | `06_Resources/` | `copilot-harness-deep-dive.md` | drop `workflow/draft` | `10_Agents/harnesses/copilot/wiring.md`, `10_Agents/harnesses/README.md`, the supersession blockquote in the primitives research, `00_Meta/changelog.md` (wikilink) |
-| `2026-08-11-m5-m7-implementation-plan.md` | M5–M7 build plan — fully executed and closed out | `07_Archives/inbox/` | unchanged (dated, per `prd-review` precedent) | drop `workflow/draft`, add `status/done` | `00_Meta/changelog.md` (plain path), the primitives research's related-links line |
-| `2026-08-11-copilot-p0-plan.md` | Copilot P0 promotion plan + adversarial-review log — fully executed | `07_Archives/inbox/` | unchanged (dated, per `prd-review` precedent) | drop `workflow/draft`, add `status/done` | `00_Meta/changelog.md` (plain path) |
+| `2026-08-11-harness-primitives-research.md` | Verified per-harness primitive specs + overlap matrix for all seven harnesses; actively cited as grounding by every wiring doc | `06_Resources/` | `harness-primitives-research.md` | drop `workflow/draft` | 7 wiring docs (`10_Agents/harnesses/*/wiring.md`, incl. `#Section` anchors), `10_Agents/harnesses/README.md`, `10_Agents/skills/onboard-harness/SKILL.md` (plain path), `00_Meta/CHANGELOG.md` (plain path), its own link exchange with the M5–M7 plan |
+| `2026-08-11-copilot-harness-deep-dive.md` | Verified Copilot surface reference (supersedes the note above's Copilot section); grounds the P0 wiring doc | `06_Resources/` | `copilot-harness-deep-dive.md` | drop `workflow/draft` | `10_Agents/harnesses/copilot/wiring.md`, `10_Agents/harnesses/README.md`, the supersession blockquote in the primitives research, `00_Meta/CHANGELOG.md` (wikilink) |
+| `2026-08-11-m5-m7-implementation-plan.md` | M5–M7 build plan — fully executed and closed out | `07_Archives/inbox/` | unchanged (dated, per `prd-review` precedent) | drop `workflow/draft`, add `status/done` | `00_Meta/CHANGELOG.md` (plain path), the primitives research's related-links line |
+| `2026-08-11-copilot-p0-plan.md` | Copilot P0 promotion plan + adversarial-review log — fully executed | `07_Archives/inbox/` | unchanged (dated, per `prd-review` precedent) | drop `workflow/draft`, add `status/done` | `00_Meta/CHANGELOG.md` (plain path) |
 
 ## Rationale
 
@@ -30,7 +30,7 @@ Owner-requested triage of the four notes in `02_Inbox/` (README excluded). Per [
 ## Open questions
 
 1. Keep the date prefix on the two research notes instead? (They are dated snapshots; the prefix would signal that at a glance, at the cost of the Resources naming convention.)
-2. `00_Meta/changelog.md` mentions the old Inbox paths in past entries. Proposal: update all four mentions to the new paths (the changelog is navigation, not a frozen record). Alternative: leave plain-text mentions as history and fix only the wikilink.
+2. `00_Meta/CHANGELOG.md` mentions the old Inbox paths in past entries. Proposal: update all four mentions to the new paths (the changelog is navigation, not a frozen record). Alternative: leave plain-text mentions as history and fix only the wikilink.
 
 ## On approval
 

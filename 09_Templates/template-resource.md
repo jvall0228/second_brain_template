@@ -24,4 +24,4 @@ One-paragraph overview of this topic or reference material.
 
 ## Related
 
-- [[{{RELATED_NOTE}}]]
+- [Related note]({{RELATED_NOTE}})

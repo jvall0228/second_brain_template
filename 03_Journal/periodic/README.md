@@ -22,12 +22,12 @@ Time-based reflections and reviews organized by cadence.
 
 ## Templates
 
-- [[09_Templates/template-daily-log]] — Daily log template
-- [[09_Templates/template-weekly-review]] — Weekly review template
-- [[09_Templates/template-monthly-review]] — Monthly review template
-- [[09_Templates/template-quarterly-review]] — Quarterly review template
-- [[09_Templates/template-yearly-review]] — Yearly review template
+- [template-daily-log](../../09_Templates/template-daily-log.md) — Daily log template
+- [template-weekly-review](../../09_Templates/template-weekly-review.md) — Weekly review template
+- [template-monthly-review](../../09_Templates/template-monthly-review.md) — Monthly review template
+- [template-quarterly-review](../../09_Templates/template-quarterly-review.md) — Quarterly review template
+- [template-yearly-review](../../09_Templates/template-yearly-review.md) — Yearly review template
 
 ## Related
 
-- [[03_Journal/README]] — Parent directory
+- [README](../README.md) — Parent directory

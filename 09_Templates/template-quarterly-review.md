@@ -68,10 +68,10 @@ How was your sleep this quarter? Anything out of the ordinary? What contributed 
 
 ### Alignment
 
-- Does each active project serve something on the [[01_Profile/now|Now page]]?
+- Does each active project serve something on the [Now page](../01_Profile/NOW.md)?
 - Is anything on the Now page not being moved by any project?
 - Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).
-- Rewrite the [[01_Profile/now|Now page]] as part of this review — it should describe the quarter ahead, not the one that ended.
+- Rewrite the [Now page](../01_Profile/NOW.md) as part of this review — it should describe the quarter ahead, not the one that ended.
 
 ## Reflection
 
@@ -95,4 +95,4 @@ How was your sleep this quarter? Anything out of the ordinary? What contributed 
 
 ## Links to Monthly Notes
 
-- [[{{RELATED_MONTHLY_REVIEW}}]]
+- [Related monthly review]({{RELATED_MONTHLY_REVIEW}})

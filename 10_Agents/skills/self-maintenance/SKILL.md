@@ -22,8 +22,8 @@ Everything agent-generated under `10_Agents/` — `workflow/draft` skills and to
 
 ## Steps
 
-1. **Read the current environment's orientation inventory** (`10_Agents/environments/<env-slug>/orientation-inventory.md` — see [[10_Agents/environments/README]]): its solution inventory and recorded interface rungs are the source list this audit probes, and its capability/policy section bounds what the audit may do here.
-2. **Enumerate the generated layer:** `python3 10_Agents/tools/brain/brain.py list --dir 10_Agents --tag workflow/draft --json`, plus automations documented in orientation/automation notes.
+1. **Resolve and read only the current environment:** run `brain env detect --json`; fail closed if it does not select exactly one slug. Read that slug's `orientation-inventory.md` only. Its solution inventory and recorded interface rungs are the source list this audit probes, and its capability/policy section bounds what the audit may do here. `brain env list` may diagnose metadata, but never use it to read another environment's contents.
+2. **Enumerate the generated layer:** `brain list --dir 10_Agents --tag workflow/draft --json`, plus automations documented in orientation/automation notes.
 3. **Validate:** `brain validate` must stay clean; fix generated-content errors directly (bump `updated:`).
 4. **Probe each source** a generated tool or flow depends on: does the CLI still exist and authenticate, is the MCP server still registered, does a dry-run still return data? Auth stays environmental — **credentials never enter the repo** (PRD §16.2), so a probe failure is often just an expired local session: report it, don't work around it by embedding secrets.
 5. **Repair or prune:** update tooling for upstream changes (re-verify against current vendor docs), keeping each tool on the best rung of the **interface ranking ladder** (see `agent-orientation`: custom tooling → first-party CLI → first-party MCP/connector → wrapped vendor API → browser → none) — and propose pruning tools whose source is gone.
@@ -32,5 +32,5 @@ Everything agent-generated under `10_Agents/` — `workflow/draft` skills and to
 
 ## References
 
-- `00_Meta/prd.md` §9.3 (write policy), §11 (promotion), §19 M7
+- `00_Meta/PRD.md` §6.2 (write policy), §11 (promotion), §8.4 (environment integrations)
 - `10_Agents/skills/vault-maintenance/SKILL.md` — the vault-side sibling of this skill

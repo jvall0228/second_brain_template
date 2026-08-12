@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives: Muse Code
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
 Muse Code is [Meta's coding agent for the terminal and CI](https://dev.meta.ai/docs/muse-code.md), built by Meta Superintelligence Labs on the `muse-spark-1.2` model (co-trained with the harness) and [launched in beta on 2026-08-05](https://techcrunch.com/2026/08/05/meta-launches-muse-code-an-ai-agent-for-large-code-bases/) for macOS and Linux (`curl -fsSL https://dev.meta.ai/install.sh | sh`). Surfaces are an interactive TUI and a headless `muse exec` mode — no IDE/web/desktop surface is documented. Its runtime is an append-only local event log ([replay-exact, restart-safe](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2)) with persistent async background agents. Closed-source, [usage-based token billing](https://dev.meta.ai/docs/muse-code/auth.md); press reports a discounted "contributor" tier (>10x cheaper) in exchange for training-data consent ([CNBC](https://www.cnbc.com/2026/08/05/meta-debuts-muse-code-to-take-on-anthropic-and-openai-.html)).
 
@@ -54,7 +54,7 @@ Headless `muse exec "prompt"` (or `--prompt-file`) for scripts/CI, `--json` for 
 ## Vault wiring implications
 - **Zero-adapter entrypoint**: our `AGENTS.md` is Muse Code's native, preferred instruction file — the `CLAUDE.md → @AGENTS.md` shim is unnecessary here (and Muse ignores it when AGENTS.md exists). Bootstrap-sequence links work as prose; no import mechanism to lean on.
 - **Skills land natively**: ship vault skills at `.agents/skills/<skill-id>/SKILL.md`; Muse also scans `.claude/skills`, so a single Claude-format skill tree serves both harnesses, with `muse skills validate` / `import --from claude` as the migration check.
-- **Memory bridge is the adapter's main job**: mirror the vault map into `.agents/memory/MEMORY.md` (index → `00_Meta/index`, topics → `01_Profile/now`, `01_Profile/preferences`) so Muse's memory-recall observer surfaces vault context automatically.
+- **Memory bridge is the adapter's main job**: mirror the vault map into `.agents/memory/MEMORY.md` (index → `00_Meta/INDEX`, topics → `01_Profile/NOW`, `01_Profile/PREFERENCES`) so Muse's memory-recall observer surfaces vault context automatically.
 - **Sandbox caveat for git**: `.git` and `.agents` are read-only in the sandbox, so our pre-commit frontmatter hook still guards human commits, but agent-driven commits/`updated:` bumps need approval or an unsandboxed stage — replicate the lint as a `PostToolUse` hook in `.muse/hooks.json` (users must `muse hooks trust` it once).
 - **`brain` CLI**: pre-seed workspace prefix allow-rules ("always allow in this workspace") for `brain …` invocations; under `untrusted` mode every unlisted stage prompts. `proxy-only` networking is fine for a local vault.
 - **MCP is user-scope only**: the vault cannot ship project MCP config; the Muse adapter README must document adding any vault MCP server to `~/.config/muse/settings.json` manually.

@@ -17,5 +17,5 @@ _Empty — add your first yearly review when you have one._
 
 ## Related
 
-- [[03_Journal/periodic/README|Periodic Notes]] — Parent hub
-- [[09_Templates/template-yearly-review]] — Yearly review template
+- [Periodic Notes](../README.md) — Parent hub
+- [template-yearly-review](../../../09_Templates/template-yearly-review.md) — Yearly review template

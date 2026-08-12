@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # M5–M7 Implementation Plan
 
-Execution plan for the remaining [[00_Meta/prd]] milestones, based on requirements gathered from the owner on 2026-08-11. Every spec-affecting decision below is already recorded in the PRD (the owner's answers authorized those amendments); this note holds the build detail.
+Execution plan for the remaining [PRD](../../00_Meta/PRD.md) milestones, based on requirements gathered from the owner on 2026-08-11. Every spec-affecting decision below is already recorded in the PRD (the owner's answers authorized those amendments); this note holds the build detail.
 
 ## Decision Log (owner, 2026-08-11)
 
@@ -35,7 +35,7 @@ Goal: a zero-dependency CLI that gives agents structured, queryable access to th
 
 ### Phase M5.0 — Parsing and link-resolution spec (prerequisite)
 
-Deliverable: `10_Agents/tools/brain/spec.md` — reviewed by the owner and promoted to canonical **before** implementation starts. Starting point is [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]. It must pin down:
+Deliverable: `10_Agents/tools/brain/spec.md` — reviewed by the owner and promoted to canonical **before** implementation starts. Starting point is [wikilink-resolution-rules](../../10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md). It must pin down:
 
 - **Frontmatter grammar:** a YAML subset matching the §10.1 contract — string scalars (bare or quoted), lists of strings, ISO dates. Notes with unparseable frontmatter are still indexed, with a recorded frontmatter error for `validate` to surface.
 - **Wikilink grammar:** `[[target]]`, `[[target|display]]`, `[[target#heading]]`, and `![[embeds]]`; links inside inline code spans and fenced code blocks are ignored (the known false-positive source from the M4 link check).
@@ -61,7 +61,7 @@ Proposed semantics (finalized in `spec.md`); every command supports `--json`, hu
 
 ### Phase M5.3 — `validate`
 
-Checks: frontmatter presence and required fields; tag namespace membership **read from the authoritative table in [[00_Meta/conventions]]** so conventions remains the single source; filename conventions including the documented exceptions; wikilink resolution (template placeholders and code spans exempt); `updated:` format; `--check-index` for index freshness. Exit codes: 0 clean, 1 errors, 2 warnings only.
+Checks: frontmatter presence and required fields; tag namespace membership **read from the authoritative table in [CONVENTIONS](../../00_Meta/CONVENTIONS.md)** so conventions remains the single source; filename conventions including the documented exceptions; wikilink resolution (template placeholders and code spans exempt); `updated:` format; `--check-index` for index freshness. Exit codes: 0 clean, 1 errors, 2 warnings only.
 
 ### Phase M5.4 — Hook and CI
 
@@ -73,7 +73,7 @@ Checks: frontmatter presence and required fields; tag namespace membership **rea
 
 - Stdlib `unittest` suite with a fixture mini-vault under `10_Agents/tools/brain/tests/`.
 - `10_Agents/tools/brain/README.md` (usage; carries vault frontmatter).
-- Closeout updates: PRD §19 status, [[00_Meta/status]] table, [[00_Meta/changelog]], §9.4 discovery pointer, and the operating-rules checklist gains "run `brain validate`".
+- Closeout updates: PRD §19 status, [STATUS](../../00_Meta/STATUS.md) table, [CHANGELOG](../../00_Meta/CHANGELOG.md), §9.4 discovery pointer, and the operating-rules checklist gains "run `brain validate`".
 
 ### M5 acceptance criteria
 
@@ -113,13 +113,13 @@ Proposed initial set (nine — family scope is decided; the exact list is confir
 
 Installs are manifest-driven, idempotent (re-running is a no-op), and reversible (`uninstall` removes exactly what was installed). Symlinks are created **at install time on the adopter's machine, never committed to the repo** — the in-repo symlink approach was retired (PRD §8.2). Each harness adapter's wiring doc carries the primitive map: which categories that harness supports and the exact user-config discovery paths.
 
-Per [[06_Resources/harness-primitives-research|the harness research]], the skills map collapses nicely: one `~/.agents/skills/` link covers the six harnesses that scan the shared standard path, plus one `~/.claude/skills/` link for Claude Code — and the memory-file update targets `~/.claude/CLAUDE.md` for Claude Code while the six AGENTS.md-native harnesses need only their user-scope instruction file (or nothing, where user memory is config-driven; per-harness detail in the wiring docs).
+Per [the harness research](../../06_Resources/harness-primitives-research.md), the skills map collapses nicely: one `~/.agents/skills/` link covers the six harnesses that scan the shared standard path, plus one `~/.claude/skills/` link for Claude Code — and the memory-file update targets `~/.claude/CLAUDE.md` for Claude Code while the six AGENTS.md-native harnesses need only their user-scope instruction file (or nothing, where user memory is config-driven; per-harness detail in the wiring docs).
 
 ### Phase M6.2 — P0 harness adapters
 
 `10_Agents/harnesses/{claude-code,codex,opencode,pi}/`, each shipping a reference config and a wiring doc. Per §8.3, wiring specifics are settled at build time; every wiring doc must cover: entrypoint loading, the skills install path (user config), hook installation, and how the harness invokes `brain`. Adapters carry only what a standard cannot.
 
-**Grounding:** [[06_Resources/harness-primitives-research|Harness Primitives Research (2026-08-11)]] holds the full per-harness surface specs and the overlap matrix. Research-informed adapter manifests (re-verify at build time):
+**Grounding:** [Harness Primitives Research (2026-08-11)](../../06_Resources/harness-primitives-research.md) holds the full per-harness surface specs and the overlap matrix. Research-informed adapter manifests (re-verify at build time):
 
 - **Claude Code** — `CLAUDE.md` import (does not read `AGENTS.md` natively); `~/.claude/skills/` links (it does not scan the shared `.agents/skills/`); settings permission denies; `.mcp.json`. Optional nicety: an output style.
 - **Codex** — `config.toml` incl. `[mcp_servers]`; reads `AGENTS.md` natively but expands no imports/wikilinks and caps project docs at 32 KiB — the wiring doc addresses both.
@@ -127,7 +127,7 @@ Per [[06_Resources/harness-primitives-research|the harness research]], the skill
 - **Pi** — `.pi/settings.json` + prompts; **no MCP** (TypeScript extensions instead — the preference ladder's custom-tooling rung applies).
 - **P1: Cursor** — `.cursor/rules/*.mdc`, `.cursor/mcp.json`, `.cursorignore`; **Copilot** — `.github/copilot-instructions.md` pointer + `instructions/*.instructions.md`, per-surface MCP config; **Muse Code** — thin by necessity (user-scope config only; launched 2026-08-05, treat the adapter as volatile and re-verify before hardening).
 
-Cross-cutting from the research: ship **no command files** (commands are deprecated into skills in Codex and Cursor — skills are the invocable unit everywhere); keep **one canonical MCP server manifest** in `10_Agents/` and generate per-harness configs from it; portable voice/tone lives in [[01_Profile/preferences]], not output styles (Claude Code–only).
+Cross-cutting from the research: ship **no command files** (commands are deprecated into skills in Codex and Cursor — skills are the invocable unit everywhere); keep **one canonical MCP server manifest** in `10_Agents/` and generate per-harness configs from it; portable voice/tone lives in [PREFERENCES](../../01_Profile/PREFERENCES.md), not output styles (Claude Code–only).
 
 ### Phase M6.3 — P1 second wave
 
@@ -183,8 +183,8 @@ M5 → M6 → M7, strictly: M6's maintenance and onboarding skills call `brain` 
 
 ## Related
 
-- [[00_Meta/prd]] — the spec, amended 2026-08-11 with the decision log above
-- [[00_Meta/status]] — milestone table
-- [[00_Meta/changelog]] — decision record
-- [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]] — M5.0 starting point
-- [[06_Resources/harness-primitives-research|Harness Primitives Research]] — grounded per-harness specs, overlap matrix, adapter manifests
+- [PRD](../../00_Meta/PRD.md) — the spec, amended 2026-08-11 with the decision log above
+- [STATUS](../../00_Meta/STATUS.md) — milestone table
+- [CHANGELOG](../../00_Meta/CHANGELOG.md) — decision record
+- [wikilink-resolution-rules](../../10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md) — M5.0 starting point
+- [Harness Primitives Research](../../06_Resources/harness-primitives-research.md) — grounded per-harness specs, overlap matrix, adapter manifests

@@ -140,8 +140,15 @@ class ResolutionTests(unittest.TestCase):
         self.assertEqual(self.r.resolve("01_Notes/alpha", "x"), ("01_Notes/alpha.md", []))
         self.assertEqual(self.r.resolve("", "01_Notes/alpha.md"), ("01_Notes/alpha.md", []))
         resolved, warnings = self.r.resolve("dup", "x")
-        self.assertEqual(resolved, "01_Notes/dup.md")
-        self.assertEqual(warnings, ["ambiguous"])
+        self.assertIsNone(resolved)
+        self.assertEqual(
+            warnings,
+            [
+                "ambiguous",
+                "candidate:01_Notes/dup.md",
+                "candidate:02_Other/dup.md",
+            ],
+        )
         resolved, warnings = self.r.resolve("ALPHA", "x")
         self.assertEqual(resolved, "01_Notes/alpha.md")
         self.assertEqual(warnings, ["case-mismatch"])
@@ -162,12 +169,12 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(index["assets"], ["08_Assets/pic.png"])
         alpha = index["notes"]["01_Notes/alpha.md"]
         targets = {l["raw"]: l["resolved"] for l in alpha["links"]}
-        self.assertEqual(targets["[[beta]]"], "01_Notes/beta.md")
-        self.assertEqual(targets["[[01_Notes/beta#Alpha Section|B]]"], "01_Notes/beta.md")
-        self.assertEqual(targets["![[pic.png]]"], "08_Assets/pic.png")
-        self.assertEqual(targets["[[beta\\|Beta]]"], "01_Notes/beta.md")
-        self.assertNotIn("[[fenced-away]]", targets)
-        self.assertNotIn("[[not-a-link]]", targets)
+        self.assertEqual(targets["[beta](beta.md)"], "01_Notes/beta.md")
+        self.assertEqual(targets["[B](beta.md#alpha-section)"], "01_Notes/beta.md")
+        self.assertEqual(targets["![pic](../08_Assets/pic.png)"], "08_Assets/pic.png")
+        self.assertEqual(targets["[Beta](beta.md)"], "01_Notes/beta.md")
+        self.assertNotIn("[fenced away](fenced-away.md)", targets)
+        self.assertNotIn("[not a link](not-a-link.md)", targets)
         beta = index["notes"]["01_Notes/beta.md"]
         self.assertIn("01_Notes/alpha.md", beta["backlinks"])
         self.assertEqual(beta["bodyTags"], ["focus-mode"])
@@ -198,7 +205,7 @@ class UnreadableNoteTests(unittest.TestCase):
         root = make_vault(
             td,
             {
-                "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                 "ok.md": note(),
                 "02_Inbox/README.md": note(),
             },
@@ -231,7 +238,7 @@ class UnreadableNoteTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "02_Inbox/binary.md": b"\xff\xfe garbage \x80\x81",
                 },
             )
@@ -248,7 +255,7 @@ class UnreadableNoteTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "10_Agents/tools/vscode/tests/test_x.py": f'token = "{fake_secret}"\n',
                     "10_Agents/tools/vscode/gen.py": "print('kept')\n",
                 },
@@ -284,7 +291,7 @@ class UnreadableNoteTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "locked.md": note(),
                 },
             )
@@ -315,7 +322,7 @@ class EmptyTagsTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     **files,
                 },
             )
@@ -377,7 +384,7 @@ class TaxonomyTests(unittest.TestCase):
 
     def test_unreadable(self):
         with tempfile.TemporaryDirectory() as td:
-            root = make_vault(Path(td), {"00_Meta/conventions.md": "# No table here\n"})
+            root = make_vault(Path(td), {"00_Meta/CONVENTIONS.md": "# No table here\n"})
             self.assertIsNone(brain.load_taxonomy(root))
 
 
@@ -390,6 +397,7 @@ class ValidateTests(unittest.TestCase):
         self.assertEqual(
             sorted(by_rule),
             [
+                "ambiguous-link",
                 "filename-convention",
                 "invalid-updated",
                 "tag-not-namespaced",
@@ -397,7 +405,15 @@ class ValidateTests(unittest.TestCase):
                 "unresolved-link",
             ],
         )
-        self.assertTrue(all(f["path"] == "bad/Bad_Name.md" for fs in by_rule.values() for f in fs))
+        self.assertEqual(by_rule["ambiguous-link"][0]["path"], "01_Notes/beta.md")
+        self.assertTrue(
+            all(
+                f["path"] == "bad/Bad_Name.md"
+                for rule, findings in by_rule.items()
+                if rule != "ambiguous-link"
+                for f in findings
+            )
+        )
         unresolved = by_rule["unresolved-link"]
         self.assertEqual(len(unresolved), 2)
         hinted = [f for f in unresolved if "title matches: 02_Other/title-note.md" in f["message"]]
@@ -405,7 +421,7 @@ class ValidateTests(unittest.TestCase):
         warn_rules = sorted({(f["rule"], f["path"]) for f in warnings})
         self.assertEqual(
             warn_rules,
-            [("ambiguous-link", "01_Notes/beta.md"), ("case-mismatch", "01_Notes/beta.md")],
+            [("case-mismatch", "01_Notes/beta.md")],
         )
 
     def test_exemptions_and_collisions(self):
@@ -413,7 +429,7 @@ class ValidateTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     "CLAUDE.md": "@AGENTS.md\n",
                     "A-note.md": "---\ntitle: x\ntags:\n  - type/note\nupdated: 2026-01-01\n---\n",
                     "a-note.md": "---\ntitle: x\ntags:\n  - type/note\nupdated: 2026-01-01\n---\n",
@@ -422,7 +438,14 @@ class ValidateTests(unittest.TestCase):
             )
             errors, _ = brain.run_validate(root, check_index=False)
             rules = {f["rule"] for f in errors}
-            self.assertIn("path-collision", rules)
+            materialized = {path.name for path in root.iterdir()}
+            if {"A-note.md", "a-note.md"} <= materialized:
+                self.assertIn("path-collision", rules)
+            else:
+                # Case-insensitive filesystems cannot materialize both fixture
+                # names. Keep the collision key contract covered there while
+                # Linux CI exercises the end-to-end finding above.
+                self.assertEqual(brain.fold("A-note.md"), brain.fold("a-note.md"))
             self.assertIn("missing-frontmatter", rules)
             # CLAUDE.md is exempt from frontmatter checks; A-note fails kebab-case.
             self.assertFalse(any(f["path"] == "CLAUDE.md" for f in errors))
@@ -431,7 +454,7 @@ class ValidateTests(unittest.TestCase):
             )
 
     def test_skills_contract(self):
-        conventions = (FIXTURE / "00_Meta/conventions.md").read_text()
+        conventions = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
         good = (
             "---\nname: good-skill\ndescription: Does a thing well.\n"
             'title: "Skill: Good"\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n\n# Good\n'
@@ -440,7 +463,7 @@ class ValidateTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": conventions,
+                    "00_Meta/CONVENTIONS.md": conventions,
                     "10_Agents/skills/good-skill/SKILL.md": good,
                     "10_Agents/skills/bad-name/SKILL.md": good,
                     "10_Agents/skills/no-desc/SKILL.md": (
@@ -488,7 +511,7 @@ class ProvenanceTests(unittest.TestCase):
             root = make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": (FIXTURE / "00_Meta/conventions.md").read_text(),
+                    "00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(),
                     **files,
                 },
             )
@@ -563,10 +586,10 @@ class CurationTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
 
     def vault(self, td, files):
-        return make_vault(Path(td), {"00_Meta/conventions.md": self.CONVENTIONS, **files})
+        return make_vault(Path(td), {"00_Meta/CONVENTIONS.md": self.CONVENTIONS, **files})
 
     def test_invalid_expires(self):
         with tempfile.TemporaryDirectory() as td:
@@ -603,8 +626,8 @@ class CurationTests(unittest.TestCase):
             "03_Journal/day.md": note(),
             "07_Archives/old.md": note(),
             "10_Agents/solutions/fix.md": note(),
-            "00_Meta/changelog.md": note(),
-            "00_Meta/status.md": note(),
+            "00_Meta/CHANGELOG.md": note(),
+            "00_Meta/STATUS.md": note(),
             "needs-one.md": note(),
         }
         with tempfile.TemporaryDirectory() as td:
@@ -650,9 +673,9 @@ class CurationTests(unittest.TestCase):
 
     def test_compute_curation_signals(self):
         files = {
-            "expired.md": note("[[stale-hub]]", expires="2020-01-01"),
-            "fresh.md": note("[[expired]] ![[08_Assets/used.png]]", expires="2999-01-01"),
-            "stale-hub.md": note("[[fresh]]", updated="2020-01-01", expires="2999-01-01"),
+            "expired.md": note("[stale hub](stale-hub.md)", expires="2020-01-01"),
+            "fresh.md": note("[expired](expired.md) ![used](08_Assets/used.png)", expires="2999-01-01"),
+            "stale-hub.md": note("[fresh](fresh.md)", updated="2020-01-01", expires="2999-01-01"),
             "orphan.md": note(expires="2999-01-01"),
             "08_Assets/used.png": b"x",
             "08_Assets/unused.png": b"x",
@@ -678,7 +701,7 @@ class CurationTests(unittest.TestCase):
             ctx = brain.context_report(root)
             by_path = {r["path"]: r for r in ctx["docs"]}
             self.assertEqual(by_path["AGENTS.md"]["sizeBytes"], 9000)
-            self.assertIsNone(by_path["01_Profile/now.md"]["sizeBytes"])
+            self.assertIsNone(by_path["01_Profile/NOW.md"]["sizeBytes"])
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
                 _, warnings = brain.run_validate(root, check_index=False)
             self.assertTrue(
@@ -762,7 +785,7 @@ class CurationTests(unittest.TestCase):
         # table intact so validate can still read the taxonomy).
         big_conventions = self.CONVENTIONS + "\n" + ("padding line\n" * 4000)
         with tempfile.TemporaryDirectory() as td:
-            root = self.vault(td, {"00_Meta/conventions.md": big_conventions})
+            root = self.vault(td, {"00_Meta/CONVENTIONS.md": big_conventions})
             ctx = brain.context_report(root)
             self.assertGreater(ctx["totalBytes"], brain.BOOTSTRAP_TOTAL_BUDGET)
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
@@ -835,12 +858,12 @@ class SecretScanTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text()
+        cls.CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text()
 
     def scan(self, files: dict):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(
-                Path(td), {"00_Meta/conventions.md": self.CONVENTIONS, **files}
+                Path(td), {"00_Meta/CONVENTIONS.md": self.CONVENTIONS, **files}
             )
             errors, _ = brain.run_validate(root, check_index=False)
         return [f for f in errors if f["rule"].startswith("secret-")]
@@ -879,7 +902,7 @@ class SecretScanTests(unittest.TestCase):
             make_vault(
                 Path(td),
                 {
-                    "00_Meta/conventions.md": self.CONVENTIONS,
+                    "00_Meta/CONVENTIONS.md": self.CONVENTIONS,
                     "leak.md": note(self.FAKE_AWS),
                 },
             )
@@ -921,7 +944,7 @@ class SecretScanTests(unittest.TestCase):
         body = "\n".join(
             [
                 "Prose about AWS AKIA prefixes and akiaiosfodnn7example shapes.",
-                "See [[06_Resources/some-note]] and #topic/software tags.",
+                "See [some note](06_Resources/some-note.md) and #topic/software tags.",
                 'commit = "d3b07384d113edec49eaa6238ad5ff00c0ffee12"',  # git SHA: no uppercase
                 "https://example.com/AbC123defGHI456jklMNO789pqrSTU012vwxYZ345",
                 "the token: value pair syntax (unquoted, not a credential)",

@@ -21,5 +21,5 @@ What's the priority right now?
 
 ## Related
 
-- Projects: [[{{RELATED_PROJECT}}]]
-- Resources: [[{{RELATED_RESOURCE}}]]
+- Projects: [Related project]({{RELATED_PROJECT}})
+- Resources: [Related resource]({{RELATED_RESOURCE}})

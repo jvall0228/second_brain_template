@@ -21,19 +21,26 @@ Keep an adopter's fork current with the upstream `second_brain_template`: detect
 - **Pull-only — never push upstream.** This skill fetches from the upstream template repo and writes only to the fork. Agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner (issue #22's hard rule). A fork improvement worth generalizing is *suggested to the owner* in the sync report as "worth upstreaming?" — the owner carries it upstream by hand if they choose.
 - **Dry-run first, mandatory.** The first pass of every sync is report-only: produce the full classified plan (what would change, lane by lane) as the Inbox report **before any write**. Applying requires the owner's go-ahead on that plan — like `recommended-automations`.
 - **Idempotent.** Re-running against the same upstream release produces no new changes and a report saying so. Never re-apply what a previous sync already applied; never re-propose what the owner already rejected (check prior sync reports in the Inbox and `07_Archives/`).
-- **Inbox-first report.** The sync report is an `02_Inbox/` note (see [[#Report]]); the owner triages it like anything else.
+- **Inbox-first report.** The sync report is an `02_Inbox/` note (see [Report](#report)); the owner triages it like anything else.
 - **Owner content is never touched**, in any mode, under any flag. When in doubt about a path's lane, treat it as owner content and surface the question in the report.
 
 ## Detect
 
-Upstream version signaling (accepted design, issue #6): the fork records the upstream release it has adopted in the `template_version` key of [[00_Meta/config.yaml]] (spec §15.3, read via `brain config`); upstream marks each template release with a git tag (`template-v*`).
+Before classification, resolve the current environment with `brain env detect
+--json`. If registered environments exist and matching fails, stop before
+reading environment content or writing a report. Treat every non-current
+`10_Agents/environments/<slug>/` path as opaque owner content: report metadata
+only, never diff or serialize its contents. `.second-brain/` is ignored local
+state and must never be staged, classified, or proposed upstream.
+
+Upstream version signaling (accepted design, issue #6): the fork records the upstream release it has adopted in the `template_version` key of [config.yaml](../../../00_Meta/config.yaml) (spec §15.3, read via `brain config`); upstream marks each template release with a git tag (`template-v*`).
 
 1. **Upstream remote.** Look for a git remote named `upstream` pointing at the template repo. If none is configured, this is a documented one-time setup step — propose it in the report and stop:
    ```
    git remote add upstream https://github.com/<template-owner>/second_brain_template.git
    ```
 2. **Fetch tags:** `git fetch upstream --tags` (fetch only — see ground rules).
-3. **Read the fork's recorded version:** `python3 10_Agents/tools/brain/brain.py config --json` → `templateVersion`. If unset, the fork predates version signaling: propose an initial baseline in the report (the newest upstream tag whose tree the fork already contains, or a full first-sync review) rather than guessing.
+3. **Read the fork's recorded version:** `brain config --json` → `templateVersion`. If unset, the fork predates version signaling: propose an initial baseline in the report (the newest upstream tag whose tree the fork already contains, or a full first-sync review) rather than guessing.
 4. **Compare against upstream release tags** (`git tag -l 'template-v*'` on the upstream remote, version-sorted). The pending work is the tag-to-tag diff from the recorded version to the newest release — semantic release units, not raw commit soup: `git diff --name-status <recorded-tag>..<newest-tag>`.
 5. **Edge cases:**
    - **Upstream has no tags** (it predates its own release duty): fall back to `00_Meta/VERSION` in the upstream tree if upstream ships one (the accepted design's stopgap the config key absorbs); if neither exists, diff against `upstream/main` and say so in the report — the sync still works, it just loses release granularity.
@@ -84,8 +91,8 @@ Lanes:
 | Path | Lane | Why |
 |------|------|-----|
 | `00_Meta/config.yaml` | owner-content | Per-fork policy record (spec §15.1) — upstream grammar/comment changes are proposals at most |
-| `00_Meta/changelog.md` | owner-content | The fork's own history, not the template's |
-| `00_Meta/status.md` | owner-content | The fork's own state |
+| `00_Meta/CHANGELOG.md` | owner-content | The fork's own history, not the template's |
+| `00_Meta/STATUS.md` | owner-content | The fork's own state |
 | `09_Templates/` templates onboard-owner actually rewrote from `variants/` | owner-content | Issue #12: a work-context fork owns the periodic templates the specialization stage rewrote in place (currently `template-daily-log.md` and `template-weekly-review.md`; detectable as diverged from upstream) — backfilling upstream updates over them would reintroduce the personal sections, so upstream changes to them become proposals. Periodic templates that were **never rewritten** stay machinery; the cross-cutting divergence rule governs them like any other file |
 | `10_Agents/solutions/` | owner-content | The fork's learned solution notes |
 | `10_Agents/environments/` | owner-content | Issue #15: per-environment inventories belong to the fork |
@@ -112,9 +119,9 @@ Only after the dry-run report is approved:
 
 Where a new upstream convention applies to existing fork content (a new frontmatter field, tag namespace, validate rule):
 
-1. Run the mechanical regeneration steps: `python3 10_Agents/tools/brain/brain.py index` and `python3 10_Agents/tools/vscode/gen_snippets.py` (the pre-commit hook does both, but run them explicitly so the diff is reviewable).
+1. Run the mechanical regeneration steps: `brain index` and `python3 10_Agents/tools/vscode/gen_snippets.py` (the pre-commit hook does both, but run them explicitly so the diff is reviewable).
 2. Generate the mechanical fixes for fork content the new convention now covers — **owner-content files still are not edited**; convention gaps in owner content become a checklist in the report instead.
-3. **Prove with `python3 10_Agents/tools/brain/brain.py validate` — 0 errors** before committing; run the test suite (`python3 10_Agents/tools/run_tests.py`).
+3. **Prove with `brain validate` — 0 errors** before committing; run the test suite (`python3 10_Agents/tools/run_tests.py`).
 4. Document the backfill pass (what was regenerated, what was fixed, what remains for the owner) as a section of the sync report.
 
 ## Report
@@ -140,7 +147,7 @@ The detect step only works if upstream releases are tagged. Whoever operates the
 
 ## References
 
-- [[00_Meta/prd]] §6.3 — change control the apply lanes implement
+- [PRD](../../../00_Meta/PRD.md) §6.3 — change control the apply lanes implement
 - `10_Agents/tools/brain/spec.md` §15.3 — the `template_version` config key
 - `10_Agents/skills/inbox-capture/SKILL.md` — the report note's write rules
 - `10_Agents/skills/recommended-automations/SKILL.md` — the dry-run-first pattern

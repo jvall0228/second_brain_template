@@ -5,7 +5,19 @@ __pycache__/
 # machine-specific, regenerated per clone — never committed, unlike the index.
 10_Agents/tools/brain/vault-embeddings.json
 
+# Per-clone environment selection and secrets-adjacent overlays (brain spec
+# §20). Tracked environment identity lives under 10_Agents/environments/;
+# raw local identity, credentials, endpoints, and delivery state live here.
+.second-brain/environment
+.second-brain/environments/
+
 # Machine-local Cursor overlay artifacts (installed per-clone by
 # onboard-harness, reversed by delete — never shared between machines).
 .cursor/
 .cursorignore
+
+# Crash-recovery state for `brain migrate-links --write`. The journal and
+# per-note quarantine/staging files are machine-local evidence, never corpus.
+/.brain-link-migration.json
+.*.migrate-new-*
+.*.migrate-old-*

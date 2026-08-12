@@ -43,15 +43,17 @@ def render_note(root: Path, today: datetime.date) -> str:
     return (
         template.read_text(encoding="utf-8")
         .replace("{{date}}", today.isoformat())
-        # Unresolved wikilinks are brain-validate errors, so link related
+        # Unresolved links are brain-validate errors, so link related
         # notes only once they exist; plain text otherwise.
         .replace(
-            "[[{{RELATED_WEEKLY_REVIEW}}]]",
-            f"[[{weekly}]]" if (root / f"{weekly}.md").exists() else "not yet created",
+            "[Current weekly review]({{RELATED_WEEKLY_REVIEW}})",
+            f"[{iso_year}-W{iso_week:02d} review](../weekly/{iso_year}-W{iso_week:02d}-review.md)"
+            if (root / f"{weekly}.md").exists()
+            else "not yet created",
         )
         .replace(
-            "[[{{PREVIOUS_DAILY_NOTE}}]]",
-            f"[[{yesterday.isoformat()}]]"
+            "[Previous daily note]({{PREVIOUS_DAILY_NOTE}})",
+            f"[{yesterday.isoformat()}]({yesterday.isoformat()}.md)"
             if (daily_dir / f"{yesterday.isoformat()}.md").exists()
             else "none",
         )

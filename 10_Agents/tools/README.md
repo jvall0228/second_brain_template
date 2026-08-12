@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -15,9 +15,10 @@ Executable tools that give agents structured access to the vault. Tools here are
 
 ## Contents
 
-- [[10_Agents/tools/brain/README|brain]] — the vault index CLI: query commands plus `validate`, backing the committed `vault-index.json` and the pre-commit hook. Its behavior contract is [[10_Agents/tools/brain/spec]].
-- [[10_Agents/tools/vscode/README|vscode]] — scripts behind the VS Code editor surface ([[00_Meta/prd]] §6.5): template-synced snippet generation (hook-enforced) and daily-note creation, both wired to `.vscode/tasks.json`.
-- `adopt_check.py` — the adopter-flow smoke test (issue #20): replays the root README's "Adopt this template" steps in a scratch copy — delete the seeded examples, dumb-fill `01_Profile/`, write a first Inbox capture — and requires `brain validate` to stay at zero errors. The delete list is data-driven from `adopt_examples.json` and cross-checked against the README so the two can't drift; CI runs it on every push, and its unit tests live in `brain/tests/test_adopt_check.py` (single-script tool, shared suite home).
+- [brain](brain/README.md) — the vault CLI: indexed query/validation, AYMT, generated Home, offline artifacts, and the provider-neutral `notify` boundary for fake previews and approved local file tests. Its behavior contract is [spec](brain/spec.md).
+- [vscode](vscode/README.md) — scripts behind the VS Code editor surface ([PRD](../../00_Meta/PRD.md) §6.5): template-synced snippet generation (hook-enforced) and daily-note creation, both wired to `.vscode/tasks.json`.
+- [skill adapters](skill_adapters/README.md) — deterministic, hook/CI-enforced text adapters exposing canonical skills at `.agents/skills/` and `.claude/skills/` without workflow duplication or symlinks.
+- `adopt_check.py` + `adopt_cleanup.py` — preview/apply the manifest-owned seeded-example bundle with exact deletion inventories/reference edits, source and validator hashes, ignored/untracked/dirty/stale/unmarked refusal, a durable recovery lock (`recover`), transactional rollback, and independently checked post-apply validation. With no subcommand, the CI smoke test replays cleanup, profile fill, and first capture in a scratch copy.
 
 ## Testing (TDD convention)
 
@@ -35,5 +36,5 @@ The runner discovers every `*/tests/` directory automatically, so a new tool's s
 
 ## Rules
 
-- Template-shipped tools are canonical (see [[00_Meta/prd]] §9.3); agent-generated tools start `workflow/draft` until the human promotes them.
+- Template-shipped tools are canonical (see [PRD](../../00_Meta/PRD.md) §9.3); agent-generated tools start `workflow/draft` until the human promotes them.
 - Tools must stay dependency-free and deterministic — see the spec of the tool you're changing before touching it.

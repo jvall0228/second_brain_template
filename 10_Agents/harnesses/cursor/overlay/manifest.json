@@ -28,7 +28,7 @@
         "method": "generate",
         "target": "<vault>/.cursorignore",
         "scope": "project",
-        "generator": "python3 10_Agents/tools/brain/brain.py list --tag restricted/private",
+        "generator": "brain list --tag restricted/private",
         "generator_semantics": "Seed the target from the template if absent. On every sync, rewrite the managed block between the '# BEGIN second-brain restricted/private (generated)' and '# END' markers wholesale with one line per path printed by the generator command — idempotent, handles both gained and lost tags, and never touches owner lines outside the markers. Re-run whenever notes gain or lose the restricted/private tag; the file does not regenerate itself."
       },
       "reverse": {

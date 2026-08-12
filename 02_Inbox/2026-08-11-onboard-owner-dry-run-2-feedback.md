@@ -14,7 +14,7 @@ session: onboarding-2026-08-11
 
 # Onboard-owner template feedback — 2026-08-11 dry run 2
 
-Owner feedback from a second live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] dry run (Claude Code, vault `second_brain_test`, cloned from the public `second_brain_template` repo). Capture for template / skill updates — not owner profile content. A prior dry run's feedback already landed as [[07_Archives/inbox/2026-08-11-onboard-owner-template-feedback|adaptive-interview requirements]]; this run surfaced gaps beyond that fix.
+Owner feedback from a second live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) dry run (Claude Code, vault `second_brain_test`, cloned from the public `second_brain_template` repo). Capture for template / skill updates — not owner profile content. A prior dry run's feedback already landed as [adaptive-interview requirements](../07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md); this run surfaced gaps beyond that fix.
 
 ## Feedback
 
@@ -25,7 +25,7 @@ Owner feedback from a second live [[10_Agents/skills/onboard-owner/SKILL|onboard
 
 3. **No safeguard before pulling real personal data into a public-remote vault.** Stage 9 (agent-orientation / "connect their world") offers to pull real calendar/email data with no check on whether the vault's `git remote` points at a public repo (here, `second_brain_template` itself). The owner had to catch this and call it a failure that the agent needed to ask live rather than the skill refusing by default. Fix: `agent-orientation` (and `onboard-owner` stage 9's offer) should check the vault's remote before offering real-data connections, and hard-skip / hard-warn by default when the remote looks public or template-like (e.g. matches the upstream template's own repo, or is public on the host).
 
-4. **Stage 10 cleanup doesn't account for cross-links between example content.** Deleting `04_Projects/example-project/` (offered and approved once a real project existed) broke four unrelated files that linked to it as a worked example: `00_Meta/index.md`, `04_Projects/README.md`, `05_Areas/example-area/README.md`, and the sample weekly review `03_Journal/periodic/weekly/2025-W03-review.md`. The skill should either treat the example set as a linked bundle (offer to update/remove all cross-references together) or, at minimum, warn the agent to `brain validate` and fix fallout immediately after any example deletion — the current text only says "offer to remove them," not "and repair what links to them."
+4. **Stage 10 cleanup doesn't account for cross-links between example content.** Deleting `04_Projects/example-project/` (offered and approved once a real project existed) broke four unrelated files that linked to it as a worked example: `00_Meta/INDEX.md`, `04_Projects/README.md`, `05_Areas/example-area/README.md`, and the sample weekly review `03_Journal/periodic/weekly/2025-W03-review.md`. The skill should either treat the example set as a linked bundle (offer to update/remove all cross-references together) or, at minimum, warn the agent to `brain validate` and fix fallout immediately after any example deletion — the current text only says "offer to remove them," not "and repair what links to them."
 
 ## Context from the run (for triage)
 
@@ -35,9 +35,9 @@ Owner feedback from a second live [[10_Agents/skills/onboard-owner/SKILL|onboard
 - Vault intent: personal, work kept fully separate — role/company interview correctly skipped
 - People map: skipped — no orientation inventory existed yet and git history had nothing usable; correctly deferred per the skill's own fallback
 - Seed content: one real project captured (car theft → repair/reimbursement follow-up), no area surfaced
-- First capture → triage: worked well end to end (car interest → filed into `01_Profile/identity.md` § Interests, Inbox copy cleared)
+- First capture → triage: worked well end to end (car interest → filed into `01_Profile/IDENTITY.md` § Interests, Inbox copy cleared)
 - Stages 7, 8, 9 all deferred per owner instruction (see items 2–3 above)
-- Related skill: [[10_Agents/skills/onboard-owner/SKILL]]; also touches [[10_Agents/skills/onboard-harness/SKILL]] and [[10_Agents/skills/agent-orientation/SKILL]]
+- Related skill: [SKILL](../10_Agents/skills/onboard-owner/SKILL.md); also touches [SKILL](../10_Agents/skills/onboard-harness/SKILL.md) and [SKILL](../10_Agents/skills/agent-orientation/SKILL.md)
 
 ## Suggested triage
 

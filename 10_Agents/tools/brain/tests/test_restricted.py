@@ -18,23 +18,23 @@ import brain  # noqa: E402
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "vault"
 
 # Fixture conventions plus the restricted row — the closed-list namespace the
-# real 00_Meta/conventions.md registers (single value: private).
-CONVENTIONS = (FIXTURE / "00_Meta/conventions.md").read_text(encoding="utf-8") + (
+# real 00_Meta/CONVENTIONS.md registers (single value: private).
+CONVENTIONS = (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(encoding="utf-8") + (
     "| `restricted/*` | Privacy marking | `private` |\n"
 )
 
 RESTRICTED_NOTE = (
     "---\ntitle: Secret Plans\ntags:\n  - type/note\n  - restricted/private\n"
     "updated: 2026-08-11\n---\n\n# Secret Heading\n\nSensitive body #topic/secretive\n"
-    "Linking a sibling: [[other-secret]]\n"
+    "Linking a sibling: [other secret](other-secret.md)\n"
 )
 OTHER_RESTRICTED = (
     "---\ntitle: Other Secret\ntags:\n  - type/note\n  - restricted/private\n"
-    "updated: 2026-08-11\n---\n\nAlso sensitive. Back at [[secret]]\n"
+    "updated: 2026-08-11\n---\n\nAlso sensitive. Back at [secret](secret.md)\n"
 )
 NORMAL_LINKER = (
     "---\ntitle: Normal\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n\n"
-    "# Normal Heading\n\nSee [[secret]] and embed ![[secret]] and [[plain]].\n"
+    "# Normal Heading\n\nSee [secret](secret.md) and embed ![secret](secret.md) and [plain](plain.md).\n"
 )
 PLAIN_NOTE = (
     "---\ntitle: Plain\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n\nNothing.\n"
@@ -51,7 +51,7 @@ def make_vault(tmp: Path, files: dict[str, str]) -> Path:
 
 def base_files() -> dict[str, str]:
     return {
-        "00_Meta/conventions.md": CONVENTIONS,
+        "00_Meta/CONVENTIONS.md": CONVENTIONS,
         "secret.md": RESTRICTED_NOTE,
         "other-secret.md": OTHER_RESTRICTED,
         "normal.md": NORMAL_LINKER,
@@ -64,7 +64,7 @@ class RestrictedTaxonomyTests(unittest.TestCase):
 
     def test_table_registers_closed_restricted_namespace(self):
         with tempfile.TemporaryDirectory() as td:
-            root = make_vault(Path(td), {"00_Meta/conventions.md": CONVENTIONS})
+            root = make_vault(Path(td), {"00_Meta/CONVENTIONS.md": CONVENTIONS})
             tax = brain.load_taxonomy(root)
             self.assertEqual(tax["restricted"], ["private"])
 
@@ -100,7 +100,7 @@ class RestrictedTaxonomyTests(unittest.TestCase):
             )
 
     def test_real_conventions_table_registers_restricted(self):
-        # The repo's own 00_Meta/conventions.md, not the fixture copy.
+        # The repo's own 00_Meta/CONVENTIONS.md, not the fixture copy.
         tax = brain.load_taxonomy(brain.default_vault_root())
         self.assertEqual(tax["restricted"], ["private"])
 
@@ -153,7 +153,7 @@ class RestrictedLinkWarningTests(unittest.TestCase):
         )
         files["linker.md"] = (
             "---\ntitle: Linker\ntags:\n  - type/note\nupdated: 2026-08-11\n---\n\n"
-            "See [[body-tagged]].\n"
+            "See [body tagged](body-tagged.md).\n"
         )
         _, warnings = self.run_validate(files)
         self.assertFalse(
@@ -207,8 +207,8 @@ class RestrictedIndexReductionTests(unittest.TestCase):
             files["secret.md"] = (
                 "---\ntitle: \"Secret Plans\"\ntags:\n  - type/note\n"
                 "  - restricted/private\nupdated: 2026-08-11\n---\n\n"
-                "See [[other-secret#Hidden Section|the secret alias text]] "
-                "and ![[normal]].\n"
+                "See [the secret alias text](other-secret.md#hidden-section) "
+                "and ![normal](normal.md).\n"
             )
             root = make_vault(Path(td), files)
             reduced = brain.reduce_restricted(self.build(root))
@@ -217,8 +217,8 @@ class RestrictedIndexReductionTests(unittest.TestCase):
             for link in links:
                 self.assertIsNone(link["display"])
                 self.assertIsNone(link["fragment"])
-            self.assertEqual(links[0]["raw"], "[[other-secret]]")
-            self.assertEqual(links[1]["raw"], "![[normal]]")
+            self.assertEqual(links[0]["raw"], "[](other-secret.md)")
+            self.assertEqual(links[1]["raw"], "![](normal.md)")
             # Non-restricted notes keep full link records.
             normal_links = reduced["notes"]["normal.md"]["links"]
             self.assertTrue(all("raw" in l for l in normal_links))

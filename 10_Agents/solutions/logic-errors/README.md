@@ -16,4 +16,4 @@ _Empty — document a solution here the first time you resolve a logic error wor
 
 ## Related
 
-- [[10_Agents/solutions/README|Solutions]] — Parent directory
+- [Solutions](../README.md) — Parent directory

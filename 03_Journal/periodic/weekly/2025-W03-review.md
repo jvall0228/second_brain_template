@@ -10,7 +10,7 @@ updated: 2025-01-19
 
 > **Sample weekly review from the Second Brain template**, filled in to show the format.
 > Delete this file once you've seen the pattern; create real ones with
-> [[09_Templates/template-weekly-review]].
+> [template-weekly-review](../../../09_Templates/template-weekly-review.md).
 
 ## Get Clear
 
@@ -19,11 +19,11 @@ updated: 2025-01-19
 
 ## Get Current — Projects
 
-- [[04_Projects/example-project/README|Example Project]] — site audit done; next action is picking a framework.
+- [Example Project](../../../04_Projects/example-project/README.md) — site audit done; next action is picking a framework.
 
 ## Get Current — Areas
 
-- [[05_Areas/example-area/README|Example Area]] — worked out twice; aiming for three next week.
+- [Example Area](../../../05_Areas/example-area/README.md) — worked out twice; aiming for three next week.
 
 ## Review
 

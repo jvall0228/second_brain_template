@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Codex Wiring
 
-Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [[06_Resources/harness-codex|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [research](../../../06_Resources/harness-codex.md)); re-verify before relying on paths.
 
 ## Entrypoint loading
 
@@ -25,7 +25,7 @@ User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then p
 
 ## Skills
 
-Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/` — the shared standard path. `onboard-harness`'s `~/.agents/skills/<name>` symlinks cover Codex with no extra work. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects.
+Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/`. A clean clone includes generated text adapters in `.agents/skills/`; each mirrors the canonical `name`/`description` and points to `10_Agents/skills/<name>/SKILL.md`. No project symlinks or onboarding writes are needed. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects. Optional user-global mode retains the manifest-owned `~/.agents/skills/<name>` link/copy route after exact preview and approval.
 
 ## Hook installation
 
@@ -34,12 +34,12 @@ Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
 Approval for the command falls under Codex's `approval_policy`/sandbox settings; a prefix allow rule can be added in `.codex/rules/` (Starlark `prefix_rule`) for trusted projects.
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 

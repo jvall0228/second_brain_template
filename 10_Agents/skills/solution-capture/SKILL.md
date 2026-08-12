@@ -19,7 +19,7 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
 ## Steps
 
 1. **Pick the category** — an existing directory under `10_Agents/solutions/` whose README fits the problem. If none fits, create a new kebab-case category directory *with a README* describing what belongs there.
-2. **Name the note** with a kebab-case slug describing the problem (`wikilink-resolution-rules.md` is the worked example).
+2. **Name the note** with a kebab-case slug describing the problem (`wikilink-resolution-rules.md`, now documenting the relative Markdown contract, is the worked example).
 3. **Write in the standard shape:**
    ```markdown
    ---
@@ -41,11 +41,11 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
    ## Prevention   — how to avoid hitting it again
    ## Related      — links/paths to affected docs
    ```
-   The provenance fields (`00_Meta/conventions.md` § Provenance) are expected on agent-written notes: `author:` is your harness identifier (`claude-code`, `copilot`, …); `session:` is the session URL / PR / task reference — omit it when none exists.
+   The provenance fields (`00_Meta/CONVENTIONS.md` § Provenance) are expected on agent-written notes: `author:` is your harness identifier (`claude-code`, `copilot`, …); `session:` is the session URL / PR / task reference — omit it when none exists.
 4. **Keep it evergreen:** facts and commands, no session narrative. If a solution supersedes an old note, update that note (bump `updated:`) instead of writing a duplicate.
-5. **Validate and commit:** `python3 10_Agents/tools/brain/brain.py validate`, then commit.
+5. **Validate and commit:** `brain validate`, then commit.
 
 ## References
 
 - `10_Agents/solutions/README.md` — category index and format
-- `00_Meta/prd.md` §9.2 — the carve-out's exact terms
+- `00_Meta/PRD.md` §9.2 — the carve-out's exact terms

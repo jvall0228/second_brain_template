@@ -32,4 +32,4 @@ What changes as a result of this decision?
 
 ## Related
 
-- Project: [[{{RELATED_PROJECT}}]]
+- Project: [Related project]({{RELATED_PROJECT}})

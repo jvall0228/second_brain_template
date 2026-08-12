@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # opencode Wiring
 
-Facts verified 2026-08-11 against [opencode.ai/docs](https://opencode.ai/docs) (see [[06_Resources/harness-opencode|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [opencode.ai/docs](https://opencode.ai/docs) (see [research](../../../06_Resources/harness-opencode.md)); re-verify before relying on paths.
 
 ## Entrypoint loading
 
@@ -20,7 +20,7 @@ opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over 
 
 ## Skills
 
-opencode scans `.opencode/skills/`, `.claude/skills/`, and the shared `.agents/skills/` — the `~/.agents/skills/<name>` symlinks from `onboard-harness` cover it with no extra work.
+opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/`. A clean clone includes generated text adapters in the latter two paths, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
 
 ## Hook installation
 
@@ -29,12 +29,12 @@ opencode scans `.opencode/skills/`, `.claude/skills/`, and the shared `.agents/s
 ## Invoking brain
 
 ```
-python3 10_Agents/tools/brain/brain.py <command> --json
+brain <command> --json
 ```
 
 Shell access falls under the `permission` map in `opencode.json`; the reference config leaves bash on defaults — tighten per taste.
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `python3 10_Agents/tools/brain/brain.py search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `python3 10_Agents/tools/brain/brain.py embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 

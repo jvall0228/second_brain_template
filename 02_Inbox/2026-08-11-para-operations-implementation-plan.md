@@ -12,7 +12,7 @@ updated: 2026-08-11
 
 # Implementation Plan: CODE Operations & Vault Operations
 
-Executes [[02_Inbox/2026-08-11-para-operations-skills-requirements|the R1–R25 requirements]]. Phases are grouped by **artifact cluster**, not by requirement number, so each canonical file gets rewritten once instead of repeatedly. **Owner approval of this plan authorizes the canonical edits listed per phase**; anything beyond a phase's listed files still goes through the normal needs-review path.
+Executes [the R1–R25 requirements](2026-08-11-para-operations-skills-requirements.md). Phases are grouped by **artifact cluster**, not by requirement number, so each canonical file gets rewritten once instead of repeatedly. **Owner approval of this plan authorizes the canonical edits listed per phase**; anything beyond a phase's listed files still goes through the normal needs-review path.
 
 ## Ground rules (every phase)
 
@@ -51,7 +51,7 @@ Overridable before Phase 1; silence = assumption stands.
 ### Phase 1 — Rules & retrieval (R11, R14, R22)
 
 - New skill `vault-answer`: search order (brain search → index → grep), wikilink citations in every answer, vault-vs-model knowledge separation, answers-are-assets capture offer, unanswerable → offer research-to-resource.
-- `10_Agents/docs/operating-rules.md` gains two sections: **Stuck/Escalation Protocol** (R14) and **Session-End Flush** (R22).
+- `10_Agents/docs/OPERATING-RULES.md` gains two sections: **Stuck/Escalation Protocol** (R14) and **Session-End Flush** (R22).
 - Canonical edits: operating-rules, skills README (+1 row).
 - Exit: operating-rules still reads as one coherent document; new skill passes validate.
 
@@ -93,7 +93,7 @@ The only code-heavy phase and the only frontmatter-schema change. Internal order
 
 1. Cadence table (R15) lives in the skills README (beside the catalog it schedules); conventions points to it.
 2. recommended-automations rewrite: two flow families (inbound + rhythm jobs), unattended contract, guardrails (no shipping from Outbox, dry-run-first); source of truth = the R15 table.
-3. periodic-review gains the archive completion path (R9) and goal-alignment questions (R16); weekly/monthly/quarterly review templates updated to match; quarterly updates now.md.
+3. periodic-review gains the archive completion path (R9) and goal-alignment questions (R16); weekly/monthly/quarterly review templates updated to match; quarterly updates NOW.md.
 4. onboard-owner riders: teaches the rhythm, pitches rhythm jobs.
 - Canonical edits: recommended-automations, periodic-review, review templates, onboard-owner, skills README.
 
@@ -127,7 +127,7 @@ This note is the plan of record. On each phase completion: flip its Status to Do
 
 ## Related
 
-- [[02_Inbox/2026-08-11-para-operations-skills-requirements|Requirements (R1–R25)]] — what this plan executes
-- [[10_Agents/skills/README]] — the catalog being extended
-- [[00_Meta/conventions]] — change control governing the canonical edits
-- [[10_Agents/docs/operating-rules]] — write rules amended in Phases 1 and 5
+- [Requirements (R1–R25)](2026-08-11-para-operations-skills-requirements.md) — what this plan executes
+- [README](../10_Agents/skills/README.md) — the catalog being extended
+- [CONVENTIONS](../00_Meta/CONVENTIONS.md) — change control governing the canonical edits
+- [OPERATING-RULES](../10_Agents/docs/OPERATING-RULES.md) — write rules amended in Phases 1 and 5

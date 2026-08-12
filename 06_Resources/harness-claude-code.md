@@ -11,9 +11,9 @@ expires: 2026-11-11
 
 # Harness Primitives: Claude Code
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
-Claude Code is Anthropic's agentic coding harness: a terminal CLI plus [VS Code and JetBrains extensions, a desktop app, and a web/cloud surface at claude.ai/code (with mobile apps)](https://code.claude.com/docs/en/overview), all sharing one engine so "your CLAUDE.md files, settings, and MCP servers work across all of them"; proprietary, requiring a paid Claude subscription or Anthropic Console/API billing. It has an exceptionally rich extension surface (see the [[06_Resources/harness-primitives-research|research overview]] for the cross-harness comparison) and is the reference implementation of the Agent Skills standard.
+Claude Code is Anthropic's agentic coding harness: a terminal CLI plus [VS Code and JetBrains extensions, a desktop app, and a web/cloud surface at claude.ai/code (with mobile apps)](https://code.claude.com/docs/en/overview), all sharing one engine so "your CLAUDE.md files, settings, and MCP servers work across all of them"; proprietary, requiring a paid Claude subscription or Anthropic Console/API billing. It has an exceptionally rich extension surface (see the [research overview](harness-primitives-research.md) for the cross-harness comparison) and is the reference implementation of the Agent Skills standard.
 
 ## Context & memory files
 - **Does NOT read AGENTS.md natively.** The docs state flatly: ["Claude Code reads `CLAUDE.md`, not `AGENTS.md`"](https://code.claude.com/docs/en/memory#agents-md) and recommend a `CLAUDE.md` containing `@AGENTS.md` (or a symlink) — exactly what this vault already ships. `/init` with `CLAUDE_CODE_NEW_INIT=1` will read AGENTS.md and other tools' rules; `/import` (v2.1.213+) does a one-time copy.

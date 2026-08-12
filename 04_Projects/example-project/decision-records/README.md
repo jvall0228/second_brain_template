@@ -10,12 +10,12 @@ expires: 2027-08-11
 # Decision Records
 
 Architecture and approach decisions for this project — one file per decision. Name them
-`YYYY-MM-DD-short-title.md` and use the [[09_Templates/template-decision-record]] template.
+`YYYY-MM-DD-short-title.md` and use the [template-decision-record](../../../09_Templates/template-decision-record.md) template.
 
 ## Contents
 
-- [[04_Projects/example-project/decision-records/2025-01-10-example-decision|2025-01-10 — Static-site framework choice]]
+- [2025-01-10 — Static-site framework choice](2025-01-10-example-decision.md)
 
 ## Related
 
-- [[04_Projects/example-project/README|Example Project]] — Parent project
+- [Example Project](../README.md) — Parent project

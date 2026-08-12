@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # Copilot P0 Promotion Plan
 
-Owner directive (2026-08-11): "Add copilot support. Do research on the copilot harness and implement." Copilot has been a P1 adapter since M6.3; this plan brings it to first-class support, grounded in the same-day deep-dive research (since merged into [[06_Resources/harness-primitives-research#GitHub Copilot (P0)|the harness research's Copilot section]]). Standards-first discipline holds: the adapter carries only what a cross-harness standard cannot. The plan was adversarially reviewed before implementation (see the review log at the end); all accepted findings are folded in below.
+Owner directive (2026-08-11): "Add copilot support. Do research on the copilot harness and implement." Copilot has been a P1 adapter since M6.3; this plan brings it to first-class support, grounded in the same-day deep-dive research (since merged into [the harness research's Copilot section](../../06_Resources/harness-copilot.md)). Standards-first discipline holds: the adapter carries only what a cross-harness standard cannot. The plan was adversarially reviewed before implementation (see the review log at the end); all accepted findings are folded in below.
 
 ## Scope decision
 
@@ -19,7 +19,7 @@ Owner directive (2026-08-11): "Add copilot support. Do research on the copilot h
 
 The template already covers the agent surfaces' entrypoint (`AGENTS.md` is native). What's missing, per the research: (a) the non-agent surfaces get no bootstrap at all, (b) the cloud agent escapes the vault's enforcement chain (git hooks likely bypassed, CI gated behind human approval), (c) the documented skills install for Copilot (symlinks) doesn't actually work, and (d) the wiring doc predates the hooks/skills/CLI facts and the "cloud agent" rename.
 
-**Tier framing:** implementing the above is directed work. Recording it as a P0 row in [[00_Meta/prd]] §8.3 is this plan's *interpretation* of "add copilot support" (support that demonstrably works end-to-end = the P0 bar) — the PRD edit marks the promotion as owner-directed-in-substance but **pending owner confirmation of the tier itself**, and the final report surfaces it.
+**Tier framing:** implementing the above is directed work. Recording it as a P0 row in [PRD](../../00_Meta/PRD.md) §8.3 is this plan's *interpretation* of "add copilot support" (support that demonstrably works end-to-end = the P0 bar) — the PRD edit marks the promotion as owner-directed-in-substance but **pending owner confirmation of the tier itself**, and the final report surfaces it.
 
 ## Deliverables
 
@@ -60,9 +60,9 @@ The install algorithm's step 1 claims the `~/.agents/skills/` symlinks cover Cop
   - §18: bullet recording the Copilot `agentStop` hook as a shipped enforcement layer (cloud agent; approval-gate caveat).
 - **`10_Agents/skills/recommended-automations/SKILL.md`** (canonical): move Copilot out of the "no built-in scheduler" bucket — gh-aw scheduled workflows / `gh agent-task` for cloud flows; cron + `copilot -p` locally.
 - **`10_Agents/harnesses/README.md`**: Copilot row → P0 tier with updated summary; grounding sentence notes Copilot facts now live in the deep-dive note.
-- **`06_Resources/harness-primitives-research.md`**: one-line supersession pointer at the top of its Copilot section (the [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 plan]]'s Copilot line stays as-is — executed history).
-- **`00_Meta/changelog.md`**: new entry "Copilot Promoted to P0".
-- No `00_Meta/status.md` change (milestone table; this is post-milestone work). No brain.py/spec/test changes (no `.md` semantics touched).
+- **`06_Resources/harness-primitives-research.md`**: one-line supersession pointer at the top of its Copilot section (the [M5–M7 plan](2026-08-11-m5-m7-implementation-plan.md)'s Copilot line stays as-is — executed history).
+- **`00_Meta/CHANGELOG.md`**: new entry "Copilot Promoted to P0".
+- No `00_Meta/STATUS.md` change (milestone table; this is post-milestone work). No brain.py/spec/test changes (no `.md` semantics touched).
 - Implementation detail: run `python3 10_Agents/tools/brain/brain.py index` explicitly before committing (not relying on the pre-commit hook as a side effect), then `validate`.
 
 ## Explicit non-goals

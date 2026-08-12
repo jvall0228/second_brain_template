@@ -3,7 +3,7 @@ title: "Platform Solutions"
 tags:
   - type/meta
   - audience/agent
-updated: 2026-08-10
+updated: 2026-08-12
 ---
 
 # Platform Solutions
@@ -12,8 +12,8 @@ Solutions to platform-specific problems (OS, shell, CLI differences).
 
 ## Contents
 
-_Empty — document a solution here the first time you hit a platform-specific problem worth remembering._
+- [Writable Pathname Rollback Races](writable-pathname-rollback-races.md) — preserve recovery evidence when an already-open writer makes authenticated unlink unsafe
 
 ## Related
 
-- [[10_Agents/solutions/README|Solutions]] — Parent directory
+- [Solutions](../README.md) — Parent directory

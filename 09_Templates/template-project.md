@@ -26,8 +26,8 @@ What does "done" look like?
 
 ## Related
 
-- Area: [[{{RELATED_AREA}}]]
-- Resources: [[{{RELATED_RESOURCE}}]]
+- Area: [Related area]({{RELATED_AREA}})
+- Resources: [Related resource]({{RELATED_RESOURCE}})
 
 ## Log
 

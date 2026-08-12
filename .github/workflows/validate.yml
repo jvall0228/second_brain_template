@@ -31,10 +31,15 @@ jobs:
         # (delete seeded examples, fill 01_Profile/, first Inbox capture) and
         # requires brain validate to stay at zero errors afterwards.
         run: python3 10_Agents/tools/adopt_check.py
-      - name: regenerate index + snippets (PRD §18, §6.5)
+      - name: verify project-local skill adapters (issue #82)
+        run: python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py --check
+      - name: regenerate index + snippets + skill adapters (PRD §18, §6.5)
         run: |
           python3 10_Agents/tools/brain/brain.py index
           python3 10_Agents/tools/vscode/gen_snippets.py
+          python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py
+      - name: verify explicit-write local artifacts (issue #23)
+        run: python3 10_Agents/tools/brain/brain.py artifacts --check
       - name: brain validate
         run: |
           set +e
@@ -49,7 +54,7 @@ jobs:
         # token, and a PR's head branch gets healed by its own push events.
         if: github.event_name == 'push'
         run: |
-          git add 10_Agents/tools/brain/vault-index.json .vscode/second-brain.code-snippets
+          git add 10_Agents/tools/brain/vault-index.json .vscode/second-brain.code-snippets .agents/skills .claude/skills
           if git diff --cached --quiet; then
             echo "generated files already fresh — nothing to commit"
             exit 0

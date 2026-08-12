@@ -54,6 +54,14 @@
 #
 # template_version: template-v1.2.0
 #
+# Push-only notification setup is deliberately not stored in this tracked
+# config. `brain notify --setup` writes schema-versioned, mode-0600 setup to
+# `.second-brain/environments/<slug>/notifications.json`; delivery state and
+# local file-test output live beside it and remain ignored. Categories default
+# off. Store only a real provider's secret environment-variable name there;
+# keep the secret value in the process environment or an external secret store.
+# Real-provider transport/test send is not shipped.
+#
 # ---------------------------------------------------------------------------
 # Reserved keys (parsed and tolerated, not yet implemented — claimed by
 # open issues): environments, modules, provenance, sync.

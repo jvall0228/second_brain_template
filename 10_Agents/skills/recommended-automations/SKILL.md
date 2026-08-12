@@ -17,13 +17,14 @@ expires: 2027-08-11
 Turn recurring vault operations into scheduled flows the owner doesn't have to remember. Two families:
 
 1. **Inbound flows** — external sources captured into the vault (email, calendar, chat, transcripts).
-2. **Rhythm jobs** — headless invocations of the vault's own skills on cadence. **Source of truth: the cadence table in [[10_Agents/skills/README]] § The Rhythm** — this skill wires that table, never a private copy of it.
+2. **Rhythm jobs** — headless invocations of the vault's own skills on cadence. **Source of truth: the cadence table in [README](../README.md) § The Rhythm** — this skill wires that table, never a private copy of it.
 
 ## Ground rules
 
-- **Interface ranking ladder** for each flow's source access (PRD §19 M7; full six-rung ladder in `agent-orientation`): (1) environment-specific custom tooling (CLI or MCP) → (2) first-party CLI → (3) first-party MCP server/connector → (4) vendor API wrapped in a generated tool → (5) browser automation, last resort → (6) none, recorded explicitly.
+- **Interface ranking ladder** for each flow's source access (PRD §8.4; full six-rung ladder in `agent-orientation`): (1) environment-specific custom tooling (CLI or MCP) → (2) first-party CLI → (3) first-party MCP server/connector → (4) vendor API wrapped in a generated tool → (5) browser automation, last resort → (6) none, recorded explicitly.
 - **Credentials never enter the repo** (PRD §16.2): schedules and scripts are committed; auth stays in the environment (CLI sessions, env vars, the harness's connector store).
-- Every inbound flow **writes through the `inbox-capture` rules** — dated kebab filenames, full frontmatter, `workflow/draft` — so triage stays uniform. **Inbound flows** never write outside `02_Inbox/` except `daily-log` context flows, which follow that skill's rules. Rhythm jobs instead write to each invoked skill's own home (reviews to `03_Journal/`, maintenance to `00_Meta/status.md`) — they inherit that skill's write posture, not the Inbox-only rule.
+- **Every scheduled inbound run is persistence-gated immediately before access.** At a process boundary run `python3 10_Agents/tools/brain/brain.py remote-safety --persist --json` and proceed only when it exits `0` **and** returns `operationAllowed: true`; generated Python calls `require_remote_safety(..., persist=True)` at the same point. `block`, `unknown`, and local-only states make **zero connector calls and open zero output files**. Unattended jobs never use `--acknowledge-unknown`; they stop and report only the stable, redacted reason through the scheduler.
+- Every inbound flow **writes through the `inbox-capture` rules** — dated kebab filenames, full frontmatter, `workflow/draft` — so triage stays uniform. **Inbound flows** never write outside `02_Inbox/` except `daily-log` context flows, which follow that skill's rules. Rhythm jobs instead write to each invoked skill's own home (reviews to `03_Journal/`, maintenance to `00_Meta/STATUS.md`) — they inherit that skill's write posture, not the Inbox-only rule.
 - **The unattended contract:** a scheduled run has nobody to ask. It executes only self-contained outcomes; anything needing judgment becomes a report note in the Inbox; its final output is the **deliverable** (the log entry, the report, the review draft) — never a plan, a question, or a request for input. Scheduled runs inherit the strictest write posture of the skills they invoke.
 - **No automation ever ships from `02_Outbox/`** — the weekly sweep *flags* lingering packets; shipping stays the owner's act, always.
 
@@ -63,13 +64,13 @@ Document each wired flow in the harness's context (what runs, when, writing what
 
 ## Steps
 
-1. Read the **current environment's** orientation inventory note (`10_Agents/environments/<env-slug>/orientation-inventory.md` — see [[10_Agents/environments/README]]) for adopted sources, interface rungs, priorities, and the environment's permission envelope (never propose a flow the environment forbids); read the cadence table for the rhythm side.
+1. Resolve the current environment with `brain env detect --json` and fail closed unless exactly one slug is selected. Read **only that environment's** orientation inventory note for adopted sources, interface rungs, priorities, and the permission envelope (never propose a flow the environment forbids); read the cadence table for the rhythm side. Store generated wiring/state under that environment's ignored overlay.
 2. Propose flows from both families (tables above, pruned to real sources and the owner's actual rhythm) with cadence and cost/noise notes — owner picks.
-3. Wire each approved flow via the harness scheduler; first runs in **dry-run mode** — inbound flows produce a sample Inbox note, rhythm jobs produce their deliverable tagged `workflow/draft` — before anything is enabled.
+3. Wire each approved flow via the harness scheduler. For inbound flows, make the persistence preflight the first executable step before the connector or output path is opened, and test block, unknown, and local-only with connector/output spies. First runs in **dry-run mode** — inbound flows produce a sample Inbox note only after that gate passes; rhythm jobs produce their deliverable tagged `workflow/draft` — before anything is enabled.
 4. Owner reviews samples → enable; register the flows with `self-maintenance` (it audits `10_Agents/` drafts and the documented flows).
 
 ## References
 
-- [[10_Agents/skills/README]] § The Rhythm — the cadence table rhythm jobs implement
+- [README](../README.md) § The Rhythm — the cadence table rhythm jobs implement
 - `10_Agents/skills/inbox-capture/SKILL.md` — the write rules every inbound flow obeys
 - `10_Agents/harnesses/<name>/wiring.md` — per-harness invocation detail
