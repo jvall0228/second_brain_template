@@ -100,7 +100,7 @@ class OnboardOwnerStagesTests(unittest.TestCase):
 
     def test_people_guidance_never_depends_on_deleted_example(self):
         text = read(ONBOARD_OWNER)
-        self.assertIn("[[03_Journal/people/README|people-note guidance]]", text)
+        self.assertIn("[people-note guidance](../../../03_Journal/people/README.md)", text)
         self.assertNotIn("example-person", text)
 
 

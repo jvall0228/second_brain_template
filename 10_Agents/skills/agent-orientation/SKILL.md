@@ -16,7 +16,7 @@ expires: 2027-08-11
 
 Map what this environment can reach, agree on what's worth ingesting, and generate the access layer — the vault reaches outward from here.
 
-Orientation is not open-ended discovery: it produces a **structured inventory note** with the required sections defined in [[#Required output contract]] below. Infer as much as possible from the environment itself (installed CLIs, MCP/connector lists, config files); interview the owner only for what can't be observed.
+Orientation is not open-ended discovery: it produces a **structured inventory note** with the required sections defined in [Required output contract](#required-output-contract) below. Infer as much as possible from the environment itself (installed CLIs, MCP/connector lists, config files); interview the owner only for what can't be observed.
 
 ## Interface ranking ladder (apply to every inventory entry)
 
@@ -95,7 +95,7 @@ Environment facts (not harness or vault facts):
 
 ## Where the inventory lands
 
-One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [[10_Agents/environments/README]] for the contract: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment.
+One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [README](../../environments/README.md) for the contract: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment.
 
 Before reading or writing an inventory, resolve the current environment with
 `brain env detect --json`. If a legacy unregistered directory exists, run
@@ -188,6 +188,6 @@ session: <session-or-pr-ref>
 
 ## References
 
-- [[10_Agents/environments/README]] — the environment-scoped landing convention (minimal slice of #15)
+- [README](../../environments/README.md) — the environment-scoped landing convention (minimal slice of #15)
 - `10_Agents/harnesses/<name>/wiring.md` — what this harness can reach and how (static; verify live)
 - `00_Meta/PRD.md` §8.4, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers

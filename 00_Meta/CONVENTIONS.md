@@ -44,7 +44,15 @@ Allowed exceptions:
 
 ## Locale & Output Defaults
 
-For timezone, date format, units, and other machine-readable defaults, see [[01_Profile/DEFAULTS]].
+For timezone, date format, units, and other machine-readable defaults, see [DEFAULTS](../01_Profile/DEFAULTS.md).
+
+## Internal Link Contract
+
+Maintained content uses **source-relative inline Markdown only**: `[label](relative/path.md)`, `[label](#heading-slug)`, or `![alt](relative/path.png)`. Destinations use POSIX `/`, exact case, explicit extensions, and UTF-8 percent encoding for spaces and Unicode; heading fragments are GitHub-compatible.
+
+Obsidian is configured to author this portable form; GitHub, VS Code, and `brain` resolve it. Legacy parsing and `migrate-links` are import-only: never author new `[[…]]` links.
+
+Template links use `[human label]({{TOKEN}})`. Replace each token with the complete encoded relative destination including its extension; instantiated notes retain no placeholders.
 
 ## Frontmatter Requirements
 
@@ -83,11 +91,11 @@ Files in `09_Templates/` may use placeholder tokens such as `{{date}}`, `{{title
 
 ### Adapter File Exception
 
-`CLAUDE.md` at the vault root carries no frontmatter: it is a one-line adapter (`@AGENTS.md`) that Claude Code expands into the [[AGENTS]] entrypoint, not a note. It follows canonical change control despite having no tags.
+`CLAUDE.md` at the vault root carries no frontmatter: it is a one-line adapter (`@AGENTS.md`) that Claude Code expands into the [AGENTS](../AGENTS.md) entrypoint, not a note. It follows canonical change control despite having no tags.
 
 ## Tag Namespaces
 
-Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [[00_Meta/PRD]] and [[AGENTS]]) summarize it. Current namespaces:
+Tags use **slash-delimited namespaces**. **This table is the authoritative tag taxonomy** — other documents (including [PRD](PRD.md) and [AGENTS](../AGENTS.md)) summarize it. Current namespaces:
 
 | Namespace | Purpose | Values |
 |-----------|---------|--------|
@@ -102,7 +110,7 @@ Notes tagged `workflow/canonical` require a PR or explicit human approval to mod
 
 ### restricted/private
 
-`restricted/private` marks content that must not spread beyond its note. **Not access control** ([[00_Meta/PRD]] §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published), the `restricted-link` warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
+`restricted/private` marks content that must not spread beyond its note. **Not access control** ([PRD](PRD.md) §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published), the `restricted-link` warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
 
 ## Tasks
 
@@ -121,13 +129,13 @@ Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by de
 
 **Standing exceptions:**
 
-- Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [[10_Agents/README]]) and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
-- Live, user-invoked [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]] may write its documented draft inventory, access tool, and capture skill. Markdown uses `workflow/draft`; other files inherit it until promotion.
-- A live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
+- Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [README](../10_Agents/README.md)) and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
+- Live, user-invoked [agent-orientation](../10_Agents/skills/agent-orientation/SKILL.md) may write its documented draft inventory, access tool, and capture skill. Markdown uses `workflow/draft`; other files inherit it until promotion.
+- A live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
 
 **Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`; check first, on collision append a numeric suffix (`-2`), never overwrite another agent's note.
 
-See [[02_Inbox/README]] for Inbox-specific guidance.
+See [README](../02_Inbox/README.md) for Inbox-specific guidance.
 
 ## Change Control
 
@@ -147,26 +155,26 @@ Promoting a `workflow/draft` note to `workflow/canonical` is an owner decision, 
 1. The owner has explicitly approved the promotion (in-session direction counts).
 2. The note passes `brain validate` clean and its content is current (bump `updated:`, refresh `expires:` to the evergreen TTL).
 3. Swap `workflow/draft` → `workflow/canonical`.
-4. The note is reachable: linked from [[00_Meta/INDEX]] and/or its directory README.
-5. Structural promotions (new skills, new policies) get a [[00_Meta/CHANGELOG]] entry.
+4. The note is reachable: linked from [INDEX](INDEX.md) and/or its directory README.
+5. Structural promotions (new skills, new policies) get a [CHANGELOG](CHANGELOG.md) entry.
 
 Promoting an access-tool/capture-skill bundle is one owner decision: promote its Markdown, after which non-note files become canonical-by-policy.
 
-For expanded agent guidance, see [[10_Agents/README]].
+For expanded agent guidance, see [README](../10_Agents/README.md).
 
 ## Bootstrap Context Budgets
 
-The bootstrap docs ([[AGENTS]], [[01_Profile/NOW]], [[01_Profile/PREFERENCES]], [[01_Profile/DEFAULTS]], this file, [[00_Meta/INDEX]]) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `brain context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
+The bootstrap docs ([AGENTS](../AGENTS.md), [NOW](../01_Profile/NOW.md), [PREFERENCES](../01_Profile/PREFERENCES.md), [DEFAULTS](../01_Profile/DEFAULTS.md), this file, [INDEX](INDEX.md)) load into **every** agent session — their size is a per-session context tax. Each has a byte budget (~150% of its measured 2026-08-11 size; total capped at 32 KiB, the smallest harness project-doc cap). `brain context` reports actual sizes against budget; `brain validate` warns on breach but never blocks. Budget values are authoritative in the `brain.py` constants block (spec §14). When a bootstrap doc outgrows its budget, distill it — move detail into linked notes — rather than raising the budget by reflex.
 
 ## Operating Rhythm
 
-The canonical cadence table — which skills run daily, weekly, monthly, and quarterly — lives in [[10_Agents/skills/README]] § The Rhythm. Automations wire that table; documents don't duplicate it.
+The canonical cadence table — which skills run daily, weekly, monthly, and quarterly — lives in [README](../10_Agents/skills/README.md) § The Rhythm. Automations wire that table; documents don't duplicate it.
 
 ## Recency
 
 Agents detecting what changed:
 1. Check `updated:` field in frontmatter (primary signal)
-2. Read [[00_Meta/CHANGELOG]] for structural changes
+2. Read [CHANGELOG](CHANGELOG.md) for structural changes
 3. Use `git log -n 10` for detailed file-level history
 
 **Changelog entry format** — new entries use `## [YYYY-MM-DD] <operation> | <summary>`, grep-parseable via `grep '^## \['`. Forward-only: entries before the 2026-08-11 `recategorize` entry keep their original `## YYYY-MM-DD — Title` headers, so the grep matches new-format entries, not the full history. `<operation>` is a short kebab-case verb phrase (`add-skill`, `restructure`, `backfill`); the bullets below the header carry the detail.

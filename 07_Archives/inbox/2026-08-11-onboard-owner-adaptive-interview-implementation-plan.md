@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # Implementation Plan: onboard-owner adaptive interview
 
-Executes [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|the R1–R5 requirements]]. Single artifact, single phase — everything lands in one edit of `10_Agents/skills/onboard-owner/SKILL.md`. **Owner approval of this plan authorizes that edit.**
+Executes [the R1–R5 requirements](2026-08-11-onboard-owner-adaptive-interview-requirements.md). Single artifact, single phase — everything lands in one edit of `10_Agents/skills/onboard-owner/SKILL.md`. **Owner approval of this plan authorizes that edit.**
 
 **Status: executed 2026-08-11**, on branch `onboard-owner/adaptive-interview`, pending PR review/merge.
 
@@ -41,11 +41,11 @@ Executes [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-require
 - [x] SKILL.md reads as one coherent document — reviewed end-to-end post-edit.
 - [x] Stages 2–9 no longer need to individually justify plain-text-only or cold-ask behavior; the interaction defaults section covers it once.
 - [x] `brain validate` clean (0 errors, 4 pre-existing unrelated warnings); index regenerated; changelog entry added.
-- [x] This plan and its requirements doc archived to `07_Archives/inbox/` with `status/done`, mirroring [[07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements|the original onboard-owner requirements]]'s lifecycle.
+- [x] This plan and its requirements doc archived to `07_Archives/inbox/` with `status/done`, mirroring [the original onboard-owner requirements](2026-08-11-onboard-owner-skill-requirements.md)'s lifecycle.
 - [ ] PR opened and merged — tracked outside this note; this note's `status/done` reflects the plan's own execution, not the PR merge.
 
 ## Related
 
-- [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|Requirements (R1–R5)]] — what this plan executes
-- [[10_Agents/skills/onboard-owner/SKILL]] — the file edited
-- [[10_Agents/skills/agent-orientation/SKILL]] — referenced in step 3
+- [Requirements (R1–R5)](2026-08-11-onboard-owner-adaptive-interview-requirements.md) — what this plan executes
+- [SKILL](../../10_Agents/skills/onboard-owner/SKILL.md) — the file edited
+- [SKILL](../../10_Agents/skills/agent-orientation/SKILL.md) — referenced in step 3

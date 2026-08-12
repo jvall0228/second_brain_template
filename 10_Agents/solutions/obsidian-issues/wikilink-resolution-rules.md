@@ -1,5 +1,5 @@
 ---
-title: "Obsidian Wikilink Resolution Rules"
+title: "Relative Markdown Link Rules"
 tags:
   - type/solution
   - topic/obsidian
@@ -8,11 +8,11 @@ tags:
 updated: 2026-08-11
 ---
 
-# Obsidian Wikilink Resolution Rules
+# Relative Markdown Link Rules
 
 ## Problem
 
-When migrating or reorganizing Obsidian vault files, wikilinks break in subtle ways. Understanding how Obsidian resolves `[[links]]` is essential to avoid broken references.
+Internal links can work in one editor yet break in another when their destination is ambiguous, vault-root-relative, incorrectly encoded, or tied to editor-specific syntax. The vault needs one form that resolves identically in Obsidian, VS Code, GitHub, and `brain`.
 
 ## Symptoms
 
@@ -21,97 +21,82 @@ When migrating or reorganizing Obsidian vault files, wikilinks break in subtle w
 - Renamed or moved files cause cascading link failures
 - Links to periodic notes resolve to wrong files or show as unresolved
 
-## How Obsidian Resolves Wikilinks
+## Solution: one portable form
 
-Obsidian uses **filename matching** across the entire vault (shortest unique path). The resolution order:
+Maintained content uses inline Markdown with a human label and a destination relative to the source note. Note destinations include `.md`; asset destinations include their real extension. Paths use `/`, exact case, and UTF-8 percent encoding for spaces and non-ASCII bytes. Obsidian's tracked settings create this form by default.
 
-1. **Exact filename match** (minus `.md`) — `[[foo]]` matches `foo.md` anywhere in the vault
-2. **Shortest unique path** — if multiple `foo.md` exist, Obsidian picks the shortest disambiguating path
-3. **Full path match** — `[[path/to/foo]]` matches `path/to/foo.md` exactly
+`brain` resolves the destination from the source file, rejects paths that escape the vault or disguise external schemes, and never guesses among ambiguous case-folded paths. Heading fragments use GitHub's rendered-heading slug rules, including duplicate suffixes such as `-1`.
 
-### Key Rules
-
-| Pattern | Resolves? | Why |
-|---------|-----------|-----|
-| `[[2024-01-02]]` | Yes | Matches `2024-01-02.md` by filename |
-| `[[2024-01]]` | No | No file named `2024-01.md` exists (it's `2024-01-review.md`) |
-| `[[2024-01-review]]` | Yes | Matches `2024-01-review.md` by filename |
-| `[[Bits of Wisdom]]` | Yes* | Matches if a file's `title:` frontmatter equals "Bits of Wisdom" |
-| `[[2024-12-31 (W01)]]` | No | Parentheses in filenames cause issues; title matching is unreliable |
-| `[[path/to/file]]` | Yes | Exact path match — but breaks if the file moves |
-| `[[path/to/file\|Display]]` | Yes | Same as above, with display text alias |
-
-*Title-based resolution depends on Obsidian settings and may not work reliably.
-
-## Solution: Safe Linking Patterns
+## Safe linking patterns
 
 ### For links within the same directory
 
-Use bare filenames — they survive directory renames:
+Use the sibling filename including its extension:
 
 ```markdown
-[[2024-01-02]]           <!-- daily note linking to another daily note -->
-[[2024-W01-review]]      <!-- weekly note linking to another weekly note -->
+[Previous day](2024-01-02.md)
+[Weekly review](2024-W01-review.md)
 ```
 
 ### For links across directories
 
-Use full paths with display text — explicit and unambiguous:
+Walk from the source directory with `../` segments or a child directory:
 
 ```markdown
-[[03_Journal/periodic/weekly/2024-W01-review|Week 1]]
-[[03_Journal/periodic/monthly/2024-01-review|January]]
-[[06_Resources/example-resource|Example Resource]]
+[Week 1](../weekly/2024-W01-review.md)
+[January](../monthly/2024-01-review.md)
+[Example Resource](../../../06_Resources/example-resource.md)
 ```
 
 ### For links to migrated content notes
 
-If the filename is kebab-case but the original title used spaces, prefer the path:
+Keep the readable title in the label and the real filename in the destination:
 
 ```markdown
-[[03_Journal/insights/lessons-learned|Lessons Learned]]
+[Lessons Learned](../insights/lessons-learned.md)
 ```
 
 ## Common Mistakes
 
-### 1. Assuming partial filename matches work
+### 1. Using a partial or title-shaped destination
 
 ```markdown
 <!-- BROKEN: no file named "2024-01.md" exists -->
-[[2024-01|January]]
+[January](2024-01.md)
 
 <!-- FIXED: use the full filename -->
-[[03_Journal/periodic/monthly/2024-01-review|January]]
+[January](2024-01-review.md)
 ```
 
-### 2. Using old-vault title format as link target
+### 2. Omitting percent encoding
 
 ```markdown
-<!-- BROKEN: no file named "2024-12-31 (W01).md" exists -->
-[[2024-12-31 (W01)|Week 1]]
+<!-- BROKEN: a literal space is not the canonical destination form -->
+[Café notes](café notes.md)
 
-<!-- FIXED: use the new filename -->
-[[03_Journal/periodic/weekly/2024-W01-review|Week 1]]
+<!-- FIXED: encode the UTF-8 path bytes -->
+[Café notes](caf%C3%A9%20notes.md)
 ```
 
-### 3. Forgetting the `-review` suffix
+### 3. Using a vault-root path
 
 ```markdown
-<!-- BROKEN: file is "2024-01-review.md" not "2024-01.md" -->
-[[2024-01]]
+<!-- BROKEN: leading slash is not source-relative -->
+[Conventions](/00_Meta/CONVENTIONS.md)
 
-<!-- FIXED -->
-[[2024-01-review]]
+<!-- FIXED from a note under 03_Journal/periodic/monthly/ -->
+[Conventions](../../../00_Meta/CONVENTIONS.md)
 ```
 
 ## Prevention
 
 When creating or migrating notes with cross-references:
 
-1. **Check the actual filename** of the target, not the title
-2. **Use full paths** for links that cross directory boundaries
-3. **After reorganizing files**, grep for old link patterns: `grep -r '\[\[old-name' .`
-4. **Test in Obsidian** — hover over links to verify they resolve
+1. **Check the actual filename and exact case** of the target, not its title.
+2. **Compute the destination from the source note**, not from the vault root.
+3. **Keep explicit extensions and encode path bytes**; preserve a meaningful label or image alt text.
+4. **After reorganizing files**, run `brain validate --check-index` and inspect `brain links <note>`.
+5. **Use `brain migrate-links` only for imports**; maintained content must make `brain migrate-links --check` return zero.
 
 ## Related
 

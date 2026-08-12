@@ -12,7 +12,7 @@ updated: 2026-08-11
 
 # Implementation Plan: CODE Operations & Vault Operations
 
-Executes [[02_Inbox/2026-08-11-para-operations-skills-requirements|the R1–R25 requirements]]. Phases are grouped by **artifact cluster**, not by requirement number, so each canonical file gets rewritten once instead of repeatedly. **Owner approval of this plan authorizes the canonical edits listed per phase**; anything beyond a phase's listed files still goes through the normal needs-review path.
+Executes [the R1–R25 requirements](2026-08-11-para-operations-skills-requirements.md). Phases are grouped by **artifact cluster**, not by requirement number, so each canonical file gets rewritten once instead of repeatedly. **Owner approval of this plan authorizes the canonical edits listed per phase**; anything beyond a phase's listed files still goes through the normal needs-review path.
 
 ## Ground rules (every phase)
 
@@ -127,7 +127,7 @@ This note is the plan of record. On each phase completion: flip its Status to Do
 
 ## Related
 
-- [[02_Inbox/2026-08-11-para-operations-skills-requirements|Requirements (R1–R25)]] — what this plan executes
-- [[10_Agents/skills/README]] — the catalog being extended
-- [[00_Meta/CONVENTIONS]] — change control governing the canonical edits
-- [[10_Agents/docs/OPERATING-RULES]] — write rules amended in Phases 1 and 5
+- [Requirements (R1–R25)](2026-08-11-para-operations-skills-requirements.md) — what this plan executes
+- [README](../10_Agents/skills/README.md) — the catalog being extended
+- [CONVENTIONS](../00_Meta/CONVENTIONS.md) — change control governing the canonical edits
+- [OPERATING-RULES](../10_Agents/docs/OPERATING-RULES.md) — write rules amended in Phases 1 and 5

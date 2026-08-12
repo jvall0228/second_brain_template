@@ -11,8 +11,8 @@ updated: {{date}}
 
 ## Related
 
-- Monthly review: [[{{RELATED_MONTHLY_REVIEW}}]]
-- Daily notes: [[{{RELATED_DAILY_NOTE}}]]
+- Monthly review: [Current monthly review]({{RELATED_MONTHLY_REVIEW}})
+- Daily notes: [Related daily note]({{RELATED_DAILY_NOTE}})
 
 ## Get Clear
 
@@ -92,7 +92,7 @@ How was your sleep this week? Anything out of the ordinary? Any notable dreams?
 
 ### Alignment
 
-- Does each active project serve something on the [[01_Profile/NOW|Now page]]?
+- Does each active project serve something on the [Now page](../01_Profile/NOW.md)?
 - Is anything on the Now page not being moved by any project?
 - Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).
 

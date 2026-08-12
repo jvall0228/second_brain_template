@@ -9,11 +9,14 @@ Run from the vault root:
 """
 
 import re
+import sys
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(ROOT / "10_Agents" / "tools" / "brain"))
+import brain  # noqa: E402
 ORIENTATION = ROOT / "10_Agents/skills/agent-orientation/SKILL.md"
 ENVIRONMENTS_README = ROOT / "10_Agents/environments/README.md"
 RECOMMENDED_AUTOMATIONS = ROOT / "10_Agents/skills/recommended-automations/SKILL.md"
@@ -122,14 +125,18 @@ class NeverBootstrapLinkedTests(unittest.TestCase):
         ROOT / "01_Profile" / "DEFAULTS.md",
     ]
 
-    def test_no_bootstrap_wikilinks_into_environments(self):
+    def test_no_bootstrap_links_into_environments(self):
+        notes, assets = brain.walk_corpus(ROOT)
+        index = brain.build_index(ROOT, notes, assets)
         for doc in self.BOOTSTRAP_DOCS:
             if not doc.exists():
                 continue
-            for match in re.findall(r"\[\[([^\]|#]+)", doc.read_text(encoding="utf-8")):
+            rel = doc.relative_to(ROOT).as_posix()
+            for link in index["notes"][rel]["links"]:
+                target = link.get("resolved") or link.get("destination") or ""
                 self.assertFalse(
-                    match.strip().startswith("10_Agents/environments/"),
-                    f"{doc.name} wikilinks into 10_Agents/environments/ — "
+                    target.startswith("10_Agents/environments/"),
+                    f"{doc.name} links into 10_Agents/environments/ — "
                     "environment notes must never be bootstrap-linked",
                 )
 

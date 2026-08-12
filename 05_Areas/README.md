@@ -17,9 +17,9 @@ Ongoing areas of responsibility — things you maintain but never "finish." Area
 Ask: **"Is this an ongoing responsibility with a standard to maintain, but no end date?"**
 
 - **Yes** — It's an Area. Put it here.
-- **Has a specific outcome and deadline** — It's a Project. See [[04_Projects/README]].
-- **Just reference material, no responsibility** — It's a Resource. See [[06_Resources/README]].
-- **No longer relevant** — Archive it. See [[07_Archives/README]].
+- **Has a specific outcome and deadline** — It's a Project. See [README](../04_Projects/README.md).
+- **Just reference material, no responsibility** — It's a Resource. See [README](../06_Resources/README.md).
+- **No longer relevant** — Archive it. See [README](../07_Archives/README.md).
 
 The key test: Will this still matter in a year, with no "done" state? If yes, it's an Area.
 
@@ -33,9 +33,9 @@ Each area gets its own subfolder or standalone note:
 
 ## Contents
 
-- [[05_Areas/example-area/README|Example Area]] — Sample area showing the structure. Delete once you've seen the pattern.
+- [Example Area](example-area/README.md) — Sample area showing the structure. Delete once you've seen the pattern.
 
 ## Related
 
-- [[00_Meta/INDEX]] — Full vault map
-- [[09_Templates/template-area]] — Template for new areas
+- [INDEX](../00_Meta/INDEX.md) — Full vault map
+- [template-area](../09_Templates/template-area.md) — Template for new areas

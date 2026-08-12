@@ -90,7 +90,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 The vault ships a zero-dependency CLI, [`brain`](10_Agents/tools/brain/spec.md), that indexes every note and enforces the conventions (Python 3.10+, stdlib only):
 
 ```
-./brain validate   # frontmatter, tags, filenames, wikilinks
+./brain validate   # frontmatter, tags, filenames, and relative Markdown links
 ./brain search <q> # plus: list, links, tags, show, recent
 ```
 

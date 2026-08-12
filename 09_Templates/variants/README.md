@@ -9,7 +9,7 @@ updated: 2026-08-11
 
 # Template Variants
 
-Context-specific **source material** for fork-time template specialization (issue #12, option 2). During [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]'s context-specialization step, a **work**-context answer rewrites the shipped periodic templates in `09_Templates/` **in place** from the matching file here — template paths never change, so everything that resolves templates by stable name (`daily_note.py`, the daily-log and periodic-review skills, snippet generation) keeps working untouched.
+Context-specific **source material** for fork-time template specialization (issue #12, option 2). During [onboard-owner](../../10_Agents/skills/onboard-owner/SKILL.md)'s context-specialization step, a **work**-context answer rewrites the shipped periodic templates in `09_Templates/` **in place** from the matching file here — template paths never change, so everything that resolves templates by stable name (`daily_note.py`, the daily-log and periodic-review skills, snippet generation) keeps working untouched.
 
 | Variant source | Rewrites | Work-context difference |
 |----------------|----------|-------------------------|
@@ -27,5 +27,5 @@ Omitting mood/health at specialization time is data-sensitivity enforcement **by
 
 ## Related
 
-- [[09_Templates/README]] — Template selection guide and placeholder syntax
-- [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] — The specialization step
+- [README](../README.md) — Template selection guide and placeholder syntax
+- [onboard-owner](../../10_Agents/skills/onboard-owner/SKILL.md) — The specialization step

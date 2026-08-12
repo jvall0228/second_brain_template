@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Codex Wiring
 
-Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [[06_Resources/harness-codex|research]]); re-verify before relying on paths.
+Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [research](../../../06_Resources/harness-codex.md)); re-verify before relying on paths.
 
 ## Entrypoint loading
 
@@ -39,7 +39,7 @@ brain <command> --json
 
 Approval for the command falls under Codex's `approval_policy`/sandbox settings; a prefix allow rule can be added in `.codex/rules/` (Starlark `prefix_rule`) for trusted projects.
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 

@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives: opencode
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
 [opencode](https://github.com/sst/opencode) is "the open source coding agent" — MIT-licensed (~196k stars), built by the SST team and maintained under Anomaly Co. (repo `sst/opencode`, org now `anomalyco`). Surfaces: terminal TUI, CLI (`opencode run`), headless HTTP server (`opencode serve`), web UI (`opencode web`), desktop app (macOS/Windows/Linux), IDE/VS Code extension, and ACP support (stdio nd-JSON) for editors like Zed. The tool itself is free; you bring provider API keys (any provider via Models.dev) or use its paid Zen model gateway.
 

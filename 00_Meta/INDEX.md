@@ -12,49 +12,49 @@ expires: 2027-08-11
 # Vault Index (Map of Content)
 
 ## Core Context (Agent Bootstrap)
-- [[AGENTS]] — Entrypoint, structure, rules
-- [[01_Profile/README|Profile]] — What the owner-context notes are for
-- [[01_Profile/NOW]] — Current focus
-- [[01_Profile/PREFERENCES]] — Communication style
-- [[01_Profile/DEFAULTS]] — Timezone, locale, defaults
-- [[01_Profile/IDENTITY]] — Who you are (cognitive style, values)
-- [[01_Profile/WORK]] — Role and professional context
-- [[01_Profile/TOOLING-STACK]] — Tools and devices
-- [[01_Profile/LONG-RUNNING-THEMES]] — Persistent interests and themes
-- [[00_Meta/CONVENTIONS]] — Writing rules
+- [AGENTS](../AGENTS.md) — Entrypoint, structure, rules
+- [Profile](../01_Profile/README.md) — What the owner-context notes are for
+- [NOW](../01_Profile/NOW.md) — Current focus
+- [PREFERENCES](../01_Profile/PREFERENCES.md) — Communication style
+- [DEFAULTS](../01_Profile/DEFAULTS.md) — Timezone, locale, defaults
+- [IDENTITY](../01_Profile/IDENTITY.md) — Who you are (cognitive style, values)
+- [WORK](../01_Profile/WORK.md) — Role and professional context
+- [TOOLING-STACK](../01_Profile/TOOLING-STACK.md) — Tools and devices
+- [LONG-RUNNING-THEMES](../01_Profile/LONG-RUNNING-THEMES.md) — Persistent interests and themes
+- [CONVENTIONS](CONVENTIONS.md) — Writing rules
 
 ## Active Work
-- [[04_Projects/README|Projects]] — Outcomes with deadlines
-  - [[04_Projects/example-project/README|Example Project]] — Sample; delete once you've seen the pattern
-- [[02_Inbox/README|Inbox]] — Triage queue
-- [[02_Outbox/README|Outbox]] — Outbound deliverables awaiting the owner's review and shipping
+- [Projects](../04_Projects/README.md) — Outcomes with deadlines
+  - [Example Project](../04_Projects/example-project/README.md) — Sample; delete once you've seen the pattern
+- [Inbox](../02_Inbox/README.md) — Triage queue
+- [Outbox](../02_Outbox/README.md) — Outbound deliverables awaiting the owner's review and shipping
 
 ## Knowledge & Reference
-- [[06_Resources/README|Resources]] — Topic notes
-  - [[06_Resources/example-resource|Example Resource]] — Sample; delete once you've seen the pattern
-- [[03_Journal/README|Journal]] — Personal knowledge and experience
-  - [[03_Journal/periodic/README|Periodic Notes]] — Daily/weekly/monthly/quarterly/yearly reviews
-  - [[03_Journal/ideas/README|Ideas]] — Brainstorms and concepts
-  - [[03_Journal/insights/README|Insights]] — Reflections and wisdom
-  - [[03_Journal/memories/README|Memories]] — Notable event accounts
-  - [[03_Journal/people/README|People]] — Character studies
-  - [[03_Journal/plans/README|Plans]] — Strategies and approaches
-- [[05_Areas/README|Areas]] — Ongoing responsibilities
-  - [[05_Areas/example-area/README|Example Area]] — Sample; delete once you've seen the pattern
+- [Resources](../06_Resources/README.md) — Topic notes
+  - [Example Resource](../06_Resources/example-resource.md) — Sample; delete once you've seen the pattern
+- [Journal](../03_Journal/README.md) — Personal knowledge and experience
+  - [Periodic Notes](../03_Journal/periodic/README.md) — Daily/weekly/monthly/quarterly/yearly reviews
+  - [Ideas](../03_Journal/ideas/README.md) — Brainstorms and concepts
+  - [Insights](../03_Journal/insights/README.md) — Reflections and wisdom
+  - [Memories](../03_Journal/memories/README.md) — Notable event accounts
+  - [People](../03_Journal/people/README.md) — Character studies
+  - [Plans](../03_Journal/plans/README.md) — Strategies and approaches
+- [Areas](../05_Areas/README.md) — Ongoing responsibilities
+  - [Example Area](../05_Areas/example-area/README.md) — Sample; delete once you've seen the pattern
 
 ## Maintenance
-- [[00_Meta/README|Meta]] — What the vault-level meta docs are
-- [[07_Archives/README|Archives]] — Completed or inactive items
-- [[08_Assets/README|Assets]] — Images, attachments, non-markdown files
-- [[00_Meta/CHANGELOG]] — Structural change log
-- [[00_Meta/PRD]] — Design rationale (product requirements)
-- [[00_Meta/STATUS]] — Vault status snapshot
+- [Meta](README.md) — What the vault-level meta docs are
+- [Archives](../07_Archives/README.md) — Completed or inactive items
+- [Assets](../08_Assets/README.md) — Images, attachments, non-markdown files
+- [CHANGELOG](CHANGELOG.md) — Structural change log
+- [PRD](PRD.md) — Design rationale (product requirements)
+- [STATUS](STATUS.md) — Vault status snapshot
 
 ## Templates
-- [[09_Templates/README]] — Template selection guide
+- [README](../09_Templates/README.md) — Template selection guide
 
 ## Agent Docs
-- [[10_Agents/README]] — Agent behavior and write rules
-- [[10_Agents/docs/README|Agent docs]] — Operating rules, task patterns
-- [[10_Agents/harnesses/README|Harness adapters]] — Per-harness wiring
-- [[10_Agents/skills/README|The CODE loop]] — Skill catalog + cadence table
+- [README](../10_Agents/README.md) — Agent behavior and write rules
+- [Agent docs](../10_Agents/docs/README.md) — Operating rules, task patterns
+- [Harness adapters](../10_Agents/harnesses/README.md) — Per-harness wiring
+- [The CODE loop](../10_Agents/skills/README.md) — Skill catalog + cadence table

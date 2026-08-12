@@ -10,8 +10,8 @@ updated: 2026-02-22
 
 ## Contents
 
-- [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules|Wikilink Resolution Rules]]
+- [Relative Markdown Link Rules](wikilink-resolution-rules.md)
 
 ## Related
 
-- [[10_Agents/solutions/README|Solutions]] — Parent directory
+- [Solutions](../README.md) — Parent directory

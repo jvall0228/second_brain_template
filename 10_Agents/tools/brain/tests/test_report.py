@@ -41,11 +41,11 @@ def note(body: str = "", tags=("type/note",), updated="2026-08-01", title="x") -
 #   tag drift: type/bogus unknown-value, madeup/x unknown-namespace, plain
 #              not-namespaced; topic/sw single-use + near-duplicate of
 #              topic/software (used twice).
-#   unresolved: one [[missing-note]] link.
+#   unresolved: one Markdown link to missing-note.md.
 REPORT_FILES = {
     "04_Projects/active-stale.md": note(tags=("type/note", "status/active"), updated="2026-06-01"),
     "04_Projects/active-fresh.md": note(tags=("type/note", "status/active"), updated="2026-08-01"),
-    "06_Resources/hub.md": note(body="[[linked]] and [[missing-note]]", tags=("type/note", "topic/software")),
+    "06_Resources/hub.md": note(body="[linked](linked.md) and [missing](missing-note.md)", tags=("type/note", "topic/software")),
     "06_Resources/linked.md": note(tags=("type/note", "topic/software")),
     "06_Resources/loner.md": note(tags=("type/note", "topic/sw")),
     "06_Resources/README.md": note(),
@@ -203,7 +203,7 @@ class SectionTests(ReportTestCase):
             self.assertEqual(rep["unresolvedLinks"]["count"], 1)
             self.assertEqual(
                 rep["unresolvedLinks"]["links"],
-                [{"line": 8, "path": "06_Resources/hub.md", "target": "missing-note"}],
+                [{"line": 8, "path": "06_Resources/hub.md", "target": "missing-note.md"}],
             )
 
     def test_unreadable_taxonomy_disables_drift_only(self):

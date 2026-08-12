@@ -10,9 +10,9 @@ updated: 2026-08-11
 
 # PRD Review — Spec vs. Shipped Template
 
-> **Resolution (2026-08-11):** all findings below were resolved the same day — the PRD was rewritten as revision 2.0 and the companion docs/templates were aligned. See [[00_Meta/CHANGELOG]] for the change list. This note is retained as the review record.
+> **Resolution (2026-08-11):** all findings below were resolved the same day — the PRD was rewritten as revision 2.0 and the companion docs/templates were aligned. See [CHANGELOG](../../00_Meta/CHANGELOG.md) for the change list. This note is retained as the review record.
 
-A structured review of [[00_Meta/PRD]] against the vault as shipped. Five review passes ran over distinct dimensions (spec-vs-implementation conformance, internal consistency, cross-document consistency, spec quality, and a scripted frontmatter/link/tag audit); every finding was independently re-verified against the files before inclusion, and claims that failed verification were dropped. Raw findings were then deduplicated into the themes below.
+A structured review of [PRD](../../00_Meta/PRD.md) against the vault as shipped. Five review passes ran over distinct dimensions (spec-vs-implementation conformance, internal consistency, cross-document consistency, spec quality, and a scripted frontmatter/link/tag audit); every finding was independently re-verified against the files before inclusion, and claims that failed verification were dropped. Raw findings were then deduplicated into the themes below.
 
 ## Verdict
 
@@ -24,7 +24,7 @@ The problem is drift. The PRD contradicts its own naming convention in most of t
 
 ## Milestone Reality Check
 
-The PRD gives no milestone status anywhere, and [[00_Meta/STATUS]] never mentions milestones. Actual state:
+The PRD gives no milestone status anywhere, and [STATUS](../../00_Meta/STATUS.md) never mentions milestones. Actual state:
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|

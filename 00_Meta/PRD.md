@@ -102,11 +102,11 @@ Obsidian and VS Code are contract surfaces. Obsidian is primary; VS Code is a su
 
 **Editor-neutral integrity:** Markdown, Git, stable paths, frontmatter, templates, and `brain` preserve bytes, validate links, and prevent unintended rewrites.
 
-**Obsidian:** tracked config provides navigation, properties, backlinks, graph, tags, templates, daily notes, and wikilinks.
+**Obsidian:** tracked config provides navigation, properties, backlinks, graph, tags, templates, daily notes, and relative Markdown links (`useMarkdownLinks: true`, `newLinkFormat: relative`).
 
 **VS Code:** tracked config provides Markdown link/path checks, image paste into Assets, `brain`/task/daily-note commands, folder-open navigation, and generated snippets. Extension recommendations default to first-party publishers; `extension_trust: relaxed` records an override. Automatic tasks need workspace trust and consent.
 
-Gaps need an editor-neutral route or documentation. Navigation, template, link, homepage, and command changes evaluate both configs; snippets are never hand-edited. See [[06_Resources/vscode-editor-support]].
+Gaps need an editor-neutral route or documentation. Navigation, template, link, homepage, and command changes evaluate both configs; snippets are never hand-edited. See [vscode-editor-support](../06_Resources/vscode-editor-support.md).
 
 ## 7. Content and navigation contracts
 
@@ -115,7 +115,7 @@ Gaps need an editor-neutral route or documentation. Navigation, template, link, 
 - `updated` drives recency; Git, changelog, and status carry finer history, structural events, and state.
 - Contextual Markdown tasks use Obsidian Tasks emoji grammar; `brain tasks` is editor-neutral.
 - Template paths are stable; work specialization rewrites only documented periodic templates.
-- Maintained content currently uses wikilinks; `brain` reports resolution, ambiguity, and case findings.
+- Maintained content uses source-relative inline Markdown links with explicit extensions and GitHub-compatible heading slugs; `brain` reports resolution, ambiguity, encoding, fragment, and case findings. Legacy wikilinks are import-only and must be migrated before acceptance.
 - INDEX is the human map and is not overwritten by dynamic summaries.
 
 ## 8. Agent model
@@ -157,7 +157,7 @@ Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` ins
 
 ### 9.4 `brain` and generated data
 
-`brain` is Python 3.10+ and normed by [[10_Agents/tools/brain/spec]]. It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, and embeddings.
+`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/spec.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, and embeddings.
 
 The committed index and VS Code snippets are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
 
@@ -169,7 +169,7 @@ Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may u
 
 ### 10.2 Tags
 
-[[00_Meta/CONVENTIONS#Tag Namespaces]] is the single authoritative taxonomy. The current namespaces cover audience, type, topic, workflow, status, and `restricted/private`; other documents summarize rather than redefine that table.
+[CONVENTIONS](CONVENTIONS.md#tag-namespaces) is the single authoritative taxonomy. The current namespaces cover audience, type, topic, workflow, status, and `restricted/private`; other documents summarize rather than redefine that table.
 
 ### 10.3 Restriction semantics
 
@@ -261,13 +261,13 @@ Agents check overlaps, use collision-safe Inbox names, preserve unrelated edits,
 | M11 | Markdown task tracking and optional semantic search |
 | M12 | Pull-only template sync and the propose/review/record self-improvement loop |
 
-Release detail belongs in [[00_Meta/CHANGELOG]], not in this current-state specification.
+Release detail belongs in [CHANGELOG](CHANGELOG.md), not in this current-state specification.
 
 `brain` remains the vault's programmatic interface; a vault MCP server is out of scope.
 
 ### 19.2 Approved Ready roadmap
 
-The active contract is [[02_Inbox/2026-08-11-ready-backlog-implementation-plan]], grounded by [[02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm]]. This maintained dual-editor contract implements #71, #72, and #73. The remaining approved packages stay roadmap work until accepted on merged `main`:
+The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). This maintained dual-editor contract implements #71, #72, and #73. The remaining approved packages stay roadmap work until accepted on merged `main`:
 
 1. remote safety and project-local skill discovery (#83, #82);
 2. onboarding entry and atomic example cleanup (#81, #84);

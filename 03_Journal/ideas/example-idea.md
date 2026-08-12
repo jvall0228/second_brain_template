@@ -31,4 +31,4 @@ A small CLI that reads this vault's frontmatter and prints everything tagged
 
 ## Related
 
-- [[04_Projects/README]] — Where this would live if it became a project
+- [README](../../04_Projects/README.md) — Where this would live if it became a project

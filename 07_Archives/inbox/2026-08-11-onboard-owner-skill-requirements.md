@@ -11,7 +11,7 @@ updated: 2026-08-11
 
 # Requirements: `onboard-owner` skill
 
-Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth library skill that onboards a **new vault owner** — the human counterpart to [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]. Motivating case: the owner is forking the template for a family member who is not a software engineer.
+Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth library skill that onboards a **new vault owner** — the human counterpart to [onboard-harness](../../10_Agents/skills/onboard-harness/SKILL.md). Motivating case: the owner is forking the template for a family member who is not a software engineer.
 
 ## The one design constraint that rules the rest
 
@@ -29,18 +29,18 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 - Open with the payoff, not the system: "a place where everything you tell me is remembered, organized, and usable by any AI assistant you talk to — so you never start from zero."
 - **Progressive disclosure**: teach each piece at the moment it's used (Inbox when the first capture happens, reviews when scheduling comes up). No upfront lecture, no glossary.
 - Teach by **doing together**: the guided first capture → triage cycle is the lesson on how the vault works day to day.
-- The skill links to vault docs ([[00_Meta/CONVENTIONS]], [[00_Meta/INDEX]]) for the *agent's* grounding; it never sends the *owner* to read them.
+- The skill links to vault docs ([CONVENTIONS](../../00_Meta/CONVENTIONS.md), [INDEX](../../00_Meta/INDEX.md)) for the *agent's* grounding; it never sends the *owner* to read them.
 
 ### 2. Interview — populate the owner's context
 
-- Conversationally fill the three profile notes — [[01_Profile/NOW]] (current focus, projects, key dates), [[01_Profile/PREFERENCES]] (how they like to communicate and receive output), [[01_Profile/DEFAULTS]] (timezone, locale, units) — writing valid, frontmatter-complete notes from their answers.
-- **Writes directly to `01_Profile/`** (owner decision): the live interview is the approval; no Inbox staging. This is a standing write-policy exception scoped to this skill, mirroring the `solution-capture` carve-out — record it in [[AGENTS]] / conventions when the skill ships.
+- Conversationally fill the three profile notes — [NOW](../../01_Profile/NOW.md) (current focus, projects, key dates), [PREFERENCES](../../01_Profile/PREFERENCES.md) (how they like to communicate and receive output), [DEFAULTS](../../01_Profile/DEFAULTS.md) (timezone, locale, units) — writing valid, frontmatter-complete notes from their answers.
+- **Writes directly to `01_Profile/`** (owner decision): the live interview is the approval; no Inbox staging. This is a standing write-policy exception scoped to this skill, mirroring the `solution-capture` carve-out — record it in [AGENTS](../../AGENTS.md) / conventions when the skill ships.
 - Seed first real content where the conversation surfaces it: 1–2 projects into `04_Projects/`, responsibilities into `05_Areas/`, using the templates.
 - Offer to delete the seeded worked examples once real content exists in a section (their documented purpose is "delete once you've learned the pattern").
 
 ### 3. Orchestrate — run the other onboarding skills
 
-- Sequence (owner decision: orchestration **triggers** the sub-skills; they stay separate skills): profile interview → [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] for the harness in use → [[10_Agents/skills/agent-orientation/SKILL|agent-orientation]] → optionally [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]].
+- Sequence (owner decision: orchestration **triggers** the sub-skills; they stay separate skills): profile interview → [onboard-harness](../../10_Agents/skills/onboard-harness/SKILL.md) for the harness in use → [agent-orientation](../../10_Agents/skills/agent-orientation/SKILL.md) → optionally [recommended-automations](../../10_Agents/skills/recommended-automations/SKILL.md).
 - Invoke each by **following its SKILL.md contract**, never reimplementing it; each sub-skill keeps its own approval gates.
 - Sub-skills assume a technical reader in places — this skill **wraps their owner-facing moments in plain language** (e.g. orientation's source interview becomes "should I be able to see your calendar?").
 - Every hand-off is offered, not forced; stopping early is a valid outcome.
@@ -49,7 +49,7 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 
 - **Resumable state**: a checklist note at `02_Inbox/YYYY-MM-DD-onboarding.md` marks each stage done/skipped/pending; re-running the skill resumes rather than re-interviews.
 - **Validation gate**: every written note passes `brain validate`; a full validate run closes the session. Failures are the agent's to fix, invisibly.
-- **Discoverability**: root README and [[AGENTS]] point first-run adopters at this skill as step 0 of the adoption path.
+- **Discoverability**: root README and [AGENTS](../../AGENTS.md) point first-run adopters at this skill as step 0 of the adoption path.
 - **Exit criteria** ("onboarded"): profile notes filled; at least one harness wired; seed examples decided on; owner has done one capture → triage cycle with the agent and knows they can just say "remember this" / "what's in my inbox?".
 
 ## Build-time decisions (owner-settled)
@@ -60,5 +60,5 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 
 ## Related
 
-- [[10_Agents/skills/README]] — library the skill joins (would be #13)
-- [[00_Meta/PRD]] §9.3 — write policy the profile exception amends
+- [README](../../10_Agents/skills/README.md) — library the skill joins (would be #13)
+- [PRD](../../00_Meta/PRD.md) §9.3 — write policy the profile exception amends

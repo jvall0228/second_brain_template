@@ -14,7 +14,7 @@ session: https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73
 
 # Implementation Plan — M8–M12
 
-Detailed work plan for the **20 non-deferred issues**, sequenced per [[02_Inbox/2026-08-11-feature-request-triage|the triage note]]. Deferred (M13, out of this plan): #4, #15, #19, #21, #23, #26, #27, #29, #31, #32.
+Detailed work plan for the **20 non-deferred issues**, sequenced per [the triage note](2026-08-11-feature-request-triage.md). Deferred (M13, out of this plan): #4, #15, #19, #21, #23, #26, #27, #29, #31, #32.
 
 **Baseline** (main @ PR #33 merged): `brain.py` stdlib-only CLI with spec (`10_Agents/tools/brain/spec.md` §1–14), 43-test suite wired into CI, self-healing CI (regenerate + auto-commit index/snippets), pre-commit hook, 18 skills, 7 harness wiring docs + shared registration (`~/.agents/second-brain/AGENTS.md`), VS Code tooling (`gen_snippets.py`, `daily_note.py`).
 
@@ -251,4 +251,4 @@ M12.1 → M12.2                                          (both need M9; M12.2 ne
 
 ---
 
-*Agent-generated (feature-request triage session). Inbox-first: pairs with [[02_Inbox/2026-08-11-feature-request-triage|the triage note]]; both promote together on review.*
+*Agent-generated (feature-request triage session). Inbox-first: pairs with [the triage note](2026-08-11-feature-request-triage.md); both promote together on review.*

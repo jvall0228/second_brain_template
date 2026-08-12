@@ -18,11 +18,11 @@ Make the fork **self-improving** (issue #22): agents observe how the owner actua
 
 ## Ground rules (guardrails)
 
-- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([[00_Meta/PRD]] §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [[AGENTS]] / [[00_Meta/CONVENTIONS]] § Agent Write Rules and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
+- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([PRD](../../../00_Meta/PRD.md) §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [AGENTS](../../../AGENTS.md) / [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Agent Write Rules and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
 - **Rate limit: max 3 proposals open at once** (open PRs + untriaged Inbox proposal notes from this loop, counted together). Issue #22 requires a rate limit ("max N open at once") without fixing N; this skill sets N = 3 so the owner is never spammed into rubber-stamping. At the limit, hold further proposals for the next cycle — rank and keep the best three.
 - **Owner content is out of bounds** except as read-only evidence. The loop maintains the fork's *spec* (conventions, skills, templates, agent docs, tooling); journal/profile/PARA notes are never proposal targets — they are only observed.
-- **Never push upstream.** The fork pulls from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] is pull-only); this loop personalizes the fork in the opposite direction and inherits the same hard rule: agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. A fork improvement worth generalizing is flagged to the owner as "worth upstreaming?" — the owner carries it upstream by hand if they choose. (Also stated in [[10_Agents/docs/OPERATING-RULES]].)
-- **Consult the rejection log first.** Before proposing anything, read [[10_Agents/docs/rejected-proposals]] — a rejected idea is never re-proposed. Re-raising requires **materially new evidence**, and the proposal must state explicitly what changed since the rejection.
+- **Never push upstream.** The fork pulls from the public upstream template ([sync-upstream](../sync-upstream/SKILL.md) is pull-only); this loop personalizes the fork in the opposite direction and inherits the same hard rule: agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. A fork improvement worth generalizing is flagged to the owner as "worth upstreaming?" — the owner carries it upstream by hand if they choose. (Also stated in [OPERATING-RULES](../../docs/OPERATING-RULES.md).)
+- **Consult the rejection log first.** Before proposing anything, read [rejected-proposals](../../docs/rejected-proposals.md) — a rejected idea is never re-proposed. Re-raising requires **materially new evidence**, and the proposal must state explicitly what changed since the rejection.
 - **Single-topic proposals.** One observed friction → one proposal (the atomic-notes rule applies to spec changes too). A cycle that finds five frictions produces up to the rate limit of separate proposals, not one omnibus.
 
 ## Observe
@@ -38,7 +38,7 @@ Evidence is collected read-only. Owner content read here is quoted into proposal
 
 ## Propose
 
-For each observed friction (best three first, per the rate limit), after checking [[10_Agents/docs/rejected-proposals]]:
+For each observed friction (best three first, per the rate limit), after checking [rejected-proposals](../../docs/rejected-proposals.md):
 
 - **Canonical docs** (`workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`, template-shipped skills): open a **PR** on a proposal branch containing the change. Change control is the safety mechanism — the PR *is* the proposal.
 - **Everything else** (new draft skills, template tweaks pending §6.3 review, taxonomy suggestions, automation ideas): write an **Inbox proposal note** per the `inbox-capture` rules — `02_Inbox/YYYY-MM-DD-proposal-<slug>.md`, tagged `workflow/needs-review`.
@@ -49,7 +49,7 @@ Every proposal — PR description or Inbox note — must state:
 2. **The change:** exactly what would be edited, single-topic.
 3. **Expected effect:** what improves, and how the next cycle would verify it.
 4. **Rollback plan:** how to undo (usually `git revert <merge>`; for conventions, the note also names what downstream content would need re-checking).
-5. **Provenance:** `author:` (harness identifier) + `session:` (session URL / PR / task ref) per [[00_Meta/CONVENTIONS]] § Provenance — on the Inbox note's frontmatter, and in the PR description for PR-lane proposals.
+5. **Provenance:** `author:` (harness identifier) + `session:` (session URL / PR / task ref) per [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Provenance — on the Inbox note's frontmatter, and in the PR description for PR-lane proposals.
 
 ## Owner review
 
@@ -61,13 +61,13 @@ Proposals are **never self-merged** and never applied by the loop in any form. T
 
 ## Record rejections
 
-Rejections are memory, not failure. Append every rejected proposal to [[10_Agents/docs/rejected-proposals]] — one table row: date, proposal (with a link to the PR or note), the evidence it cited, and why it was rejected **if the owner stated a reason** (never invent one; leave the cell as `—` otherwise). The log is **append-only**: rows are never edited or removed, so the loop's memory of "we tried that" survives every session.
+Rejections are memory, not failure. Append every rejected proposal to [rejected-proposals](../../docs/rejected-proposals.md) — one table row: date, proposal (with a link to the PR or note), the evidence it cited, and why it was rejected **if the owner stated a reason** (never invent one; leave the cell as `—` otherwise). The log is **append-only**: rows are never edited or removed, so the loop's memory of "we tried that" survives every session.
 
 The loop consults this log **first**, before proposing (ground rules above). A rejected item may be re-raised only with materially new evidence, and the new proposal must say so explicitly: "previously rejected on `<date>` (see rejected-proposals); re-raising because `<what is new>`."
 
 ## Recur
 
-The loop runs as a **monthly spec retrospective**, registered in the cadence table ([[10_Agents/skills/README]] § The Rhythm) alongside the monthly review and maintenance pass, and wireable as a scheduled rhythm job via [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]]. Under the unattended contract, a scheduled run carries the loop through Observe and drafts proposals — Inbox notes directly; PR-lane proposals as a prepared branch + Inbox summary — and its deliverable is the retrospective report; the owner review step always waits for a human.
+The loop runs as a **monthly spec retrospective**, registered in the cadence table ([README](../README.md) § The Rhythm) alongside the monthly review and maintenance pass, and wireable as a scheduled rhythm job via [recommended-automations](../recommended-automations/SKILL.md). Under the unattended contract, a scheduled run carries the loop through Observe and drafts proposals — Inbox notes directly; PR-lane proposals as a prepared branch + Inbox summary — and its deliverable is the retrospective report; the owner review step always waits for a human.
 
 Each cycle ends with a short retrospective report in `02_Inbox/` (`YYYY-MM-DD-spec-retrospective.md`, `inbox-capture` rules, provenance fields): evidence reviewed, proposals opened (with links), proposals held back by the rate limit, verification of the previous cycle's merged changes, and any "worth upstreaming?" flags for the owner.
 
@@ -75,7 +75,7 @@ Each cycle ends with a short retrospective report in `02_Inbox/` (`YYYY-MM-DD-sp
 
 A seeded friction, walked observe → propose:
 
-**Observe.** This cycle's `brain report` shows tag drift: `topic/sw` (3 uses) and `topic/software` (14 uses) as a near-duplicate pair. The previous cycle's report showed the same pair at 1 vs 12 — the drift is recurring, not a one-off typo. `git log` shows two triage commits that manually retagged `topic/sw` → `topic/software`, so the owner has already voted twice. [[10_Agents/docs/rejected-proposals]] has no row for this idea.
+**Observe.** This cycle's `brain report` shows tag drift: `topic/sw` (3 uses) and `topic/software` (14 uses) as a near-duplicate pair. The previous cycle's report showed the same pair at 1 vs 12 — the drift is recurring, not a one-off typo. `git log` shows two triage commits that manually retagged `topic/sw` → `topic/software`, so the owner has already voted twice. [rejected-proposals](../../docs/rejected-proposals.md) has no row for this idea.
 
 **Propose.** The fix is a convention nudge, not a canonical-doc edit (the `topic/*` namespace is free-form, so no taxonomy table changes) — Inbox lane. One single-topic proposal note, written to `02_Inbox/2026-08-11-proposal-topic-sw-alias.md`:
 
@@ -111,27 +111,27 @@ near-duplicate pair; triage stops spending edits on retagging.
 **Notes affected:** `02_Inbox/2026-08-03-sw-estimation-links.md`, …
 ```
 
-**Owner review.** The note waits in the Inbox; triage accepts (retag proceeds as a normal non-canonical edit) or rejects (a row is appended to [[10_Agents/docs/rejected-proposals]] and the pair is never proposed again without new evidence). The loop itself touches nothing.
+**Owner review.** The note waits in the Inbox; triage accepts (retag proceeds as a normal non-canonical edit) or rejects (a row is appended to [rejected-proposals](../../docs/rejected-proposals.md) and the pair is never proposed again without new evidence). The loop itself touches nothing.
 
 The example proposal conforms: frontmatter carries `title`, `tags`, `updated`; every tag is namespaced and each namespaced value is in the conventions taxonomy (`topic/*` is free-form); provenance `author:` is a harness identifier and `session:` a session URL per § Provenance; the filename follows the Inbox `YYYY-MM-DD-slug.md` convention; the body states evidence, change, expected effect, and rollback.
 
 ## Steps
 
-1. Read [[10_Agents/docs/rejected-proposals]] — load the do-not-repropose list.
+1. Read [rejected-proposals](../../docs/rejected-proposals.md) — load the do-not-repropose list.
 2. Observe (above): `brain report` vs previous cycle, git history, triage outcomes, `10_Agents/solutions/`.
 3. Count proposals already open from this loop (PRs + untriaged Inbox proposal notes); available slots = 3 minus that.
 4. For each friction, best-ranked first, up to the available slots: propose via the right lane (canonical → PR; else Inbox note), with evidence, expected effect, rollback, provenance.
 5. Verify the previous cycle's merged changes had their expected effect; note the outcome in the retrospective report.
-6. Append any newly-rejected proposals to [[10_Agents/docs/rejected-proposals]].
+6. Append any newly-rejected proposals to [rejected-proposals](../../docs/rejected-proposals.md).
 7. Write the retrospective report to `02_Inbox/`; the owner takes it from there.
 
 ## References
 
 - Issue #22 — the loop's design: observe/propose/review/recur, rate limit, upstream boundary
-- [[00_Meta/PRD]] §6.3 — change control the propose lanes implement
-- [[10_Agents/docs/rejected-proposals]] — the loop's rejection memory
-- [[10_Agents/docs/OPERATING-RULES]] — never-push-upstream rule, canonical note handling
-- [[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] — the pull direction this loop coexists with (issue #6)
+- [PRD](../../../00_Meta/PRD.md) §6.3 — change control the propose lanes implement
+- [rejected-proposals](../../docs/rejected-proposals.md) — the loop's rejection memory
+- [OPERATING-RULES](../../docs/OPERATING-RULES.md) — never-push-upstream rule, canonical note handling
+- [sync-upstream](../sync-upstream/SKILL.md) — the pull direction this loop coexists with (issue #6)
 - `10_Agents/tools/brain/spec.md` §16 — `brain report`, the Observe step's primary instrument (issue #16)
 - `10_Agents/skills/inbox-capture/SKILL.md` — write rules for proposal notes and the retrospective report
-- [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]] — scheduling the monthly retrospective
+- [recommended-automations](../recommended-automations/SKILL.md) — scheduling the monthly retrospective

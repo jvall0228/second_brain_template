@@ -28,4 +28,4 @@ _Empty — add your first plan when you have one._
 
 ## Related
 
-- [[03_Journal/README]] — Parent directory
+- [README](../README.md) — Parent directory

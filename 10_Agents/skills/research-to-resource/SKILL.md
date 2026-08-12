@@ -25,7 +25,7 @@ Convert research output into reference material that stays useful after the sess
    - Option comparison → `09_Templates/template-comparison.md`
 3. **Write with provenance.** Every non-obvious claim carries its source; end the note with a `## Sources` section listing URLs/titles **with retrieval dates** — research decays, and the date tells future readers how stale it might be. Distinguish verified facts from your inference.
 4. **Frontmatter:** real `title`, `updated:` today, `topic/*` tags for the subject, and `workflow/draft` — research stays draft until the human reviews it. Include the provenance fields (`00_Meta/CONVENTIONS.md` § Provenance): `author:` with your harness identifier (`claude-code`, `copilot`, …) and `session:` with the session URL / PR / task reference when one exists.
-5. **Link it in:** wikilink related notes both ways where the related note is non-canonical (full paths across directories).
+5. **Link it in:** add source-relative Markdown links with explicit `.md` extensions in both directions where the related note is non-canonical.
 6. **Propagate:** research that extends, corrects, or contradicts *other* existing notes gets merged into those notes now, per step 1's merge rules (canonical targets → propose via Inbox instead). A source is fully ingested only when every note it touches reflects it — one source at a time, supervised.
 7. **Validate and commit:** `brain validate`, then commit.
 
@@ -33,9 +33,9 @@ Convert research output into reference material that stays useful after the sess
 
 - Invoked research writes to `06_Resources/`; incidental findings mid-task still go through `inbox-capture`.
 - Long raw dumps don't belong in the vault — distill; attach oversized source material under `08_Assets/` only if genuinely needed.
-- **Respect `restricted/*`:** when research touches a note tagged `restricted/private`, link it — never quote or summarize its content into the resource note ([[00_Meta/CONVENTIONS#Tag Namespaces]]; the operating-rules containment duty). Research output that is itself sensitive gets the tag on creation.
+- **Respect `restricted/*`:** when research touches a note tagged `restricted/private`, link it — never quote or summarize its content into the resource note ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#tag-namespaces); the operating-rules containment duty). Research output that is itself sensitive gets the tag on creation.
 - **Merging is replacement, not accumulation.** Rewrite or delete the passages the new research conflicts with or obsoletes — never append a fresh section beside a stale one. The note must read as one coherent current state; its size should track knowledge, not edit count. Git history is the archive.
-- **One topic, one note.** Notes are atomic: each covers exactly one subject, and each subject lives in exactly one note (sections for facets, wikilinks for relationships). Never let two notes share authority over the same facts — every reader and agent should find one place to look and one place to update.
+- **One topic, one note.** Notes are atomic: each covers exactly one subject, and each subject lives in exactly one note (sections for facets, links for relationships). Never let two notes share authority over the same facts — every reader and agent should find one place to look and one place to update.
 - If session constraints force a temporary parallel note (e.g. the target is awaiting review), merging it back is unfinished work — flag it, don't normalize it.
 
 ## References

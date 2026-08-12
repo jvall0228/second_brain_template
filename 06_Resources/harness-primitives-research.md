@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives Research
 
-Grounded research (2026-08-11) on the extension surface of every harness in the [[00_Meta/PRD]] §8.3 support table, plus the universal standards layer they build on. Produced for M6/M7 planning (see [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]]) by nine parallel research agents working from official documentation; the load-bearing claims are sourced in the per-harness notes linked below. Harness surfaces move fast — treat this as accurate as of the date above and re-verify before each adapter ships (per §8.3, wiring specifics are settled at build time). Unverifiable details are marked as gaps, not guessed. This note holds the cross-harness comparison (headline findings, overlap matrix, implications); the per-harness surface specs and their sources live in the separate notes linked under [[#Per-harness specs]] below.
+Grounded research (2026-08-11) on the extension surface of every harness in the [PRD](../00_Meta/PRD.md) §8.3 support table, plus the universal standards layer they build on. Produced for M6/M7 planning (see [M5–M7 Implementation Plan](../07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md)) by nine parallel research agents working from official documentation; the load-bearing claims are sourced in the per-harness notes linked below. Harness surfaces move fast — treat this as accurate as of the date above and re-verify before each adapter ships (per §8.3, wiring specifics are settled at build time). Unverifiable details are marked as gaps, not guessed. This note holds the cross-harness comparison (headline findings, overlap matrix, implications); the per-harness surface specs and their sources live in the separate notes linked under [Per-harness specs](#per-harness-specs) below.
 
 ## Headline Findings
 
@@ -19,7 +19,7 @@ Grounded research (2026-08-11) on the extension surface of every harness in the 
 - `.agents/skills/` is the shared skills discovery path (6 of 7 scan it; user scope `~/.agents/skills/`). Claude Code scans only `.claude/skills/` — so onboarding links the shared path once, plus one Claude Code–specific link.
 - Custom slash-command files are converging **into** skills — already deprecated in Codex and Cursor. Ship skills, never command files.
 - Rules, subagents, hooks, plugins, settings, and permissions are proprietary per harness. Git pre-commit remains the only portable hook layer, which validates the M5 enforcement design.
-- Output styles are effectively Claude Code–only (the `/output-style` command was removed but the primitive lives on via settings). Portable voice/tone belongs in [[01_Profile/PREFERENCES]], loaded through the entrypoint.
+- Output styles are effectively Claude Code–only (the `/output-style` command was removed but the primitive lives on via settings). Portable voice/tone belongs in [PREFERENCES](../01_Profile/PREFERENCES.md), loaded through the entrypoint.
 - MCP is a standard protocol with non-standard per-harness config. Pi has no built-in MCP at all (extensions instead — which suits the integration preference ladder's custom-tooling rung), and Muse Code takes user-scope servers only.
 - **No portable privacy/ignore mechanism exists.** Only Cursor honors a repo ignore file; Codex, Pi, and Muse Code have no reliable content-exclusion mechanism. This is an open policy question for the owner — flagged in the implementation plan.
 - Codex and opencode read `AGENTS.md` natively but do **not** expand wikilinks or `@`-imports (Codex also caps project docs at 32 KiB) — adapters make the bootstrap deterministic with plain paths (e.g. opencode's `instructions[]`).
@@ -78,17 +78,17 @@ Grounded research (2026-08-11) on the extension surface of every harness in the 
 
 The full per-harness surface specs — each self-contained with its own sources and research gaps — live in dedicated notes (split out from this note on 2026-08-11 so each harness is one topic, one note):
 
-- [[06_Resources/harness-standards|Universal standards & protocols]] — AGENTS.md, Agent Skills, MCP: the portability substrate every adapter builds on
-- [[06_Resources/harness-claude-code|Claude Code]] (P0)
-- [[06_Resources/harness-codex|Codex]] (P0)
-- [[06_Resources/harness-opencode|opencode]] (P0)
-- [[06_Resources/harness-pi|Pi]] (P0)
-- [[06_Resources/harness-copilot|GitHub Copilot]] (P0)
-- [[06_Resources/harness-cursor|Cursor]] (P1)
-- [[06_Resources/harness-muse-code|Muse Code]] (P1)
+- [Universal standards & protocols](harness-standards.md) — AGENTS.md, Agent Skills, MCP: the portability substrate every adapter builds on
+- [Claude Code](harness-claude-code.md) (P0)
+- [Codex](harness-codex.md) (P0)
+- [opencode](harness-opencode.md) (P0)
+- [Pi](harness-pi.md) (P0)
+- [GitHub Copilot](harness-copilot.md) (P0)
+- [Cursor](harness-cursor.md) (P1)
+- [Muse Code](harness-muse-code.md) (P1)
 
 ## Related
 
-- [[00_Meta/PRD]] — §8.3 support tiers this research grounds; §9.3 plugin-library design
-- [[07_Archives/inbox/2026-08-11-m5-m7-implementation-plan|M5–M7 Implementation Plan]] — consumes these findings (adapter manifests, install map)
-- [[01_Profile/PREFERENCES]] — portable home for voice/tone (in lieu of output styles)
+- [PRD](../00_Meta/PRD.md) — §8.3 support tiers this research grounds; §9.3 plugin-library design
+- [M5–M7 Implementation Plan](../07_Archives/inbox/2026-08-11-m5-m7-implementation-plan.md) — consumes these findings (adapter manifests, install map)
+- [PREFERENCES](../01_Profile/PREFERENCES.md) — portable home for voice/tone (in lieu of output styles)

@@ -19,7 +19,7 @@ Append a solution note directly to `10_Agents/solutions/<category>/` — no Inbo
 ## Steps
 
 1. **Pick the category** — an existing directory under `10_Agents/solutions/` whose README fits the problem. If none fits, create a new kebab-case category directory *with a README* describing what belongs there.
-2. **Name the note** with a kebab-case slug describing the problem (`wikilink-resolution-rules.md` is the worked example).
+2. **Name the note** with a kebab-case slug describing the problem (`wikilink-resolution-rules.md`, now documenting the relative Markdown contract, is the worked example).
 3. **Write in the standard shape:**
    ```markdown
    ---

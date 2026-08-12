@@ -25,8 +25,8 @@ Keep the vault passing its own checks and its snapshots truthful.
    - Unresolved links → use the `link-repair` skill
    - Frontmatter/tag/filename errors on **non-canonical** notes → fix directly (bump `updated:`)
    - Errors on `workflow/canonical` notes → do **not** edit directly; propose the fix via an Inbox note tagged `workflow/needs-review` (see `10_Agents/docs/OPERATING-RULES.md`), unless the human has directed the change in this session
-4. **Investigate warnings** (ambiguous links, case mismatches): fix the link text to the unambiguous full path where intent is clear; otherwise list them for the human.
-5. **Scan for duplication:** notes sharing a subject (e.g. one "supersedes" another, or two reference notes covering the same tool/topic) violate the one-topic-one-note rule — propose a merge to the human with a suggested surviving note and which conflicting sections get replaced — a merge rewrites overlapping content into one coherent whole, never concatenates two notes. Never merge unprompted. Approved proposals are executed via the [[10_Agents/skills/merge-notes/SKILL|merge-notes]] skill — detection proposes here; that skill executes.
+4. **Investigate warnings** (ambiguous links, case mismatches): fix the destination to the exact source-relative path where intent is clear; otherwise list them for the human.
+5. **Scan for duplication:** notes sharing a subject (e.g. one "supersedes" another, or two reference notes covering the same tool/topic) violate the one-topic-one-note rule — propose a merge to the human with a suggested surviving note and which conflicting sections get replaced — a merge rewrites overlapping content into one coherent whole, never concatenates two notes. Never merge unprompted. Approved proposals are executed via the [merge-notes](../merge-notes/SKILL.md) skill — detection proposes here; that skill executes.
 6. **Refresh snapshots:**
    - `00_Meta/STATUS.md` is deliberately non-canonical — update its snapshot/milestone table directly when reality moved.
    - Add a dated `00_Meta/CHANGELOG.md` entry **only** for structural changes (it's canonical: needs human direction).
@@ -36,7 +36,7 @@ Keep the vault passing its own checks and its snapshots truthful.
 
 - Never delete or restructure content as "cleanup" — flag candidates for the human instead.
 - Warnings don't block commits; errors do. Leave the vault at zero errors.
-- Staleness and expiration are the [[10_Agents/skills/curate/SKILL|curate]] skill's charter (epistemic integrity); this skill stays mechanical.
+- Staleness and expiration are the [curate](../curate/SKILL.md) skill's charter (epistemic integrity); this skill stays mechanical.
 
 ## References
 

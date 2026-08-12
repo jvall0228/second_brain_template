@@ -105,15 +105,15 @@ VALIDATE_CURATION_WARNINGS = True
 
 # R20 bootstrap context budgets (bytes): measured 2026-08-11 sizes + ~50%
 # headroom, rounded up. Total ties to the smallest harness project-doc cap.
-# CONVENTIONS.md raised 11264 -> 12288 with issue #75's exact 14-path framework
-# manifest. The aggregate remains below the 32 KiB harness cap.
+# Portable Markdown paths add bytes to two bootstrap docs; issue #74 raises
+# only their per-file ceilings. Actual aggregate size remains below 32 KiB.
 BOOTSTRAP_BUDGETS = {
-    CORE_FRAMEWORK_PATHS["conventions"]: 12288,
+    CORE_FRAMEWORK_PATHS["conventions"]: 12544,
     CORE_FRAMEWORK_PATHS["index"]: 4096,
     CORE_FRAMEWORK_PATHS["defaults"]: 2048,
     CORE_FRAMEWORK_PATHS["now"]: 2048,
     CORE_FRAMEWORK_PATHS["preferences"]: 3072,
-    "AGENTS.md": 8192,
+    "AGENTS.md": 8704,
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
 
@@ -5764,7 +5764,7 @@ def cmd_report(root: Path, args) -> int:
             )
     lines.append(f"unresolved links: {rep['unresolvedLinks']['count']}")
     for row in rep["unresolvedLinks"]["links"]:
-        lines.append(f"  {row['path']}:{row['line']}  -> [[{row['target']}]]")
+        lines.append(f"  {row['path']}:{row['line']}  -> {row['target']}")
     emit(rep, args.json, lines)
     return 0
 

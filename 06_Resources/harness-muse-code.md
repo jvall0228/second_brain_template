@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives: Muse Code
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
 Muse Code is [Meta's coding agent for the terminal and CI](https://dev.meta.ai/docs/muse-code.md), built by Meta Superintelligence Labs on the `muse-spark-1.2` model (co-trained with the harness) and [launched in beta on 2026-08-05](https://techcrunch.com/2026/08/05/meta-launches-muse-code-an-ai-agent-for-large-code-bases/) for macOS and Linux (`curl -fsSL https://dev.meta.ai/install.sh | sh`). Surfaces are an interactive TUI and a headless `muse exec` mode — no IDE/web/desktop surface is documented. Its runtime is an append-only local event log ([replay-exact, restart-safe](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2)) with persistent async background agents. Closed-source, [usage-based token billing](https://dev.meta.ai/docs/muse-code/auth.md); press reports a discounted "contributor" tier (>10x cheaper) in exchange for training-data consent ([CNBC](https://www.cnbc.com/2026/08/05/meta-debuts-muse-code-to-take-on-anthropic-and-openai-.html)).
 

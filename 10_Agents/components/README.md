@@ -17,7 +17,7 @@ The agent library's registry of **recommended components** an onboarder can inst
 into a coding harness. A component is a named, installable capability with one
 machine-readable record. This directory is that registry — `manifest.json` is the
 single source of truth; the human-facing curated catalog for the community items
-stays at [[06_Resources/recommended-skills]].
+stays at [recommended-skills](../../06_Resources/recommended-skills.md).
 
 ## What a recommended component is
 
@@ -36,9 +36,9 @@ Four kinds, each with its own install method:
 | `vault-config-preset` | A fork-policy starting point | `merge-config` — a preset fragment applied into `00_Meta/config.yaml` |
 
 The install vocabulary is the overlay method vocabulary
-([[10_Agents/harnesses/README]] § Overlays) plus one new method, `merge-config`,
+([README](../harnesses/README.md) § Overlays) plus one new method, `merge-config`,
 for presets. There is **one install engine** — the overlay + component installer
-in [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] — never a second model.
+in [onboard-harness](../skills/onboard-harness/SKILL.md) — never a second model.
 
 ## The agent library includes third-party components — without vendoring them
 
@@ -53,10 +53,10 @@ agent-generated skills.
 
 ## Installer, sign-off, reversibility
 
-[[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] reads `manifest.json`,
+[onboard-harness](../skills/onboard-harness/SKILL.md) reads `manifest.json`,
 groups by kind, and installs each component by its declared method/scope/target,
 recording every action in the machine manifest `~/.agents/second-brain-manifest.json`.
-[[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] offers the install as a
+[onboard-owner](../skills/onboard-owner/SKILL.md) offers the install as a
 first-class step and applies `vault-config-preset` components itself under its
 live-session write exception (a config change is a vault write, and an owner decision).
 
@@ -78,7 +78,7 @@ branch in `source.track` (`main`); `.gitmodules` carries the matching `branch = 
 so the install-time `git submodule update --init --remote` fetches the branch's current
 tip. There is no frozen commit and no three-place SHA agreement
 to maintain — the **supply-chain safeguard is the install-time per-item owner sign-off
-against the content actually fetched** ([[10_Agents/skills/onboard-harness/SKILL|onboard-harness]]).
+against the content actually fetched** ([onboard-harness](../skills/onboard-harness/SKILL.md)).
 `test_components.py` checks that each submodule component declares a `track` branch and
 that `.gitmodules` configures branch-tracking for it.
 
@@ -86,4 +86,4 @@ that `.gitmodules` configures branch-tracking for it.
 
 - `manifest.json` — the machine-readable registry (schema `manifest_version: 1`).
 - `presets/` — `vault-config-preset` fragments (currently `work-fork.yaml`).
-- [[06_Resources/recommended-skills]] — the human-facing curated catalog for community items.
+- [recommended-skills](../../06_Resources/recommended-skills.md) — the human-facing curated catalog for community items.

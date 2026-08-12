@@ -21,7 +21,7 @@ Keep an adopter's fork current with the upstream `second_brain_template`: detect
 - **Pull-only — never push upstream.** This skill fetches from the upstream template repo and writes only to the fork. Agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner (issue #22's hard rule). A fork improvement worth generalizing is *suggested to the owner* in the sync report as "worth upstreaming?" — the owner carries it upstream by hand if they choose.
 - **Dry-run first, mandatory.** The first pass of every sync is report-only: produce the full classified plan (what would change, lane by lane) as the Inbox report **before any write**. Applying requires the owner's go-ahead on that plan — like `recommended-automations`.
 - **Idempotent.** Re-running against the same upstream release produces no new changes and a report saying so. Never re-apply what a previous sync already applied; never re-propose what the owner already rejected (check prior sync reports in the Inbox and `07_Archives/`).
-- **Inbox-first report.** The sync report is an `02_Inbox/` note (see [[#Report]]); the owner triages it like anything else.
+- **Inbox-first report.** The sync report is an `02_Inbox/` note (see [Report](#report)); the owner triages it like anything else.
 - **Owner content is never touched**, in any mode, under any flag. When in doubt about a path's lane, treat it as owner content and surface the question in the report.
 
 ## Detect
@@ -33,7 +33,7 @@ reading environment content or writing a report. Treat every non-current
 only, never diff or serialize its contents. `.second-brain/` is ignored local
 state and must never be staged, classified, or proposed upstream.
 
-Upstream version signaling (accepted design, issue #6): the fork records the upstream release it has adopted in the `template_version` key of [[00_Meta/config.yaml]] (spec §15.3, read via `brain config`); upstream marks each template release with a git tag (`template-v*`).
+Upstream version signaling (accepted design, issue #6): the fork records the upstream release it has adopted in the `template_version` key of [config.yaml](../../../00_Meta/config.yaml) (spec §15.3, read via `brain config`); upstream marks each template release with a git tag (`template-v*`).
 
 1. **Upstream remote.** Look for a git remote named `upstream` pointing at the template repo. If none is configured, this is a documented one-time setup step — propose it in the report and stop:
    ```
@@ -147,7 +147,7 @@ The detect step only works if upstream releases are tagged. Whoever operates the
 
 ## References
 
-- [[00_Meta/PRD]] §6.3 — change control the apply lanes implement
+- [PRD](../../../00_Meta/PRD.md) §6.3 — change control the apply lanes implement
 - `10_Agents/tools/brain/spec.md` §15.3 — the `template_version` config key
 - `10_Agents/skills/inbox-capture/SKILL.md` — the report note's write rules
 - `10_Agents/skills/recommended-automations/SKILL.md` — the dry-run-first pattern

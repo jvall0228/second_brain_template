@@ -14,12 +14,12 @@ Vault-level conventions, navigation, and structural documentation. Files here go
 
 ## Contents
 
-- [[00_Meta/CONVENTIONS]] — Naming, tagging, directory layout, change-control rules
-- [[00_Meta/INDEX]] — Global map of content (Map of Content)
-- [[00_Meta/CHANGELOG]] — Structural change log
-- [[00_Meta/PRD]] — Product requirements document
-- [[00_Meta/STATUS]] — Vault status snapshot
+- [CONVENTIONS](CONVENTIONS.md) — Naming, tagging, directory layout, change-control rules
+- [INDEX](INDEX.md) — Global map of content (Map of Content)
+- [CHANGELOG](CHANGELOG.md) — Structural change log
+- [PRD](PRD.md) — Product requirements document
+- [STATUS](STATUS.md) — Vault status snapshot
 
 ## Related
 
-- [[AGENTS]] — Vault entrypoint (`CLAUDE.md` imports it via `@AGENTS.md` for Claude Code)
+- [AGENTS](../AGENTS.md) — Vault entrypoint (`CLAUDE.md` imports it via `@AGENTS.md` for Claude Code)

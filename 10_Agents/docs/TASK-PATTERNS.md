@@ -10,7 +10,7 @@ expires: 2027-08-11
 
 # Task Patterns
 
-Rules for agent-created output in this vault. For general conventions, see [[00_Meta/CONVENTIONS]].
+Rules for agent-created output in this vault. For general conventions, see [CONVENTIONS](../../00_Meta/CONVENTIONS.md).
 
 ## Default Write Location
 
@@ -20,7 +20,7 @@ Agent output goes to `02_Inbox/` by default unless the human explicitly names a 
 
 - Current active policy: write to `02_Inbox/` by default
 - Other non-Inbox destinations require the human to name them in the current request
-- Standing exception: solution notes may be added to `10_Agents/solutions/` (include `type/solution` in tags; see [[10_Agents/README]])
+- Standing exception: solution notes may be added to `10_Agents/solutions/` (include `type/solution` in tags; see [README](../README.md))
 - Standing exception: a live, user-invoked `agent-orientation` session may write its environment inventory and paired draft bundle to `10_Agents/environments/<env-slug>/`, `10_Agents/tools/<source>/`, and `10_Agents/skills/<source>-capture/`; note files stay `workflow/draft`, and non-note tool files inherit that state
 - Standing exception: a live `onboard-owner` session may write only the profile, people, project, area, template-specialization, and config outputs documented in that skill
 - Standing exception: `self-improve` may append rejection rows to `10_Agents/docs/rejected-proposals.md`
@@ -73,6 +73,6 @@ updated: 2026-02-21
 
 ## Filename Convention
 
-Use kebab-case by default: `research-rust-async-patterns.md`. Follow documented exceptions in [[00_Meta/CONVENTIONS#Filename Convention]].
+Use kebab-case by default: `research-rust-async-patterns.md`. Follow documented exceptions in [CONVENTIONS](../../00_Meta/CONVENTIONS.md#filename-convention).
 
 For Inbox notes, prefix with the date: `YYYY-MM-DD-descriptive-slug.md`. Check whether the file already exists before writing; on collision, append a numeric suffix (`-2`) rather than overwriting.

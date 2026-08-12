@@ -67,14 +67,14 @@ class AdoptCheckTest(unittest.TestCase):
         )
         self.assertIn("adopt_check: OK", proc.stdout)
 
-    def test_red_on_canonical_wikilink_to_seeded_example(self):
+    def test_red_on_canonical_markdown_link_to_seeded_example(self):
         # Acceptance criterion (issue #20): a kept doc linking AT a seeded
         # example (without the cleanup marker) must turn the check red.
         copy_repo(self.copy)
         index = self.copy / "00_Meta" / "INDEX.md"
         index.write_text(
             index.read_text(encoding="utf-8")
-            + "\n- [[06_Resources/example-resource]] pinned reference\n",
+            + "\n- [pinned reference](../06_Resources/example-resource.md)\n",
             encoding="utf-8",
         )
         proc = run_adopt_check(self.copy)
@@ -140,14 +140,15 @@ class AdoptCheckTest(unittest.TestCase):
         kept = self.copy / "06_Resources/kept-reference.md"
         kept.write_text(
             "---\ntitle: Kept\ntags:\n  - type/reference\nupdated: 2026-08-11\n---\n\n"
-            "- [[04_Projects/example-project/README|Aliased example]]\n",
+            "- [Aliased example](../04_Projects/example-project/README.md)\n",
             encoding="utf-8",
         )
         with self.assertRaisesRegex(AdoptionError, "unmarked surviving references"):
             build_plan(self.copy)
         kept.write_text(
             kept.read_text(encoding="utf-8").replace(
-                "Aliased example]]", "Aliased example]] — Delete once you've seen the pattern"
+                "Aliased example](../04_Projects/example-project/README.md)",
+                "Aliased example](../04_Projects/example-project/README.md) — Delete once you've seen the pattern",
             ),
             encoding="utf-8",
         )
@@ -161,7 +162,7 @@ class AdoptCheckTest(unittest.TestCase):
         kept.write_text(
             "---\ntitle: Private\ntags:\n  - type/reference\n  - restricted/private\n"
             "updated: 2026-08-11\n---\n\n"
-            f"- {secret}: [[04_Projects/example-project/README|Alias]] — "
+            f"- {secret}: [Alias](../04_Projects/example-project/README.md) — "
             "Delete once you've seen the pattern\n",
             encoding="utf-8",
         )

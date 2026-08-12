@@ -26,8 +26,8 @@
       "",
       "## Related",
       "",
-      "- Projects: [[${3:RELATED_PROJECT}]]",
-      "- Resources: [[${4:RELATED_RESOURCE}]]"
+      "- Projects: [Related project](${3:RELATED_PROJECT})",
+      "- Resources: [Related resource](${4:RELATED_RESOURCE})"
     ],
     "description": "Instantiate 09_Templates/template-area.md",
     "prefix": "sb-area",
@@ -75,7 +75,7 @@
       "",
       "## Decision Record Link",
       "If this results in a decision, link to a decision record:",
-      "- [[${3:RELATED_DECISION_RECORD}]]"
+      "- [Related decision record](${3:RELATED_DECISION_RECORD})"
     ],
     "description": "Instantiate 09_Templates/template-comparison.md",
     "prefix": "sb-comparison",
@@ -96,8 +96,8 @@
       "",
       "## Related",
       "",
-      "- Weekly review: [[${1:RELATED_WEEKLY_REVIEW}]]",
-      "- Yesterday: [[${2:PREVIOUS_DAILY_NOTE}]]",
+      "- Weekly review: [Current weekly review](${1:RELATED_WEEKLY_REVIEW})",
+      "- Yesterday: [Previous daily note](${2:PREVIOUS_DAILY_NOTE})",
       "",
       "## Preview",
       "",
@@ -217,7 +217,7 @@
       "",
       "## Related",
       "",
-      "- Project: [[${5:RELATED_PROJECT}]]"
+      "- Project: [Related project](${5:RELATED_PROJECT})"
     ],
     "description": "Instantiate 09_Templates/template-decision-record.md",
     "prefix": "sb-decision-record",
@@ -270,7 +270,7 @@
       "",
       "## Related",
       "",
-      "- [[${7:RELATED_NOTE}]]"
+      "- [Related note](${7:RELATED_NOTE})"
     ],
     "description": "Instantiate 09_Templates/template-media.md",
     "prefix": "sb-media",
@@ -349,7 +349,7 @@
       "",
       "### Alignment",
       "",
-      "- Does each active project serve something on the [[01_Profile/NOW|Now page]]?",
+      "- Does each active project serve something on the [Now page](../01_Profile/NOW.md)?",
       "- Is anything on the Now page not being moved by any project?",
       "- Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).",
       "",
@@ -375,7 +375,7 @@
       "",
       "## Links to Weekly Notes",
       "",
-      "- [[${2:RELATED_WEEKLY_REVIEW}]]"
+      "- [Related weekly review](${2:RELATED_WEEKLY_REVIEW})"
     ],
     "description": "Instantiate 09_Templates/template-monthly-review.md",
     "prefix": "sb-monthly-review",
@@ -411,8 +411,8 @@
       "",
       "## Related",
       "",
-      "- Area: [[${5:RELATED_AREA}]]",
-      "- Resources: [[${6:RELATED_RESOURCE}]]",
+      "- Area: [Related area](${5:RELATED_AREA})",
+      "- Resources: [Related resource](${6:RELATED_RESOURCE})",
       "",
       "## Log",
       "",
@@ -494,10 +494,10 @@
       "",
       "### Alignment",
       "",
-      "- Does each active project serve something on the [[01_Profile/NOW|Now page]]?",
+      "- Does each active project serve something on the [Now page](../01_Profile/NOW.md)?",
       "- Is anything on the Now page not being moved by any project?",
       "- Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).",
-      "- Rewrite the [[01_Profile/NOW|Now page]] as part of this review — it should describe the quarter ahead, not the one that ended.",
+      "- Rewrite the [Now page](../01_Profile/NOW.md) as part of this review — it should describe the quarter ahead, not the one that ended.",
       "",
       "## Reflection",
       "",
@@ -521,7 +521,7 @@
       "",
       "## Links to Monthly Notes",
       "",
-      "- [[${2:RELATED_MONTHLY_REVIEW}]]"
+      "- [Related monthly review](${2:RELATED_MONTHLY_REVIEW})"
     ],
     "description": "Instantiate 09_Templates/template-quarterly-review.md",
     "prefix": "sb-quarterly-review",
@@ -555,7 +555,7 @@
       "",
       "## Related",
       "",
-      "- [[${3:RELATED_NOTE}]]"
+      "- [Related note](${3:RELATED_NOTE})"
     ],
     "description": "Instantiate 09_Templates/template-resource.md",
     "prefix": "sb-resource",
@@ -576,8 +576,8 @@
       "",
       "## Related",
       "",
-      "- Monthly review: [[${2:RELATED_MONTHLY_REVIEW}]]",
-      "- Daily notes: [[${3:RELATED_DAILY_NOTE}]]",
+      "- Monthly review: [Current monthly review](${2:RELATED_MONTHLY_REVIEW})",
+      "- Daily notes: [Related daily note](${3:RELATED_DAILY_NOTE})",
       "",
       "## Get Clear",
       "",
@@ -657,7 +657,7 @@
       "",
       "### Alignment",
       "",
-      "- Does each active project serve something on the [[01_Profile/NOW|Now page]]?",
+      "- Does each active project serve something on the [Now page](../01_Profile/NOW.md)?",
       "- Is anything on the Now page not being moved by any project?",
       "- Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).",
       "",
@@ -778,7 +778,7 @@
       "",
       "## Links to Quarterly Notes",
       "",
-      "- [[${2:RELATED_QUARTERLY_REVIEW}]]"
+      "- [Related quarterly review](${2:RELATED_QUARTERLY_REVIEW})"
     ],
     "description": "Instantiate 09_Templates/template-yearly-review.md",
     "prefix": "sb-yearly-review",
@@ -802,7 +802,7 @@
       "",
       "## Related",
       "",
-      "- [[${4:RELATED_NOTE}]]",
+      "- [Related note](${4:RELATED_NOTE})",
       "",
       "## Source",
       "",

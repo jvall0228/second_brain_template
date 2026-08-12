@@ -1,6 +1,6 @@
 ---
 name: merge-notes
-description: Execute an approved merge, split, or rename/move of vault notes — rewrite content into one coherent whole, retarget inbound wikilinks via the index, archive superseded notes, validate. Use only after the human has approved a specific proposal (e.g. from vault-maintenance's duplication scan).
+description: Execute an approved merge, split, or rename/move of vault notes — rewrite content into one coherent whole, retarget inbound links via the index, archive superseded notes, validate. Use only after the human has approved a specific proposal (e.g. from vault-maintenance's duplication scan).
 title: "Skill: Merge Notes"
 tags:
   - type/reference
@@ -14,7 +14,7 @@ expires: 2027-08-11
 
 **CODE stage:** System (outside the loop).
 
-Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]]'s duplication scan, reviews); this skill only **executes what the human has already approved**, naming the exact notes involved.
+Note surgery. Detection and proposal live elsewhere ([vault-maintenance](../vault-maintenance/SKILL.md)'s duplication scan, reviews); this skill only **executes what the human has already approved**, naming the exact notes involved.
 
 ## Merge — two or more notes share a subject
 
@@ -28,7 +28,7 @@ Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-ma
 ## Split — one note has outgrown one topic
 
 1. The approval names the note and the intended pieces (one subject each).
-2. **Create one note per subject** from the right template, each self-contained with its share of the content; wire the pieces together with wikilinks.
+2. **Create one note per subject** from the right template, each self-contained with its share of the content; wire the pieces together with relative Markdown links.
 3. **The original either becomes one of the pieces** (keeping its path for the subject it's best known for) or is emptied and archived.
 4. **Re-point inbound links by intent:** each backlink goes to the piece its citing context actually meant — check the surrounding sentence, don't bulk-replace.
 5. Finish as in merge step 6.
@@ -37,7 +37,7 @@ Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-ma
 
 1. **Before moving:** `brain links <path>` — capture the backlink list first.
 2. `git mv` the file (preserves history); update its `title:` if the name changed; bump `updated:`.
-3. **Retarget every backlink** to the new path — cross-directory links need full paths (`[[06_Resources/new-name|Display]]`).
+3. **Retarget every backlink** to the new path with a source-relative destination and explicit extension, preserving the label (for example `[Display](../../06_Resources/new-name.md)`).
 4. Reindex and `validate --check-index` — the index catches any straggler links — then commit the move and retargets as one change.
 
 ## Rules
@@ -49,7 +49,7 @@ Note surgery. Detection and proposal live elsewhere ([[10_Agents/skills/vault-ma
 
 ## References
 
-- [[10_Agents/skills/vault-maintenance/SKILL|vault-maintenance]] — where merge proposals come from
-- [[10_Agents/skills/link-repair/SKILL|link-repair]] — fixing links outside a surgery context
+- [vault-maintenance](../vault-maintenance/SKILL.md) — where merge proposals come from
+- [link-repair](../link-repair/SKILL.md) — fixing links outside a surgery context
 - `10_Agents/tools/brain/README.md` — the `links` command
-- [[10_Agents/docs/OPERATING-RULES]] — update by replacement; canonical handling
+- [OPERATING-RULES](../../docs/OPERATING-RULES.md) — update by replacement; canonical handling

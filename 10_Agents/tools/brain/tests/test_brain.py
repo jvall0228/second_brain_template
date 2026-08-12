@@ -169,12 +169,12 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(index["assets"], ["08_Assets/pic.png"])
         alpha = index["notes"]["01_Notes/alpha.md"]
         targets = {l["raw"]: l["resolved"] for l in alpha["links"]}
-        self.assertEqual(targets["[[beta]]"], "01_Notes/beta.md")
-        self.assertEqual(targets["[[01_Notes/beta#Alpha Section|B]]"], "01_Notes/beta.md")
-        self.assertEqual(targets["![[pic.png]]"], "08_Assets/pic.png")
-        self.assertEqual(targets["[[beta\\|Beta]]"], "01_Notes/beta.md")
-        self.assertNotIn("[[fenced-away]]", targets)
-        self.assertNotIn("[[not-a-link]]", targets)
+        self.assertEqual(targets["[beta](beta.md)"], "01_Notes/beta.md")
+        self.assertEqual(targets["[B](beta.md#alpha-section)"], "01_Notes/beta.md")
+        self.assertEqual(targets["![pic](../08_Assets/pic.png)"], "08_Assets/pic.png")
+        self.assertEqual(targets["[Beta](beta.md)"], "01_Notes/beta.md")
+        self.assertNotIn("[fenced away](fenced-away.md)", targets)
+        self.assertNotIn("[not a link](not-a-link.md)", targets)
         beta = index["notes"]["01_Notes/beta.md"]
         self.assertIn("01_Notes/alpha.md", beta["backlinks"])
         self.assertEqual(beta["bodyTags"], ["focus-mode"])
@@ -673,9 +673,9 @@ class CurationTests(unittest.TestCase):
 
     def test_compute_curation_signals(self):
         files = {
-            "expired.md": note("[[stale-hub]]", expires="2020-01-01"),
-            "fresh.md": note("[[expired]] ![[08_Assets/used.png]]", expires="2999-01-01"),
-            "stale-hub.md": note("[[fresh]]", updated="2020-01-01", expires="2999-01-01"),
+            "expired.md": note("[stale hub](stale-hub.md)", expires="2020-01-01"),
+            "fresh.md": note("[expired](expired.md) ![used](08_Assets/used.png)", expires="2999-01-01"),
+            "stale-hub.md": note("[fresh](fresh.md)", updated="2020-01-01", expires="2999-01-01"),
             "orphan.md": note(expires="2999-01-01"),
             "08_Assets/used.png": b"x",
             "08_Assets/unused.png": b"x",
@@ -944,7 +944,7 @@ class SecretScanTests(unittest.TestCase):
         body = "\n".join(
             [
                 "Prose about AWS AKIA prefixes and akiaiosfodnn7example shapes.",
-                "See [[06_Resources/some-note]] and #topic/software tags.",
+                "See [some note](06_Resources/some-note.md) and #topic/software tags.",
                 'commit = "d3b07384d113edec49eaa6238ad5ff00c0ffee12"',  # git SHA: no uppercase
                 "https://example.com/AbC123defGHI456jklMNO789pqrSTU012vwxYZ345",
                 "the token: value pair syntax (unquoted, not a credential)",

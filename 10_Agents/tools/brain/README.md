@@ -12,7 +12,7 @@ expires: 2027-08-11
 
 # `brain` — Vault Index CLI
 
-Zero-dependency CLI (Python 3.10+, stdlib only) that indexes every note in the vault and enforces its conventions. The behavior contract is [[10_Agents/tools/brain/spec]] (canonical); this README is usage only.
+Zero-dependency CLI (Python 3.10+, stdlib only) that indexes every note in the vault and enforces its conventions. The behavior contract is [spec](spec.md) (canonical); this README is usage only.
 
 ## Invocation
 
@@ -66,4 +66,4 @@ Every command accepts `--json` for machine-readable output, `--vault PATH` to ov
 python3 10_Agents/tools/run_tests.py
 ```
 
-The runner is the canonical entrypoint for every tool suite (see [[10_Agents/tools/README]]); plain `unittest discover -s 10_Agents/tools/brain/tests` still works for this suite alone. Fixture mini-vaults under any `10_Agents/tools/*/tests/` tree are excluded from the real corpus by design (spec §2).
+The runner is the canonical entrypoint for every tool suite (see [README](../README.md)); plain `unittest discover -s 10_Agents/tools/brain/tests` still works for this suite alone. Fixture mini-vaults under any `10_Agents/tools/*/tests/` tree are excluded from the real corpus by design (spec §2).

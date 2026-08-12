@@ -10,11 +10,11 @@ expires: 2027-08-11
 
 # Operating Rules
 
-Behavior expectations for agents working in this vault. These supplement — not duplicate — the rules in [[AGENTS]] and [[00_Meta/CONVENTIONS]].
+Behavior expectations for agents working in this vault. These supplement — not duplicate — the rules in [AGENTS](../../AGENTS.md) and [CONVENTIONS](../../00_Meta/CONVENTIONS.md).
 
 ## Bootstrap Before Working
 
-Always read the bootstrap sequence before producing output. See [[AGENTS#Bootstrap Sequence (Must-Read Order)]].
+Always read the bootstrap sequence before producing output. See [AGENTS](../../AGENTS.md#bootstrap-sequence-must-read-order).
 
 **Arm the pre-commit hook before your first commit:** run `git config core.hooksPath .githooks` once per clone. Fresh agent environments (cloud containers, CI checkouts, new clones) do not have it, and without it your commits ship a stale vault index that fails CI for everyone. Claude Code sessions get this automatically via the repo's `.claude/settings.json` SessionStart hook; every other harness runs it manually at bootstrap.
 
@@ -30,7 +30,7 @@ Before creating or modifying a note, read:
 
 When updating an existing note, **replace** the sections the new content conflicts with or obsoletes — never append a new section alongside a stale one. Append-only editing bloats notes into contradictory context dumps that mislead every future reader, human or agent. A note must always read as the current state of knowledge; git history preserves every prior version for posterity, so deleting outdated content loses nothing. Appending is right only for genuinely additive structures — logs, journals, changelog-style records — where entries are events, not claims.
 
-For [[00_Meta/PRD]] specifically, edit superseded requirements in place and describe only shipped behavior, the live roadmap, and genuinely unresolved decisions. Record a structural PRD change once in [[00_Meta/CHANGELOG]]; Git holds detailed revision history. Do not add revision banners, compatibility addenda, resolved incident narratives, or duplicate consideration logs to the PRD.
+For [PRD](../../00_Meta/PRD.md) specifically, edit superseded requirements in place and describe only shipped behavior, the live roadmap, and genuinely unresolved decisions. Record a structural PRD change once in [CHANGELOG](../../00_Meta/CHANGELOG.md); Git holds detailed revision history. Do not add revision banners, compatibility addenda, resolved incident narratives, or duplicate consideration logs to the PRD.
 
 ## Canonical Note Handling
 
@@ -42,7 +42,7 @@ Without that authority, propose a change:
 
 1. Write a note to `02_Inbox/` explaining the proposed change
 2. Tag it `workflow/needs-review`
-3. Reference the canonical note with a wikilink
+3. Reference the canonical note with a source-relative Markdown link
 
 The human reviews and applies (or rejects) the change.
 
@@ -50,7 +50,7 @@ The human reviews and applies (or rejects) the change.
 
 When blocked — a required input is missing, an instruction is ambiguous in a way more reading can't resolve, or two vault sources contradict each other — never guess-and-commit, and never silently resolve a conflict between notes. Instead:
 
-1. Write a `02_Inbox/` note tagged `workflow/needs-review` stating what you were doing, what blocked you (for conflicts: wikilink both sources and quote the conflicting claims), and the options you see.
+1. Write a `02_Inbox/` note tagged `workflow/needs-review` stating what you were doing, what blocked you (for conflicts: link both sources and quote the conflicting claims), and the options you see.
 2. Stop that line of work. Continue any unaffected work; if nothing remains, end the session cleanly (see Session-End Flush below).
 
 The human resolves the conflict; the resolution usually becomes an edit to one of the conflicting notes, so the vault — not just the session — gets unstuck.
@@ -61,18 +61,18 @@ Before writing any note, verify:
 
 - [ ] Frontmatter includes `title`, `tags`, `updated`
 - [ ] `updated:` is set to today's date — on every edit, not just creation
-- [ ] Tags use defined namespaces (see [[00_Meta/CONVENTIONS#Tag Namespaces]])
-- [ ] Filename follows [[00_Meta/CONVENTIONS#Filename Convention]] and does not collide with an existing note
-- [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [[00_Meta/CONVENTIONS]] § Provenance)
+- [ ] Tags use defined namespaces (see [CONVENTIONS](../../00_Meta/CONVENTIONS.md#tag-namespaces))
+- [ ] Filename follows [CONVENTIONS](../../00_Meta/CONVENTIONS.md#filename-convention) and does not collide with an existing note
+- [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [CONVENTIONS](../../00_Meta/CONVENTIONS.md) § Provenance)
 - [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, or live user-invoked `agent-orientation` inventory plus paired draft bundle)
 - [ ] A generated orientation bundle is still draft: its inventory, skill, and tool documentation say `workflow/draft`, and no non-note file is treated as canonical-by-policy before owner promotion
-- [ ] **Restricted containment** ([[00_Meta/CONVENTIONS#Tag Namespaces|restricted/private]]): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
-- [ ] Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [[10_Agents/tools/brain/README|brain]])
-- [ ] **Editor-surface parity** ([[00_Meta/PRD]] §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
+- [ ] **Restricted containment** ([restricted/private](../../00_Meta/CONVENTIONS.md#tag-namespaces)): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
+- [ ] Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [brain](../tools/brain/README.md))
+- [ ] **Editor-surface parity** ([PRD](../../00_Meta/PRD.md) §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
 
 ## Upstream Boundary
 
-**Never push upstream.** The fork pulls updates from the public upstream template ([[10_Agents/skills/sync-upstream/SKILL|sync-upstream]], pull-only); agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. Generalizable improvements discovered in this fork are *suggested to the owner* as "worth upstreaming?" (in sync reports or [[10_Agents/skills/self-improve/SKILL|self-improve]] retrospectives) — the owner carries them upstream by hand if they choose.
+**Never push upstream.** The fork pulls updates from the public upstream template ([sync-upstream](../skills/sync-upstream/SKILL.md), pull-only); agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. Generalizable improvements discovered in this fork are *suggested to the owner* as "worth upstreaming?" (in sync reports or [self-improve](../skills/self-improve/SKILL.md) retrospectives) — the owner carries them upstream by hand if they choose.
 
 ## Personal-data remote safety
 
@@ -101,14 +101,14 @@ Multiple agents may work in this vault. Sync (pull) before writing when the envi
 
 The vault only knows what reaches disk — chat context evaporates. Before ending a working session, and when the harness is about to compact or truncate its context, flush anything durable:
 
-- A solved problem worth reusing → the [[10_Agents/skills/solution-capture/SKILL|solution-capture]] skill.
-- General session learnings — decisions made, surprises found, the state of half-finished work → today's daily log ([[10_Agents/skills/daily-log/SKILL|daily-log]]) or an Inbox capture.
+- A solved problem worth reusing → the [solution-capture](../skills/solution-capture/SKILL.md) skill.
+- General session learnings — decisions made, surprises found, the state of half-finished work → today's daily log ([daily-log](../skills/daily-log/SKILL.md)) or an Inbox capture.
 - Nothing durable happened → write nothing; don't manufacture a note to satisfy this rule.
 
 Then commit and push, so the flush actually survives the session.
 
 ## Related
 
-- [[AGENTS]] — Vault entrypoint
-- [[00_Meta/CONVENTIONS]] — Full convention reference
-- [[10_Agents/docs/TASK-PATTERNS]] — Write rules and examples
+- [AGENTS](../../AGENTS.md) — Vault entrypoint
+- [CONVENTIONS](../../00_Meta/CONVENTIONS.md) — Full convention reference
+- [TASK-PATTERNS](TASK-PATTERNS.md) — Write rules and examples

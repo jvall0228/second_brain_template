@@ -14,7 +14,7 @@ Non-markdown files — images, PDFs, attachments, and other binary assets refere
 
 ## When to Put Something Here
 
-Any file that isn't a markdown note: screenshots, diagrams, exported PDFs, audio clips, etc. Reference these from notes using Obsidian embed syntax (`![[filename.png]]`) or relative markdown links — embeds are the vault-internal default; relative links are the portable option.
+Any file that isn't a markdown note: screenshots, diagrams, exported PDFs, audio clips, etc. Reference these from notes with portable relative Markdown images such as `![Diagram](../08_Assets/diagram.png)` or links such as `[PDF](../08_Assets/report.pdf)`. Percent-encode spaces and Unicode bytes in destinations.
 
 ## Lifecycle
 

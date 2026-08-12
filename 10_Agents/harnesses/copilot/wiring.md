@@ -12,7 +12,7 @@ expires: 2026-11-11
 
 # Copilot Wiring
 
-Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [[06_Resources/harness-copilot|the harness research's Copilot section]] (sources linked there; it absorbed the same-day deep-dive). Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
+Facts verified 2026-08-11 against [docs.github.com/copilot](https://docs.github.com/copilot) and the VS Code docs — see [the harness research's Copilot section](../../../06_Resources/harness-copilot.md) (sources linked there; it absorbed the same-day deep-dive). Re-verify before relying on paths. GitHub now brands the async agent the **Copilot cloud agent**.
 
 ## Entrypoint loading
 
@@ -55,13 +55,13 @@ brain <command> --json
 
 CLI pre-approval: `--allow-tool='shell(brain:*)'` covers managed `brain` invocations (the colon wildcard is shell's only wildcard). Without managed installation, approve the repository launcher or long-form fallback narrowly. Interactive approvals persist per-directory in `~/.copilot/permissions-config.json`. Deny rules always beat allow rules, even under `--allow-all`/`--yolo`. The cloud agent runs brain fine offline — the egress firewall (default-on) only affects network access, which brain never uses.
 
-**Semantic search** ([[10_Agents/tools/brain/spec|spec]] §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 
 - **MCP is per-surface:** `.vscode/mcp.json` (VS Code workspace), `~/.copilot/mcp-config.json` (CLI, `/mcp add`), and the cloud agent's JSON config lives in **repository settings on github.com** (shared with code review — cannot be committed as a file). The vault ships no servers (vault MCP is permanently out of scope, PRD §19); M7 external-source servers register per-surface.
 - **Secrets:** the cloud agent has a dedicated **Agents** secrets/variables store (Settings → Secrets and variables → Agents), exposed as env vars; names prefixed `COPILOT_MCP_` go only to MCP servers. Credentials never enter the repo (PRD §16.2).
-- **Automation:** headless `copilot -p "<prompt>"`; cloud tasks via `gh agent-task` (gh ≥ 2.80), the Agent tasks REST API (public preview, user-to-server tokens only), or scheduled [gh-aw](https://github.github.com/gh-aw/reference/copilot-cloud-agent/) workflows — see [[10_Agents/skills/recommended-automations/SKILL|recommended-automations]].
+- **Automation:** headless `copilot -p "<prompt>"`; cloud tasks via `gh agent-task` (gh ≥ 2.80), the Agent tasks REST API (public preview, user-to-server tokens only), or scheduled [gh-aw](https://github.github.com/gh-aw/reference/copilot-cloud-agent/) workflows — see [recommended-automations](../../skills/recommended-automations/SKILL.md).
 - **VS Code reads Claude Code hook config** (`.claude/settings.json`[`.local`]) but **ignores matchers** — the Claude Code adapter's PostToolUse validate example would fire on *every* tool call under VS Code Copilot. Fine at ~1–2 s per validate, but know it's there.
 - **Content-exclusion is org-managed** (and ignored by the CLI/agent surfaces — M6 research) — no repo-level privacy mechanism; feeds the open policy decision (PRD §21).
 - Glob-scoped instruction files (`.github/instructions/*.instructions.md`, `applyTo` frontmatter) exist but add nothing here: `AGENTS.md` already reaches every agent surface they reach. Prompt files and custom agents likewise are not shipped — skills are the vault's portable unit.
@@ -73,4 +73,4 @@ CLI pre-approval: `--allow-tool='shell(brain:*)'` covers managed `brain` invocat
 
 ## Reference config
 
-None to copy — the working config ships in the repo itself: `.github/copilot-instructions.md` (IDE/web bootstrap shim), `.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh` (cloud-agent enforcement). All three sit outside the note corpus (dot-paths are pruned), so `brain` never validates or indexes them. They are catalogued as `shipped-in-repo` artifacts in `overlay/manifest.json` — the Copilot **overlay** (see the Overlays section of [[10_Agents/harnesses/README]]): present in every clone, so [[10_Agents/skills/onboard-harness/SKILL|onboard-harness]] installs and removes nothing for them.
+None to copy — the working config ships in the repo itself: `.github/copilot-instructions.md` (IDE/web bootstrap shim), `.github/hooks/vault-validate.json` + `.github/scripts/agent-stop-validate.sh` (cloud-agent enforcement). All three sit outside the note corpus (dot-paths are pruned), so `brain` never validates or indexes them. They are catalogued as `shipped-in-repo` artifacts in `overlay/manifest.json` — the Copilot **overlay** (see the Overlays section of [README](../README.md)): present in every clone, so [onboard-harness](../../skills/onboard-harness/SKILL.md) installs and removes nothing for them.

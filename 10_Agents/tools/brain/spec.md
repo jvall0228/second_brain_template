@@ -14,14 +14,14 @@ expires: 2027-08-11
 
 ## 1. Scope and status
 
-This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, index-schema, and command-semantics rules that `brain.py` implements. [[00_Meta/PRD]] §19 M5 requires these rules to be specified in a spec note before implementation; the implementation plan's Phase M5.0 additionally required owner review before the Indexer phase (M5.1). **Reviewed and promoted to canonical by the owner on 2026-08-11** — changes now follow §6.3 change control.
+This note is the **M5.0 deliverable**: the concrete parsing, link-resolution, index-schema, and command-semantics rules that `brain.py` implements. [PRD](../../../00_Meta/PRD.md) §19 M5 requires these rules to be specified in a spec note before implementation; the implementation plan's Phase M5.0 additionally required owner review before the Indexer phase (M5.1). **Reviewed and promoted to canonical by the owner on 2026-08-11** — changes now follow §6.3 change control.
 
-Design inspiration is Obsidian's MetadataCache; the starting point is [[10_Agents/solutions/obsidian-issues/wikilink-resolution-rules]]. Where this spec deliberately diverges from Obsidian or from the implementation plan, the divergence is listed in §11 and §12.
+Design inspiration is Obsidian's MetadataCache; the portable authoring contract is [Relative Markdown Link Rules](../../solutions/obsidian-issues/wikilink-resolution-rules.md). Where this spec deliberately diverges from Obsidian or from the implementation plan, the divergence is listed in §11 and §12.
 
-**Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([[00_Meta/PRD]] §6.5) — and `brain` is the compatibility keystone between them:
+**Editor surfaces this spec serves (must-consider on every change).** The vault has two supported editors — **Obsidian** (primary UI) and **VS Code** ([PRD](../../../00_Meta/PRD.md) §6.5) — and `brain` is the compatibility keystone between them:
 - The **link-resolution model (§6) tracks Obsidian's**: a link that resolves differently in `brain` than in Obsidian is a bug in one of them, and every intentional divergence must be recorded in §11.
 - The **VS Code surface consumes `brain` directly**: `.vscode/tasks.json` invokes `validate`, `index`, `search`, `recent`, `report`, `tasks`, and `links` (the backlinks-panel substitute there), so command semantics (§9–10) and output are part of that editor's UX contract.
-- Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [[10_Agents/docs/OPERATING-RULES]] (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
+- Any change to this spec or to `brain.py` behavior must therefore be checked against **both** editor surfaces, and structural consequences flow to the editor-surface parity duty in [OPERATING-RULES](../../docs/OPERATING-RULES.md) (update `.obsidian/`, `.vscode/`, and the §6.5 mapping together).
 
 Normative language: **must** = required behavior; **records an error/warning** = the finding is stored in the index or produced by `validate` (§10), never silently dropped.
 
@@ -44,7 +44,7 @@ Normative language: **must** = required behavior; **records an error/warning** =
 
 ## 4. Frontmatter grammar
 
-`brain` parses the YAML **subset** implied by the §10.1 contract of [[00_Meta/PRD]] — not full YAML. Notes whose frontmatter falls outside the subset are **still indexed**; each violation is recorded in that note's `frontmatterErrors` for `validate` to surface (parsing is best-effort, never fatal).
+`brain` parses the YAML **subset** implied by the §10.1 contract of [PRD](../../../00_Meta/PRD.md) — not full YAML. Notes whose frontmatter falls outside the subset are **still indexed**; each violation is recorded in that note's `frontmatterErrors` for `validate` to surface (parsing is best-effort, never fatal).
 
 ### 4.1 Block detection
 
@@ -96,12 +96,12 @@ Template placeholders (`{{…}}`) are ordinary strings to the parser; the `09_Te
 
 ### 5.1 Recognized forms and records
 
-The schema-v2 extractor reads two formats into one record shape:
+The schema-v2 extractor reads the maintained format plus one import-only legacy format into one record shape:
 
 - **Standard inline Markdown:** `[label](destination)`, `![alt](destination)`, angle-bracket destinations, balanced parentheses, escaped delimiters, one optional fully quoted/parenthesized ignored title, URL-encoded paths/fragments, and fragment-only self-links. Arbitrary text after a destination is invalid rather than silently discarded. Reference-style and multiline links are intentionally not recognized.
 - **Legacy import format:** `[[target]]`, `[[target|label]]`, `[[target#fragment]]`, `[[target#fragment|label]]`, and the `!` embed forms. The first `|` (or table-safe `\|`) separates the label; the first `#` separates the fragment; one final `.md` is stripped only from the compatibility `target` field. Odd backslash parity escapes either link syntax; even parity does not.
 
-Each record always carries `raw`, `range`, `line`, `label`, `destination`, `fragment`, `format` (`markdown|wikilink`), `embed`, `placeholder`, and `resolution`. `range.start.offset`/`range.end.offset` are a half-open range in **normalized UTF-8 bytes**; endpoints also carry 1-based line and 0-based character column. `resolution` is `{status, path, fragment, warnings}`. During the transition, `display`, `target`, `resolved`, and top-level `warnings` mirror the schema-v1 meanings for existing consumers. `format: wikilink` is the authoritative legacy count; the index also exposes aggregate `linkCounts`.
+Each record always carries `raw`, `range`, `line`, `label`, `destination`, `fragment`, `format` (`markdown|wikilink`), `embed`, `placeholder`, and `resolution`. `range.start.offset`/`range.end.offset` are a half-open range in **normalized UTF-8 bytes**; endpoints also carry 1-based line and 0-based character column. `resolution` is `{status, path, fragment, warnings}`. `display`, `target`, `resolved`, and top-level `warnings` remain schema-v1 compatibility aliases for consumers. `format: wikilink` is the authoritative import-debt count; the index also exposes aggregate `linkCounts`. A maintained repository has zero such records.
 
 A destination or fragment containing `{{` is a placeholder: indexed with `status: placeholder`, counted, and exempt from normal resolution/validation. A fragment beginning `^` is an unsupported block reference: its path may resolve for backlink structure, but the record status/warning is explicit and migration refuses it. Raw/bare URLs and Markdown destinations with a URI scheme or `//` are external and excluded. A leading `/` Markdown destination is recorded as unsupported rather than treated as repository-relative; portable vault links are source-relative.
 
@@ -117,7 +117,7 @@ This removes the known false-positive source from the M4 link check. Indented (4
 
 ## 6. Link and fragment resolution
 
-Legacy wikilinks retain Obsidian's filename-first import model. Markdown links use source-relative explicit paths compatible with GitHub, VS Code, and Obsidian. Title matching remains a hint only.
+Markdown links use source-relative explicit paths compatible with GitHub, VS Code, and Obsidian. Legacy imports retain Obsidian's filename-first model until `migrate-links` converts them. Title matching remains a hint only.
 
 **Folding rule:** every case-insensitive comparison in this section means NFC normalization followed by `str.casefold()`. (For vaults conforming to the §10.2 filename rules this reduces to ASCII case-insensitivity, making behavior independent of the interpreter's Unicode database version.)
 
@@ -135,7 +135,7 @@ For a target `T` (post §5.1 normalization), resolution tries **notes first, the
    - multiple → **ambiguous**: `path: null`, status `ambiguous`, and deterministic candidate warnings; never guess;
    - none → step 4.
 3. **Path** (`T` contains `/`): exact match against note path `T + ".md"`, case-sensitively; failing that, by the folding rule (unique hit → resolved; multiple hits → ambiguity rule above; none → step 4). Partial path *suffix* matching is **not** supported (§11).
-4. **Asset fallback:** if `T`'s final component has an extension — it matches `\.[A-Za-z0-9]+$` and the suffix is not `md` — resolve against the **asset list** with the same branch structure as steps 2–3 (bare name → asset basename table, *including* the extension; path → exact asset path; same ambiguity and case rules). Trying notes first means `[[web-2.0]]` finds a note named `web-2.0.md` even though `.0` looks like an extension; `![[img.png]]` finds the asset.
+4. **Asset fallback:** if `T`'s final component has an extension — it matches `\.[A-Za-z0-9]+$` and the suffix is not `md` — resolve against the **asset list** with the same branch structure as steps 2–3 (bare name → asset basename table, *including* the extension; path → exact asset path; same ambiguity and case rules). Trying notes first means the legacy target `web-2.0` finds a note named `web-2.0.md` even though `.0` looks like an extension; an imported image target `img.png` finds the asset.
 5. **Unresolved:** `path: null`. If some note's `title` equals `T` under the folding rule, each such path is recorded as a `title-match:<path>` repair hint.
 
 ### 6.3 Markdown algorithm
@@ -153,7 +153,7 @@ Any difference between the link text and the actual filename/path casing on a re
 ### 6.6 Backlinks and warnings
 
 - **Backlinks:** for every resolved note-target link (embed or not), the containing note's path is added to the target's `backlinks` (sorted, de-duplicated).
-- Per-link warnings carry ambiguity candidates, case/fragment-case mismatches, title hints, unresolved fragments, and unsupported block/destination states; `validate` maps the blocking path states while WP8 reports legacy fragment debt without making the unchanged maintained tree fail.
+- Per-link warnings carry ambiguity candidates, case/fragment-case mismatches, title hints, unresolved fragments, and unsupported block/destination states; `validate` maps the blocking path states while import previews report legacy fragment debt before any write.
 
 ## 7. Body extraction
 
@@ -182,15 +182,15 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
    "frontmatterErrors": [],
    "headings": [{"level": 1, "line": 8, "slug": "prd", "text": "PRD"}],
    "links": [
-    {"destination": "AGENTS", "display": null, "embed": false,
-     "format": "wikilink", "fragment": null, "label": null, "line": 12,
+    {"destination": "../AGENTS.md", "display": "AGENTS", "embed": false,
+     "format": "markdown", "fragment": null, "label": "AGENTS", "line": 12,
      "placeholder": false,
      "range": {"start": {"column": 0, "line": 12, "offset": 200},
-               "end": {"column": 10, "line": 12, "offset": 210}},
-     "raw": "[[AGENTS]]",
+               "end": {"column": 22, "line": 12, "offset": 222}},
+     "raw": "[AGENTS](../AGENTS.md)",
      "resolution": {"fragment": null, "path": "AGENTS.md",
                     "status": "resolved", "warnings": []},
-     "resolved": "AGENTS.md", "target": "AGENTS", "warnings": []}
+     "resolved": "AGENTS.md", "target": "../AGENTS.md", "warnings": []}
    ],
    "sizeBytes": 12345,
    "tasks": [
@@ -201,8 +201,8 @@ A body tag is `#` immediately followed by one or more of `[A-Za-z0-9_/-]`, conta
    "updated": "2026-08-11"
   }
  },
- "linkCounts": {"legacy": 1, "markdown": 0, "placeholder": 0,
-                "unsupportedBlockReference": 0, "wikilink": 1},
+ "linkCounts": {"legacy": 0, "markdown": 1, "placeholder": 0,
+                "unsupportedBlockReference": 0, "wikilink": 0},
  "schemaVersion": 2
 }
 ```
@@ -257,13 +257,13 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 
 ### 10.1 Rule sources
 
-Tag namespace membership is read **at runtime** from the authoritative table in [[00_Meta/CONVENTIONS#Tag Namespaces]] — `brain` hardcodes no taxonomy. Mechanically: take the first markdown table after the `## Tag Namespaces` heading; skip the header and separator rows; for each data row, the **namespace** is the first backtick-quoted token in column 1 with any trailing `/*` removed; if column 3's cell text begins with `Free-form` (case-insensitive), the namespace is **open** (any value passes); otherwise the namespace is **closed** and its value list is the backtick-quoted tokens in column 3. Applied to the current table this yields closed `audience`, `type`, `workflow`, `status` and open `topic` — and if the owner adds or re-marks a namespace, `brain` follows the table with no code change. A missing or unparseable table, or a row yielding no namespace, is a validate **error** (`conventions-table-unreadable`), never a silent pass.
+Tag namespace membership is read **at runtime** from the authoritative table in [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#tag-namespaces) — `brain` hardcodes no taxonomy. Mechanically: take the first markdown table after the `## Tag Namespaces` heading; skip the header and separator rows; for each data row, the **namespace** is the first backtick-quoted token in column 1 with any trailing `/*` removed; if column 3's cell text begins with `Free-form` (case-insensitive), the namespace is **open** (any value passes); otherwise the namespace is **closed** and its value list is the backtick-quoted tokens in column 3. Applied to the current table this yields closed `audience`, `type`, `workflow`, `status` and open `topic` — and if the owner adds or re-marks a namespace, `brain` follows the table with no code change. A missing or unparseable table, or a row yielding no namespace, is a validate **error** (`conventions-table-unreadable`), never a silent pass.
 
 ### 10.2 Checks
 
 **Errors** (exit 1): missing frontmatter; missing/null `title` or `updated`; a missing, null, or **empty** `tags` list (`tags: []` declares no tags and fails the same `missing-tags` check; the §10.3 template-placeholder exemption is per-value, and an empty list has no values to exempt, so it fires in `09_Templates/` too); `not-readable` (§3 read failure — `validate` reports it as the note's only finding, suppressing the derived frontmatter-field checks, and `not-utf8` behaves the same way; every other command skips the file); `invalid-updated`; any §4 `frontmatterErrors` entry except the warning-mapped ones below; a frontmatter tag not slash-delimited, in a namespace absent from the conventions table, or (for closed namespaces) not in the value list — **frontmatter tags only; `bodyTags` are informal and never checked**; a filename-convention violation; an unresolved or ambiguous internal link (placeholders exempt); `path-collision` — two corpus paths equal under the §6 folding rule, which cannot co-exist on default macOS/Windows filesystems. Secret-scanning findings (§10.5) are also errors.
 
-**Filename convention:** applies to the **basename** of note files only (directories and assets are not checked). A note basename must match `^[a-z0-9]+(-[a-z0-9]+)*\.md$` — all-digit segments are allowed, so dated notes like `2025-01-15.md` and `2024-01-review.md` pass. Exceptions per [[00_Meta/CONVENTIONS]]: `AGENTS.md`, `CLAUDE.md`, `README.md` at any level; the 14 exact-case framework paths registered in `CORE_FRAMEWORK_PATHS`; periodic tokens `YYYY-W##-review.md` and `YYYY-Q#-review.md`; `SKILL.md` inside `10_Agents/skills/` (Agent Skills format, M6). Case variants of a registered framework path fail even when the lowercase basename would otherwise match kebab-case; the exception does not apply to an identically named note elsewhere.
+**Filename convention:** applies to the **basename** of note files only (directories and assets are not checked). A note basename must match `^[a-z0-9]+(-[a-z0-9]+)*\.md$` — all-digit segments are allowed, so dated notes like `2025-01-15.md` and `2024-01-review.md` pass. Exceptions per [CONVENTIONS](../../../00_Meta/CONVENTIONS.md): `AGENTS.md`, `CLAUDE.md`, `README.md` at any level; the 14 exact-case framework paths registered in `CORE_FRAMEWORK_PATHS`; periodic tokens `YYYY-W##-review.md` and `YYYY-Q#-review.md`; `SKILL.md` inside `10_Agents/skills/` (Agent Skills format, M6). Case variants of a registered framework path fail even when the lowercase basename would otherwise match kebab-case; the exception does not apply to an identically named note elsewhere.
 
 **Agent Skills contract (`10_Agents/skills/`, added at M6 per the implementation plan):** every skill directory (a direct child of `10_Agents/skills/` containing notes) must hold a `SKILL.md` whose frontmatter carries — in addition to the vault contract — an Agent Skills `name` equal to the directory name (`skill-name-mismatch`) and a non-empty `description` string (`skill-missing-description`); a skill directory without a `SKILL.md` is `skill-missing`. All three are errors.
 
@@ -299,7 +299,7 @@ PRD §16.2's never-commit-credentials rule is enforced by `validate` itself, so 
 | `generic-credential` | literal credential assignments | a key named like api-key / secret / token / password (case-insensitive), then `:` or `=`, then a **quoted** literal of 12+ token characters containing at least one digit |
 | `high-entropy-string` | long opaque literals (the one conservative entropy heuristic) | `:` or `=`, then a **quoted** run of 40+ base64 characters containing lowercase, uppercase, and a digit (padding `=` allowed) |
 
-The two assignment rules require the value to be *entirely* quoted token characters, and the entropy heuristic requires mixed case plus a digit — so prose, wikilinks, bare git SHAs (lowercase hex has no uppercase), and long URLs (contain `:`/`.`/`?` outside the charset) never flag; tuned to zero false positives on this repo's own tree, which the test suite pins with a repo self-scan.
+The two assignment rules require the value to be *entirely* quoted token characters, and the entropy heuristic requires mixed case plus a digit — so prose, link markup, bare git SHAs (lowercase hex has no uppercase), and long URLs (contain `:`/`.`/`?` outside the charset) never flag; tuned to zero false positives on this repo's own tree, which the test suite pins with a repo self-scan.
 
 **Allowlist.** A line is exempt when it carries an HTML comment containing the token `brain:allow-secret-pattern` — marker and pattern on the **same line**. The committed marker is the audit trail: documentation *about* token shapes stays possible, and every suppression is greppable. There is no file- or directory-level allowlist.
 
@@ -310,7 +310,7 @@ The two assignment rules require the value to be *entirely* quoted token charact
 ## 11. Divergences from Obsidian and known limitations
 
 - **No title-based resolution** (deliberate; §6). Title matches become repair hints, not links.
-- **No partial path-suffix matching** (`[[to/foo]]` matching `a/to/foo.md`): full path or bare name only — the plan's three-step ladder is the whole ladder.
+- **No partial path-suffix matching for legacy imports** (`to/foo` matching `a/to/foo.md`): full path or bare name only — the plan's three-step ladder is the whole ladder.
 - Block references (`#^id`) are explicitly unsupported and migration-blocking; heading fragments are verified per §6.4.
 - Inline code spans are line-scoped; CommonMark multi-line spans are not recognized (§5.2).
 - Indented code blocks, HTML comments, and `%%` comments are scanned for links/tags (only fenced blocks and inline spans are excluded).
@@ -325,7 +325,7 @@ The two assignment rules require the value to be *entirely* quoted token charact
 3. **`sizeBytes` measures normalized text**, not on-disk bytes — same determinism argument against `autocrlf` checkouts. §8.2, §3.
 4. **Query commands always rebuild in memory** rather than reading the committed index. §9.
 5. **Folding-rule matching (NFC + casefold) with `case-mismatch` warnings**; all paths NFC-normalized. §2, §6.
-6. **Assets are recorded (path-only)** so `![[embeds]]` can resolve; resolution tries notes first, then assets. §2, §6.2.
+6. **Assets are recorded (path-only)** so Markdown images and imported embeds can resolve; legacy resolution tries notes first, then assets. §2, §6.2.
 7. **Validate's tag checks cover frontmatter tags only**; inline `#tags` are informal. §10.2.
 8. **The template-placeholder exemption is per-value**, so real notes in `09_Templates/` (its README) stay fully checked. §10.3.
 9. **Warnings never block commits** (exit 2 passes the hook); only errors do. §10.4.
@@ -334,13 +334,13 @@ The two assignment rules require the value to be *entirely* quoted token charact
 ## 13. Future considerations (out of M5 scope)
 
 - Verifying heading/block fragments against the target's indexed headings.
-- Reference-style and multiline Markdown links remain future parser work; inline relative Markdown and legacy wikilinks are the current dual-format contract.
+- Reference-style and multiline Markdown links remain future parser work; inline source-relative Markdown is the maintained authoring contract, with legacy parsing retained only for imports.
 - Excluding HTML/`%%` comments from extraction.
 - ~~A `restricted/*`-aware output filter~~ — adopted 2026-08-11 (issue #17): tag-only `restricted/private`, index reduction in §8.3, `restricted-link` warning in §10.2. Still future: directory-based restriction and finer-grained values, revisited only if tag-only proves insufficient.
 
 ## 14. Curation signals (ops plan Phase 4)
 
-Detection lives in `brain`; the judgment lives in the `curate` skill; findings needing owner decisions land as Inbox proposals. Every tunable is a module constant in one block at the top of `brain.py` — `CURATE_MAX_LINES`/`CURATE_MAX_BYTES` (oversized), `CURATE_STALE_DAYS`, `EXPIRES_CAP_DAYS`, the exemption sets, and the `BOOTSTRAP_BUDGETS` map with `BOOTSTRAP_TOTAL_BUDGET`. Policy prose (TTL defaults, what's exempt and why) lives in [[00_Meta/CONVENTIONS]] § Expiration; the constants are authoritative for values.
+Detection lives in `brain`; the judgment lives in the `curate` skill; findings needing owner decisions land as Inbox proposals. Every tunable is a module constant in one block at the top of `brain.py` — `CURATE_MAX_LINES`/`CURATE_MAX_BYTES` (oversized), `CURATE_STALE_DAYS`, `EXPIRES_CAP_DAYS`, the exemption sets, and the `BOOTSTRAP_BUDGETS` map with `BOOTSTRAP_TOTAL_BUDGET`. Policy prose (TTL defaults, what's exempt and why) lives in [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Expiration; the constants are authoritative for values.
 
 - **`expires:`** — optional frontmatter date (`YYYY-MM-DD`). Malformed → `invalid-expires` error (§10.2). Present and past → **expired** (curate report only). More than `EXPIRES_CAP_DAYS` after `updated:` → **expires-beyond-cap**. Absent on a note that should carry one → **missing-expires**; exempt by path: `02_Inbox/` (zero-friction capture; assigned at triage), `02_Outbox/` (ephemeral packets; lifecycle is the archive path), `03_Journal/`, `07_Archives/`, `09_Templates/`, `10_Agents/solutions/`, the changelog, `00_Meta/STATUS.md`, and `CLAUDE.md`; exempt by type tag: `type/decision` (event records, via `EXPIRES_EXEMPT_TYPE_TAGS`). The orphan check uses the path exemptions only — a decision record still wants inbound links.
 - **oversized** — normalized size or line count over the constants; exempt `07_Archives/` and the changelog (frozen/append-only content is never a split candidate).
@@ -375,15 +375,15 @@ Top-level keys are registered here so later issues cannot collide:
 | Key | Status | Meaning |
 |-----|--------|---------|
 | `write_exceptions` | **implemented** | List of vault-relative directory paths agents may write to **in addition to** the Inbox-first defaults (`02_Inbox/`, `02_Outbox/`, `10_Agents/solutions/` — `AGENT_WRITE_DEFAULT_PREFIXES`). Config only ever widens the set; entries are normalized to a trailing `/`. The enforcement point is `agent_write_allowed(rel, config)`, for harness write-gates and skills; it also allows the built-in single-file exceptions in `AGENT_WRITE_DEFAULT_FILES` (append-only agent logs inside otherwise PR-only prefixes — currently `10_Agents/docs/rejected-proposals.md`, per conventions § Agent Write Rules). Session-scoped carve-outs (onboard-owner, agent-generated skills/tools per PRD §6.2) remain policy prose, not paths. |
-| `extension_trust` | **implemented** | VS Code extension trust policy (PRD §6.5): `first-party` (default) or `relaxed`. A documented override consumed by the editor docs ([[06_Resources/vscode-editor-support]]) — `brain` exposes the effective value via `extension_trust(config)` and `brain config`; it drives no `brain` behavior itself. |
-| `context` | **implemented** (#12) | Fork context recorded by [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]]'s specialization step: **one scalar**, `personal` (the default when absent) or `work`. Beyond parsing and reporting it — `vault_context(config)` and `brain config` expose the effective value — `brain` acts on it in no way yet: specialization happens at onboarding time by rewriting the periodic templates in `09_Templates/` in place from `09_Templates/variants/`, not at read time, so the key is a record for tooling and future skills, not a switch. |
+| `extension_trust` | **implemented** | VS Code extension trust policy (PRD §6.5): `first-party` (default) or `relaxed`. A documented override consumed by the editor docs ([vscode-editor-support](../../../06_Resources/vscode-editor-support.md)) — `brain` exposes the effective value via `extension_trust(config)` and `brain config`; it drives no `brain` behavior itself. |
+| `context` | **implemented** (#12) | Fork context recorded by [onboard-owner](../../skills/onboard-owner/SKILL.md)'s specialization step: **one scalar**, `personal` (the default when absent) or `work`. Beyond parsing and reporting it — `vault_context(config)` and `brain config` expose the effective value — `brain` acts on it in no way yet: specialization happens at onboarding time by rewriting the periodic templates in `09_Templates/` in place from `09_Templates/variants/`, not at read time, so the key is a record for tooling and future skills, not a switch. |
 | `environments` | reserved (#15) | — |
 | `modules` | reserved (#32) | — |
 | `provenance` | reserved (#18) | — |
 | `report` | **implemented** (#16) | Health-report thresholds (§16.4): a one-level nested mapping under `report:` whose subkeys are `stale_days` (stale-active threshold, default `30`) and `inbox_days` (Inbox triage-debt threshold, default `14`). Values are non-negative-integer scalars (digits only — §4.3 stores strings; `report_thresholds(config)` converts). A `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `brain report` only — never by `index`, and it moves no `validate` severity. |
 | `sync` | reserved (#26) | — |
 | `tasks` | **implemented** (#28) | Task-module settings (§17.4): a one-level nested mapping under `tasks:` whose sole subkey is `carry_over` (`on` \| `off`, default `on`) — whether daily-note instantiation carries yesterday's unchecked tasks into the new note's Backlog section (§17.5). `tasks_carry_over(config)` converts; a `null` value or absent subkey means the default; malformed values fall back to the default at read time while `check_config` reports them (§15.4). Consumed by `daily_note.py` only — never by `index`, and it moves no `validate` severity. |
-| `template_version` | **implemented** (#6) | Upstream template version record (issue #6): **one scalar**, a free-form version string (by convention the upstream release tag, e.g. `template-v1.2.0`), or absent when the fork has never recorded one. Written by the [[10_Agents/skills/sync-upstream/SKILL|sync-upstream]] skill after a completed sync; that skill compares the recorded value against upstream release tags to find pending releases. A record, not a switch — `template_version(config)` and `brain config` expose the effective value (`null` when unset); `brain` drives no behavior from it and it never influences `index` output. |
+| `template_version` | **implemented** (#6) | Upstream template version record (issue #6): **one scalar**, a free-form version string (by convention the upstream release tag, e.g. `template-v1.2.0`), or absent when the fork has never recorded one. Written by the [sync-upstream](../../skills/sync-upstream/SKILL.md) skill after a completed sync; that skill compares the recorded value against upstream release tags to find pending releases. A record, not a switch — `template_version(config)` and `brain config` expose the effective value (`null` when unset); `brain` drives no behavior from it and it never influences `index` output. |
 
 Reserved keys parse and are **tolerated silently** whatever their shape. **Unknown** keys (neither implemented nor reserved) are tolerated too — forward compatibility — at the cost of a validate **warning** (`config-unknown-key`), never an error.
 
@@ -423,7 +423,7 @@ Review-period scoping. `--since` restricts **exactly two** sections — **tag dr
 
 ## 17. Task tracking (`brain tasks`) — issue #28
 
-Markdown-native checkbox tasks, adopted 2026-08-11 per the accepted triage recommendation on issue #28: **Obsidian Tasks emoji grammar is the canonical inline metadata**, so Obsidian users get the native plugin experience with zero vault changes while `brain` answers the same queries on every other surface. The conventions entry ([[00_Meta/CONVENTIONS]] § Tasks) carries the human-facing emoji ↔ meaning table and the location rule: tasks live where their context lives (any note); there is no central task file.
+Markdown-native checkbox tasks, adopted 2026-08-11 per the accepted triage recommendation on issue #28: **Obsidian Tasks emoji grammar is the canonical inline metadata**, so Obsidian users get the native plugin experience with zero vault changes while `brain` answers the same queries on every other surface. The conventions entry ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Tasks) carries the human-facing emoji ↔ meaning table and the location rule: tasks live where their context lives (any note); there is no central task file.
 
 ### 17.1 Recognition
 
@@ -649,7 +649,7 @@ No flag is a read-only preview. The migrator scans tracked working-corpus notes,
 
 Placeholders stay unchanged and counted. Ambiguous paths/headings, unresolved targets/fragments, block refs, unsafe sources, stale ranges, and overlapping edits are blockers; a plan with any blocker is never writable. Rendering uses the resolved target rather than regex text: notes keep explicit `.md`, paths are relative to the source and URL-encoded, heading links use §6.4 slugs, aliases become escaped labels, self-headings stay fragment-only, and embeds become Markdown images with a meaningful alt label. Splicing operates on raw byte ranges, preserving UTF-8 BOM, LF/CRLF/mixed endings, final-newline state, unrelated bytes, and file mode.
 
-`--check` is read-only and exits 1 while **any legacy record** (placeholders included), edit, or blocker remains, otherwise 0. This makes it the WP9 zero-legacy acceptance gate rather than merely an automatic-edit-complete signal. `--json` exposes the same complete plan. Explicit `--write` is the only mutation mode; it reports that index/snippets/skill adapters require regeneration, leaving that generated-artifact step to the reviewed WP9 corpus commit.
+`--check` is read-only and exits 1 while **any legacy record** (placeholders included), edit, or blocker remains, otherwise 0. It is the zero-legacy acceptance gate rather than merely an automatic-edit-complete signal. `--json` exposes the same complete plan. Explicit `--write` is the only mutation mode; every successful write reports that the index, snippets, and skill adapters require immediate regeneration. The shipped corpus itself has zero legacy records; this command remains available for importing older vaults.
 
 ### 22.2 Write refusal and transaction
 

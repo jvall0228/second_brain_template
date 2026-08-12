@@ -13,10 +13,10 @@ Behavioral documentation for AI agents operating in this vault.
 
 ## Contents
 
-- [[10_Agents/docs/OPERATING-RULES|Operating Rules]]
-- [[10_Agents/docs/TASK-PATTERNS|Task Patterns]]
-- [[10_Agents/docs/rejected-proposals|Rejected Proposals]] — the [[10_Agents/skills/self-improve/SKILL|self-improve]] loop's append-only rejection memory
+- [Operating Rules](OPERATING-RULES.md)
+- [Task Patterns](TASK-PATTERNS.md)
+- [Rejected Proposals](rejected-proposals.md) — the [self-improve](../skills/self-improve/SKILL.md) loop's append-only rejection memory
 
 ## Related
 
-- [[10_Agents/README|Agents]] — Parent directory
+- [Agents](../README.md) — Parent directory

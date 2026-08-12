@@ -38,4 +38,4 @@ List the candidate options.
 
 ## Decision Record Link
 If this results in a decision, link to a decision record:
-- [[{{RELATED_DECISION_RECORD}}]]
+- [Related decision record]({{RELATED_DECISION_RECORD}})

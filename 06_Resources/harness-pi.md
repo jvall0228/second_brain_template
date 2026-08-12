@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives: Pi
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
 Pi is a deliberately minimal, "aggressively extensible" open-source terminal coding agent by Mario Zechner (badlogic, of libGDX fame), now maintained under [Earendil Inc.](https://pi.dev) with contributors (npm maintainers include Armin Ronacher); it lives in the [pi-mono monorepo](https://github.com/badlogic/pi-mono) (canonical org now `earendil-works`), ships as the CLI/TUI `@earendil-works/pi-coding-agent` (v0.84.1, 2026-08-07) plus an SDK and RPC mode — MIT-licensed and free, bring-your-own API keys. Its philosophy: four default tools, a tiny system prompt, and everything else (sub-agents, plan mode, permissions, MCP) pushed out to user-installable extensions.
 

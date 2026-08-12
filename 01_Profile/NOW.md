@@ -21,7 +21,7 @@ What you're focused on right now. Agents read this first to understand current p
 
 ## Active Projects
 
-- <!-- Name — one-line description. Link the project note, e.g. [[04_Projects/example-project/README]] — delete once you've seen the pattern -->
+- <!-- Name — one-line description. Link the project note, e.g. [README](../04_Projects/example-project/README.md) — delete once you've seen the pattern -->
 
 ## Key Dates / Deadlines
 

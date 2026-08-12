@@ -15,7 +15,7 @@ author: codex
 
 ## Purpose
 
-Define one research-grounded contract for resolving every **Ready** issue in GitHub Project 3. The derived sequence is in [[02_Inbox/2026-08-11-ready-backlog-implementation-plan]]. This proposal does not authorize protected-note edits.
+Define one research-grounded contract for resolving every **Ready** issue in GitHub Project 3. The derived sequence is in [2026-08-11-ready-backlog-implementation-plan](2026-08-11-ready-backlog-implementation-plan.md). This proposal does not authorize protected-note edits.
 
 ## Scope and rebaseline
 

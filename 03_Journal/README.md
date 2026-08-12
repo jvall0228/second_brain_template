@@ -18,9 +18,9 @@ The key distinction: **Journal is subjective** (your perspective), **Resources a
 Ask: **"Is this my perspective, understanding, or experience?"**
 
 - **Yes** — It's a Journal entry. Put it here.
-- **No, it's shareable reference material** — It's a Resource. See [[06_Resources/README]].
-- **No, it has a specific outcome and deadline** — It's a Project. See [[04_Projects/README]].
-- **No, it's an ongoing responsibility** — It's an Area. See [[05_Areas/README]].
+- **No, it's shareable reference material** — It's a Resource. See [README](../06_Resources/README.md).
+- **No, it has a specific outcome and deadline** — It's a Project. See [README](../04_Projects/README.md).
+- **No, it's an ongoing responsibility** — It's an Area. See [README](../05_Areas/README.md).
 
 ## Structure
 
@@ -41,10 +41,10 @@ Ask: **"Is this my perspective, understanding, or experience?"**
 
 ## Related
 
-- [[00_Meta/INDEX]] — Full vault map
-- [[03_Journal/periodic/README|Periodic Notes]] — Time-based journal hub
-- [[09_Templates/template-daily-log]] — Template for daily entries
-- [[09_Templates/template-weekly-review]] — Template for weekly reviews
-- [[09_Templates/template-monthly-review]] — Template for monthly reviews
-- [[09_Templates/template-quarterly-review]] — Template for quarterly reviews
-- [[09_Templates/template-yearly-review]] — Template for yearly reviews
+- [INDEX](../00_Meta/INDEX.md) — Full vault map
+- [Periodic Notes](periodic/README.md) — Time-based journal hub
+- [template-daily-log](../09_Templates/template-daily-log.md) — Template for daily entries
+- [template-weekly-review](../09_Templates/template-weekly-review.md) — Template for weekly reviews
+- [template-monthly-review](../09_Templates/template-monthly-review.md) — Template for monthly reviews
+- [template-quarterly-review](../09_Templates/template-quarterly-review.md) — Template for quarterly reviews
+- [template-yearly-review](../09_Templates/template-yearly-review.md) — Template for yearly reviews

@@ -33,4 +33,4 @@ deadlines), **Areas** (ongoing responsibilities), **Resources** (topics of inter
 
 ## Related
 
-- [[00_Meta/CONVENTIONS]] — How this vault applies PARA
+- [CONVENTIONS](../00_Meta/CONVENTIONS.md) — How this vault applies PARA

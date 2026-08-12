@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives: Codex
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
 Codex is OpenAI's coding/general agent, maintained by OpenAI, spanning a terminal CLI (open-source, [Apache-2.0, Rust](https://github.com/openai/codex), `npm install -g @openai/codex` / `brew install --cask codex`), an IDE extension (VS Code + Cursor/Windsurf, with separate Xcode and JetBrains integrations), Codex cloud/web tasks, and the ChatGPT desktop app; usage is bundled with ChatGPT Plus/Pro/Business/Edu/Enterprise plans or paid via API key. As of 2026 the official docs live at [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (developers.openai.com/codex 308-redirects there).
 

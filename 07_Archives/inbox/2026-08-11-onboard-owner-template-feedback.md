@@ -14,9 +14,9 @@ session: onboarding-2026-08-11
 
 # Onboard-owner template feedback — 2026-08-11 dry run
 
-Owner feedback from a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]] dry run (Cursor, vault `second_brain_test`). Capture for template / skill updates — not owner profile content.
+Owner feedback from a live [onboard-owner](../../10_Agents/skills/onboard-owner/SKILL.md) dry run (Cursor, vault `second_brain_test`). Capture for template / skill updates — not owner profile content.
 
-**Triaged:** see [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements|the resulting requirements (R1–R5)]] and [[07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan|implementation plan]] — executed against [[10_Agents/skills/onboard-owner/SKILL]] on branch `onboard-owner/adaptive-interview`.
+**Triaged:** see [the resulting requirements (R1–R5)](2026-08-11-onboard-owner-adaptive-interview-requirements.md) and [implementation plan](2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md) — executed against [SKILL](../../10_Agents/skills/onboard-owner/SKILL.md) on branch `onboard-owner/adaptive-interview`.
 
 ## Feedback
 
@@ -32,7 +32,7 @@ Owner feedback from a live [[10_Agents/skills/onboard-owner/SKILL|onboard-owner]
 - Owner new to notes apps / Obsidian
 - Preferences settled on explanatory tone + CTAs + recommend-options-when-asking
 - Automations / heavy wiring deferred (dry run)
-- Related skill: [[10_Agents/skills/onboard-owner/SKILL]]
+- Related skill: [SKILL](../../10_Agents/skills/onboard-owner/SKILL.md)
 - Requirements history pointer in skill: `07_Archives/inbox/2026-08-11-onboard-owner-skill-requirements.md`
 
 ## Suggested triage

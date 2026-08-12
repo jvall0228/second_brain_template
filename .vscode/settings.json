@@ -24,9 +24,9 @@
   },
 
   // --- Built-in markdown engine (no extension required) ---
-  // Validate standard markdown links and flag ones that point nowhere.
-  // [[Wikilinks]] are not parsed by VS Code and are neither validated nor
-  // flagged here — `brain links` / `brain validate` remain authoritative.
+  // Validate the vault's canonical source-relative Markdown links and offer
+  // path completions. `brain validate` additionally checks fragments,
+  // ambiguity, URL encoding, exact case, and the zero-legacy contract.
   "markdown.validate.enabled": true,
   "markdown.suggest.paths.enabled": true,
   // Pasting/dropping an image into a note files it under 08_Assets/,

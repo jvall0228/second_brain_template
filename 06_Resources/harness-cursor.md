@@ -11,7 +11,7 @@ expires: 2026-11-11
 
 # Harness Primitives: Cursor
 
-Part of the [[06_Resources/harness-primitives-research|harness primitives research]] (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
+Part of the [harness primitives research](harness-primitives-research.md) (2026-08-11) — see it for the cross-harness overlap matrix and comparative findings. Surfaces move fast; re-verify against the sources below before relying on specifics.
 
 Cursor (Anysphere) is a proprietary AI-first code editor (VS Code fork) with a terminal CLI (`agent`, installed via `curl https://cursor.com/install`), a web/mobile surface for [Cloud Agents](https://cursor.com/docs/cloud-agent) (cursor.com/agents, iOS app), and dashboard-managed [Automations](https://cursor.com/docs/automations); subscription-based, with Cloud Agents billed at API pricing for the selected model.
 

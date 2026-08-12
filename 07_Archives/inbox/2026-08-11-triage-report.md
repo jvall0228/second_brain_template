@@ -10,7 +10,7 @@ updated: 2026-08-11
 
 # Inbox Triage Report — 2026-08-11
 
-Owner-requested triage of the four notes in `02_Inbox/` (README excluded). Per [[10_Agents/skills/triage-inbox/SKILL|the triage skill]], these are **proposals** — moves happen only after explicit approval.
+Owner-requested triage of the four notes in `02_Inbox/` (README excluded). Per [the triage skill](../../10_Agents/skills/triage-inbox/SKILL.md), these are **proposals** — moves happen only after explicit approval.
 
 ## Proposals
 

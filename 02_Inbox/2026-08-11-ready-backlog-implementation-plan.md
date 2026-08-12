@@ -15,7 +15,7 @@ author: codex
 
 ## Objective and authority
 
-Resolve issues #4, #15, #21, #23, #71, #72, #73, #74, #75, #78, #79, #81, #82, #83, and #84 from the approved contract in [[02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm]]. Ready PR #80 and non-Ready items are excluded.
+Resolve issues #4, #15, #21, #23, #71, #72, #73, #74, #75, #78, #79, #81, #82, #83, and #84 from the approved contract in [2026-08-11-ready-backlog-requirements-brainstorm](2026-08-11-ready-backlog-requirements-brainstorm.md). Ready PR #80 and non-Ready items are excluded.
 
 This plan is review-gated because it proposes protected canonical changes, core renames, and a link-format migration. Approval authorizes only the repository work listed here. Real credentials/destinations, repository visibility, PATH/shell choices, and user-global installation retain explicit owner gates.
 

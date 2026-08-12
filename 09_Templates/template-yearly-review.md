@@ -83,4 +83,4 @@ How was your sleep this year? Anything out of the ordinary? What contributed to 
 
 ## Links to Quarterly Notes
 
-- [[{{RELATED_QUARTERLY_REVIEW}}]]
+- [Related quarterly review]({{RELATED_QUARTERLY_REVIEW}})

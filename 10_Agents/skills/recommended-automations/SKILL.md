@@ -17,7 +17,7 @@ expires: 2027-08-11
 Turn recurring vault operations into scheduled flows the owner doesn't have to remember. Two families:
 
 1. **Inbound flows** — external sources captured into the vault (email, calendar, chat, transcripts).
-2. **Rhythm jobs** — headless invocations of the vault's own skills on cadence. **Source of truth: the cadence table in [[10_Agents/skills/README]] § The Rhythm** — this skill wires that table, never a private copy of it.
+2. **Rhythm jobs** — headless invocations of the vault's own skills on cadence. **Source of truth: the cadence table in [README](../README.md) § The Rhythm** — this skill wires that table, never a private copy of it.
 
 ## Ground rules
 
@@ -71,6 +71,6 @@ Document each wired flow in the harness's context (what runs, when, writing what
 
 ## References
 
-- [[10_Agents/skills/README]] § The Rhythm — the cadence table rhythm jobs implement
+- [README](../README.md) § The Rhythm — the cadence table rhythm jobs implement
 - `10_Agents/skills/inbox-capture/SKILL.md` — the write rules every inbound flow obeys
 - `10_Agents/harnesses/<name>/wiring.md` — per-harness invocation detail
