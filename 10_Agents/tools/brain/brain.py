@@ -42,6 +42,12 @@ INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
 AYMT_RELPATH = "00_Meta/AYMT.md"
 AYMT_SCHEMA_VERSION = 1
 AYMT_MARKER = "<!-- generated-by: brain aymt v1; do not edit -->"
+HOME_RELPATH = "00_Meta/HOME.md"
+HOME_SCHEMA_VERSION = 1
+HOME_MARKER = "<!-- generated-by: brain home v1; do not edit -->"
+HOME_FIELD_LIMIT = 240
+HOME_TASK_CAP = 5
+HOME_ACTIVE_CAP = 8
 AYMT_SECTION_CAPS = {"do-next": 3, "unblock-or-decide": 2, "keep-warm": 2}
 AYMT_FIELD_LIMIT = 240
 AYMT_SOURCE_LIMIT = 3
@@ -3123,7 +3129,7 @@ def scan_secrets(root: Path, paths: list[str]) -> list[dict]:
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*\.md$")
 PERIODIC_RE = re.compile(r"^\d{4}-(W\d{2}|Q\d)-review\.md$")
 NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md"}
-EXACT_NOTE_PATH_EXCEPTIONS = frozenset({AYMT_RELPATH})
+EXACT_NOTE_PATH_EXCEPTIONS = frozenset({AYMT_RELPATH, HOME_RELPATH})
 FM_WARNING_RULES = {"tags-not-a-list"}
 SKILLS_PREFIX = "10_Agents/skills/"
 
@@ -5524,6 +5530,10 @@ class AymtError(RuntimeError):
     """Stable, privacy-safe refusal at the AYMT CLI boundary."""
 
 
+class HomeError(RuntimeError):
+    """Stable, privacy-safe refusal at the Home CLI boundary."""
+
+
 def _aymt_text(value: object, *, limit: int = AYMT_FIELD_LIMIT) -> str:
     """Single-line, bounded text safe for JSON and Markdown."""
     text = nfc(" ".join(str(value if value is not None else "").split()))
@@ -5701,7 +5711,7 @@ def _select_aymt_candidates(candidates: list[dict]) -> tuple[list[dict], dict]:
 
 def _aymt_note_allowed(rel: str, rec: dict, restricted_paths: set[str]) -> bool:
     if (
-        rel in {AYMT_RELPATH, "00_Meta/HOME.md"}
+        rel in {AYMT_RELPATH, HOME_RELPATH}
         or rel.startswith(("07_Archives/", "09_Templates/", ENVIRONMENTS_RELPATH + "/"))
         or rel in restricted_paths
     ):
@@ -5711,12 +5721,11 @@ def _aymt_note_allowed(rel: str, rec: dict, restricted_paths: set[str]) -> bool:
     return not any(link.get("resolved") in restricted_paths for link in rec.get("links", []))
 
 
-def _aymt_seed_paths(root: Path) -> tuple[str, ...]:
-    """Manifest-owned examples never become owner action candidates."""
+def _aymt_seed_paths(raw: bytes) -> tuple[str, ...]:
+    """Parse the authenticated manifest-owned example inventory."""
     try:
-        raw = _read_nofollow_bytes(root, ADOPT_EXAMPLES_RELPATH, max_bytes=64 * 1024)
         data = json.loads(raw.decode("utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+    except (UnicodeError, json.JSONDecodeError, ValueError):
         raise AymtError("seed inventory is unavailable") from None
     delete = data.get("delete") if isinstance(data, dict) else None
     if (
@@ -5987,17 +5996,15 @@ def _load_aymt_github_input(path: str | None, stdin, as_of: date) -> list[dict]:
     return rows
 
 
-def _aymt_environment(root: Path, selection: dict) -> dict:
+def _aymt_environment(selection: dict, raw: bytes | None) -> dict:
     if selection["state"] == "unconfigured":
         return {"freshness": None, "slug": None, "source": "none", "state": "unconfigured"}
     slug = selection.get("slug")
-    if not _valid_environment_slug(slug):
+    if not _valid_environment_slug(slug) or raw is None:
         raise AymtError("current environment metadata is unavailable")
-    rel = f"{ENVIRONMENTS_RELPATH}/{slug}/{ENVIRONMENT_MANIFEST_NAME}"
     try:
-        raw = _read_nofollow_bytes(root, rel, max_bytes=64 * 1024)
         manifest = json.loads(raw.decode("utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+    except (UnicodeError, json.JSONDecodeError, ValueError):
         raise AymtError("current environment metadata is unavailable") from None
     if validate_environment_manifest(manifest, slug):
         raise AymtError("current environment metadata is unavailable")
@@ -6017,60 +6024,24 @@ def build_aymt(
     selection: dict | None = None,
     github_input: str | None = None,
     stdin=None,
+    _context: dict | None = None,
 ) -> dict:
     """Build a deterministic, tracked-corpus-only and privacy-filtered brief."""
     today_d = today_d or today()
     stdin = stdin or sys.stdin
-    try:
-        selected = selection or select_aymt_environment(root)
-    except EnvironmentSelectionError:
-        raise AymtError("current environment selection is unavailable") from None
-    tracked = git_tracked(root)
-    if tracked is None:
-        # index_corpus() has a useful working-tree fallback for interactive
-        # indexing, but AYMT is a committed privacy-sensitive snapshot. It may
-        # never expand its input universe when Git discovery is unavailable.
-        raise AymtError("tracked AYMT corpus is unavailable")
-    if selected["state"] == "selected":
-        manifest_rel = f"{ENVIRONMENTS_RELPATH}/{selected['slug']}/{ENVIRONMENT_MANIFEST_NAME}"
-        if manifest_rel not in tracked:
-            raise AymtError("selected environment metadata is not tracked")
-    environment = _aymt_environment(root, selected)
-    notes, assets = walk_corpus(root, selected_environment=None)
-    environment_prefix = ENVIRONMENTS_RELPATH + "/"
-    notes = [
-        rel for rel in notes
-        if rel in tracked and not rel.startswith(environment_prefix)
-    ]
-    assets = [
-        rel for rel in assets
-        if rel in tracked and not rel.startswith(environment_prefix)
-    ]
-    # Authenticate every shared note exactly once. Privacy classification,
-    # link restriction, and all body-derived candidates consume these same
-    # immutable bytes; a later path swap cannot change classification or leak.
-    note_snapshots: dict[str, bytes | None] = {}
-    snapshot_texts: dict[str, str | None] = {}
-    for rel in notes:
+    if _context is None:
         try:
-            raw = _read_nofollow_bytes(root, rel)
-        except OSError:
-            raw = None
-        note_snapshots[rel] = raw
-        snapshot_texts[rel] = None if raw is None else _decode_note_bytes(raw)[0]
-    # Environment note bodies are removed before indexing; selected
-    # environment contribution is the validated metadata envelope above.
-    index = build_index(root, notes, assets, note_snapshots=note_snapshots)
-    restricted_paths = {
-        rel for rel, rec in index["notes"].items() if is_restricted(rec)
-    }
-    seed_paths = _aymt_seed_paths(root)
-    allowed = {
-        rel: rec
-        for rel, rec in index["notes"].items()
-        if _aymt_note_allowed(rel, rec, restricted_paths)
-        and not _aymt_is_seed_path(rel, seed_paths)
-    }
+            selected = selection or select_aymt_environment(root)
+        except EnvironmentSelectionError:
+            raise AymtError("current environment selection is unavailable") from None
+        _context = _build_action_context(root, today_d, selected)
+    context = _context
+    environment = context["environment"]
+    note_snapshots = context["snapshots"]
+    snapshot_texts = context["snapshotTexts"]
+    index = context["index"]
+    allowed = context["allowed"]
+    safe_report = context["report"]
     candidates: list[dict] = []
     now_rel = CORE_FRAMEWORK_PATHS["now"]
     if now_rel in allowed:
@@ -6251,27 +6222,6 @@ def build_aymt(
                 staleness=min(4, max(0, (today_d - iso_date(rec.get("updated"))).days // 30)) if iso_date(rec.get("updated")) else 0,
             )
         )
-    # Recompute backlinks over only the allowed source/target universe. A
-    # restricted, seeded, or otherwise excluded note must not influence safe
-    # report debt merely by linking to an allowed note.
-    safe_notes = {
-        rel: {**rec, "backlinks": []}
-        for rel, rec in allowed.items()
-    }
-    for source, rec in safe_notes.items():
-        for link in rec.get("links", []):
-            target = link.get("resolved")
-            if target in safe_notes and source not in safe_notes[target]["backlinks"]:
-                safe_notes[target]["backlinks"].append(source)
-    for rec in safe_notes.values():
-        rec["backlinks"].sort()
-    config, _findings = load_config(root)
-    safe_report = compute_report(
-        {**index, "notes": safe_notes},
-        today_d,
-        report_thresholds(config),
-        None,
-    )
     inbox_paths = [
         rel for rel in sorted(allowed)
         if rel.startswith(INBOX_PREFIX) and rel != "02_Inbox/README.md"
@@ -6442,6 +6392,560 @@ def render_aymt(payload: dict) -> bytes:
     return provisional.replace(b'content-digest: "PENDING"', f'content-digest: "{content_digest}"'.encode())
 
 
+# ---------------------------------------------------------------------------
+# §24 Home
+
+
+def _revalidate_action_context(root: Path, context: dict) -> None:
+    """Refuse if the tracked universe or any consumed authority changed."""
+    current_tracked = git_tracked(root)
+    if current_tracked is None or current_tracked != context["tracked"]:
+        raise AymtError("tracked action corpus changed")
+    for rel, snapshot in sorted(context["authoritySnapshots"].items()):
+        try:
+            current = _read_nofollow_bytes(
+                root, rel, max_bytes=snapshot["maxBytes"]
+            )
+        except OSError:
+            raise AymtError("tracked action authority changed") from None
+        if current != snapshot["bytes"]:
+            raise AymtError("tracked action authority changed")
+    for rel, expected in sorted(context["freshnessSnapshots"].items()):
+        if expected is None:
+            try:
+                _read_nofollow_bytes(root, rel)
+            except OSError:
+                continue
+            raise AymtError("tracked action source changed")
+        try:
+            current = _read_nofollow_bytes(root, rel)
+        except OSError:
+            raise AymtError("tracked action source changed") from None
+        if current != expected:
+            raise AymtError("tracked action source changed")
+
+
+def _home_validation_summary(allowed: dict[str, dict]) -> dict:
+    """Bounded rule/count signal over only safe authenticated note records."""
+    counts: dict[tuple[str, str], int] = {}
+
+    def add(severity: str, rule: str, amount: int = 1) -> None:
+        counts[(severity, rule)] = counts.get((severity, rule), 0) + amount
+
+    for rel, rec in allowed.items():
+        fm = rec.get("frontmatter", {})
+        frontmatter_errors = rec.get("frontmatterErrors", [])
+        if rel != "CLAUDE.md":
+            for finding in frontmatter_errors:
+                rule = finding.split(":", 1)[0]
+                add("warning" if rule in FM_WARNING_RULES or rule == "duplicate-key" else "error", rule)
+            if not frontmatter_errors:
+                if not fm:
+                    add("error", "missing-frontmatter")
+                else:
+                    if rec.get("title") is None:
+                        add("error", "missing-title")
+                    tags = fm.get("tags")
+                    if tags is None or tags == []:
+                        add("error", "missing-tags")
+                    if "updated" not in fm:
+                        add("error", "missing-updated")
+        for task in rec.get("tasks", []):
+            if task.get("malformed"):
+                add("warning", "task-invalid-date", len(task["malformed"]))
+        for link in rec.get("links", []):
+            if link.get("placeholder"):
+                continue
+            status = link.get("resolution", {}).get("status")
+            if link.get("resolved") is None:
+                add("error", "ambiguous-link" if status == "ambiguous" else "unresolved-link")
+            if status == "unsupported-block-reference":
+                add("warning", "unsupported-block-reference")
+            if any(value in {"case-mismatch", "fragment-case-mismatch"} for value in link.get("warnings", [])):
+                add("warning", "case-mismatch")
+    rows = [
+        {"count": count, "rule": rule, "severity": severity}
+        for (severity, rule), count in sorted(counts.items())
+    ]
+    return {
+        "errors": sum(row["count"] for row in rows if row["severity"] == "error"),
+        "rules": rows[:12],
+        "truncatedRules": max(0, len(rows) - 12),
+        "warnings": sum(row["count"] for row in rows if row["severity"] == "warning"),
+    }
+
+
+def _home_safe_index_fresh(
+    committed: bytes | None,
+    freshness_index: dict,
+) -> bool:
+    """Compare the complete privacy-reduced tracked index by canonical bytes."""
+    return (
+        committed is not None
+        and committed == serialize(reduce_restricted(freshness_index))
+    )
+
+
+def _build_action_context(root: Path, today_d: date, selection: dict) -> dict:
+    """One authenticated tracked snapshot shared by AYMT and Home."""
+    tracked_paths = git_tracked(root)
+    if tracked_paths is None:
+        raise AymtError("tracked action corpus is unavailable")
+    tracked = frozenset(tracked_paths)
+    if ADOPT_EXAMPLES_RELPATH not in tracked:
+        raise AymtError("tracked seed inventory is unavailable")
+    manifest_rel = None
+    if selection["state"] == "selected":
+        manifest_rel = f"{ENVIRONMENTS_RELPATH}/{selection['slug']}/{ENVIRONMENT_MANIFEST_NAME}"
+        if manifest_rel not in tracked:
+            raise AymtError("selected environment metadata is not tracked")
+    authority_snapshots: dict[str, dict[str, object]] = {}
+
+    def authority(rel: str, max_bytes: int) -> bytes:
+        try:
+            raw = _read_nofollow_bytes(root, rel, max_bytes=max_bytes)
+        except OSError:
+            raise AymtError("tracked action authority is unavailable") from None
+        authority_snapshots[rel] = {"bytes": raw, "maxBytes": max_bytes}
+        return raw
+
+    try:
+        seed_raw = authority(ADOPT_EXAMPLES_RELPATH, 64 * 1024)
+        manifest_raw = (
+            authority(manifest_rel, 64 * 1024) if manifest_rel is not None else None
+        )
+        environment = _aymt_environment(selection, manifest_raw)
+        seed_paths = _aymt_seed_paths(seed_raw)
+    except AymtError:
+        raise
+    notes, assets = walk_corpus(root, selected_environment=None)
+    environment_prefix = ENVIRONMENTS_RELPATH + "/"
+    # Keep every tracked pathname in the resolver universe so safe links to an
+    # excluded target do not become false unresolved-health findings. Capture
+    # the complete shared-note snapshot once for the generic committed-index
+    # freshness bit, but decode only eligible bytes into the action context.
+    notes = sorted(rel for rel in notes if rel in tracked)
+    assets = sorted(
+        rel for rel in assets
+        if rel in tracked
+    )
+    snapshots: dict[str, bytes | None] = {}
+    snapshot_texts: dict[str, str | None] = {}
+    freshness_snapshots: dict[str, bytes | None] = {}
+    for rel in notes:
+        try:
+            raw = _read_nofollow_bytes(root, rel)
+        except OSError:
+            raw = None
+        freshness_snapshots[rel] = raw
+        if (
+            rel.startswith(environment_prefix)
+            or rel in {AYMT_RELPATH, HOME_RELPATH}
+            or _aymt_is_seed_path(rel, seed_paths)
+        ):
+            snapshots[rel] = None
+            snapshot_texts[rel] = None
+            continue
+        snapshots[rel] = raw
+        snapshot_texts[rel] = (
+            None if snapshots[rel] is None else _decode_note_bytes(snapshots[rel])[0]
+        )
+    index = build_index(root, notes, assets, note_snapshots=snapshots)
+    freshness_index = build_index(
+        root, notes, assets, note_snapshots=freshness_snapshots
+    )
+    restricted = {rel for rel, rec in index["notes"].items() if is_restricted(rec)}
+    allowed = {
+        rel: rec
+        for rel, rec in index["notes"].items()
+        if snapshots.get(rel) is not None
+        and _aymt_note_allowed(rel, rec, restricted)
+    }
+    safe_notes = {rel: {**rec, "backlinks": []} for rel, rec in allowed.items()}
+    for source, rec in safe_notes.items():
+        for link in rec.get("links", []):
+            target = link.get("resolved")
+            if target in safe_notes and source not in safe_notes[target]["backlinks"]:
+                safe_notes[target]["backlinks"].append(source)
+    for rec in safe_notes.values():
+        rec["backlinks"].sort()
+    if CONFIG_RELPATH in tracked:
+        try:
+            config_text = authority(CONFIG_RELPATH, 64 * 1024).decode("utf-8")
+        except UnicodeError:
+            raise AymtError("tracked action config is unavailable") from None
+        config, _findings = parse_config(config_text)
+    else:
+        config, _findings = {}, []
+    committed_index = (
+        authority(INDEX_RELPATH, 4 * 1024 * 1024)
+        if INDEX_RELPATH in tracked
+        else None
+    )
+    report = compute_report(
+        {**index, "notes": safe_notes}, today_d, report_thresholds(config), None
+    )
+    return {
+        "allowed": allowed,
+        "authoritySnapshots": authority_snapshots,
+        "environment": environment,
+        "index": index,
+        "indexFresh": _home_safe_index_fresh(committed_index, freshness_index),
+        "report": report,
+        "freshnessSnapshots": freshness_snapshots,
+        "snapshots": snapshots,
+        "snapshotTexts": snapshot_texts,
+        "tracked": tracked,
+        "validation": _home_validation_summary(allowed),
+    }
+
+
+def _home_path_row(rel: str, rec: dict) -> dict:
+    return {
+        "path": rel,
+        "title": _aymt_text(rec.get("title") or rel.rsplit("/", 1)[-1], limit=HOME_FIELD_LIMIT),
+        "updated": rec.get("updated"),
+    }
+
+
+def _home_review_rows(today_d: date, allowed: dict[str, dict]) -> list[dict]:
+    iso_year, iso_week, _iso_day = today_d.isocalendar()
+    quarter = (today_d.month - 1) // 3 + 1
+    current = (
+        ("daily", f"03_Journal/periodic/daily/{today_d.isoformat()}.md", "Today's daily log"),
+        ("weekly", f"03_Journal/periodic/weekly/{iso_year}-W{iso_week:02d}-review.md", "Current weekly review"),
+        ("monthly", f"03_Journal/periodic/monthly/{today_d.year}-{today_d.month:02d}-review.md", "Current monthly review"),
+        ("quarterly", f"03_Journal/periodic/quarterly/{today_d.year}-Q{quarter}-review.md", "Current quarterly review"),
+        ("yearly", f"03_Journal/periodic/yearly/{today_d.year}-review.md", "Current yearly review"),
+    )
+    rows: list[dict] = []
+    for cadence, rel, label in current:
+        if rel not in allowed:
+            continue
+        rows.append(
+            {
+                "caveat": "This records the current period; inspect the note before treating it as complete.",
+                "nextStep": "Open the tracked note and continue or review its recorded cadence.",
+                "outcome": label,
+                "sources": [_aymt_source(rel, label)],
+                "state": "present",
+                "whyNow": f"The safe tracked {cadence} note for the current period exists.",
+            }
+        )
+    for row in _aymt_cadence_candidates(today_d, set(allowed)):
+        rows.append(
+            {
+                "caveat": row["caveat"],
+                "nextStep": row["nextStep"],
+                "outcome": row["outcome"],
+                "sources": row["sources"],
+                "state": "due",
+                "whyNow": row["whyNow"],
+            }
+        )
+    return rows
+
+
+def build_home(
+    root: Path,
+    *,
+    today_d: date | None = None,
+    selection: dict | None = None,
+    github_input: str | None = None,
+    stdin=None,
+) -> dict:
+    """Build Home from structured AYMT plus one safe tracked corpus snapshot."""
+    today_d = today_d or today()
+    stdin = stdin or sys.stdin
+    try:
+        selected = selection or select_aymt_environment(root)
+        context = _build_action_context(root, today_d, selected)
+        aymt = build_aymt(
+            root,
+            today_d=today_d,
+            selection=selected,
+            github_input=github_input,
+            stdin=stdin,
+            _context=context,
+        )
+    except (AymtError, EnvironmentSelectionError):
+        raise HomeError("Home inputs are unavailable") from None
+    allowed = context["allowed"]
+    report = context["report"]
+
+    global_actions = sorted(
+        aymt["candidates"],
+        key=lambda row: (
+            -row["score"],
+            -row["signals"]["urgency"],
+            -row["signals"]["leverage"],
+            row["signals"]["effort"],
+            row["signals"]["dependency"],
+            row["id"],
+        ),
+    )
+    actions = global_actions[:3]
+
+    overdue: list[dict] = []
+    due: list[dict] = []
+    for rel, rec in sorted(allowed.items()):
+        for task in rec.get("tasks", []):
+            if task.get("status") != "open" or task.get("malformed"):
+                continue
+            due_d = iso_date(task.get("due"))
+            if due_d is None:
+                continue
+            row = {
+                "due": due_d.isoformat(),
+                "line": task["line"],
+                "path": rel,
+                "text": _aymt_text(task.get("text"), limit=HOME_FIELD_LIMIT),
+            }
+            (overdue if due_d < today_d else due).append(row)
+    overdue.sort(key=lambda row: (row["due"], row["path"], row["line"]))
+    due.sort(key=lambda row: (row["due"], row["path"], row["line"]))
+
+    inbox_paths = [
+        rel for rel in sorted(allowed)
+        if rel.startswith(INBOX_PREFIX) and rel != "02_Inbox/README.md"
+    ]
+    inbox_rows = []
+    for bucket in REPORT_BUCKET_LABELS:
+        inbox_rows.extend(report["inboxAging"]["buckets"][bucket])
+    inbox_rows.sort(
+        key=lambda row: (
+            -(row["ageDays"] if row["ageDays"] is not None else -1),
+            row["path"],
+        )
+    )
+    active_projects = [
+        _home_path_row(rel, rec)
+        for rel, rec in sorted(allowed.items())
+        if rel.startswith("04_Projects/") and "status/active" in frontmatter_tags(rec)
+    ][:HOME_ACTIVE_CAP]
+    active_areas = [
+        _home_path_row(rel, rec)
+        for rel, rec in sorted(allowed.items())
+        if rel.startswith("05_Areas/") and "status/active" in frontmatter_tags(rec)
+    ][:HOME_ACTIVE_CAP]
+
+    review_rows = _home_review_rows(today_d, allowed)
+
+    current_paths = []
+    for rel, label in (
+        (CORE_FRAMEWORK_PATHS["now"], "Now"),
+        (CORE_FRAMEWORK_PATHS["status"], "Status"),
+        (CORE_FRAMEWORK_PATHS["changelog"], "Changelog"),
+    ):
+        if rel in allowed:
+            current_paths.append({"label": label, "path": rel, "updated": allowed[rel].get("updated")})
+
+    expired = []
+    near_expiry = []
+    for rel, rec in sorted(allowed.items()):
+        expires_d = iso_date(rec.get("frontmatter", {}).get("expires"))
+        if expires_d is None:
+            continue
+        row = {"expires": expires_d.isoformat(), "path": rel, "title": rec.get("title")}
+        if expires_d < today_d:
+            expired.append(row)
+        elif (expires_d - today_d).days <= 14:
+            near_expiry.append(row)
+    expired.sort(key=lambda row: (row["expires"], row["path"]))
+    near_expiry.sort(key=lambda row: (row["expires"], row["path"]))
+
+    navigation = [
+        {"label": "Vault index", "path": CORE_FRAMEWORK_PATHS["index"]},
+        {"label": "Actions You May Take", "path": AYMT_RELPATH},
+    ]
+    for rel, label in (
+        (CORE_FRAMEWORK_PATHS["now"], "Now"),
+        ("02_Inbox/README.md", "Inbox"),
+        ("04_Projects/README.md", "Projects"),
+        ("05_Areas/README.md", "Areas"),
+        (CORE_FRAMEWORK_PATHS["status"], "Status"),
+        (CORE_FRAMEWORK_PATHS["changelog"], "Changelog"),
+    ):
+        if rel in allowed:
+            navigation.append({"label": label, "path": rel})
+
+    inputs = {
+        "actions": actions,
+        "active": {"areas": active_areas, "projects": active_projects},
+        "aymt": {"inputDigest": aymt["inputDigest"], "summary": aymt["summary"]},
+        "current": current_paths,
+        "date": today_d.isoformat(),
+        "environment": context["environment"],
+        "health": {
+            "expired": expired[:HOME_ACTIVE_CAP],
+            "expiredCount": len(expired),
+            "index": {"fresh": context["indexFresh"], "scope": "tracked-safe"},
+            "nearExpiry": near_expiry[:HOME_ACTIVE_CAP],
+            "nearExpiryCount": len(near_expiry),
+            "orphanCount": len(report["orphans"]),
+            "staleActive": report["staleActive"][:HOME_ACTIVE_CAP],
+            "staleActiveCount": len(report["staleActive"]),
+            "unresolvedLinkCount": report["unresolvedLinks"]["count"],
+            "validation": context["validation"],
+        },
+        "inbox": {
+            "count": len(inbox_paths),
+            "oldest": inbox_rows[:HOME_TASK_CAP],
+            "triageDebt": len(report["inboxAging"]["triageDebt"]),
+        },
+        "navigation": navigation,
+        "reviews": review_rows,
+        "schemaVersion": HOME_SCHEMA_VERSION,
+        "tasks": {"due": due[:HOME_TASK_CAP], "overdue": overdue[:HOME_TASK_CAP]},
+    }
+    payload = {**inputs, "inputDigest": _sha256_bytes(_canonical_json(inputs))}
+    try:
+        _revalidate_action_context(root, context)
+    except AymtError:
+        raise HomeError("Home inputs are unavailable") from None
+    return payload
+
+
+def _home_link(source: str, target: str, label: str) -> str:
+    destination = _aymt_relative_destination(source, target)
+    return f"[{_aymt_label(label)}]({destination})"
+
+
+def _home_sources(row: dict) -> str:
+    rendered = []
+    for source in row.get("sources", []):
+        if source["kind"] == "vault":
+            rendered.append(_home_link(HOME_RELPATH, source["path"], source["label"]))
+        else:
+            rendered.append(f"[{_aymt_label(source['label'])}]({source['url']})")
+    return ", ".join(rendered) or "None"
+
+
+def render_home(payload: dict) -> bytes:
+    tomorrow = (date.fromisoformat(payload["date"]) + timedelta(days=1)).isoformat()
+    lines = [
+        "---",
+        'title: "Home"',
+        "tags:",
+        "  - audience/agent",
+        "  - audience/human",
+        "  - type/meta",
+        "  - workflow/canonical",
+        f"updated: {payload['date']}",
+        f"expires: {tomorrow}",
+        "generated: brain-home-v1",
+        f'input-digest: "{payload["inputDigest"]}"',
+        'content-digest: "PENDING"',
+        "---",
+        "",
+        HOME_MARKER,
+        "",
+        "# Home",
+        "",
+        "A deterministic, local navigation surface. Refresh it explicitly; it does not authorize external action.",
+        "",
+        "## Top actions",
+        "",
+    ]
+    if not payload["actions"]:
+        lines.extend(["_No safe, concrete action is currently selected._", ""])
+    for row in payload["actions"]:
+        lines.extend(
+            [
+                f"### {_aymt_markdown_text(row['outcome'])}",
+                "",
+                f"- **Why now:** {_aymt_markdown_text(row['whyNow'])}",
+                f"- **Next step:** {_aymt_markdown_text(row['nextStep'])}",
+                f"- **Sources:** {_home_sources(row)}",
+                "",
+            ]
+        )
+
+    lines.extend(["## Due and overdue", ""])
+    if not payload["tasks"]["overdue"] and not payload["tasks"]["due"]:
+        lines.extend(["_No tracked safe task has a machine-readable due date._", ""])
+    for heading, rows in (("Overdue", payload["tasks"]["overdue"]), ("Due", payload["tasks"]["due"])):
+        if rows:
+            lines.extend([f"### {heading}", ""])
+            for row in rows:
+                source = _home_link(HOME_RELPATH, row["path"], f"{row['path']}:{row['line']}")
+                lines.append(f"- **{row['due']}** — {_aymt_markdown_text(row['text'])} ({source})")
+            lines.append("")
+
+    inbox = payload["inbox"]
+    lines.extend(["## Inbox", ""])
+    lines.append(
+        f"- **Tracked safe notes:** {inbox['count']}"
+        f"; **triage debt:** {inbox['triageDebt']}"
+    )
+    for row in inbox["oldest"]:
+        age = "age unknown" if row["ageDays"] is None else f"{row['ageDays']} days old"
+        lines.append(f"- {_home_link(HOME_RELPATH, row['path'], row['path'])} — {age}")
+    lines.append("")
+
+    lines.extend(["## Active work", ""])
+    for heading, rows in (("Projects", payload["active"]["projects"]), ("Areas", payload["active"]["areas"])):
+        lines.extend([f"### {heading}", ""])
+        if not rows:
+            lines.append("_No safe tracked item is tagged active._")
+        for row in rows:
+            lines.append(f"- {_home_link(HOME_RELPATH, row['path'], row['title'])} — updated {row['updated']}")
+        lines.append("")
+
+    lines.extend(["## Cadence and reviews", ""])
+    if not payload["reviews"]:
+        lines.extend(["_No periodic review is due in today's exact cadence window._", ""])
+    for row in payload["reviews"]:
+        lines.append(f"- **{_aymt_markdown_text(row['outcome'])}:** {_aymt_markdown_text(row['nextStep'])} ({_home_sources(row)})")
+    if payload["reviews"]:
+        lines.append("")
+
+    lines.extend(["## Current state", ""])
+    for row in payload["current"]:
+        lines.append(f"- {_home_link(HOME_RELPATH, row['path'], row['label'])} — updated {row['updated']}")
+    if not payload["current"]:
+        lines.append("_No safe current-state source is available._")
+    lines.append("")
+
+    health = payload["health"]
+    lines.extend(["## Expiry and health", ""])
+    lines.append(
+        f"- **Expired:** {health['expiredCount']}; **near expiry:** {health['nearExpiryCount']}; "
+        f"**stale active:** {health['staleActiveCount']}; **orphans:** {health['orphanCount']}; "
+        f"**unresolved links:** {health['unresolvedLinkCount']}"
+    )
+    validation = health["validation"]
+    index_state = "fresh" if health["index"]["fresh"] else "stale"
+    lines.append(
+        f"- **Safe validation:** {validation['errors']} errors, {validation['warnings']} warnings; "
+        f"**tracked-safe index:** {index_state}."
+    )
+    for row in health["expired"]:
+        lines.append(f"- Expired {row['expires']}: {_home_link(HOME_RELPATH, row['path'], row['title'] or row['path'])}")
+    for row in health["nearExpiry"]:
+        lines.append(f"- Expires {row['expires']}: {_home_link(HOME_RELPATH, row['path'], row['title'] or row['path'])}")
+    for row in health["staleActive"]:
+        lines.append(f"- Stale active ({row['daysOld']} days): {_home_link(HOME_RELPATH, row['path'], row['title'])}")
+    lines.append("")
+
+    environment = payload["environment"]
+    lines.extend(["## Current environment", ""])
+    if environment["state"] == "unconfigured":
+        lines.append("- Not configured; Home used shared tracked sources only.")
+    else:
+        freshness = environment["freshness"]
+        lines.append(
+            f"- `{environment['slug']}` selected via `{environment['source']}`; "
+            f"metadata checked {freshness['checkedAt']}, expires {freshness['expiresAt']}."
+        )
+    lines.extend(["", "## Navigate", ""])
+    lines.append(" · ".join(_home_link(HOME_RELPATH, row["path"], row["label"]) for row in payload["navigation"]))
+    lines.append("")
+    provisional = ("\n".join(lines).rstrip("\n") + "\n").encode("utf-8")
+    digest = _sha256_bytes(provisional.replace(b'content-digest: "PENDING"', b'content-digest: ""'))
+    return provisional.replace(b'content-digest: "PENDING"', f'content-digest: "{digest}"'.encode())
+
+
 def _aymt_mode_owned(mode: int) -> bool:
     # Windows exposes only the read-only bit through chmod/stat; a normal
     # writable file commonly reports 0666 rather than POSIX 0644. Mutation is
@@ -6451,8 +6955,8 @@ def _aymt_mode_owned(mode: int) -> bool:
     return mode == 0o644
 
 
-def _aymt_owned(raw: bytes, mode: int) -> bool:
-    if not _aymt_mode_owned(mode) or AYMT_MARKER.encode() not in raw:
+def _aymt_owned(raw: bytes, mode: int, marker: str = AYMT_MARKER) -> bool:
+    if not _aymt_mode_owned(mode) or marker.encode() not in raw:
         return False
     match = re.search(rb'^content-digest: "([0-9a-f]{64})"$', raw, re.MULTILINE)
     if match is None:
@@ -6462,9 +6966,9 @@ def _aymt_owned(raw: bytes, mode: int) -> bool:
     return _sha256_bytes(neutral) == expected
 
 
-def _aymt_casefold_collision(root: Path) -> bool:
-    """Portable read-only check for a sibling spelling of AYMT.md."""
-    parent_path = root / posixpath.dirname(AYMT_RELPATH)
+def _aymt_casefold_collision(root: Path, relpath: str = AYMT_RELPATH) -> bool:
+    """Portable read-only check for a sibling spelling of one generated file."""
+    parent_path = root / posixpath.dirname(relpath)
     before = os.lstat(parent_path)
     if _link_like_stat(before) or not stat.S_ISDIR(before.st_mode):
         raise OSError("AYMT parent path is unsafe")
@@ -6477,7 +6981,7 @@ def _aymt_casefold_collision(root: Path) -> bool:
         != (after.st_dev, after.st_ino, stat.S_IFMT(after.st_mode))
     ):
         raise OSError("AYMT parent path changed during read")
-    name = posixpath.basename(AYMT_RELPATH)
+    name = posixpath.basename(relpath)
     return any(candidate.casefold() == name.casefold() and candidate != name for candidate in names)
 
 
@@ -6504,12 +7008,38 @@ def _read_current_aymt(root: Path) -> tuple[bytes | None, int | None]:
     return raw, stat.S_IMODE(info.st_mode)
 
 
-def write_aymt(root: Path, desired: bytes) -> str:
-    """Dedicated exact-file CAS writer; generic agent write rules stay closed."""
+def _read_current_home(root: Path) -> tuple[bytes | None, int | None]:
+    """Portable no-follow current-file reader for zero-write Home modes."""
+    try:
+        if _aymt_casefold_collision(root, HOME_RELPATH):
+            raise HomeError("Home has a case-insensitive sibling collision")
+        raw, info = _read_nofollow_file(root, HOME_RELPATH, max_bytes=512 * 1024)
+    except FileNotFoundError:
+        return None, None
+    except HomeError:
+        raise
+    except OSError:
+        raise HomeError("existing Home is not a safe regular file") from None
+    return raw, stat.S_IMODE(info.st_mode)
+
+
+def _write_generated_exact(
+    root: Path,
+    desired: bytes,
+    *,
+    relpath: str,
+    marker: str,
+) -> str:
+    """Descriptor-bound writer allowlisted to the two generated exact paths."""
+    if (relpath, marker) not in {
+        (AYMT_RELPATH, AYMT_MARKER),
+        (HOME_RELPATH, HOME_MARKER),
+    }:
+        raise AymtError("generated exact-file write authority is unavailable")
     if not _migration_mutation_supported():
         raise AymtError("safe AYMT writes are unavailable on this runtime; preview/check only")
     try:
-        parent, name = _open_migration_parent(root, AYMT_RELPATH)
+        parent, name = _open_migration_parent(root, relpath)
     except (OSError, LinkMigrationError):
         raise AymtError("AYMT parent path is unsafe") from None
     try:
@@ -6573,7 +7103,7 @@ def write_aymt(root: Path, desired: bytes) -> str:
             result = "unchanged"
             return result
         if prior is not None and (
-            prior_info is None or not _aymt_owned(prior, stat.S_IMODE(prior_info.st_mode))
+            prior_info is None or not _aymt_owned(prior, stat.S_IMODE(prior_info.st_mode), marker)
         ):
             raise AymtError("existing AYMT is foreign or modified; preserved")
         if hasattr(signal, "SIGTERM"):
@@ -6681,6 +7211,64 @@ def write_aymt(root: Path, desired: bytes) -> str:
             os.close(parent)
         if cleanup_error is not None and not active_error:
             raise cleanup_error
+
+
+def write_aymt(root: Path, desired: bytes) -> str:
+    """Dedicated AYMT-only writer; generic agent write rules stay closed."""
+    return _write_generated_exact(
+        root, desired, relpath=AYMT_RELPATH, marker=AYMT_MARKER
+    )
+
+
+def write_home(root: Path, desired: bytes) -> str:
+    """Dedicated HOME-only wrapper around the proven descriptor-bound writer."""
+    try:
+        return _write_generated_exact(
+            root, desired, relpath=HOME_RELPATH, marker=HOME_MARKER
+        )
+    except KeyboardInterrupt:
+        raise
+    except AymtError:
+        raise HomeError("Home write failed safely") from None
+
+
+def cmd_home(root: Path, args) -> int:
+    try:
+        payload = build_home(
+            root,
+            selection=getattr(args, "home_selection", None),
+            github_input=args.github_input,
+            stdin=sys.stdin,
+        )
+        rendered = render_home(payload)
+        try:
+            current, current_mode = _read_current_home(root)
+        except HomeError:
+            current, current_mode = None, None
+        fresh = (
+            current == rendered
+            and current_mode is not None
+            and _aymt_owned(current, current_mode, HOME_MARKER)
+        )
+        if args.write:
+            outcome = write_home(root, rendered)
+            payload = {**payload, "fresh": True, "write": outcome}
+        else:
+            payload = {**payload, "fresh": fresh}
+    except (HomeError, KeyboardInterrupt):
+        message = "Home generation failed safely"
+        if args.json:
+            print(json.dumps({"error": message}, indent=1, sort_keys=True))
+        else:
+            print(f"error: {message}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps(payload, ensure_ascii=False, indent=1, sort_keys=True))
+    elif args.write:
+        print(f"{HOME_RELPATH}: {payload['write']}")
+    else:
+        sys.stdout.buffer.write(rendered)
+    return 1 if args.check and not fresh else 0
 
 
 def cmd_aymt(root: Path, args) -> int:
@@ -8849,6 +9437,24 @@ def main(argv: list[str] | None = None) -> int:
         metavar="PATH|-",
         help="optional strict sanitized GitHub issue snapshot (brain never invokes GitHub)",
     )
+    p = add("home", help="preview/check/write the deterministic local Home")
+    home_mode = p.add_mutually_exclusive_group()
+    home_mode.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 1 when 00_Meta/HOME.md is absent or stale; never write",
+    )
+    home_mode.add_argument(
+        "--write",
+        action="store_true",
+        help="write only the owned generated 00_Meta/HOME.md",
+    )
+    p.add_argument(
+        "--github-input",
+        default=None,
+        metavar="PATH|-",
+        help="optional strict sanitized GitHub issue snapshot for AYMT actions",
+    )
     add("tags", help="tag usage counts by namespace")
     p = add("show", help="full index record for one note")
     p.add_argument("note")
@@ -8978,6 +9584,7 @@ def main(argv: list[str] | None = None) -> int:
         "links": cmd_links,
         "migrate-links": cmd_migrate_links,
         "aymt": cmd_aymt,
+        "home": cmd_home,
         "tags": cmd_tags,
         "show": cmd_show,
         "recent": cmd_recent,
@@ -9006,16 +9613,17 @@ def main(argv: list[str] | None = None) -> int:
             try:
                 selector = (
                     select_aymt_environment
-                    if args.command == "aymt"
+                    if args.command in {"aymt", "home"}
                     else select_environment
                 )
                 selection = selector(root, requested=getattr(args, "requested_env", None))
             except EnvironmentSelectionError as exc:
-                if args.command == "aymt":
+                if args.command in {"aymt", "home"}:
+                    label = "AYMT" if args.command == "aymt" else "Home"
                     if args.json:
-                        print(json.dumps({"error": "AYMT generation failed safely"}, indent=1, sort_keys=True))
+                        print(json.dumps({"error": f"{label} generation failed safely"}, indent=1, sort_keys=True))
                     else:
-                        print("error: AYMT generation failed safely", file=sys.stderr)
+                        print(f"error: {label} generation failed safely", file=sys.stderr)
                     return 1
                 print(
                     f"error: environment selection failed ({exc.code})",
@@ -9025,6 +9633,8 @@ def main(argv: list[str] | None = None) -> int:
             _ACTIVE_ENVIRONMENT = selection["slug"]
             if args.command == "aymt":
                 args.aymt_selection = selection
+            elif args.command == "home":
+                args.home_selection = selection
         return handlers[args.command](root, args)
     finally:
         _ACTIVE_ENVIRONMENT = previous_environment

@@ -102,9 +102,9 @@ Obsidian and VS Code are contract surfaces. Obsidian is primary; VS Code is a su
 
 **Editor-neutral integrity:** Markdown, Git, stable paths, frontmatter, templates, and `brain` preserve bytes, validate links, and prevent unintended rewrites.
 
-**Obsidian:** tracked config provides navigation, properties, backlinks, graph, tags, templates, daily notes, and relative Markdown links (`useMarkdownLinks: true`, `newLinkFormat: relative`).
+**Obsidian:** tracked config provides navigation, properties, backlinks, graph, tags, templates, daily notes, relative Markdown links (`useMarkdownLinks: true`, `newLinkFormat: relative`), and native startup opening of generated Home (`openBehavior: file:00_Meta/HOME.md`).
 
-**VS Code:** tracked config provides Markdown link/path checks, image paste into Assets, `brain`/task/daily-note commands, folder-open navigation, and generated snippets. Extension recommendations default to first-party publishers; `extension_trust: relaxed` records an override. Automatic tasks need workspace trust and consent.
+**VS Code:** tracked config provides Markdown link/path checks, image paste into Assets, `brain`/task/daily-note commands, read-only Home preview, best-effort folder-open Home navigation, and generated snippets. Extension recommendations default to first-party publishers; `extension_trust: relaxed` records an override. Automatic tasks need workspace trust, consent, and the `code` CLI on `PATH`; manual file open is the recovery path.
 
 Gaps need an editor-neutral route or documentation. Navigation, template, link, homepage, and command changes evaluate both configs; snippets are never hand-edited. See [vscode-editor-support](../06_Resources/vscode-editor-support.md).
 
@@ -267,14 +267,7 @@ Release detail belongs in [CHANGELOG](CHANGELOG.md), not in this current-state s
 
 ### 19.2 Approved Ready roadmap
 
-The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). This maintained dual-editor contract implements #71, #72, and #73. The remaining approved packages stay roadmap work until accepted on merged `main`:
-
-1. remote safety and project-local skill discovery (#83, #82);
-2. onboarding entry and atomic example cleanup (#81, #84);
-3. environment selection and a portable `brain` command (#15, #4);
-4. uppercase core filenames and portable Markdown links (#75, #74);
-5. generated Home (#78), building on the shipped local Actions You May Take brief (#79);
-6. local offline artifacts and push-only owner notifications (#23, #21).
+The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). The merged contract implements the PRD, remote-safety, discovery, onboarding, environment/launcher, uppercase-core, portable-link, AYMT, and generated-Home packages (#71, #72, #73, #83, #82, #81, #84, #15, #4, #75, #74, #79, #78). Remaining approved roadmap work is local offline artifacts (#23) and push-only owner notifications (#21), each still subject to its own acceptance gates.
 
 ## 20. Current acceptance criteria
 
@@ -292,6 +285,5 @@ Only owner choices or evidence gates remain:
 
 - **#15:** owner-chosen environment slugs; implementation proves private matching and ambiguity behavior.
 - **#4:** owner-approved existing writable PATH target; never edit shell startup files automatically.
-- **#78:** commit Obsidian's default-file key only after a disposable-vault proof; otherwise document UI/CLI setup.
 - **#21:** owner selects a private destination before any real send; otherwise fake/file transport only and the issue stays open.
 - **Cross-harness privacy:** no portable repository ignore exists; stronger access exclusion would need a separate product decision.

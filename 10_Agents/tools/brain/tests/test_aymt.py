@@ -832,16 +832,16 @@ class AymtWriterTests(unittest.TestCase):
 
 
 class AymtCliPrivacyTests(unittest.TestCase):
-    def test_repository_has_exact_twenty_one_canonical_skills(self):
+    def test_repository_has_exact_twenty_two_canonical_skills(self):
         root = Path(__file__).resolve().parents[4]
         names = sorted(
             path.parent.name
             for path in (root / "10_Agents/skills").glob("*/SKILL.md")
         )
-        self.assertEqual(len(names), 21)
+        self.assertEqual(len(names), 22)
         self.assertIn("aymt", names)
         wiring = (root / "10_Agents/harnesses/copilot/wiring.md").read_text(encoding="utf-8")
-        self.assertIn("twenty-one canonical skill names", wiring)
+        self.assertIn("twenty-two canonical skill names", wiring)
 
     def test_selection_failure_codes_have_identical_redacted_cli_output(self):
         outputs = []

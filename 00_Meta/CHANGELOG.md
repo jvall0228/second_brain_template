@@ -10,6 +10,12 @@ updated: 2026-08-11
 
 # Changelog
 
+## [2026-08-11] add-home | deterministic local startup and navigation (#78)
+
+- Added generated [Home](HOME.md) plus `brain home` preview/JSON/check/write modes. Home consumes structured AYMT data and one authenticated tracked safe corpus snapshot for tasks, Inbox, active work, reviews, current state, health, selected environment metadata, and navigation; it never parses AYMT Markdown or environment bodies.
+- Added the canonical [refresh-home skill](../10_Agents/skills/refresh-home/SKILL.md), generated harness adapters, and a HOME-only descriptor-bound writer. Generic agents still cannot hand-edit Home, and clone-local Home remains outside hooks and the merge driver.
+- Obsidian now opens Home through its native tracked `openBehavior` setting. VS Code best-effort opens the committed Home on folder open and exposes a separate read-only preview, with workspace-trust and automatic-task recovery documented.
+
 ## [2026-08-11] add-aymt | deterministic local next-action brief (#79)
 
 - Added `brain aymt` preview/JSON/check/write modes, tracked-corpus privacy filtering, documented integer scoring and stable capped ranking, metadata-only environment freshness, and strict caller-sanitized GitHub input without connector or network execution.

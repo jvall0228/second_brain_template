@@ -24,6 +24,7 @@ expires: 2027-08-11
 - [CONVENTIONS](CONVENTIONS.md) — Writing rules
 
 ## Active Work
+- [Home](HOME.md) — Generated local startup and navigation surface; refresh with `brain home --write`
 - [Projects](../04_Projects/README.md) — Outcomes with deadlines
   - [Example Project](../04_Projects/example-project/README.md) — Sample; delete once you've seen the pattern
 - [Inbox](../02_Inbox/README.md) — Triage queue

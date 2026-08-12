@@ -76,7 +76,7 @@ class RepositoryMarkdownContractTests(unittest.TestCase):
         counts = self.index["linkCounts"]
         self.assertEqual(counts["legacy"], 0)
         self.assertEqual(counts["wikilink"], 0)
-        self.assertEqual(counts["markdown"], 785)
+        self.assertEqual(counts["markdown"], 811)
         failures = []
         for path, record in self.index["notes"].items():
             for link in record["links"]:
@@ -146,7 +146,11 @@ class RepositoryMarkdownContractTests(unittest.TestCase):
         app = json.loads((ROOT / ".obsidian" / "app.json").read_text(encoding="utf-8"))
         self.assertEqual(
             app,
-            {"newLinkFormat": "relative", "useMarkdownLinks": True},
+            {
+                "newLinkFormat": "relative",
+                "openBehavior": "file:00_Meta/HOME.md",
+                "useMarkdownLinks": True,
+            },
         )
         vscode = (ROOT / ".vscode" / "settings.json").read_text(encoding="utf-8")
         self.assertIn('"markdown.validate.enabled": true', vscode)

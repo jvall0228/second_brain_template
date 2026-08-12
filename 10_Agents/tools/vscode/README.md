@@ -14,7 +14,9 @@ expires: 2027-08-11
 
 Scripts backing the VS Code alternative-editor surface ([PRD](../../../00_Meta/PRD.md) §6.5). Stdlib-only Python 3.10+, per the tools rules in [README](../README.md). Both are invoked from `.vscode/tasks.json` and the pre-commit hook — no editor extension involved (strict first-party trust policy).
 
-The hand-maintained task surface also exposes **Brain: Actions You May Take**, a read-only `brain aymt` preview. Writing the generated [AYMT](../../../00_Meta/AYMT.md) remains an explicit CLI/skill action and is deliberately not a folder-open task or hook.
+The hand-maintained task surface exposes read-only **Brain: Actions You May Take** and **Brain: Home Preview** tasks. Folder-open best-effort opens the committed [Home](../../../00_Meta/HOME.md) without regenerating it; writing Home or [AYMT](../../../00_Meta/AYMT.md) remains an explicit CLI/skill action and neither file is in a hook.
+
+VS Code requires workspace trust and one-time approval for automatic folder-open tasks. If Home does not open, trust the repository, run **Tasks: Manage Automatic Tasks in Folder**, allow automatic tasks, and reopen the folder. The `code` CLI must also be on `PATH`; otherwise open `00_Meta/HOME.md` manually or run `brain home` for a read-only preview.
 
 ## Contents
 

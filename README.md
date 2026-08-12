@@ -43,6 +43,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 ## How it works
 
 - **You** open this repo as an Obsidian vault (or edit the Markdown directly) to capture, organize, and review notes.
+- **Home** (`00_Meta/HOME.md`) is the generated local startup surface; preview with `brain home` and refresh it explicitly with `brain home --write`.
 - **Agents** read a [bootstrap sequence](AGENTS.md) to learn who you are, what you're working on, and how to behave — then write output to `02_Inbox/` for you to triage.
 - **Git** tracks every change, making agent contributions auditable and reversible.
 
