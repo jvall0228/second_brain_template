@@ -38,6 +38,7 @@ Allowed exceptions:
 - Entrypoints: exact uppercase `AGENTS.md`, `CLAUDE.md`, and `README.md`, at the root or any directory level.
 - Framework core: `00_Meta/{CONVENTIONS,INDEX,CHANGELOG,PRD,STATUS}.md`, `01_Profile/{NOW,PREFERENCES,DEFAULTS,IDENTITY,WORK,TOOLING-STACK,LONG-RUNNING-THEMES}.md`, and `10_Agents/docs/{OPERATING-RULES,TASK-PATTERNS}.md`. These 14 paths require this exact case; the exception does not extend to other notes with the same basename.
 - Generated: exact `00_Meta/{AYMT,HOME}.md` via matching `brain {aymt,home} --write`.
+- Generated assets: the exact lowercase inventory under `08_Assets/artifacts/` (`brain artifacts --write`).
 - Skill manifests: `SKILL.md` inside `10_Agents/skills/<skill-name>/` (the Agent Skills format requires this exact name).
 - Periodic review filenames may use ISO week/quarter tokens:
   - `YYYY-W##-review.md` (weekly)
@@ -132,6 +133,7 @@ Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by de
 
 - Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [README](../10_Agents/README.md)) and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
 - Only matching `brain {aymt,home} --write` replaces exact `00_Meta/{AYMT,HOME}.md`; no hand edits.
+- Only `brain artifacts --write` replaces the exact generated inventory under `08_Assets/artifacts/`; no hand edits or generic directory authority.
 - Live, user-invoked [agent-orientation](../10_Agents/skills/agent-orientation/SKILL.md) may write its documented draft inventory, access tool, and capture skill. Markdown uses `workflow/draft`; other files inherit it until promotion.
 - A live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
 

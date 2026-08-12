@@ -587,7 +587,7 @@ class HomeRepositoryContractTests(unittest.TestCase):
 
     def test_skill_inventory_and_adapters_include_refresh_home(self):
         skills = sorted((self.root / "10_Agents/skills").glob("*/SKILL.md"))
-        self.assertEqual(len(skills), 22)
+        self.assertEqual(len(skills), 23)
         self.assertTrue((self.root / ".agents/skills/refresh-home/SKILL.md").is_file())
         self.assertTrue((self.root / ".claude/skills/refresh-home/SKILL.md").is_file())
 

@@ -89,11 +89,22 @@ git add "$root/.agents/skills" "$root/.claude/skills" || exit 1
 python3 "$brain" validate
 case $? in
     0|2)
-        hook_completed=1
-        exit 0
         ;;
     *)
         echo "pre-commit: brain validate found errors — commit aborted" >&2
         exit 1
         ;;
 esac
+
+# Local artifacts are explicit-write generated files, not hook-owned output.
+# Refuse stale bytes without mutating them; refresh deliberately with
+# `brain artifacts --write` before retrying the commit. Keep this after
+# validation so validation failures retain their precise diagnostic while the
+# hook transaction still rolls back all earlier generated mutations.
+python3 "$brain" artifacts --check >/dev/null || {
+    echo "pre-commit: local artifacts are stale — run brain artifacts --write" >&2
+    exit 1
+}
+
+hook_completed=1
+exit 0

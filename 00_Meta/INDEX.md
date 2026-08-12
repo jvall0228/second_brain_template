@@ -48,6 +48,7 @@ expires: 2027-08-11
 - [Meta](README.md) — What the vault-level meta docs are
 - [Archives](../07_Archives/README.md) — Completed or inactive items
 - [Assets](../08_Assets/README.md) — Images, attachments, non-markdown files
+  - [Local Artifacts](../08_Assets/artifacts/README.md) — Offline link graph and health dashboard
 - [CHANGELOG](CHANGELOG.md) — Structural change log
 - [PRD](PRD.md) — Design rationale (product requirements)
 - [STATUS](STATUS.md) — Vault status snapshot

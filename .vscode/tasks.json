@@ -82,6 +82,22 @@
       "problemMatcher": []
     },
     {
+      "label": "Brain: Preview Artifacts",
+      "detail": "Read-only plan for the deterministic offline link graph and health dashboard (spec §25)",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/brain\" artifacts",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" artifacts" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Brain: Open Artifacts",
+      "detail": "Open both fresh generated HTML views locally; refuses stale or foreign files",
+      "type": "shell",
+      "command": "\"${workspaceFolder}/brain\" artifacts --open",
+      "windows": { "command": "\"${workspaceFolder}\\brain.cmd\" artifacts --open" },
+      "problemMatcher": []
+    },
+    {
       "label": "Daily Note: Open Today",
       "detail": "Create today's note from 09_Templates/template-daily-log.md if missing, then open it",
       "type": "shell",

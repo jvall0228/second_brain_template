@@ -19,3 +19,5 @@ Any file that isn't a markdown note: screenshots, diagrams, exported PDFs, audio
 ## Lifecycle
 
 This directory is **append-only** by default. Move large or obsolete assets to `07_Archives/assets/` (or delete them if they're reproducible) rather than editing in place.
+
+The exact generated views under [artifacts](artifacts/README.md) are the sole replacement exception: only `brain artifacts --write` may create or replace its two HTML files and manifest after ownership checks. Hosting remains disabled.

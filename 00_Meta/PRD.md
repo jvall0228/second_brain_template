@@ -247,7 +247,7 @@ Agents check overlaps, use collision-safe Inbox names, preserve unrelated edits,
 
 ## 19. Shipped milestones and Ready roadmap
 
-### 19.1 Shipped M0–M12
+### 19.1 Shipped M0–M13
 
 | Milestone | Shipped capability |
 |---|---|
@@ -260,6 +260,7 @@ Agents check overlaps, use collision-safe Inbox names, preserve unrelated edits,
 | M10 | Structured orientation, harness overlays, recommended components, and owner onboarding |
 | M11 | Markdown task tracking and optional semantic search |
 | M12 | Pull-only template sync and the propose/review/record self-improvement loop |
+| M13 | Local action brief plus deterministic offline link-graph and health-dashboard artifacts |
 
 Release detail belongs in [CHANGELOG](CHANGELOG.md), not in this current-state specification.
 
@@ -267,12 +268,13 @@ Release detail belongs in [CHANGELOG](CHANGELOG.md), not in this current-state s
 
 ### 19.2 Approved Ready roadmap
 
-The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). The merged contract implements the PRD, remote-safety, discovery, onboarding, environment/launcher, uppercase-core, portable-link, AYMT, and generated-Home packages (#71, #72, #73, #83, #82, #81, #84, #15, #4, #75, #74, #79, #78). Remaining approved roadmap work is local offline artifacts (#23) and push-only owner notifications (#21), each still subject to its own acceptance gates.
+The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). The merged contract implements the PRD, remote-safety, discovery, onboarding, environment/launcher, uppercase-core, portable-link, AYMT, generated-Home, and local offline-artifact packages (#71, #72, #73, #83, #82, #81, #84, #15, #4, #75, #74, #79, #78, #23). Push-only owner notifications (#21) remain subject to the private-provider acceptance gate.
 
 ## 20. Current acceptance criteria
 
 - Bootstrap is ordered, budgeted, and path-correct; maintained notes pass frontmatter, taxonomy, filename, and link checks.
 - Tool tests, validation, freshness checks, and scratch adoption finish with zero errors; generated outputs are byte-stable.
+- Local HTML artifacts are privacy-filtered, offline, CSP-bound, accessible without JavaScript for their static summary, and locally openable without a hosting dependency.
 - Obsidian and VS Code perform documented navigation, edit, template, task, and validation flows without unintended rewrites.
 - Restriction reduction, secret scan, and credential-free config fixtures pass and never claim access control.
 - Write lanes agree across entrypoint, conventions, config, rules, skills, and `brain`.

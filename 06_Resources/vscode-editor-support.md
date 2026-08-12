@@ -48,7 +48,7 @@ Extensions must run locally, require no account for core function, and must not 
 |---|---|
 | Relative Markdown navigation | Built-in click-through, path completion, and `markdown.validate`; `brain validate` adds fragment/encoding/case checks |
 | Backlinks (`backlink`, `outgoing-link`) | `brain links --json`; workspace search for the target path |
-| Graph (`graph`) | none (accepted) |
+| Graph (`graph`) | `brain artifacts --open` opens the deterministic offline link graph; use the VS Code task |
 | Tag pane (`tag-pane`) | `brain tags`; workspace search for the tag string |
 | Daily notes (`daily-notes`) | [daily-log](../10_Agents/skills/daily-log/SKILL.md) skill via an attached harness, or copy `09_Templates/template-daily-log.md` |
 | Mermaid in preview | renders on GitHub and in Obsidian; not in VS Code preview (accepted) |
@@ -97,7 +97,7 @@ Sources:
 
 1. **Trust policy scope:** strict first-party is the *template default*, overridable per fork. The structured vault-config file for such overrides shipped as `00_Meta/config.yaml` (issue #2): set `extension_trust: relaxed` there to record that a fork admits community extensions such as Foam — see [spec](../10_Agents/tools/brain/spec.md) §15 and `brain config`.
 2. **AI harness extensions:** kept (Claude Code, Copilot) — the vault is agent-oriented and both are P0 harnesses.
-3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute) / health / tasks / read-only AYMT and Home previews, all built-in task machinery, `python3` the only requirement.
+3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute) / health / tasks / read-only AYMT and Home previews / artifact preview and local open, all built-in task machinery, `python3` the only requirement.
 4. **Snippets over raw templates as the user-facing surface:** shipped `.vscode/second-brain.code-snippets`, **generated** from `09_Templates/` by `10_Agents/tools/vscode/gen_snippets.py` and kept in sync automatically by the pre-commit hook (`--check` mode available). `{{date}}` maps to VS Code's auto-filling date variables; other tokens become tabstops. Plus an `sb-frontmatter` snippet for bare capture.
 5. **Cursor synergy:** noted in [wiring](../10_Agents/harnesses/cursor/wiring.md) — the whole `.vscode/` surface works in Cursor unchanged.
 6. **Acceptance criteria:** written into PRD §6.5. Config is script-verified in this environment (snippet generation deterministic + valid JSON, daily-note output passes `brain validate`, tasks reference real commands); the open-in-real-VS-Code acceptance pass was waived by the owner at merge (2026-08-11).

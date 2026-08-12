@@ -55,7 +55,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/PRD.md` §6.5), or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
 4. Skim [`00_Meta/CONVENTIONS.md`](00_Meta/CONVENTIONS.md) to learn the naming and tagging rules.
-5. **Install the pre-commit hook** so every commit keeps the vault index, VS Code snippets, and repository skill adapters fresh and the conventions enforced, and **the merge driver** so committed generated files never need hand-merging:
+5. **Install the pre-commit hook** so every commit keeps the vault index, VS Code snippets, and repository skill adapters fresh, verifies the explicit-write local artifacts, and enforces conventions; install **the merge driver** so hook-generated files never need hand-merging:
    ```
    git config core.hooksPath .githooks
    git config merge.regenerate.driver true

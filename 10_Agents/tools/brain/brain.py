@@ -6,7 +6,7 @@ Behavior is governed by spec.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
-Commands: index, list, search, links, migrate-links, aymt, tags, show, recent,
+Commands: index, list, search, links, migrate-links, aymt, artifacts, tags, show, recent,
           validate, curate, context, config, report, tasks, embed,
           remote-safety, env
 """
@@ -53,6 +53,19 @@ AYMT_FIELD_LIMIT = 240
 AYMT_SOURCE_LIMIT = 3
 AYMT_GITHUB_MAX_BYTES = 64 * 1024
 AYMT_GITHUB_MAX_ISSUES = 100
+ARTIFACT_SCHEMA_VERSION = 1
+ARTIFACT_DIR_RELPATH = "08_Assets/artifacts"
+ARTIFACT_OUTPUTS = (
+    f"{ARTIFACT_DIR_RELPATH}/link-graph.html",
+    f"{ARTIFACT_DIR_RELPATH}/health-dashboard.html",
+    f"{ARTIFACT_DIR_RELPATH}/manifest.json",
+)
+ARTIFACT_GENERATOR = "brain-artifacts-v1"
+ARTIFACT_HTML_MARKER = "<!-- generated-by: brain artifacts v1; do not edit -->"
+ARTIFACT_MAX_NODES = 500
+ARTIFACT_MAX_EDGES = 2_000
+ARTIFACT_STATIC_LINK_CAP = 40
+ARTIFACT_TEXT_LIMIT = 160
 ADOPT_EXAMPLES_RELPATH = "10_Agents/tools/adopt_examples.json"
 # §18.1 embeddings sidecar: gitignored, machine-local, pruned from the corpus
 # exactly like the index file (constants for the rest of §17 sit with its code).
@@ -121,15 +134,16 @@ VALIDATE_CURATION_WARNINGS = True
 
 # R20 bootstrap context budgets (bytes): measured 2026-08-11 sizes + ~50%
 # headroom, rounded up. Total ties to the smallest harness project-doc cap.
-# Portable Markdown paths add bytes to two bootstrap docs; issue #74 raises
-# only their per-file ceilings. Actual aggregate size remains below 32 KiB.
+# Portable Markdown paths and the exact artifact write lane add bytes to two
+# bootstrap docs; issues #74/#23 raise only their per-file ceilings. Actual
+# aggregate size remains below 32 KiB.
 BOOTSTRAP_BUDGETS = {
-    CORE_FRAMEWORK_PATHS["conventions"]: 12544,
+    CORE_FRAMEWORK_PATHS["conventions"]: 12800,
     CORE_FRAMEWORK_PATHS["index"]: 4096,
     CORE_FRAMEWORK_PATHS["defaults"]: 2048,
     CORE_FRAMEWORK_PATHS["now"]: 2048,
     CORE_FRAMEWORK_PATHS["preferences"]: 3072,
-    "AGENTS.md": 8704,
+    "AGENTS.md": 8832,
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
 
@@ -4735,6 +4749,12 @@ def _stage_migration_at(
             if reserved_name is not None:
                 raise LinkMigrationError("reserved migration stage is occupied")
             continue
+        created_info = os.fstat(descriptor)
+        created_identity = (
+            created_info.st_dev,
+            created_info.st_ino,
+            stat.S_IFMT(created_info.st_mode),
+        )
         try:
             offset = 0
             while offset < len(data):
@@ -4746,11 +4766,22 @@ def _stage_migration_at(
                     os.fstat(descriptor)
                 )
         except BaseException:
-            os.close(descriptor)
             try:
-                os.unlink(name, dir_fd=parent)
+                current = os.stat(
+                    name, dir_fd=parent, follow_symlinks=False
+                )
             except FileNotFoundError:
                 pass
+            else:
+                current_identity = (
+                    current.st_dev,
+                    current.st_ino,
+                    stat.S_IFMT(current.st_mode),
+                )
+                if current_identity == created_identity:
+                    os.unlink(name, dir_fd=parent)
+            finally:
+                os.close(descriptor)
             raise
         os.close(descriptor)
         return name
@@ -7310,6 +7341,13 @@ def cmd_aymt(root: Path, args) -> int:
     return 1 if args.check and not fresh else 0
 
 
+def cmd_artifacts(root: Path, args) -> int:
+    """Preview, check, write, or locally open the exact artifact inventory."""
+    import artifacts as artifact_pipeline
+
+    return artifact_pipeline.command(sys.modules[__name__], root, args)
+
+
 def resolve_note_arg(index: dict, arg: str) -> str | None:
     # Index paths are /-separated (spec §2); accept OS-native separators from
     # callers like the VS Code ${relativeFile} task on Windows.
@@ -9455,6 +9493,32 @@ def main(argv: list[str] | None = None) -> int:
         metavar="PATH|-",
         help="optional strict sanitized GitHub issue snapshot for AYMT actions",
     )
+    p = add(
+        "artifacts",
+        help="preview/check/write the deterministic local graph and health dashboard",
+    )
+    artifact_mode = p.add_mutually_exclusive_group()
+    artifact_mode.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 1 when any owned artifact is absent or stale; never write",
+    )
+    artifact_mode.add_argument(
+        "--write",
+        action="store_true",
+        help="write only the exact owned files under 08_Assets/artifacts/",
+    )
+    p.add_argument(
+        "--open",
+        action="store_true",
+        help="open both fresh local files in the default browser",
+    )
+    p.add_argument(
+        "--as-of",
+        default=None,
+        metavar="YYYY-MM-DD",
+        help="controlled snapshot date (default: latest safe source updated date)",
+    )
     add("tags", help="tag usage counts by namespace")
     p = add("show", help="full index record for one note")
     p.add_argument("note")
@@ -9585,6 +9649,7 @@ def main(argv: list[str] | None = None) -> int:
         "migrate-links": cmd_migrate_links,
         "aymt": cmd_aymt,
         "home": cmd_home,
+        "artifacts": cmd_artifacts,
         "tags": cmd_tags,
         "show": cmd_show,
         "recent": cmd_recent,
@@ -9609,6 +9674,7 @@ def main(argv: list[str] | None = None) -> int:
             "config",
             "remote-safety",
             "install",
+            "artifacts",
         }:
             try:
                 selector = (

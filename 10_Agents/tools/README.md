@@ -15,7 +15,7 @@ Executable tools that give agents structured access to the vault. Tools here are
 
 ## Contents
 
-- [brain](brain/README.md) — the vault index CLI: query commands plus `validate`, backing the committed `vault-index.json` and the pre-commit hook. Its behavior contract is [spec](brain/spec.md).
+- [brain](brain/README.md) — the vault index CLI: query, validation, AYMT, and offline artifact commands, backing the committed `vault-index.json`. Its behavior contract is [spec](brain/spec.md).
 - [vscode](vscode/README.md) — scripts behind the VS Code editor surface ([PRD](../../00_Meta/PRD.md) §6.5): template-synced snippet generation (hook-enforced) and daily-note creation, both wired to `.vscode/tasks.json`.
 - [skill adapters](skill_adapters/README.md) — deterministic, hook/CI-enforced text adapters exposing canonical skills at `.agents/skills/` and `.claude/skills/` without workflow duplication or symlinks.
 - `adopt_check.py` + `adopt_cleanup.py` — preview/apply the manifest-owned seeded-example bundle with exact deletion inventories/reference edits, source and validator hashes, ignored/untracked/dirty/stale/unmarked refusal, a durable recovery lock (`recover`), transactional rollback, and independently checked post-apply validation. With no subcommand, the CI smoke test replays cleanup, profile fill, and first capture in a scratch copy.

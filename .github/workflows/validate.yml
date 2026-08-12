@@ -38,6 +38,8 @@ jobs:
           python3 10_Agents/tools/brain/brain.py index
           python3 10_Agents/tools/vscode/gen_snippets.py
           python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py
+      - name: verify explicit-write local artifacts (issue #23)
+        run: python3 10_Agents/tools/brain/brain.py artifacts --check
       - name: brain validate
         run: |
           set +e

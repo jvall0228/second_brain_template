@@ -10,6 +10,13 @@ updated: 2026-08-11
 
 # Changelog
 
+## [2026-08-11] generate-artifacts | deterministic local graph and dashboard (#23)
+
+- Added `brain artifacts` preview/JSON/check/write/open modes and a canonical [generate-artifacts](../10_Agents/skills/generate-artifacts/SKILL.md) workflow for the exact offline [artifact inventory](../08_Assets/artifacts/README.md).
+- The link graph and health dashboard derive bounded metadata from authenticated Git-tracked shared snapshots only. Restricted and targeting notes, environment content, untracked or linked files, credentials, absolute host paths, raw bodies, and generated outputs are filtered before serialization.
+- Both self-contained HTML files use hashed CSP sources, escaped canonical JSON, safe DOM text/attribute APIs, static and JavaScript-off summaries, keyboard/focus/reduced-motion/responsive states, and no CDN or runtime network. Hosting and notifications remain unimplemented and disabled.
+- Added exact-file ownership, rollback/concurrency refusal, controlled timestamps and manifest digests, VS Code preview/open tasks, freshness gates, and focused determinism, injection, privacy, accessibility, performance, browser-spy, and data-preservation tests.
+
 ## [2026-08-11] add-home | deterministic local startup and navigation (#78)
 
 - Added generated [Home](HOME.md) plus `brain home` preview/JSON/check/write modes. Home consumes structured AYMT data and one authenticated tracked safe corpus snapshot for tasks, Inbox, active work, reviews, current state, health, selected environment metadata, and navigation; it never parses AYMT Markdown or environment bodies.

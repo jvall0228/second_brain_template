@@ -21,8 +21,8 @@ updated: 2026-08-11
 - Full PARA + Journal structure, bootstrap, canonical navigation, and 12 note templates are in place.
 - Both supported editors are wired: tracked Obsidian settings and VS Code settings, tasks, extensions, and generated snippets.
 - Internal navigation uses source-relative Markdown links with explicit extensions across Obsidian, VS Code, GitHub, and `brain`; the maintained corpus has no legacy links.
-- The deterministic `brain` index/validation CLI, hooks, CI, adoption smoke, health reporting, tasks, optional semantic-search path, local AYMT brief, and generated Home are shipped.
-- Twenty-two canonical Agent Skills, seven harness adapters, environment orientation, reversible onboarding, pull-only template sync, and the propose-only self-improvement loop are shipped.
+- The deterministic `brain` index/validation CLI, hooks, CI, adoption smoke, health reporting, tasks, optional semantic-search path, local AYMT brief, generated Home, and privacy-filtered offline artifacts are shipped.
+- Twenty-three canonical Agent Skills, seven harness adapters, environment orientation, reversible onboarding, pull-only template sync, and the propose-only self-improvement loop are shipped.
 - Profile notes are blank templates — fill them in before pointing agents at the vault.
 - README and `adopt_examples.json` list the complete seed set; atomic onboarder cleanup is shipped.
 
@@ -41,10 +41,11 @@ Per the roadmap in [PRD](PRD.md) §19:
 | M10 | Structured orientation, overlays, components, owner onboarding | Done (2026-08-11) |
 | M11 | Tasks and optional semantic search | Done (2026-08-11) |
 | M12 | Pull-only template sync and self-improvement loop | Done (2026-08-11) |
+| M13 | Local action brief and offline artifact views | Done (2026-08-11) |
 
 ## Active Ready Roadmap
 
-The approved execution plan is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md). Its implementation packages through #78 generated Home are shipped in the current contract. The remaining local-artifact and notification packages stay roadmap work until their own gates pass; current state and owner gates are summarized in [PRD](PRD.md) §§19–21.
+The approved execution plan is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md). Its implementation packages through #23 local artifacts are shipped in the current contract. Push-only owner notifications (#21) remain gated on an owner-selected private provider and approved smoke send; current state and owner gates are summarized in [PRD](PRD.md) §§19–21.
 
 ## Getting-Started Checklist
 

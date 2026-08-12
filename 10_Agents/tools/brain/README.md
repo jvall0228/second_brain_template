@@ -44,6 +44,7 @@ Every command accepts `--json` for machine-readable output, `--vault PATH` to ov
 | `links <note>` | Outgoing links, backlinks, and unresolved targets for one note |
 | `aymt` | Deterministic local Actions You May Take brief (spec §23). Preview is read-only; `--json` explains scores and selection, `--check` verifies `00_Meta/AYMT.md` without writing, and explicit `--write` updates only the recognized generated file. Optional `--github-input PATH\|-` accepts a strict sanitized snapshot; brain never invokes GitHub or the network |
 | `home` | Deterministic local Home (spec §24) built from structured AYMT plus safe tracked tasks, Inbox, active work, reviews, current state, health, environment metadata, and navigation. Preview/JSON/check are zero-write; explicit `--write` updates only recognized generated `00_Meta/HOME.md`. Optional `--github-input PATH\|-` affects only AYMT actions; brain never invokes GitHub or the network |
+| `artifacts` | Deterministic offline link graph and health dashboard (spec §25). Preview/`--json` are read-only; `--check` verifies the exact generated inventory; `--write` updates only recognized files under `08_Assets/artifacts/`; `--open` opens fresh local HTML. `--as-of YYYY-MM-DD` controls the source timestamp |
 | `tags` | Tag usage counts grouped by namespace |
 | `show <note>` | The full index record for one note |
 | `recent [n]` | Notes by `updated:` descending (default 10) |
