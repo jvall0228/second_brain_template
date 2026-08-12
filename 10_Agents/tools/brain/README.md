@@ -42,6 +42,7 @@ Every command accepts `--json` for machine-readable output, `--vault PATH` to ov
 | `list` | Note paths; filters: `--dir PREFIX`, `--tag TAG` (repeatable; `type/*` matches a namespace), `--type X` |
 | `search <query>` | Case-insensitive substring over titles, headings, and body. `--semantic` ranks whole notes by embedding similarity instead (spec §18.4), degrading to keyword search on a vectorless vault; `--query-vector` reads the query embedding from stdin, `--top N` caps results |
 | `links <note>` | Outgoing links, backlinks, and unresolved targets for one note |
+| `aymt` | Deterministic local Actions You May Take brief (spec §23). Preview is read-only; `--json` explains scores and selection, `--check` verifies `00_Meta/AYMT.md` without writing, and explicit `--write` updates only the recognized generated file. Optional `--github-input PATH\|-` accepts a strict sanitized snapshot; brain never invokes GitHub or the network |
 | `tags` | Tag usage counts grouped by namespace |
 | `show <note>` | The full index record for one note |
 | `recent [n]` | Notes by `updated:` descending (default 10) |

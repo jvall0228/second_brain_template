@@ -21,10 +21,10 @@ updated: 2026-08-11
 - Full PARA + Journal structure, bootstrap, canonical navigation, and 12 note templates are in place.
 - Both supported editors are wired: tracked Obsidian settings and VS Code settings, tasks, extensions, and generated snippets.
 - Internal navigation uses source-relative Markdown links with explicit extensions across Obsidian, VS Code, GitHub, and `brain`; the maintained corpus has no legacy links.
-- The deterministic `brain` index/validation CLI, hooks, CI, adoption smoke, health reporting, tasks, and optional semantic-search path are shipped.
-- Twenty canonical Agent Skills, seven harness adapters, environment orientation, reversible onboarding, pull-only template sync, and the propose-only self-improvement loop are shipped.
+- The deterministic `brain` index/validation CLI, hooks, CI, adoption smoke, health reporting, tasks, optional semantic-search path, and local AYMT brief are shipped.
+- Twenty-one canonical Agent Skills, seven harness adapters, environment orientation, reversible onboarding, pull-only template sync, and the propose-only self-improvement loop are shipped.
 - Profile notes are blank templates — fill them in before pointing agents at the vault.
-- README and `adopt_examples.json` list the complete seed set; atomic onboarder cleanup remains Ready issue #84.
+- README and `adopt_examples.json` list the complete seed set; atomic onboarder cleanup is shipped.
 
 ## Milestone Status
 
@@ -44,7 +44,7 @@ Per the roadmap in [PRD](PRD.md) §19:
 
 ## Active Ready Roadmap
 
-The approved execution plan is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md). Its #71/#72/#73 PRD package is implemented in the current contract; the remaining packages stay roadmap work until each passes tests, validation, generated-file freshness, adversarial review, and integration on `main`. Current state and unresolved owner gates are summarized in [PRD](PRD.md) §§19–21.
+The approved execution plan is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md). Its #71/#72/#73 PRD package and #79 AYMT are implemented in the current contract; #78 generated Home and the other remaining packages stay roadmap work until each passes tests, validation, generated-file freshness, adversarial review, and integration on `main`. Current state and unresolved owner gates are summarized in [PRD](PRD.md) §§19–21.
 
 ## Getting-Started Checklist
 

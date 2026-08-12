@@ -62,6 +62,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | Skill | Does |
 |-------|------|
 | [vault-maintenance](vault-maintenance/SKILL.md) | Run `brain validate`, fix findings, keep status/changelog current (mechanical integrity) |
+| [aymt](aymt/SKILL.md) | Rank tracked local signals into a reviewable 5–7-action brief; preview by default, dedicated exact-file write only on request |
 | [curate](curate/SKILL.md) | Work the `brain curate` report: refresh, re-verify, propose archives/splits, semantic lint (epistemic integrity) |
 | [link-repair](link-repair/SKILL.md) | Find and fix broken relative Markdown links using the index's repair hints |
 | [merge-notes](merge-notes/SKILL.md) | Execute approved merges, splits, and renames: rewrite, retarget backlinks, archive, validate |

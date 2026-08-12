@@ -14,6 +14,8 @@ expires: 2027-08-11
 
 Scripts backing the VS Code alternative-editor surface ([PRD](../../../00_Meta/PRD.md) §6.5). Stdlib-only Python 3.10+, per the tools rules in [README](../README.md). Both are invoked from `.vscode/tasks.json` and the pre-commit hook — no editor extension involved (strict first-party trust policy).
 
+The hand-maintained task surface also exposes **Brain: Actions You May Take**, a read-only `brain aymt` preview. Writing the generated [AYMT](../../../00_Meta/AYMT.md) remains an explicit CLI/skill action and is deliberately not a folder-open task or hook.
+
 ## Contents
 
 - `gen_snippets.py` — generates `.vscode/second-brain.code-snippets` from `09_Templates/`, mapping `{{date}}` to VS Code's auto-filling date variables and other `{{...}}` tokens to tabstops. **The generated file is never edited by hand**; the pre-commit hook regenerates and re-stages it, so the snippet surface cannot drift from the canonical templates (editor-surface parity, §6.5). `--check` exits 1 if the committed file is stale.

@@ -28,6 +28,7 @@ expires: 2027-08-11
   - [Example Project](../04_Projects/example-project/README.md) — Sample; delete once you've seen the pattern
 - [Inbox](../02_Inbox/README.md) — Triage queue
 - [Outbox](../02_Outbox/README.md) — Outbound deliverables awaiting the owner's review and shipping
+- [Actions You May Take](AYMT.md) — Generated local next-action brief; refresh with `brain aymt --write`
 
 ## Knowledge & Reference
 - [Resources](../06_Resources/README.md) — Topic notes

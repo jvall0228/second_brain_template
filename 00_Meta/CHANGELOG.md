@@ -10,6 +10,12 @@ updated: 2026-08-11
 
 # Changelog
 
+## [2026-08-11] add-aymt | deterministic local next-action brief (#79)
+
+- Added `brain aymt` preview/JSON/check/write modes, tracked-corpus privacy filtering, documented integer scoring and stable capped ranking, metadata-only environment freshness, and strict caller-sanitized GitHub input without connector or network execution.
+- Added canonical [AYMT](AYMT.md), the [aymt skill](../10_Agents/skills/aymt/SKILL.md), generated harness adapters, and a dedicated exact-file writer that refuses foreign, linked, or concurrently replaced content. AYMT is deliberately outside hooks and the merge driver because date and selected-environment metadata are local inputs.
+- Added the VS Code read-only preview task plus focused privacy, deterministic ranking, zero-write, and data-preservation tests.
+
 Notable structural changes to the vault. For individual file history, use `git log`. Entry headers follow `## [YYYY-MM-DD] <operation> | <summary>` ([conventions § Recency](CONVENTIONS.md#recency)) — forward-only since 2026-08-11; older entries below keep their original headers.
 
 ## [2026-08-11] migrate-links | Portable relative Markdown links (#74, #75)

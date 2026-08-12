@@ -273,7 +273,7 @@ The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbo
 2. onboarding entry and atomic example cleanup (#81, #84);
 3. environment selection and a portable `brain` command (#15, #4);
 4. uppercase core filenames and portable Markdown links (#75, #74);
-5. Actions You May Take and generated Home (#79, #78);
+5. generated Home (#78), building on the shipped local Actions You May Take brief (#79);
 6. local offline artifacts and push-only owner notifications (#23, #21).
 
 ## 20. Current acceptance criteria

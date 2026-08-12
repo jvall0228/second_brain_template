@@ -76,7 +76,7 @@ class RepositoryMarkdownContractTests(unittest.TestCase):
         counts = self.index["linkCounts"]
         self.assertEqual(counts["legacy"], 0)
         self.assertEqual(counts["wikilink"], 0)
-        self.assertEqual(counts["markdown"], 775)
+        self.assertEqual(counts["markdown"], 785)
         failures = []
         for path, record in self.index["notes"].items():
             for link in record["links"]:
