@@ -9,6 +9,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path, PurePosixPath
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -52,8 +53,24 @@ def note(body: str, title: str = "Note") -> str:
 class RepositoryMarkdownContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        notes, assets = brain.walk_corpus(ROOT)
+        notes, assets = brain.index_corpus(ROOT)
         cls.index = brain.build_index(ROOT, notes, assets)
+
+    def test_untracked_legacy_note_is_outside_the_maintained_corpus(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "tracked.md").write_text(note("# Tracked\n"), encoding="utf-8")
+            legacy = "[" * 2 + "tracked" + "]" * 2
+            (root / "untracked.md").write_text(
+                note(f"{legacy}\n", "Untracked"),
+                encoding="utf-8",
+            )
+            with mock.patch.object(brain, "git_tracked", return_value={"tracked.md"}):
+                notes, assets = brain.index_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            self.assertEqual(notes, ["tracked.md"])
+            self.assertEqual(index["linkCounts"]["legacy"], 0)
+            self.assertNotIn("untracked.md", index["notes"])
 
     def test_maintained_corpus_is_markdown_only_and_resolved(self):
         counts = self.index["linkCounts"]
