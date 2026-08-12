@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2026-11-11
 ---
 
@@ -33,7 +33,7 @@ User scope (what `onboard-harness` does for Copilot — **not** the `~/.agents/s
 - **CLI:** the first registered second-brain vault that provides the global skill set becomes the manifest-recorded provider; register that real directory with `copilot skill add <vault>/10_Agents/skills` (in-session: `/skills add`). Additional registered vaults with the same skill names become consumers rather than adding duplicate directories. Compare recorded hashes; if another vault's copies differ, report managed version drift and keep the current provider until the owner explicitly chooses a global version. Provider removal follows the generic `onboard-harness` transfer/preflight rule. Reversible with `copilot skill remove` / `/skills remove`; where the registration persists is undocumented.
 - **VS Code / fallback:** **copy** skill folders into `~/.copilot/skills/` (a documented personal path; copies, not symlinks) and treat those copies as shared manifest-owned resources with provider/consumer references and content hashes. Do not overwrite them merely because another vault is onboarded. `chat.agentSkillsLocations` is documented for *project* locations; treating it as user-scope config is unverified.
 
-Caveats: the CLI ships nine built-in skills (`analyze`, `design`, `document`, `fix`, `investigate`, `research`, `security`, `test`, `verify`) that can override same-named user skills — none of the vault's twenty-three canonical skill names collide; keep it that way. The canonical files' superset frontmatter (`title`/`tags`/`updated` beyond `name`/`description`) is tolerated in practice, while generated project adapters expose only discovery metadata plus a sanctioned `metadata:` map and canonical pointer.
+Caveats: the CLI ships nine built-in skills (`analyze`, `design`, `document`, `fix`, `investigate`, `research`, `security`, `test`, `verify`) that can override same-named user skills — none of the vault's twenty-four canonical skill names collide; keep it that way. The canonical files' superset frontmatter (`title`/`tags`/`updated` beyond `name`/`description`) is tolerated in practice, while generated project adapters expose only discovery metadata plus a sanctioned `metadata:` map and canonical pointer.
 
 ## Enforcement chain
 

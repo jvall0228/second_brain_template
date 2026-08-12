@@ -4,7 +4,7 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -39,7 +39,8 @@ Standing exceptions:
 
 - Agents may append solution notes to `10_Agents/solutions/` — see [README](10_Agents/README.md) — and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (the self-improve loop's memory).
 - Only `brain {aymt,home} --write` may replace its exact generated file in `00_Meta/`; generic writes and hand edits remain forbidden.
-- Only `brain artifacts --write` may replace the three generated files named in `08_Assets/artifacts/README.md`; generic writes, hand edits, hosting, and notifications remain forbidden.
+- `brain artifacts --write` alone owns the three generated files in `08_Assets/artifacts/README.md`; generic writes and hand edits are forbidden.
+- Notify: [contract](10_Agents/skills/configure-notifications/SKILL.md).
 - A live, user-invoked [agent-orientation](10_Agents/skills/agent-orientation/SKILL.md) session may write draft outputs to `10_Agents/environments/<env-slug>/`, `10_Agents/tools/<source>/`, and `10_Agents/skills/<source>-capture/`. Markdown uses `workflow/draft`; other bundle files inherit it until owner promotion.
 - During a live [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) session, agents write interview results directly to `01_Profile/`, `03_Journal/people/` (owner-confirmed people notes), `04_Projects/`, and `05_Areas/` — and, in its context-specialization stage, rewrite the periodic templates in `09_Templates/` from `09_Templates/variants/` and record `context:` in `00_Meta/config.yaml`. The owner's in-the-moment approval is the review. Outside that session, Inbox-first applies as usual.
 

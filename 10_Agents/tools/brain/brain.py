@@ -6,7 +6,7 @@ Behavior is governed by spec.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: python 10_Agents/tools/brain/brain.py <command> [options]
-Commands: index, list, search, links, migrate-links, aymt, artifacts, tags, show, recent,
+Commands: index, list, search, links, migrate-links, aymt, home, artifacts, notify, tags, show, recent,
           validate, curate, context, config, report, tasks, embed,
           remote-safety, env
 """
@@ -18,6 +18,7 @@ import calendar
 import ctypes
 import hashlib
 import html
+import importlib.util
 import json
 import math
 import os
@@ -9353,6 +9354,27 @@ def cmd_remote_safety(root: Path, args) -> int:
     return 0 if operation_allowed else 1
 
 
+_NOTIFICATIONS_MODULE = None
+
+
+def _load_notifications_module():
+    global _NOTIFICATIONS_MODULE
+    if _NOTIFICATIONS_MODULE is not None:
+        return _NOTIFICATIONS_MODULE
+    path = Path(__file__).with_name("notifications.py")
+    spec = importlib.util.spec_from_file_location("brain_notifications", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("notification module is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    _NOTIFICATIONS_MODULE = module
+    return module
+
+
+def cmd_notify(root: Path, args) -> int:
+    return _load_notifications_module().command(sys.modules[__name__], root, args)
+
+
 def cmd_validate(root: Path, args) -> int:
     errors, warnings = run_validate(
         root,
@@ -9387,6 +9409,7 @@ def cmd_validate(root: Path, args) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     global _ACTIVE_ENVIRONMENT
+    notifications_api = _load_notifications_module()
     parser = argparse.ArgumentParser(prog="brain", description=__doc__)
     parser.add_argument("--vault", type=Path, default=None, help="vault root override")
     parser.add_argument(
@@ -9519,6 +9542,46 @@ def main(argv: list[str] | None = None) -> int:
         metavar="YYYY-MM-DD",
         help="controlled snapshot date (default: latest safe source updated date)",
     )
+    p = add(
+        "notify",
+        help="preview, check, set up, or explicitly write a local notification",
+    )
+    notify_mode = p.add_mutually_exclusive_group()
+    notify_mode.add_argument(
+        "--setup",
+        action="store_true",
+        help="write selected-environment notification setup (never sends)",
+    )
+    notify_mode.add_argument(
+        "--check",
+        action="store_true",
+        help="verify selected-environment notification readiness; never writes",
+    )
+    notify_mode.add_argument(
+        "--deliver-file",
+        action="store_true",
+        help="write one sanitized envelope locally; never uses a network",
+    )
+    notify_mode.add_argument(
+        "--send-plan",
+        action="store_true",
+        help="preview the provider payload and policy without writes or network",
+    )
+    p.add_argument("--input", default=None, metavar="PATH|-", help="strict v1 envelope JSON")
+    p.add_argument("--output", type=Path, default=None, metavar="PATH", help="file delivery path under the system temporary directory")
+    p.add_argument("--provider", choices=notifications_api.PROVIDERS, default=None, help="setup only: fake, file, or a gated provider formatter")
+    p.add_argument("--destination-label", default=None, help="setup only: non-secret private destination label")
+    p.add_argument("--private-destination-ack", action="store_true", help="setup only: owner confirms the destination is private")
+    p.add_argument("--enable-category", action="append", choices=notifications_api.CATEGORIES, default=[], help="setup only: enable one independent category (repeatable)")
+    p.add_argument("--timezone", default="America/New_York", help="setup only: IANA timezone for quiet hours")
+    p.add_argument("--quiet-start", default="22:00", help="setup only: quiet-hours start HH:MM")
+    p.add_argument("--quiet-end", default="07:00", help="setup only: quiet-hours end HH:MM")
+    p.add_argument("--rate-limit", type=int, default=6, help="setup only: deliveries per rolling hour")
+    p.add_argument("--dedupe-hours", type=int, default=24, help="setup only: dedupe window in hours")
+    p.add_argument("--secret-env", default=None, help="setup only: environment-variable name, never its value")
+    p.add_argument("--allow-https-host", action="append", default=[], help="setup only: approved lowercase HTTPS host")
+    p.add_argument("--approve-private-send", action="store_true", help="file delivery only: one-run owner approval")
+    p.add_argument("--now", default=None, metavar="RFC3339", help="preview-only deterministic policy time override")
     add("tags", help="tag usage counts by namespace")
     p = add("show", help="full index record for one note")
     p.add_argument("note")
@@ -9650,6 +9713,7 @@ def main(argv: list[str] | None = None) -> int:
         "aymt": cmd_aymt,
         "home": cmd_home,
         "artifacts": cmd_artifacts,
+        "notify": cmd_notify,
         "tags": cmd_tags,
         "show": cmd_show,
         "recent": cmd_recent,
@@ -9675,6 +9739,7 @@ def main(argv: list[str] | None = None) -> int:
             "remote-safety",
             "install",
             "artifacts",
+            "notify",
         }:
             try:
                 selector = (

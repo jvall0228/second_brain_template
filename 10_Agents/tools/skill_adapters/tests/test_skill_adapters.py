@@ -44,6 +44,11 @@ def init_clean_git_repo(repo: Path) -> None:
     subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
     subprocess.run(["git", "config", "user.name", "Adapter Test"], cwd=repo, check=True)
     subprocess.run(["git", "config", "user.email", "adapter@example.invalid"], cwd=repo, check=True)
+    # Disposable clones must not inherit a user-level detached maintenance
+    # job: it can create `.git/objects/info` while TemporaryDirectory is
+    # removing the clone, making an otherwise passing test nondeterministic.
+    subprocess.run(["git", "config", "maintenance.auto", "false"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "gc.auto", "0"], cwd=repo, check=True)
     subprocess.run(["git", "add", "."], cwd=repo, check=True)
     subprocess.run(["git", "commit", "-q", "--no-verify", "-m", "fixture"], cwd=repo, check=True)
 

@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -65,6 +65,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | [aymt](aymt/SKILL.md) | Rank tracked local signals into a reviewable 5–7-action brief; preview by default, dedicated exact-file write only on request |
 | [refresh-home](refresh-home/SKILL.md) | Preview or explicitly refresh the generated local Home from structured AYMT and safe tracked navigation/health data |
 | [generate-artifacts](generate-artifacts/SKILL.md) | Generate, check, and locally open the offline link graph and health dashboard from privacy-filtered tracked metadata |
+| [configure-notifications](configure-notifications/SKILL.md) | Configure, preview, inspect, and locally file-test push-only private owner notifications; real-provider sends remain owner-gated and unimplemented |
 | [curate](curate/SKILL.md) | Work the `brain curate` report: refresh, re-verify, propose archives/splits, semantic lint (epistemic integrity) |
 | [link-repair](link-repair/SKILL.md) | Find and fix broken relative Markdown links using the index's repair hints |
 | [merge-notes](merge-notes/SKILL.md) | Execute approved merges, splits, and renames: rewrite, retarget backlinks, archive, validate |
@@ -97,7 +98,7 @@ Vault-canonical skills live above. A separate, curated **links-only** catalog of
 | Quarterly | [periodic-review](periodic-review/SKILL.md) (quarterly, updates the Now page) + [curate](curate/SKILL.md) + [self-maintenance](self-maintenance/SKILL.md) audit | Quarter end |
 | Yearly | [periodic-review](periodic-review/SKILL.md) (yearly) | Year end |
 
-Ad hoc, not scheduled: capture and retrieval ([inbox-capture](inbox-capture/SKILL.md), [vault-answer](vault-answer/SKILL.md), [express-packet](express-packet/SKILL.md)) run when needed; surgery ([merge-notes](merge-notes/SKILL.md)) runs on approval only; upstream syncing ([sync-upstream](sync-upstream/SKILL.md)) runs when the owner asks to check for or adopt template releases.
+Ad hoc, not scheduled: capture and retrieval ([inbox-capture](inbox-capture/SKILL.md), [vault-answer](vault-answer/SKILL.md), [express-packet](express-packet/SKILL.md)) run when needed; notification setup/testing ([configure-notifications](configure-notifications/SKILL.md)) is owner-invoked; surgery ([merge-notes](merge-notes/SKILL.md)) runs on approval only; upstream syncing ([sync-upstream](sync-upstream/SKILL.md)) runs when the owner asks to check for or adopt template releases.
 
 ## Rules
 

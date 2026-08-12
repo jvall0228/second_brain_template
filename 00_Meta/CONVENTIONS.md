@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -127,13 +127,14 @@ Checkbox tasks (`- [ ]` open, `- [x]` done) live **where their context lives** �
 
 ## Agent Write Rules
 
-Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note must include valid frontmatter with `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
+Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note needs `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
 
-**Standing exceptions:**
+**Exceptions:**
 
 - Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [README](../10_Agents/README.md)) and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
 - Only matching `brain {aymt,home} --write` replaces exact `00_Meta/{AYMT,HOME}.md`; no hand edits.
 - Only `brain artifacts --write` replaces the exact generated inventory under `08_Assets/artifacts/`; no hand edits or generic directory authority.
+- Notifications: configure-notifications only.
 - Live, user-invoked [agent-orientation](../10_Agents/skills/agent-orientation/SKILL.md) may write its documented draft inventory, access tool, and capture skill. Markdown uses `workflow/draft`; other files inherit it until promotion.
 - A live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
 

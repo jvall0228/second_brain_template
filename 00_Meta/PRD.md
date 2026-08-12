@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -38,7 +38,7 @@ Second Brain is a reusable Markdown knowledge vault. Git supplies history; Obsid
 
 ## 4. Template and adoption state
 
-Blank guided profiles and one example per documented section teach the structure; they are not owner facts. README and `adopt_examples.json` define the complete seed set, while atomic onboarder cleanup remains unshipped (#84). An adopted fork has meaningful profile context. Personal and employer-visible contexts use separate forks.
+Blank guided profiles and one example per documented section teach the structure; they are not owner facts. README and `adopt_examples.json` define the complete seed set; atomic onboarder cleanup removes it transactionally when approved. An adopted fork has meaningful profile context. Personal and employer-visible contexts use separate forks.
 
 ## 5. Product architecture
 
@@ -80,7 +80,7 @@ Structured writes or navigation beyond Inbox also require `00_Meta/INDEX.md` and
 
 ### 6.2 Agent write pattern
 
-Agent captures, research, reports, and proposals default to `02_Inbox/`; outside deliverables go to `02_Outbox/` via `express-packet`, then the owner ships. Standing exceptions cover solution notes, the append-only rejection log, `onboard-owner` session outputs, and `agent-orientation` inventories plus paired draft capture skill/tool bundles. A user-invoked canonical skill may direct only its documented session writes. Generated orientation bundles are not canonical-by-policy until owner promotion; `write_exceptions` may add directories but cannot weaken canonical or privacy rules. Other destinations require current owner direction.
+Agent captures, research, reports, and proposals default to `02_Inbox/`; outside deliverables go to `02_Outbox/` via `express-packet`, then the owner ships. Standing exceptions cover solution notes, the append-only rejection log, `onboard-owner` session outputs, `agent-orientation` inventories plus paired draft capture skill/tool bundles, and `configure-notifications`' ignored environment state plus explicitly approved local file tests. The notification exception requires an owner-named and acknowledged private destination and per-category opt-in; it does not authorize a real-provider send, inbound action, restricted content, or Outbox shipping. A user-invoked canonical skill may direct only its documented session writes. Generated orientation bundles are not canonical-by-policy until owner promotion; `write_exceptions` may add directories but cannot weaken canonical or privacy rules. Other destinations require current owner direction.
 
 ### 6.3 Change control
 
@@ -139,7 +139,7 @@ Each harness has a wiring contract. P0 is required support; P1 is maintained sec
 
 ### 8.4 Environment integrations
 
-Orientation inventories capabilities and policy before generating draft tools. Access preference is local tooling, first-party CLI, first-party connector/MCP, wrapped API, browser, then “none.” Auth stays environmental; automations are proposed and generated integrations audited. Automatic environment selection remains roadmap work.
+Orientation inventories capabilities and policy before generating draft tools. Access preference is local tooling, first-party CLI, first-party connector/MCP, wrapped API, browser, then “none.” Auth stays environmental; automations are proposed and generated integrations audited. Environment selection uses the tracked manifest plus ignored current selector/fingerprint precedence and fails closed on ambiguity.
 
 ## 9. Agent library, tooling, and generated files
 
@@ -157,7 +157,7 @@ Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` ins
 
 ### 9.4 `brain` and generated data
 
-`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/spec.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, and embeddings.
+`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/spec.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
 
 The committed index and VS Code snippets are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
 
@@ -192,6 +192,8 @@ A canonical artifact defines structure, policy, navigation, or behavior. Only th
 
 Reserved keys have no behavior until implemented. Config never changes committed-index semantics.
 
+Notification configuration is separate machine-local state, not tracked fork policy: `brain notify --setup` writes schema-versioned ignored setup to `.second-brain/environments/<slug>/notifications.json`; delivery history and local file-test output live beside it. Setup records only a secret environment-variable name, never its value.
+
 ## 12. Templates
 
 Stable templates cover project, area, resource, zettel, five review cadences, decision, media, and comparison. Top-level templates generate VS Code snippets; `variants/` are onboarding inputs only.
@@ -204,6 +206,7 @@ Stable templates cover project, area, resource, zettel, five review cadences, de
 - Validation reports content, secret, restriction, and curation findings without crashing on unreadable files.
 - Template sync previews classified changes, preserves owner content, and never pushes upstream.
 - Generated integrations are draft, environment-scoped, and credential-free in tracked content.
+- Push-only notifications validate one provider-neutral operational envelope, default every category off, enforce quiet/dedupe/rate policy, and ship only fake preview and explicit local file delivery until an owner-selected real private destination passes its test-send gate.
 
 ## 14. Non-functional requirements
 
@@ -230,6 +233,8 @@ New assets land under `08_Assets/`, append-only by default, and are secret-scann
 Connected agents and Git collaborators may read the vault. Never commit credentials or material that must not reach them. `03_Journal/people/` notes concern **third parties** — keep them factual and respectful, and write nothing you would not stand behind if read back. For health, financial, or otherwise sensitive content, remember that anything committed is visible to every agent and service with repo access; keep out material that must not reach them. Legal and relationship-conflict detail also requires owner judgment. Separate work/personal forks.
 
 Restrictions cannot replace permissions or separate forks. External authentication stays in CLI sessions, keychains, connector stores, or environment variables.
+
+Notification setup, delivery history, and local file-test output stay in the ignored selected-environment overlay. The central notification filter rejects `restricted/private`, credentials, absolute paths, tracking URLs, and unsafe links before provider formatting; outbound callbacks and inbound actions are out of scope.
 
 ### 16.3 Sync boundaries
 
@@ -268,7 +273,7 @@ Release detail belongs in [CHANGELOG](CHANGELOG.md), not in this current-state s
 
 ### 19.2 Approved Ready roadmap
 
-The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). The merged contract implements the PRD, remote-safety, discovery, onboarding, environment/launcher, uppercase-core, portable-link, AYMT, generated-Home, and local offline-artifact packages (#71, #72, #73, #83, #82, #81, #84, #15, #4, #75, #74, #79, #78, #23). Push-only owner notifications (#21) remain subject to the private-provider acceptance gate.
+The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md), grounded by [2026-08-11-ready-backlog-requirements-brainstorm](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md). The merged contract implements the PRD, remote-safety, discovery, onboarding, environment/launcher, uppercase-core, portable-link, AYMT, generated-Home, and local offline-artifact packages (#71, #72, #73, #83, #82, #81, #84, #15, #4, #75, #74, #79, #78, #23). For push-only owner notifications (#21), the provider-neutral envelope, ignored environment setup/state, fake preview, and explicit local file delivery are shipped; a real-provider test send remains open pending the owner's provider and verified private-destination choice.
 
 ## 20. Current acceptance criteria
 
@@ -279,6 +284,7 @@ The active contract is [2026-08-11-ready-backlog-implementation-plan](../02_Inbo
 - Restriction reduction, secret scan, and credential-free config fixtures pass and never claim access control.
 - Write lanes agree across entrypoint, conventions, config, rules, skills, and `brain`.
 - Upstream sync previews, pulls only, preserves owner content, and is change-set reversible.
+- Notification preview is zero-write; approved local file delivery is private, create-only, policy-gated, transactionally recorded, and contains no restricted or secret-bearing content.
 - Status distinguishes fresh template, shipped framework, adopted fork, roadmap, and unresolved decisions.
 
 ## 21. Unresolved decisions
@@ -287,5 +293,5 @@ Only owner choices or evidence gates remain:
 
 - **#15:** owner-chosen environment slugs; implementation proves private matching and ambiguity behavior.
 - **#4:** owner-approved existing writable PATH target; never edit shell startup files automatically.
-- **#21:** owner selects a private destination before any real send; otherwise fake/file transport only and the issue stays open.
+- **#21:** owner selects and verifies a real provider's private destination before any real test send. Until that transport exists and its test passes, only fake preview/local file delivery is shipped and the issue stays open.
 - **Cross-harness privacy:** no portable repository ignore exists; stronger access exclusion would need a separate product decision.

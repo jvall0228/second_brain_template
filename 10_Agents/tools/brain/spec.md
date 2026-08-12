@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -252,6 +252,7 @@ Where a command takes a `<note>` argument, it accepts a vault-relative path or a
 - **`report`** — §16: the five-section vault-health synthesis (stale-active, orphans, Inbox aging, tag drift, unresolved links); `--since YYYY-MM-DD` scopes the two change-attributable sections per §16.3. Thresholds come from the `report` config key (§15.3) with built-in defaults.
 - **`tasks`** — §17.3: checkbox tasks across the vault, filterable by `--open`, `--due <date|today>`, `--overdue`, `--project PREFIX`.
 - **`embed`** — §18.3: maintain the semantic-search embeddings sidecar. `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional local model, `--status` reports coverage.
+- **`notify`** — §26: configure/check an ignored selected-environment notification boundary or validate/format a strict push-only envelope. Preview is the default zero-write mode; actual delivery is limited to `--deliver-file --approve-private-send`.
 
 ## 10. Validate semantics
 
@@ -859,3 +860,31 @@ for capture/write flows. Process-boundary adapters use `remote-safety --persist
 --json` and require both zero exit and `operationAllowed: true`. The helper raises
 `RemoteSafetyError` on blocked/unknown access and on persistence in local-only
 mode; `guarded_personal_data_call(...)` is the reference sequencing wrapper.
+
+## 26. Push-only owner notifications (`brain notify`) — issue #21
+
+`notify` is a provider-neutral, push-only boundary for small operational events. It does not read a notification provider, open a notification-provider connection, receive callbacks, accept interaction payloads, or ship Outbox content. The shipped transport surface is a zero-write `fake` preview plus explicit local `file` delivery. Slack, Google Chat, and Teams payload formatters are present only to review the future wire shape; real transport and test send are unimplemented, so #21 remains open until the owner selects and verifies a private destination.
+
+### 26.1 Version-1 envelope and privacy filter
+
+Input is UTF-8 JSON from `--input PATH|-`, capped at 64 KiB. The object has exactly these fields: `schemaVersion: 1`; `event`; `category`; `severity`; `privacyClass`; `title`; `summary`; `occurredAt`; `dedupeKey`; `sources`; and nullable `artifact`. Categories are `automation`, `inbox-review`, `maintenance`, `pr-review`, and `validation`; severities are `info`, `warning`, `error`, and `critical`; deliverable privacy classes are `operational` and `private-owner`. `restricted/private` always fails before formatting.
+
+`sources` contains at most five exact `{label, link}` records; `artifact` is null or the same shape. Links are limited to authenticated Git-tracked, non-restricted shared-vault note paths; exact GitHub issue/pull URLs; and query/fragment-free HTTPS URLs on setup allowlisted hosts. Environment-note links, untracked paths, and secret-bearing note targets fail closed. The central validator normalizes text and timestamps and rejects unknown fields, credentials/secret patterns, absolute paths, tracking-query parameters, control characters, embedded markup links, unsafe links, and oversized values. Provider code receives only the normalized envelope. Errors cross the CLI boundary only as the stable `notification operation failed safely`; payload/provider details and local paths are not echoed.
+
+### 26.2 Selected-environment setup
+
+`--setup` requires a uniquely selected environment (§20), `--provider`, `--destination-label`, and `--private-destination-ack`. `--enable-category` and `--allow-https-host` repeat; all categories default off. Quiet hours are configured by `--quiet-start`, `--quiet-end`, and IANA `--timezone`; `--rate-limit` accepts 1–60 per hour and `--dedupe-hours` accepts 1–168. Providers are `fake`, `file`, `slack`, `google-chat`, and `teams`. A real-provider record additionally requires `--secret-env` with an uppercase environment-variable name; the credential value never enters an argument, config, state, output, or tracked file.
+
+Setup is an explicit write but never a send. It calls the shared §19 guard with `persist=True`, then compare-and-swap writes canonical JSON at mode `0600` to ignored `.second-brain/environments/<slug>/notifications.json`. The v1 config contains exactly `schemaVersion`, `provider`, `destinationLabel`, `privateDestinationAcknowledged`, `categories`, `quietHours`, `rateLimitPerHour`, `dedupeHours`, `allowedHttpsHosts`, and `secretEnvironmentVariable`. Symlinks, malformed/unknown schema, unsafe parents, concurrent replacement, and ambiguous environment selection fail closed without overwriting foreign content. `--check` is read-only and reports readiness, provider, enabled categories, delivery-state row count, and whether a real-provider test send is still required.
+
+### 26.3 Preview and local file delivery
+
+With `--input` and no delivery flag, `notify` validates the envelope, loads selected-environment policy when available, formats a fake/file/future-provider payload, and returns a send plan with `direction: push-only`, `inboundCallbacks: false`, policy reason codes, a `deliveryAvailable` capability flag, and `writesPerformed: false`. Only a genuinely unconfigured environment may fall back to that fake plan; invalid explicit selection, corrupt selector/manifests, and ambiguous identity fail closed. Preview evaluates policy against `occurredAt` for deterministic bytes. Missing setup still permits a fake preview but marks policy blocked. `--json` is supported in every mode.
+
+Actual delivery requires provider `file`, an enabled matching category, acknowledged private destination, policy allowance, and both `--deliver-file` and `--approve-private-send`. Immediately before output it calls §19 with `persist=True`, reauthenticates the selected environment/config/state, and re-evaluates quiet hours, dedupe, and the hourly rate against current UTC, never the caller-controlled event time. `--now` is preview-only and refused with delivery. Default output is a new hash-named mode-`0600` JSON file under ignored `.second-brain/environments/<slug>/notification-output/`; `--output` is accepted only for a new direct child beneath the system temporary directory and outside the repository. Existing paths and symlinks are never followed or overwritten.
+
+Delivery state is bounded to 256 `{category, dedupeDigest, deliveredAt}` rows in ignored `notification-state.json`; it never stores envelope text, destination labels, or raw dedupe keys. Output creation is exclusive; state uses compare-and-swap mode-`0600` replacement. If state installation fails, the tool removes only the output inode it created; if safe rollback cannot be proven, it fails with a recovery-required error rather than touching a replacement. Quiet hours, duplicate keys within the configured window, disabled categories, and six-or-fewer-by-default hourly limits block before output. The plan exposes future transient retry delays of 5, 30, and 120 seconds; no real transport consumes them yet.
+
+### 26.4 Closure gate
+
+The fake/file foundation is shipped and testable without selecting a real provider. It does not satisfy the real-send acceptance gate. A future issue-closing change must add an owner-selected provider transport, keep credentials external, verify the destination is private, perform an owner-approved test send before live delivery, preserve the same envelope/filter/policy/transaction boundaries, and add no inbound or interactive surface.

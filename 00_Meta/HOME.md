@@ -5,11 +5,11 @@ tags:
   - audience/human
   - type/meta
   - workflow/canonical
-updated: 2026-08-11
-expires: 2026-08-12
+updated: 2026-08-12
+expires: 2026-08-13
 generated: brain-home-v1
-input-digest: "b518972117b76e0ab4c7164b5402d51982514bfbf93b82c4e131cd0fdef3f40b"
-content-digest: "4352b6c987a236a4b1bbe5f415cbc0c7920c9c5bfcc19b1e2e9583f95413ebac"
+input-digest: "3376f5323452dae22aa6c74ed88adf15763d12f1a1def19f0203371f43257b6a"
+content-digest: "34afca173e935e85fca2b373ff6c8640591c6adf64fd7a25b97460b24313f911"
 ---
 
 <!-- generated-by: brain home v1; do not edit -->
@@ -45,11 +45,11 @@ _No tracked safe task has a machine-readable due date._
 ## Inbox
 
 - **Tracked safe notes:** 5; **triage debt:** 0
-- [02_Inbox/2026-08-11-feature-request-triage.md](../02_Inbox/2026-08-11-feature-request-triage.md) — 0 days old
-- [02_Inbox/2026-08-11-implementation-plan-m8-m12.md](../02_Inbox/2026-08-11-implementation-plan-m8-m12.md) — 0 days old
-- [02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md](../02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md) — 0 days old
-- [02_Inbox/2026-08-11-ready-backlog-implementation-plan.md](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md) — 0 days old
-- [02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md) — 0 days old
+- [02_Inbox/2026-08-11-feature-request-triage.md](../02_Inbox/2026-08-11-feature-request-triage.md) — 1 days old
+- [02_Inbox/2026-08-11-implementation-plan-m8-m12.md](../02_Inbox/2026-08-11-implementation-plan-m8-m12.md) — 1 days old
+- [02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md](../02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md) — 1 days old
+- [02_Inbox/2026-08-11-ready-backlog-implementation-plan.md](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md) — 1 days old
+- [02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md) — 1 days old
 
 ## Active work
 
@@ -68,8 +68,8 @@ _No safe tracked item is tagged active._
 ## Current state
 
 - [Now](../01_Profile/NOW.md) — updated 2026-08-11
-- [Status](STATUS.md) — updated 2026-08-11
-- [Changelog](CHANGELOG.md) — updated 2026-08-11
+- [Status](STATUS.md) — updated 2026-08-12
+- [Changelog](CHANGELOG.md) — updated 2026-08-12
 
 ## Expiry and health
 

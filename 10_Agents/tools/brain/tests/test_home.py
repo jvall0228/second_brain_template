@@ -548,7 +548,10 @@ class HomeWriterTests(unittest.TestCase):
 
     def test_portable_check_is_zero_write_when_mutation_is_unsupported(self):
         target = self.vault.root / brain.HOME_RELPATH
-        target.write_bytes(self.desired)
+        # `cmd_home` evaluates the actual current date; build matching bytes so
+        # this portability contract stays deterministic across midnight.
+        current = brain.render_home(self.vault.build(today_d=date.today()))
+        target.write_bytes(current)
         os.chmod(target, 0o644)
         before = {p.name: p.read_bytes() for p in target.parent.iterdir() if p.is_file()}
         args = SimpleNamespace(check=True, write=False, json=True, github_input=None, home_selection=UNCONFIGURED)
@@ -587,7 +590,7 @@ class HomeRepositoryContractTests(unittest.TestCase):
 
     def test_skill_inventory_and_adapters_include_refresh_home(self):
         skills = sorted((self.root / "10_Agents/skills").glob("*/SKILL.md"))
-        self.assertEqual(len(skills), 23)
+        self.assertEqual(len(skills), 24)
         self.assertTrue((self.root / ".agents/skills/refresh-home/SKILL.md").is_file())
         self.assertTrue((self.root / ".claude/skills/refresh-home/SKILL.md").is_file())
 

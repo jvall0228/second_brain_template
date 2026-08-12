@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-12
 expires: 2027-08-11
 ---
 
@@ -64,7 +64,7 @@ Before writing any note, verify:
 - [ ] Tags use defined namespaces (see [CONVENTIONS](../../00_Meta/CONVENTIONS.md#tag-namespaces))
 - [ ] Filename follows [CONVENTIONS](../../00_Meta/CONVENTIONS.md#filename-convention) and does not collide with an existing note
 - [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [CONVENTIONS](../../00_Meta/CONVENTIONS.md) § Provenance)
-- [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, or live user-invoked `agent-orientation` inventory plus paired draft bundle)
+- [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, live user-invoked `agent-orientation` inventory plus paired draft bundle, or `configure-notifications`' ignored state and explicitly approved local file test)
 - [ ] Generated AYMT changes came only from explicit `brain aymt --write`; generic agents and `agent_write_allowed()` cannot hand-edit `00_Meta/AYMT.md`, and no config exception was added
 - [ ] Generated Home changes came only from explicit `brain home --write`; generic agents and `agent_write_allowed()` cannot hand-edit `00_Meta/HOME.md`, and no config exception was added
 - [ ] Generated local artifact changes came only from explicit `brain artifacts --write`; the exact two HTML files and manifest passed `--check`, and no generic `08_Assets/` write exception, hosting, or notification claim was added
@@ -95,6 +95,17 @@ and `operationAllowed: true` at a process boundary.
   is never written into the vault.
 - Raw remote URLs, provider errors, credentials, repository identities, and local
   paths never enter output, logs, notes, or artifacts.
+
+## Operational notifications
+
+Push-only owner notifications are a narrow operational exception, not a third write lane and not permission to ship Outbox content. Use [configure-notifications](../skills/configure-notifications/SKILL.md) only after the owner names and acknowledges a private destination and opts in each category. All categories default off.
+
+- Validate and privacy-filter the versioned envelope before provider formatting. Reject `restricted/private`, credentials, absolute paths, tracking URLs, raw provider errors, and unsafe links.
+- Store only the secret environment-variable name in ignored environment setup; keep the secret value in the environment or an external secret store.
+- Run the shared remote-safety guard with persistence immediately before setup or delivery. Never acknowledge an unknown state unattended.
+- Keep delivery push-only: no callbacks, mutation buttons, inbound webhooks, or reply actions. Envelope links may use authenticated vault-relative sources, GitHub issues/pulls, or explicitly allowlisted HTTPS hosts; provider buttons expose only validated HTTPS links.
+- The shipped delivery boundary is `fake` preview plus explicit local `file` output. Slack, Google Chat, and Teams payloads may be formatted for review, but real transport and test send remain unavailable pending the owner's provider and verified private-destination choice.
+- Enforce quiet hours, dedupe, and hourly rate policy before delivery. Create local outputs without overwrite and update ignored state transactionally; preserve foreign or concurrently changed content.
 
 ## Concurrency
 
