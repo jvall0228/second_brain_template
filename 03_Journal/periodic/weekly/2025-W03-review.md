@@ -19,7 +19,7 @@ updated: 2025-01-19
 
 ## Get Current — Projects
 
-- [Example Project](../../../04_Projects/example-project/README.md) — site audit done; next action is picking a framework.
+- [Example Project](../../../04_Projects/example-project/PROJECT.md) — site audit done; next action is picking a framework.
 
 ## Get Current — Areas
 

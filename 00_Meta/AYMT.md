@@ -5,11 +5,11 @@ tags:
   - audience/human
   - type/meta
   - workflow/canonical
-updated: 2026-08-12
-expires: 2026-08-13
+updated: 2026-08-14
+expires: 2026-08-15
 generated: brain-aymt-v1
-input-digest: "3b975e29d159ad89af3439643be368c5c31f1f3c08c4c50bb4ef0c4926aed680"
-content-digest: "5b57f4b8197719b2a4d9e7c38745bb079e7207aad1a9a003309c7eb6e099d049"
+input-digest: "3ce62932cac1fe5efa77ec7810cc8d4267585330fa8c308181a33273b477fa96"
+content-digest: "c17abe0f83512931da1dae557326fffdc4a2bf34f72bbc03bf458ce2d6fcd4fe"
 ---
 
 <!-- generated-by: brain aymt v1; do not edit -->
@@ -19,6 +19,13 @@ content-digest: "5b57f4b8197719b2a4d9e7c38745bb079e7207aad1a9a003309c7eb6e099d04
 A deterministic local brief. It suggests options; it does not authorize external action.
 
 ## Do next
+
+### Complete the weekly organize rhythm
+
+- **Why now:** The weekly cadence window is Friday through Sunday.
+- **Next step:** Triage Inbox, run the weekly periodic review, then sweep Outbox.
+- **Caveat:** Record completion in the weekly review so it is not suggested twice manually.
+- **Sources:** [The Rhythm](../10_Agents/skills/README.md)
 
 ### Start today's daily log
 

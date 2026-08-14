@@ -5,10 +5,16 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-12
+updated: 2026-08-14
 ---
 
 # Changelog
+
+## [2026-08-14] spec-change | Project entrypoints renamed README.md → PROJECT.md
+
+- Each project directory's entry note is now `PROJECT.md` (`04_Projects/<project>/PROJECT.md`); renamed the seeded `example-project` entry note via `git mv`. Nested directories inside a project and the PARA root `04_Projects/README.md` keep `README.md`.
+- Updated [CONVENTIONS § Filename Convention](CONVENTIONS.md#filename-convention), the brain spec's filename-exception list, and `brain`'s `NAME_EXCEPTIONS` to allow exact-uppercase `PROJECT.md`; raised the CONVENTIONS bootstrap budget 12800 → 13312 bytes to cover the new rule.
+- Rewrote every maintained inbound link to the renamed entry note (INDEX, Projects README, NOW comment, sample weekly review, example area) and regenerated the vault index and artifacts.
 
 ## [2026-08-11] generate-artifacts | deterministic local graph and dashboard (#23)
 
