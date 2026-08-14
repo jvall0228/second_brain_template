@@ -26,7 +26,7 @@ expires: 2027-08-11
 ## Active Work
 - [Home](HOME.md) — Generated local startup and navigation surface; refresh with `brain home --write`
 - [Projects](../04_Projects/README.md) — Outcomes with deadlines
-  - [Example Project](../04_Projects/example-project/README.md) — Sample; delete once you've seen the pattern
+  - [Example Project](../04_Projects/example-project/PROJECT.md) — Sample; delete once you've seen the pattern
 - [Inbox](../02_Inbox/README.md) — Triage queue
 - [Outbox](../02_Outbox/README.md) — Outbound deliverables awaiting the owner's review and shipping
 - [Actions You May Take](AYMT.md) — Generated local next-action brief; refresh with `brain aymt --write`

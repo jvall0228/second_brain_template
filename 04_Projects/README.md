@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-11
+updated: 2026-08-14
 expires: 2027-08-11
 ---
 
@@ -26,12 +26,12 @@ The key test: Can you say "this is done" and move it to Archives? If yes, it's a
 ## Structure
 
 Each project gets its own subfolder or standalone note:
-- `04_Projects/example-project/` — subfolder for multi-note projects (README, decision records, context)
+- `04_Projects/example-project/` — subfolder for multi-note projects; the entry note is `PROJECT.md` (plus decision records, context, etc.). Nested directories inside a project still use `README.md`.
 - `04_Projects/some-quick-project.md` — single note for simple projects
 
 ## Active Projects
 
-- [Example Project](example-project/README.md) — Sample project showing the structure. Delete once you've seen the pattern.
+- [Example Project](example-project/PROJECT.md) — Sample project showing the structure. Delete once you've seen the pattern.
 
 ## Related
 

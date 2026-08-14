@@ -140,15 +140,15 @@ class AdoptCheckTest(unittest.TestCase):
         kept = self.copy / "06_Resources/kept-reference.md"
         kept.write_text(
             "---\ntitle: Kept\ntags:\n  - type/reference\nupdated: 2026-08-11\n---\n\n"
-            "- [Aliased example](../04_Projects/example-project/README.md)\n",
+            "- [Aliased example](../04_Projects/example-project/PROJECT.md)\n",
             encoding="utf-8",
         )
         with self.assertRaisesRegex(AdoptionError, "unmarked surviving references"):
             build_plan(self.copy)
         kept.write_text(
             kept.read_text(encoding="utf-8").replace(
-                "Aliased example](../04_Projects/example-project/README.md)",
-                "Aliased example](../04_Projects/example-project/README.md) — Delete once you've seen the pattern",
+                "Aliased example](../04_Projects/example-project/PROJECT.md)",
+                "Aliased example](../04_Projects/example-project/PROJECT.md) — Delete once you've seen the pattern",
             ),
             encoding="utf-8",
         )
@@ -162,7 +162,7 @@ class AdoptCheckTest(unittest.TestCase):
         kept.write_text(
             "---\ntitle: Private\ntags:\n  - type/reference\n  - restricted/private\n"
             "updated: 2026-08-11\n---\n\n"
-            f"- {secret}: [Alias](../04_Projects/example-project/README.md) — "
+            f"- {secret}: [Alias](../04_Projects/example-project/PROJECT.md) — "
             "Delete once you've seen the pattern\n",
             encoding="utf-8",
         )
@@ -186,7 +186,7 @@ class AdoptCheckTest(unittest.TestCase):
         index_text = (self.copy / "10_Agents/tools/brain/vault-index.json").read_text(
             encoding="utf-8"
         )
-        self.assertNotIn("04_Projects/example-project/README.md", index_text)
+        self.assertNotIn("04_Projects/example-project/PROJECT.md", index_text)
 
     def test_stale_plan_refuses_before_mutation(self):
         copy_repo(self.copy)
@@ -420,7 +420,7 @@ class AdoptCheckTest(unittest.TestCase):
         with mock.patch("adopt_cleanup.os.replace", side_effect=recreate_after_move):
             with self.assertRaisesRegex(AdoptionError, "preserved late paths"):
                 apply_plan(self.copy, plan)
-        self.assertTrue((target / "README.md").is_file(), "original bundle must be restored")
+        self.assertTrue((target / "PROJECT.md").is_file(), "original bundle must be restored")
         recoveries = list(self.copy.glob(".adopt-recovery-*/**/late-owner.txt"))
         self.assertEqual(len(recoveries), 1)
         self.assertEqual(recoveries[0].read_text(encoding="utf-8"), "preserve me\n")

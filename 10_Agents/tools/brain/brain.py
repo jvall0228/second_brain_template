@@ -139,7 +139,7 @@ VALIDATE_CURATION_WARNINGS = True
 # bootstrap docs; issues #74/#23 raise only their per-file ceilings. Actual
 # aggregate size remains below 32 KiB.
 BOOTSTRAP_BUDGETS = {
-    CORE_FRAMEWORK_PATHS["conventions"]: 12800,
+    CORE_FRAMEWORK_PATHS["conventions"]: 13312,
     CORE_FRAMEWORK_PATHS["index"]: 4096,
     CORE_FRAMEWORK_PATHS["defaults"]: 2048,
     CORE_FRAMEWORK_PATHS["now"]: 2048,
@@ -3143,7 +3143,7 @@ def scan_secrets(root: Path, paths: list[str]) -> list[dict]:
 
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*\.md$")
 PERIODIC_RE = re.compile(r"^\d{4}-(W\d{2}|Q\d)-review\.md$")
-NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md"}
+NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md", "PROJECT.md"}
 EXACT_NOTE_PATH_EXCEPTIONS = frozenset({AYMT_RELPATH, HOME_RELPATH})
 FM_WARNING_RULES = {"tags-not-a-list"}
 SKILLS_PREFIX = "10_Agents/skills/"

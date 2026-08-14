@@ -18,4 +18,4 @@ Architecture and approach decisions for this project — one file per decision. 
 
 ## Related
 
-- [Example Project](../README.md) — Parent project
+- [Example Project](../PROJECT.md) — Parent project

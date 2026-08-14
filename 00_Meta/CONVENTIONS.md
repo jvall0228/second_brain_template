@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-12
+updated: 2026-08-14
 expires: 2027-08-11
 ---
 
@@ -36,6 +36,7 @@ Use **kebab-case** by default for filenames: `my-note-title.md`.
 
 Allowed exceptions:
 - Entrypoints: exact uppercase `AGENTS.md`, `CLAUDE.md`, and `README.md`, at the root or any directory level.
+- Project entrypoints: exact uppercase `PROJECT.md` as the entry note of each project directory (`04_Projects/<project>/PROJECT.md`). Nested directories inside a project (e.g. `sessions/`, `decision-records/`) still use `README.md`, as does the PARA root `04_Projects/README.md`.
 - Framework core: `00_Meta/{CONVENTIONS,INDEX,CHANGELOG,PRD,STATUS}.md`, `01_Profile/{NOW,PREFERENCES,DEFAULTS,IDENTITY,WORK,TOOLING-STACK,LONG-RUNNING-THEMES}.md`, and `10_Agents/docs/{OPERATING-RULES,TASK-PATTERNS}.md`. These 14 paths require this exact case; the exception does not extend to other notes with the same basename.
 - Generated: exact `00_Meta/{AYMT,HOME}.md` via matching `brain {aymt,home} --write`.
 - Generated assets: the exact lowercase inventory under `08_Assets/artifacts/` (`brain artifacts --write`).

@@ -36,4 +36,4 @@ output is fast and dependency-light.
 
 ## Related
 
-- Project: [Example Project](../README.md)
+- Project: [Example Project](../PROJECT.md)
