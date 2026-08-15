@@ -1,4 +1,4 @@
-"""Tests for brain.py against spec.md.
+"""Tests for brain.py against SPEC.md.
 
 Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests
@@ -962,3 +962,60 @@ class SecretScanTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FutureUpdatedTests(unittest.TestCase):
+    """§10.2 future-updated: a valid updated: date past the vault-today
+    horizon is an error — exact with a configured timezone, one day of
+    grace without one (host could sit anywhere in UTC-12..UTC+14)."""
+
+    NOTE = "---\ntitle: x\ntags:\n  - type/note\nupdated: {d}\n---\n"
+
+    def rules(self, files):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(
+                Path(td),
+                {"00_Meta/CONVENTIONS.md": (FIXTURE / "00_Meta/CONVENTIONS.md").read_text(), **files},
+            )
+            errors, _ = brain.run_validate(root, check_index=False)
+            return [f["rule"] for f in errors if f["path"] == "note.md"]
+
+    def test_far_future_is_error_without_timezone(self):
+        self.assertIn("future-updated", self.rules({"note.md": self.NOTE.format(d="2999-01-01")}))
+
+    def test_tomorrow_gets_grace_without_timezone(self):
+        d = (brain.today() + brain.timedelta(days=1)).isoformat()
+        self.assertNotIn("future-updated", self.rules({"note.md": self.NOTE.format(d=d)}))
+
+    def test_day_after_tomorrow_is_error_without_timezone(self):
+        d = (brain.today() + brain.timedelta(days=2)).isoformat()
+        self.assertIn("future-updated", self.rules({"note.md": self.NOTE.format(d=d)}))
+
+    def test_tomorrow_is_error_with_utc_timezone(self):
+        import datetime as _dt
+        import zoneinfo as _zi
+
+        d = (_dt.datetime.now(_zi.ZoneInfo("UTC")).date() + brain.timedelta(days=1)).isoformat()
+        self.assertIn(
+            "future-updated",
+            self.rules(
+                {
+                    "note.md": self.NOTE.format(d=d),
+                    "00_Meta/config.yaml": "timezone: UTC\n",
+                }
+            ),
+        )
+
+    def test_today_is_clean(self):
+        self.assertNotIn(
+            "future-updated",
+            self.rules(
+                {
+                    "note.md": self.NOTE.format(d=brain.today().isoformat()),
+                    "00_Meta/config.yaml": "timezone: UTC\n",
+                }
+            ),
+        )
+
+    def test_invalid_updated_is_not_double_flagged(self):
+        self.assertNotIn("future-updated", self.rules({"note.md": self.NOTE.format(d="2999-13-99")}))

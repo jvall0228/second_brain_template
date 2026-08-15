@@ -43,6 +43,6 @@ Epistemic integrity, where [vault-maintenance](../vault-maintenance/SKILL.md) is
 ## References
 
 - `10_Agents/tools/brain/README.md` — the `curate` and `context` commands
-- `10_Agents/tools/brain/spec.md` § 14 — signal definitions and tunables
+- `10_Agents/tools/brain/SPEC.md` § 14 — signal definitions and tunables
 - [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Expiration — TTL policy
 - [vault-maintenance](../vault-maintenance/SKILL.md) — the mechanical counterpart

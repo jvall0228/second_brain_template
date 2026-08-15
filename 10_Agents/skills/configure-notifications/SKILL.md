@@ -17,7 +17,7 @@ Configure operational notifications without turning the vault into a messaging c
 ## Guardrails
 
 - Require a selected environment, an owner-named private destination, `--private-destination-ack`, and explicit category opt-ins. Stop on ambiguity.
-- Never send vault prose, credentials, absolute paths, provider errors, tracking URLs, or `restricted/private` content. Notifications carry only the strict operational envelope in the [brain spec](../../tools/brain/spec.md) §26.
+- Never send vault prose, credentials, absolute paths, provider errors, tracking URLs, or `restricted/private` content. Notifications carry only the strict operational envelope in the [brain spec](../../tools/brain/SPEC.md) §26.
 - Never pass a secret value on the command line or write one to the vault. For a future real provider, record only the uppercase environment-variable name with `--secret-env`.
 - Treat setup and delivery as persistence. Let `brain notify` run the mandatory remote-safety guard immediately before writing; do not bypass a block or unknown result.
 - Do not add callbacks, reply/mutation actions, inbound webhooks, or Outbox content. Provider buttons may only open links that passed the central safe-link validator. This skill's narrow exception covers only its ignored environment overlay and an explicitly approved local file test.

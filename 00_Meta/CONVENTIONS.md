@@ -41,6 +41,7 @@ Allowed exceptions:
 - Generated: exact `00_Meta/{AYMT,HOME}.md` via matching `brain {aymt,home} --write`.
 - Generated assets: the exact lowercase inventory under `08_Assets/artifacts/` (`brain artifacts --write`).
 - Skill manifests: `SKILL.md` inside `10_Agents/skills/<skill-name>/` (the Agent Skills format requires this exact name).
+- Tool specs: exact uppercase `SPEC.md` inside `10_Agents/tools/<tool>/` (canonical tool contracts, e.g. the brain spec).
 - Periodic review filenames may use ISO week/quarter tokens:
   - `YYYY-W##-review.md` (weekly)
   - `YYYY-Q#-review.md` (quarterly)

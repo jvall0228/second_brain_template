@@ -1,4 +1,4 @@
-"""Tests for `brain report` (spec.md §16, issue #16).
+"""Tests for `brain report` (SPEC.md §16, issue #16).
 
 Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests

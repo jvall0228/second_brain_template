@@ -42,4 +42,4 @@ Drive unresolved internal links to zero without guessing.
 ## References
 
 - `10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md` — portable resolution rules and safe patterns
-- `10_Agents/tools/brain/spec.md` §6 — exactly how links resolve
+- `10_Agents/tools/brain/SPEC.md` §6 — exactly how links resolve

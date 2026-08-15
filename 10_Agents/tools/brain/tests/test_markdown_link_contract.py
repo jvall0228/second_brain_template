@@ -29,7 +29,7 @@ RAW_LEGACY_LITERAL_COUNTS = {
     "07_Archives/inbox/2026-08-11-prd-review.md": 1,
     "10_Agents/harnesses/codex/wiring.md": 1,
     "10_Agents/tools/brain/brain.py": 4,
-    "10_Agents/tools/brain/spec.md": 4,
+    "10_Agents/tools/brain/SPEC.md": 4,
     "10_Agents/tools/brain/tests/fixtures/link-migration/source.md": 3,
     "10_Agents/tools/brain/tests/fixtures/vault/01_Notes/beta.md": 2,
     "10_Agents/tools/brain/tests/fixtures/vault/bad/Bad_Name.md": 2,
@@ -76,7 +76,7 @@ class RepositoryMarkdownContractTests(unittest.TestCase):
         counts = self.index["linkCounts"]
         self.assertEqual(counts["legacy"], 0)
         self.assertEqual(counts["wikilink"], 0)
-        self.assertEqual(counts["markdown"], 834)
+        self.assertEqual(counts["markdown"], 835)
         failures = []
         for path, record in self.index["notes"].items():
             for link in record["links"]:

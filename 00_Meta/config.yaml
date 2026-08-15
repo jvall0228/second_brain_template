@@ -1,5 +1,5 @@
 # Vault config — read by `brain` (10_Agents/tools/brain/brain.py).
-# Contract: 10_Agents/tools/brain/spec.md §15. Optional by design: with this
+# Contract: 10_Agents/tools/brain/SPEC.md §15. Optional by design: with this
 # file absent (or, as shipped, all comments) every behavior stays at its
 # built-in default. Inspect the effective result with `brain config`.
 #
@@ -36,6 +36,14 @@
 # behavior from it.
 #
 # context: work
+#
+# Vault timezone (IANA name): brain computes "today" in this zone for date
+# stamping (AYMT/HOME), staleness/cadence windows, tasks --due, and the
+# future-updated validate check. Keep in parity with
+# 01_Profile/DEFAULTS.md § Locale. Absent: host clock, and future-updated
+# gets one day of grace so no host timezone false-positives.
+#
+# timezone: America/New_York
 #
 # Health-report thresholds (spec §16.4), integers in days:
 # stale_days — status/active notes older than this are stale (default 30);

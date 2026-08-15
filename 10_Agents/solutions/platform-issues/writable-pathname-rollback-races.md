@@ -53,5 +53,5 @@ Use the same bounded authenticator for final verification and recovery classific
 ## Related
 
 - [Notification implementation](../../tools/brain/notifications.py)
-- [Notification transaction contract](../../tools/brain/spec.md#263-preview-and-local-file-delivery)
+- [Notification transaction contract](../../tools/brain/SPEC.md#263-preview-and-local-file-delivery)
 - [Configure Notifications](../../skills/configure-notifications/SKILL.md)

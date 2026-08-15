@@ -148,7 +148,7 @@ The detect step only works if upstream releases are tagged. Whoever operates the
 ## References
 
 - [PRD](../../../00_Meta/PRD.md) §6.3 — change control the apply lanes implement
-- `10_Agents/tools/brain/spec.md` §15.3 — the `template_version` config key
+- `10_Agents/tools/brain/SPEC.md` §15.3 — the `template_version` config key
 - `10_Agents/skills/inbox-capture/SKILL.md` — the report note's write rules
 - `10_Agents/skills/recommended-automations/SKILL.md` — the dry-run-first pattern
 - Issues #6 (design), #12 (specialized templates), #22 (pull-only + conflicts-as-proposals), #32 (pruned modules)

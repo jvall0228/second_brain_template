@@ -2,7 +2,7 @@
 
 Claude Code's PostToolUse contract feeds hook output back to the agent only on
 exit 2 with findings on STDERR. `brain validate` exits 0 clean / 1 errors /
-2 warnings-only (spec.md section 10.4). The shim
+2 warnings-only (SPEC.md section 10.4). The shim
 `10_Agents/harnesses/claude-code/validate-hook.sh` translates between the two:
 
     brain 0 (clean)         -> 0

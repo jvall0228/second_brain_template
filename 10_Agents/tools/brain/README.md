@@ -12,7 +12,7 @@ expires: 2027-08-11
 
 # `brain` — Vault Index CLI
 
-Zero-dependency CLI (Python 3.10+, stdlib only) that indexes every note in the vault and enforces its conventions. The behavior contract is [spec](spec.md) (canonical); this README is usage only.
+Zero-dependency CLI (Python 3.10+, stdlib only) that indexes every note in the vault and enforces its conventions. The behavior contract is [spec](SPEC.md) (canonical); this README is usage only.
 
 ## Invocation
 
