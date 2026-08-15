@@ -5,11 +5,11 @@ tags:
   - audience/human
   - type/meta
   - workflow/canonical
-updated: 2026-08-14
-expires: 2026-08-15
+updated: 2026-08-15
+expires: 2026-08-16
 generated: brain-aymt-v1
-input-digest: "3ce62932cac1fe5efa77ec7810cc8d4267585330fa8c308181a33273b477fa96"
-content-digest: "c17abe0f83512931da1dae557326fffdc4a2bf34f72bbc03bf458ce2d6fcd4fe"
+input-digest: "c3338a52db8e7d53980188216ff794a9ae5abf298dbe7b1dc19aa456f655cfcb"
+content-digest: "b6932f4ae739adc130a0459ee5f09097359adf2cf151acfbaba39e0d4a4f5ceb"
 ---
 
 <!-- generated-by: brain aymt v1; do not edit -->

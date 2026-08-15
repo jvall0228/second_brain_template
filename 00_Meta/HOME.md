@@ -5,11 +5,11 @@ tags:
   - audience/human
   - type/meta
   - workflow/canonical
-updated: 2026-08-14
-expires: 2026-08-15
+updated: 2026-08-15
+expires: 2026-08-16
 generated: brain-home-v1
-input-digest: "7aaf5fc64edec559c8a72f2c25a940ecbae71d42bac81347f83ead97f9b1d748"
-content-digest: "cf1699f127765892dd50d7afd8645ba0ac8734c82755a159baf95081a5682fff"
+input-digest: "f552b85f318990d569eead2155ed15dcd71468b588ec068bce79b2dd326db3ea"
+content-digest: "ab54f62a67c8190f92c320e2be55712b00bb7c507bd4fa837516df4fb023ee0c"
 ---
 
 <!-- generated-by: brain home v1; do not edit -->
@@ -45,11 +45,11 @@ _No tracked safe task has a machine-readable due date._
 ## Inbox
 
 - **Tracked safe notes:** 6; **triage debt:** 0
-- [02_Inbox/2026-08-11-feature-request-triage.md](../02_Inbox/2026-08-11-feature-request-triage.md) — 3 days old
-- [02_Inbox/2026-08-11-implementation-plan-m8-m12.md](../02_Inbox/2026-08-11-implementation-plan-m8-m12.md) — 3 days old
-- [02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md](../02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md) — 3 days old
-- [02_Inbox/2026-08-11-ready-backlog-implementation-plan.md](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md) — 3 days old
-- [02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md) — 3 days old
+- [02_Inbox/2026-08-11-feature-request-triage.md](../02_Inbox/2026-08-11-feature-request-triage.md) — 4 days old
+- [02_Inbox/2026-08-11-implementation-plan-m8-m12.md](../02_Inbox/2026-08-11-implementation-plan-m8-m12.md) — 4 days old
+- [02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md](../02_Inbox/2026-08-11-onboard-owner-dry-run-2-feedback.md) — 4 days old
+- [02_Inbox/2026-08-11-ready-backlog-implementation-plan.md](../02_Inbox/2026-08-11-ready-backlog-implementation-plan.md) — 4 days old
+- [02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md](../02_Inbox/2026-08-11-ready-backlog-requirements-brainstorm.md) — 4 days old
 
 ## Active work
 

@@ -95,7 +95,7 @@ Sources:
 
 ## Round-two decisions (owner, 2026-08-11) and what shipped
 
-1. **Trust policy scope:** strict first-party is the *template default*, overridable per fork. The structured vault-config file for such overrides shipped as `00_Meta/config.yaml` (issue #2): set `extension_trust: relaxed` there to record that a fork admits community extensions such as Foam — see [spec](../10_Agents/tools/brain/spec.md) §15 and `brain config`.
+1. **Trust policy scope:** strict first-party is the *template default*, overridable per fork. The structured vault-config file for such overrides shipped as `00_Meta/config.yaml` (issue #2): set `extension_trust: relaxed` there to record that a fork admits community extensions such as Foam — see [spec](../10_Agents/tools/brain/SPEC.md) §15 and `brain config`.
 2. **AI harness extensions:** kept (Claude Code, Copilot) — the vault is agent-oriented and both are P0 harnesses.
 3. **Brain tooling in-editor:** shipped `.vscode/tasks.json` — validate / rebuild index / search / recent / links-for-current-note (the backlinks substitute) / health / tasks / read-only AYMT and Home previews / artifact preview and local open, all built-in task machinery, `python3` the only requirement.
 4. **Snippets over raw templates as the user-facing surface:** shipped `.vscode/second-brain.code-snippets`, **generated** from `09_Templates/` by `10_Agents/tools/vscode/gen_snippets.py` and kept in sync automatically by the pre-commit hook (`--check` mode available). `{{date}}` maps to VS Code's auto-filling date variables; other tokens become tabstops. Plus an `sb-frontmatter` snippet for bare capture.

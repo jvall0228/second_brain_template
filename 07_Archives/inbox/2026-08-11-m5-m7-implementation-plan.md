@@ -35,7 +35,7 @@ Goal: a zero-dependency CLI that gives agents structured, queryable access to th
 
 ### Phase M5.0 — Parsing and link-resolution spec (prerequisite)
 
-Deliverable: `10_Agents/tools/brain/spec.md` — reviewed by the owner and promoted to canonical **before** implementation starts. Starting point is [wikilink-resolution-rules](../../10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md). It must pin down:
+Deliverable: `10_Agents/tools/brain/SPEC.md` — reviewed by the owner and promoted to canonical **before** implementation starts. Starting point is [wikilink-resolution-rules](../../10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md). It must pin down:
 
 - **Frontmatter grammar:** a YAML subset matching the §10.1 contract — string scalars (bare or quoted), lists of strings, ISO dates. Notes with unparseable frontmatter are still indexed, with a recorded frontmatter error for `validate` to surface.
 - **Wikilink grammar:** `[[target]]`, `[[target|display]]`, `[[target#heading]]`, and `![[embeds]]`; links inside inline code spans and fenced code blocks are ignored (the known false-positive source from the M4 link check).
@@ -50,7 +50,7 @@ Deliverable: `10_Agents/tools/brain/spec.md` — reviewed by the owner and promo
 
 ### Phase M5.2 — Query commands
 
-Proposed semantics (finalized in `spec.md`); every command supports `--json`, human output is plain text:
+Proposed semantics (finalized in `SPEC.md`); every command supports `--json`, human output is plain text:
 
 - `list` — note paths with `--dir`, `--tag`, `--type` filters.
 - `search <query>` — case-insensitive substring over title, headings, and body; combinable with `--tag`.
@@ -176,7 +176,7 @@ M5 → M6 → M7, strictly: M6's maintenance and onboarding skills call `brain` 
 
 ## Open items for the owner
 
-- Review and promote `10_Agents/tools/brain/spec.md` when it lands (pre-authorized as canonical, but it will be flagged for your review before implementation proceeds).
+- Review and promote `10_Agents/tools/brain/SPEC.md` when it lands (pre-authorized as canonical, but it will be flagged for your review before implementation proceeds).
 - Confirm the nine-skill list at M6 kickoff.
 - M7 source priorities (Teams vs email vs calendar vs transcripts first) — decided at orientation time, per environment.
 - **Privacy-exclusion policy (from the harness research):** no portable ignore mechanism exists — only Cursor honors a repo ignore file; Codex, Pi, and Muse Code have no reliable content exclusion at all. If parts of the vault should be fenced off from some harnesses, that needs a per-harness deny strategy (and stays impossible on three of seven) — or the existing §16.2 rule ("exclusion from the repo is the only reliable protection") remains the whole policy. Owner call; relates to the §21 `restricted/*` consideration.

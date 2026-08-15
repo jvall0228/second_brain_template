@@ -52,6 +52,6 @@ The index is a pure function of tracked content (spec §8.2), so the regenerated
 
 ## Related
 
-- `10_Agents/tools/brain/spec.md` §8.2 — determinism guarantees and the merge-driver contract
+- `10_Agents/tools/brain/SPEC.md` §8.2 — determinism guarantees and the merge-driver contract
 - `.gitattributes` — the `merge=regenerate` mappings
 - `.githooks/pre-commit`, `.githooks/post-merge` — the regeneration hooks

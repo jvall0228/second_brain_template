@@ -157,7 +157,7 @@ Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` ins
 
 ### 9.4 `brain` and generated data
 
-`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/spec.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
+`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/SPEC.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
 
 The committed index and VS Code snippets are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
 

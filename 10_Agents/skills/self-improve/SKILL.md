@@ -132,6 +132,6 @@ The example proposal conforms: frontmatter carries `title`, `tags`, `updated`; e
 - [rejected-proposals](../../docs/rejected-proposals.md) — the loop's rejection memory
 - [OPERATING-RULES](../../docs/OPERATING-RULES.md) — never-push-upstream rule, canonical note handling
 - [sync-upstream](../sync-upstream/SKILL.md) — the pull direction this loop coexists with (issue #6)
-- `10_Agents/tools/brain/spec.md` §16 — `brain report`, the Observe step's primary instrument (issue #16)
+- `10_Agents/tools/brain/SPEC.md` §16 — `brain report`, the Observe step's primary instrument (issue #16)
 - `10_Agents/skills/inbox-capture/SKILL.md` — write rules for proposal notes and the retrospective report
 - [recommended-automations](../recommended-automations/SKILL.md) — scheduling the monthly retrospective

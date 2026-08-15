@@ -2,7 +2,7 @@
 """brain — vault index CLI.
 
 Structured, queryable access to the vault for agents and humans.
-Behavior is governed by spec.md in this directory (canonical); section
+Behavior is governed by SPEC.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: ./brain <command> [options]
@@ -32,7 +32,8 @@ import sys
 import tempfile
 import unicodedata
 import uuid
-from datetime import date, timedelta
+import zoneinfo
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from urllib.parse import quote, unquote_to_bytes, urlsplit
 
@@ -2601,6 +2602,7 @@ CONFIG_IMPLEMENTED_KEYS = frozenset(
         "report",
         "tasks",
         "template_version",
+        "timezone",
         "write_exceptions",
     }
 )
@@ -2866,6 +2868,32 @@ def template_version(config: dict) -> str | None:
     return None
 
 
+def vault_timezone(config: dict) -> str | None:
+    """Effective vault timezone: the configured IANA name when it resolves
+    on this host, else None — callers fall back to the host clock. Malformed
+    or unresolvable values fall back here; check_config reports them
+    (§15.4). Keep the value in parity with 01_Profile/DEFAULTS.md § Locale."""
+    value = config.get("timezone")
+    if isinstance(value, str) and value.strip():
+        try:
+            zoneinfo.ZoneInfo(value.strip())
+        except (zoneinfo.ZoneInfoNotFoundError, ValueError, KeyError):
+            return None
+        return value.strip()
+    return None
+
+
+def vault_today(config: dict) -> date:
+    """Today for calendar-date decisions: computed in the configured vault
+    timezone, or the host-local date when none is configured. Cloud agent
+    hosts run UTC, so late-evening local sessions otherwise stamp
+    tomorrow's date — every date brain stamps or judges goes through here."""
+    tz = vault_timezone(config)
+    if tz is None:
+        return today()
+    return datetime.now(zoneinfo.ZoneInfo(tz)).date()
+
+
 def check_config(
     root: Path, config: dict, findings: list[dict]
 ) -> tuple[list[dict], list[dict]]:
@@ -3042,6 +3070,25 @@ def check_config(
             )
         # Free-form by design (§15.3): any scalar is a documented value,
         # so there is no config-unknown-value warning for this key.
+    if "timezone" in config:
+        raw = config["timezone"]
+        if raw is None:
+            pass  # explicit empty — same as absent
+        elif not isinstance(raw, str):
+            errors.append(
+                _cfg_finding(
+                    None, "config-invalid-value", "timezone must be a scalar IANA name"
+                )
+            )
+        elif vault_timezone({"timezone": raw}) is None:
+            warnings.append(
+                _cfg_finding(
+                    None,
+                    "config-unknown-value",
+                    f"timezone {raw!r} is not a resolvable IANA timezone on "
+                    "this host (falling back to the host clock)",
+                )
+            )
     if "context" in config:
         raw = config["context"]
         if raw is None:
@@ -3075,7 +3122,7 @@ SECRET_ALLOW_RE = re.compile(r"<!--[^\n]*" + re.escape(SECRET_ALLOW_MARKER) + r"
 
 # Data-driven rule table (§10.5): (name, compiled pattern). Every finding is
 # an ERROR with rule `secret-<name>`. Extending detection is a table edit —
-# add a row here and a row to the spec.md §10.5 table in the same commit.
+# add a row here and a row to the SPEC.md §10.5 table in the same commit.
 # Patterns are written so they never match their own source text, keeping the
 # repo self-scan clean by construction.
 SECRET_RULES: tuple[tuple[str, re.Pattern], ...] = (
@@ -3147,6 +3194,7 @@ NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md", "PROJECT.md"}
 EXACT_NOTE_PATH_EXCEPTIONS = frozenset({AYMT_RELPATH, HOME_RELPATH})
 FM_WARNING_RULES = {"tags-not-a-list"}
 SKILLS_PREFIX = "10_Agents/skills/"
+TOOLS_PREFIX = "10_Agents/tools/"
 
 
 def valid_note_filename(rel: str) -> bool:
@@ -3162,6 +3210,7 @@ def valid_note_filename(rel: str) -> bool:
         or name in NAME_EXCEPTIONS
         or PERIODIC_RE.match(name)
         or (name == "SKILL.md" and rel.startswith(SKILLS_PREFIX))
+        or (name == "SPEC.md" and rel.startswith(TOOLS_PREFIX))
     )
 
 
@@ -3225,6 +3274,12 @@ def run_validate(
 
     errors.extend(scan_secrets(root, notes + assets))
 
+    # §10.2 future-updated horizon: exact with a configured timezone; one
+    # day of grace without one, so hosts anywhere in UTC-12..UTC+14 never
+    # false-positive a legitimate local today.
+    tz_name = vault_timezone(config)
+    updated_horizon = vault_today(config) + timedelta(days=0 if tz_name else 1)
+
     folded: dict[str, list[str]] = {}
     for p in notes + assets:
         folded.setdefault(fold(p), []).append(p)
@@ -3287,6 +3342,17 @@ def run_validate(
                     err(rel, "missing-tags", "frontmatter lacks a tags list")
                 if "updated" not in fm:
                     err(rel, "missing-updated", "frontmatter lacks an updated date")
+                upd_d = iso_date(rec["updated"]) if rec["updated"] else None
+                if upd_d is not None and upd_d > updated_horizon:
+                    err(
+                        rel,
+                        "future-updated",
+                        f"updated {rec['updated']} is in the future (today is "
+                        f"{vault_today(config)}"
+                        + (f" in {tz_name})" if tz_name else "; no vault timezone configured)")
+                        + " — agent hosts often run UTC; stamp dates in the "
+                        "vault timezone (01_Profile/DEFAULTS.md § Locale)",
+                    )
                 tags = raw_tags if isinstance(raw_tags, list) else (
                     [raw_tags] if isinstance(raw_tags, str) else []
                 )
@@ -3402,7 +3468,7 @@ def run_validate(
             err(skill_md, "skill-missing-description", "frontmatter lacks a description string")
 
     if VALIDATE_CURATION_WARNINGS:
-        cur = compute_curation(root, index, today())
+        cur = compute_curation(root, index, vault_today(config))
         for rel in cur["missingExpires"]:
             warn(rel, "missing-expires", "no expires: date (see conventions § Expiration)")
         for row in cur["beyondCap"]:
@@ -6059,7 +6125,7 @@ def build_aymt(
     _context: dict | None = None,
 ) -> dict:
     """Build a deterministic, tracked-corpus-only and privacy-filtered brief."""
-    today_d = today_d or today()
+    today_d = today_d or vault_today(load_config(root)[0])
     stdin = stdin or sys.stdin
     if _context is None:
         try:
@@ -6687,7 +6753,7 @@ def build_home(
     stdin=None,
 ) -> dict:
     """Build Home from structured AYMT plus one safe tracked corpus snapshot."""
-    today_d = today_d or today()
+    today_d = today_d or vault_today(load_config(root)[0])
     stdin = stdin or sys.stdin
     try:
         selected = selection or select_aymt_environment(root)
@@ -7613,6 +7679,7 @@ def cmd_config(root: Path, args) -> int:
         "reservedKeys": sorted(CONFIG_RESERVED_KEYS),
         "tasksCarryOver": tasks_carry_over(config),
         "templateVersion": template_version(config),
+        "timezone": vault_timezone(config),
         "warnings": cfg_warnings,
         "writeExceptions": list(write_exception_prefixes(config)),
     }
@@ -7624,6 +7691,7 @@ def cmd_config(root: Path, args) -> int:
         f"context: {payload['context']}",
         f"tasks carry-over: {'on' if payload['tasksCarryOver'] else 'off'}",
         f"template version: {payload['templateVersion'] or '(unset)'}",
+        f"timezone: {payload['timezone'] or '(unset — host clock)'}",
     ]
     for f in cfg_errors:
         lines.append(f"ERROR {f['rule']}: {f['message']}")
@@ -7649,7 +7717,7 @@ def cmd_report(root: Path, args) -> int:
     config, _findings = load_config(root)
     thresholds = report_thresholds(config)
     taxonomy = load_taxonomy(root)
-    rep = compute_report(index, today(), thresholds, taxonomy, since_d)
+    rep = compute_report(index, vault_today(config), thresholds, taxonomy, since_d)
 
     lines: list[str] = [
         "vault health report "
@@ -7709,8 +7777,9 @@ def cmd_report(root: Path, args) -> int:
 def cmd_tasks(root: Path, args) -> int:
     """§17.3: query checkbox tasks from the in-memory index."""
     due_limit: date | None = None
+    tasks_today = vault_today(load_config(root)[0])
     if args.due is not None:
-        due_limit = today() if args.due == "today" else iso_date(args.due)
+        due_limit = tasks_today if args.due == "today" else iso_date(args.due)
         if due_limit is None:
             print(
                 f"error: --due must be 'today' or a real YYYY-MM-DD date, "
@@ -7718,7 +7787,7 @@ def cmd_tasks(root: Path, args) -> int:
                 file=sys.stderr,
             )
             return 1
-    today_iso = today().isoformat()
+    today_iso = tasks_today.isoformat()
     notes, assets = walk_corpus(root)
     index = build_index(root, notes, assets)
     rows: list[dict] = []

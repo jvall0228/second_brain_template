@@ -10,6 +10,12 @@ updated: 2026-08-14
 
 # Changelog
 
+## [2026-08-14] spec-change | Timezone-aware dates, future-updated guard, SPEC.md rename
+
+- Added the `timezone:` config key (IANA name, parity with [DEFAULTS § Locale](../01_Profile/DEFAULTS.md)): `brain` computes calendar-today in the vault timezone for AYMT/HOME stamping, staleness/report windows, `tasks --due today`, and validation. Motivation: cloud agent hosts run UTC, so late-evening local sessions stamp tomorrow's date.
+- New validate **error** `future-updated`: a valid `updated:` date past today (exact with a configured timezone; one day of grace without one) blocks commit via the pre-commit hook.
+- Renamed the brain spec to exact-uppercase `10_Agents/tools/brain/SPEC.md` per the canonical-doc caps convention; new filename exception (`SPEC.md` inside `10_Agents/tools/`), all maintained references rewritten.
+
 ## [2026-08-14] spec-change | Project entrypoints renamed README.md → PROJECT.md
 
 - Each project directory's entry note is now `PROJECT.md` (`04_Projects/<project>/PROJECT.md`); renamed the seeded `example-project` entry note via `git mv`. Nested directories inside a project and the PARA root `04_Projects/README.md` keep `README.md`.
@@ -170,7 +176,7 @@ Owner approved the four action items in the (now archived) [`expires:` backfill 
 - **Harness research split.** The 114 KB [harness-primitives-research](../06_Resources/harness-primitives-research.md) became 8 self-contained notes — [standards & protocols](../06_Resources/harness-standards.md) plus one per harness ([Claude Code](../06_Resources/harness-claude-code.md), [Codex](../06_Resources/harness-codex.md), [opencode](../06_Resources/harness-opencode.md), [Pi](../06_Resources/harness-pi.md), [Cursor](../06_Resources/harness-cursor.md), [GitHub Copilot](../06_Resources/harness-copilot.md), [Muse Code](../06_Resources/harness-muse-code.md)) — satisfying one-topic-one-note. The hub keeps the headline findings, overlap matrix, overlaps, implications, and a per-harness index. Content moved **verbatim** (line-multiset verified); the 7 wiring docs' and the changelog's fragment links retargeted to the new notes; archived-note links left frozen. Hub: 114 KB → 12 KB.
 - **Decision records exempt from `expires:`.** `type/decision` added to brain's `EXPIRES_EXEMPT_TYPE_TAGS` (+ [CONVENTIONS](CONVENTIONS.md) § Expiration, spec §14); the example decision record's `expires:` dropped and `updated:` restored to its event date (event records freeze). The orphan check stays path-only — a decision record still wants inbound links.
 - **Orphan READMEs linked** from [INDEX](INDEX.md) (Profile, Meta, Agent docs, Harness adapters); the orphan signal is clean without a blanket README exemption.
-- **Accepted as coherent single-topic notes** (oversized-but-fine; their warnings are expected, reviewed): [PRD](PRD.md), `10_Agents/tools/brain/spec.md`, [harness-copilot](../06_Resources/harness-copilot.md). The Now-page TTL stays 12 months (the quarterly review refreshes it; a shorter TTL would double-signal).
+- **Accepted as coherent single-topic notes** (oversized-but-fine; their warnings are expected, reviewed): [PRD](PRD.md), `10_Agents/tools/brain/SPEC.md`, [harness-copilot](../06_Resources/harness-copilot.md). The Now-page TTL stays 12 months (the quarterly review refreshes it; a shorter TTL would double-signal).
 
 ## [2026-08-11] recategorize | CODE-staged catalog, stage notes, changelog format (Ops Plan Phase 7)
 
@@ -249,7 +255,7 @@ Owner approved the four action items in the (now archived) [`expires:` backfill 
 
 ## 2026-08-11 — M5: `brain` Vault Index CLI Shipped
 
-- Landed `10_Agents/tools/brain/`: `spec.md` (the parsing/link-resolution/index contract, owner-reviewed and promoted to canonical), stdlib-only `brain.py` (Python 3.10+) with `index`, `list`, `search`, `links`, `tags`, `show`, `recent`, and `validate` (all supporting `--json`), the committed deterministic `vault-index.json` (built from git-tracked files; byte-identical on rebuild), and a 21-test `unittest` suite with a fixture mini-vault under `tests/`.
+- Landed `10_Agents/tools/brain/`: `SPEC.md` (the parsing/link-resolution/index contract, owner-reviewed and promoted to canonical), stdlib-only `brain.py` (Python 3.10+) with `index`, `list`, `search`, `links`, `tags`, `show`, `recent`, and `validate` (all supporting `--json`), the committed deterministic `vault-index.json` (built from git-tracked files; byte-identical on rebuild), and a 21-test `unittest` suite with a fixture mini-vault under `tests/`.
 - Enforcement is live per [PRD](PRD.md) §18: `.githooks/pre-commit` regenerates the index and blocks commits on validation errors (install once per clone with `git config core.hooksPath .githooks` — documented in the root README), with `.github/workflows/validate.yml` re-checking validation and index freshness on every push; `.gitattributes` shields the byte-compared index from newline conversion.
 - `validate` reads the tag taxonomy from [CONVENTIONS](CONVENTIONS.md#tag-namespaces) at runtime, and the operating-rules self-validation checklist now ends with running it. New READMEs: `10_Agents/tools/` and `10_Agents/tools/brain/`; the agents README gained a Tools section.
 

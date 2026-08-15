@@ -1,4 +1,4 @@
-"""Tests for the vault config (spec.md §15, issue #2).
+"""Tests for the vault config (SPEC.md §15, issue #2).
 
 Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests
@@ -435,3 +435,59 @@ class ConfigCliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TimezoneKeyTests(unittest.TestCase):
+    """Spec §15.3: `timezone` — one scalar IANA name driving vault_today()
+    and the §10.2 future-updated horizon; host-clock fallback when unset or
+    unresolvable."""
+
+    def findings(self, text):
+        with tempfile.TemporaryDirectory() as td:
+            root = vault(Path(td), {"00_Meta/config.yaml": text})
+            errors, warnings = brain.run_validate(root, check_index=False)
+            return (
+                [f for f in errors if f["path"] == brain.CONFIG_RELPATH],
+                [f for f in warnings if f["path"] == brain.CONFIG_RELPATH],
+            )
+
+    def test_resolvable_zone_is_clean(self):
+        errors, warnings = self.findings("timezone: America/New_York\n")
+        self.assertEqual((errors, warnings), ([], []))
+
+    def test_non_scalar_is_invalid_value_error(self):
+        for text in ("timezone: [UTC]\n", "timezone:\n  name: UTC\n"):
+            errors, _ = self.findings(text)
+            self.assertEqual([f["rule"] for f in errors], ["config-invalid-value"], text)
+
+    def test_unresolvable_zone_warns(self):
+        errors, warnings = self.findings("timezone: Mars/Olympus_Mons\n")
+        self.assertEqual(errors, [])
+        self.assertEqual([f["rule"] for f in warnings], ["config-unknown-value"])
+
+    def test_vault_timezone_accessor(self):
+        self.assertIsNone(brain.vault_timezone({}))
+        self.assertIsNone(brain.vault_timezone({"timezone": None}))
+        self.assertIsNone(brain.vault_timezone({"timezone": ["UTC"]}))
+        self.assertIsNone(brain.vault_timezone({"timezone": "Not/A_Zone"}))
+        self.assertEqual(brain.vault_timezone({"timezone": "UTC"}), "UTC")
+        self.assertEqual(
+            brain.vault_timezone({"timezone": " America/New_York "}),
+            "America/New_York",
+        )
+
+    def test_vault_today_falls_back_to_host_clock(self):
+        self.assertEqual(brain.vault_today({}), brain.today())
+
+    def test_vault_today_uses_configured_zone(self):
+        import datetime as _dt
+        import zoneinfo as _zi
+
+        expected = _dt.datetime.now(_zi.ZoneInfo("Pacific/Kiritimati")).date()
+        self.assertEqual(
+            brain.vault_today({"timezone": "Pacific/Kiritimati"}), expected
+        )
+
+    def test_timezone_is_implemented(self):
+        self.assertIn("timezone", brain.CONFIG_IMPLEMENTED_KEYS)
+        self.assertNotIn("timezone", brain.CONFIG_RESERVED_KEYS)

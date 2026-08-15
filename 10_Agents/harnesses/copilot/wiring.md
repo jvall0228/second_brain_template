@@ -55,7 +55,7 @@ brain <command> --json
 
 CLI pre-approval: `--allow-tool='shell(brain:*)'` covers managed `brain` invocations (the colon wildcard is shell's only wildcard). Without managed installation, approve the repository launcher or long-form fallback narrowly. Interactive approvals persist per-directory in `~/.copilot/permissions-config.json`. Deny rules always beat allow rules, even under `--allow-all`/`--yolo`. The cloud agent runs brain fine offline — the egress firewall (default-on) only affects network access, which brain never uses.
 
-**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/SPEC.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 

@@ -28,7 +28,7 @@ Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) —
 
 ## Edit-time validation exit codes
 
-Claude Code's `PostToolUse` hook contract and `brain validate`'s exit-code contract ([spec](../../tools/brain/spec.md) §10.4) do **not** line up, and wiring one directly to the other silently breaks edit-time validation:
+Claude Code's `PostToolUse` hook contract and `brain validate`'s exit-code contract ([spec](../../tools/brain/SPEC.md) §10.4) do **not** line up, and wiring one directly to the other silently breaks edit-time validation:
 
 - **Claude Code hooks:** exit `0` = success; exit `2` = *blocking error* — STDERR is fed back to the agent; any **other** exit code is non-blocking and the output never reaches the agent.
 - **`brain validate`:** exit `0` = clean; exit `1` = errors; exit `2` = warnings only.
@@ -43,7 +43,7 @@ brain <command> --json
 
 Pre-approve it with a permission allow rule (see `settings-example.json`) so queries never prompt.
 
-**Semantic search** ([spec](../../tools/brain/spec.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
+**Semantic search** ([spec](../../tools/brain/SPEC.md) §18): `brain search --semantic "question" --json` returns relevance-ranked notes once the gitignored embeddings sidecar is populated, and degrades to keyword search (exit 0) on a vectorless vault. This harness can supply the vectors itself: compute embeddings with its model and pipe them in via `brain embed --stdin-json`, then pass the embedded query at search time with `--query-vector` on stdin. Credentials for any external embedding API stay outside the vault (PRD §16.2).
 
 ## Harness-specific notes
 
