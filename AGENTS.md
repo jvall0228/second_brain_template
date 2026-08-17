@@ -4,7 +4,7 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-08-12
+updated: 2026-08-17
 expires: 2027-08-11
 ---
 
@@ -84,6 +84,8 @@ Directories use numbered prefixes for sort stability. Each directory has a READM
 | `08_Assets/` | Images, attachments, non-markdown files |
 | `09_Templates/` | Note templates |
 | `10_Agents/` | Agent-facing documentation and behavior rules |
+
+First-class PARA entities use named directory entrypoints: `04_Projects/<project-name>/PROJECT.md`, `05_Areas/<area-name>/AREA.md`, and `06_Resources/<resource-name>/RESOURCE.md`. Supporting notes use kebab-case filenames; atomic Resource zettels remain standalone.
 
 ## Templates
 
