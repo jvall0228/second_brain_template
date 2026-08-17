@@ -495,6 +495,9 @@ class ValidateTests(unittest.TestCase):
         self.assertTrue(brain.PERIODIC_RE.match("2026-W01-review.md"))
         self.assertTrue(brain.PERIODIC_RE.match("2026-Q3-review.md"))
         self.assertFalse(brain.PERIODIC_RE.match("2026-W1-review.md"))
+        self.assertTrue(brain.valid_note_filename("04_Projects/example/PROJECT.md"))
+        self.assertTrue(brain.valid_note_filename("05_Areas/health/AREA.md"))
+        self.assertTrue(brain.valid_note_filename("06_Resources/homelab/RESOURCE.md"))
 
 
 class ProvenanceTests(unittest.TestCase):
