@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-11
+updated: 2026-08-17
 expires: 2027-08-11
 ---
 
@@ -33,7 +33,7 @@ expires: 2027-08-11
 
 ## Knowledge & Reference
 - [Resources](../06_Resources/README.md) — Topic notes
-  - [Example Resource](../06_Resources/example-resource.md) — Sample; delete once you've seen the pattern
+  - [Example Resource](../06_Resources/example-resource/RESOURCE.md) — Sample; delete once you've seen the pattern
 - [Journal](../03_Journal/README.md) — Personal knowledge and experience
   - [Periodic Notes](../03_Journal/periodic/README.md) — Daily/weekly/monthly/quarterly/yearly reviews
   - [Ideas](../03_Journal/ideas/README.md) — Brainstorms and concepts
@@ -42,7 +42,7 @@ expires: 2027-08-11
   - [People](../03_Journal/people/README.md) — Character studies
   - [Plans](../03_Journal/plans/README.md) — Strategies and approaches
 - [Areas](../05_Areas/README.md) — Ongoing responsibilities
-  - [Example Area](../05_Areas/example-area/README.md) — Sample; delete once you've seen the pattern
+  - [Example Area](../05_Areas/example-area/AREA.md) — Sample; delete once you've seen the pattern
 
 ## Maintenance
 - [Meta](README.md) — What the vault-level meta docs are
