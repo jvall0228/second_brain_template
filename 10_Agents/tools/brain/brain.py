@@ -3190,7 +3190,7 @@ def scan_secrets(root: Path, paths: list[str]) -> list[dict]:
 
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*\.md$")
 PERIODIC_RE = re.compile(r"^\d{4}-(W\d{2}|Q\d)-review\.md$")
-NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md", "PROJECT.md"}
+NAME_EXCEPTIONS = {"AGENTS.md", "CLAUDE.md", "README.md", "PROJECT.md", "AREA.md", "RESOURCE.md"}
 EXACT_NOTE_PATH_EXCEPTIONS = frozenset({AYMT_RELPATH, HOME_RELPATH})
 FM_WARNING_RULES = {"tags-not-a-list"}
 SKILLS_PREFIX = "10_Agents/skills/"
