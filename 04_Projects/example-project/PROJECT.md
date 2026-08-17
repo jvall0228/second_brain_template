@@ -4,7 +4,7 @@ tags:
   - type/project
   - status/active
   - audience/human
-updated: 2026-08-11
+updated: 2026-08-17
 expires: 2027-08-11
 ---
 
@@ -35,8 +35,8 @@ What does "done" look like? — *The new website design is live on the domain, r
 
 ## Related
 
-- Area: [Example Area](../../05_Areas/example-area/README.md)
-- Resources: [Example Resource](../../06_Resources/example-resource.md)
+- Area: [Example Area](../../05_Areas/example-area/AREA.md)
+- Resources: [Example Resource](../../06_Resources/example-resource/RESOURCE.md)
 - Decisions: [Decision Records](decision-records/README.md)
 
 ## Log
