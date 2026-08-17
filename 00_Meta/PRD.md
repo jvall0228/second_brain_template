@@ -61,6 +61,8 @@ Blank guided profiles and one example per documented section teach the structure
 
 Numeric prefixes stabilize ordering. Journal material is subjective; Resources are objective. Ideas may graduate from Journal to atomic Resource zettels.
 
+First-class PARA entities are directories with typed entrypoints: `PROJECT.md`, `AREA.md`, and `RESOURCE.md`. This keeps stable links and predictable agent bootstrap paths as an entity grows supporting notes. Atomic zettels remain standalone because each is already a single self-contained knowledge unit.
+
 ### 5.2 Portability boundary
 
 Tracked paths are vault-relative and case-sensitive. Markdown/Git are durable; `.obsidian/`, `.vscode/`, `.github/`, and `.claude/` are adapters outside the note corpus. Credentials, absolute paths, embeddings, and user-scope machine-state install manifests stay untracked or external.
