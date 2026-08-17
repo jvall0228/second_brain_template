@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-11
+updated: 2026-08-17
 expires: 2027-08-11
 ---
 
@@ -27,13 +27,15 @@ Examples: Health & Fitness, Finances, Home, Career Development.
 
 ## Structure
 
-Each area gets its own subfolder or standalone note:
-- `05_Areas/health/` — subfolder for areas with multiple notes
-- `05_Areas/finances.md` — single note for simpler areas
+Each Area gets its own directory with an exact-uppercase entrypoint:
+
+- `05_Areas/<area-name>/AREA.md` — canonical entry note for the Area
+- Supporting notes inside the Area directory use descriptive kebab-case filenames.
+- Nested organizational directories use `README.md`; the PARA root remains `05_Areas/README.md`.
 
 ## Contents
 
-- [Example Area](example-area/README.md) — Sample area showing the structure. Delete once you've seen the pattern.
+- [Example Area](example-area/AREA.md) — Sample area showing the structure. Delete once you've seen the pattern.
 
 ## Related
 
