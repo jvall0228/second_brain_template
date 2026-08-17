@@ -5,10 +5,16 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-14
+updated: 2026-08-17
 ---
 
 # Changelog
+
+## [2026-08-17] standardize-para-entrypoints | Add AREA.md and RESOURCE.md
+
+- Standardized first-class PARA entity folders as `04_Projects/<project-name>/PROJECT.md`, `05_Areas/<area-name>/AREA.md`, and `06_Resources/<resource-name>/RESOURCE.md`; supporting notes remain kebab-case and atomic zettels remain standalone.
+- Migrated the seeded Area and Resource examples, updated maintained links, indexes, root guidance, template destinations, and the information-architecture contract.
+- Added `AREA.md` and `RESOURCE.md` to `brain validate`'s filename exceptions and regression-tested all three PARA entrypoint names.
 
 ## [2026-08-14] spec-change | Timezone-aware dates, future-updated guard, SPEC.md rename
 
