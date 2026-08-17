@@ -85,8 +85,6 @@ Directories use numbered prefixes for sort stability. Each directory has a READM
 | `09_Templates/` | Note templates |
 | `10_Agents/` | Agent-facing documentation and behavior rules |
 
-First-class PARA entities use named directory entrypoints: `04_Projects/<project-name>/PROJECT.md`, `05_Areas/<area-name>/AREA.md`, and `06_Resources/<resource-name>/RESOURCE.md`. Supporting notes use kebab-case filenames; atomic Resource zettels remain standalone.
-
 ## Templates
 
 When creating structured notes, use templates from `09_Templates/`:
