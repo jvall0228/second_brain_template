@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-11
+updated: 2026-08-17
 expires: 2027-08-11
 ---
 
@@ -29,13 +29,16 @@ Examples: "Rust concurrency patterns", "Proxmox setup guide", "Zettelkasten meth
 
 ## Structure
 
-Organized by topic — flat or with subfolders as volume grows:
-- `06_Resources/rust-concurrency.md`
-- `06_Resources/homelab/proxmox-setup.md`
+Each named Resource gets its own directory with an exact-uppercase entrypoint:
+
+- `06_Resources/<resource-name>/RESOURCE.md` — canonical entry note for the Resource
+- Supporting notes inside the Resource directory use descriptive kebab-case filenames.
+- Atomic `type/zettel` notes remain standalone kebab-case files because each is already one self-contained unit.
+- Nested organizational directories use `README.md`; the PARA root remains `06_Resources/README.md`.
 
 ## Current Resources
 
-- [Example Resource](example-resource.md) — Sample reference note. Delete once you've seen the pattern.
+- [Example Resource](example-resource/RESOURCE.md) — Sample reference note. Delete once you've seen the pattern.
 
 ## Related
 
