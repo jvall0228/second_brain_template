@@ -122,6 +122,8 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 10_Agents/        Agent-facing docs and behavior rules
 ```
 
+First-class PARA entities use named folder entrypoints: `PROJECT.md`, `AREA.md`, and `RESOURCE.md`. Supporting notes inside those folders use kebab-case filenames.
+
 ## Entrypoints
 
 | Audience | Start here |
