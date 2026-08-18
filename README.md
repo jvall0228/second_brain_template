@@ -3,7 +3,7 @@ title: "Second Brain Template"
 tags:
   - type/meta
   - audience/human
-updated: 2026-08-11
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -93,6 +93,7 @@ The vault ships a zero-dependency CLI, [`brain`](10_Agents/tools/brain/SPEC.md),
 ```
 ./brain validate   # frontmatter, tags, filenames, and relative Markdown links
 ./brain search <q> # plus: list, links, tags, show, recent
+./brain projects   # canonical active Projects, Areas, targets, and rollup drift
 ```
 
 The committed index at `10_Agents/tools/brain/vault-index.json` gives agents structured vault access without running anything. The pre-commit hook (step 5 above) regenerates it on every commit and blocks commits that break the conventions; a GitHub Actions workflow re-checks both on push as a backstop.
@@ -113,7 +114,7 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 01_Profile/       Identity, preferences, current focus (Now page)
 02_Inbox/         Raw capture + agent output (triage queue)
 03_Journal/       Daily/weekly logs, reviews, ideas, insights, people, plans
-04_Projects/      Active projects with clear outcomes
+04_Projects/      Projects with bounded outcomes and lifecycle state
 05_Areas/         Ongoing areas of responsibility
 06_Resources/     Reference material and topic notes
 07_Archives/      Completed or inactive items
@@ -123,6 +124,8 @@ Each fork is self-contained: same structure, different content. Keeping them sep
 ```
 
 First-class PARA entities use named folder entrypoints: `PROJECT.md`, `AREA.md`, and `RESOURCE.md`. Supporting notes inside those folders use kebab-case filenames.
+
+Projects may advance multiple Areas. Their entrypoints own identity, `area/*` mappings, completion criteria, and active target fields; Area active-project lists are derived with `brain projects --write-rollups`. See the [Project and Area Contract](10_Agents/docs/project-area-contract.md).
 
 ## Entrypoints
 

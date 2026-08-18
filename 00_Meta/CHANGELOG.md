@@ -10,6 +10,12 @@ updated: 2026-08-18
 
 # Changelog
 
+## [2026-08-18] add-project-area-contract | Canonical lifecycle, relationships, and safe archive
+
+- Added an exact-path Project/Area registry with one lifecycle per Project, multi-Area mappings, explicit active targets and substantive outcome/completion criteria, derived Area rollups, and focused validation findings.
+- Made `brain projects`, Home, and AYMT consume the same canonical entity model so deprioritized, someday, done, supporting, and stale NOW notes cannot masquerade as active Projects.
+- Added preview-first, separately approved `brain archive-project` whole-directory moves with exact path/link/digest plans, link repair, plan-bound Git blobs, index regeneration, validation, exclusively owned durable recovery evidence, and state-authenticated rollback; Area rollup writes use the same compare-and-swap discipline and preserve concurrent owner edits. Aligned templates, reviews, skills, and PARA guidance with the contract.
+
 ## [2026-08-18] adopt-area-wiki | Add progressive knowledge layers to Areas
 
 - Adapted the evidence → synthesis → schema model and ingest/query/lint loop into a reusable optional Area Wiki Specification.

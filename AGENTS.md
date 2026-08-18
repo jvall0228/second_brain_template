@@ -4,13 +4,13 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-08-17
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
 # Second Brain
 
-A personal knowledge management vault designed for both human and AI agent use. It serves as a single source of truth for context, preferences, projects, and reference material — structured so that any agent can bootstrap itself and produce useful output without prior conversation history.
+A personal knowledge vault for humans and AI agents. It is the source of truth for context, preferences, projects, and reference material, structured so agents can bootstrap without prior conversation history.
 
 ## Bootstrap Sequence (Must-Read Order)
 
@@ -38,7 +38,7 @@ Agent writes are **two-lane**, both review-gated:
 Standing exceptions:
 
 - Agents may append solution notes to `10_Agents/solutions/` — see [README](10_Agents/README.md) — and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (the self-improve loop's memory).
-- Only `brain {aymt,home} --write` may replace its exact generated file in `00_Meta/`; generic writes and hand edits remain forbidden.
+- `brain {aymt,home} --write` owns its generated `00_Meta/` file; `brain projects --write-rollups` owns each Area's `## Active Projects`; generic/hand edits remain forbidden.
 - `brain artifacts --write` alone owns the three generated files in `08_Assets/artifacts/README.md`; generic writes and hand edits are forbidden.
 - Notify: [contract](10_Agents/skills/configure-notifications/SKILL.md).
 - A live, user-invoked [agent-orientation](10_Agents/skills/agent-orientation/SKILL.md) session may write draft outputs to `10_Agents/environments/<env-slug>/`, `10_Agents/tools/<source>/`, and `10_Agents/skills/<source>-capture/`. Markdown uses `workflow/draft`; other bundle files inherit it until owner promotion.
@@ -60,7 +60,7 @@ Tags live in YAML frontmatter under `tags:` as a list. Use **slash-delimited nam
 | `type/*` | What kind of note | `type/meta`, `type/reference`, `type/log` |
 | `topic/*` | Subject matter (free-form) | `topic/software`, `topic/health` |
 | `workflow/*` | Lifecycle stage | `workflow/canonical`, `workflow/draft` |
-| `status/*` | Actionability | `status/active`, `status/someday` |
+| `status/*` | Actionability | `status/active`, `status/deprioritized` |
 
 The authoritative taxonomy (full value lists) is [CONVENTIONS](00_Meta/CONVENTIONS.md#tag-namespaces).
 
@@ -77,7 +77,7 @@ Directories use numbered prefixes for sort stability. Each directory has a READM
 | `02_Inbox/` | Raw capture, agent output, unsorted notes |
 | `02_Outbox/` | Outbound deliverables awaiting owner review and shipping |
 | `03_Journal/` | Personal knowledge and experience |
-| `04_Projects/` | Active projects with clear outcomes |
+| `04_Projects/` | Projects with bounded outcomes |
 | `05_Areas/` | Ongoing areas of responsibility |
 | `06_Resources/` | Reference material and topic notes |
 | `07_Archives/` | Completed or inactive items |

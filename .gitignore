@@ -21,3 +21,8 @@ __pycache__/
 /.brain-link-migration.json
 .*.migrate-new-*
 .*.migrate-old-*
+
+# Whole-Project archive rollback evidence; removed after a successful staged
+# transaction or an explicit `brain archive-project <slug> --recover`.
+/.brain-project-archive.json
+/.brain-project-archive-transaction-*/

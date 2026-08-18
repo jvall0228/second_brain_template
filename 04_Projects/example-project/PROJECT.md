@@ -3,8 +3,13 @@ title: "Example Project"
 tags:
   - type/project
   - status/active
+  - project/example-project
+  - area/example-area
   - audience/human
-updated: 2026-08-17
+  - audience/agent
+target: 2026-12-31
+target_status: estimated
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -20,10 +25,11 @@ A worked example: redesigning a personal website. Replace with a real project of
 
 What does "done" look like? — *The new website design is live on the domain, replacing the old one.*
 
-## Key Dates
+## Completion Criteria
 
-- Start: 2025-01-06
-- Target: 2025-02-28
+- [ ] The replacement design is live on the domain.
+- [ ] Existing content has migrated without broken routes.
+- [ ] The owner has verified the production cutover.
 
 ## Tasks
 
@@ -33,9 +39,12 @@ What does "done" look like? — *The new website design is live on the domain, r
 - [ ] Migrate content
 - [ ] Deploy and cut over DNS
 
+## Areas
+
+- [Example Area](../../05_Areas/example-area/AREA.md)
+
 ## Related
 
-- Area: [Example Area](../../05_Areas/example-area/AREA.md)
 - Resources: [Example Resource](../../06_Resources/example-resource/RESOURCE.md)
 - Decisions: [Decision Records](decision-records/README.md)
 
@@ -43,3 +52,4 @@ What does "done" look like? — *The new website design is live on the domain, r
 
 - 2025-01-06 — Project created; audited the existing site.
 - 2025-01-10 — Chose a static-site framework (see decision record).
+- 2026-08-18 — Example target recalibrated to 2026-12-31 and marked estimated.

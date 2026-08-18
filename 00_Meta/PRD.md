@@ -51,7 +51,7 @@ Blank guided profiles and one example per documented section teach the structure
 | `02_Inbox/` | Untriaged vault captures and agent output |
 | `02_Outbox/` | Outbound drafts awaiting owner review and shipping |
 | `03_Journal/` | Subjective experience, people, ideas, plans, and periodic notes |
-| `04_Projects/` | Active outcomes with an end state |
+| `04_Projects/` | Bounded outcomes across active, deprioritized, someday, and archive-pending lifecycle states |
 | `05_Areas/` | Ongoing responsibilities |
 | `06_Resources/` | Objective references and evergreen zettels |
 | `07_Archives/` | Inactive or superseded material |
@@ -61,7 +61,7 @@ Blank guided profiles and one example per documented section teach the structure
 
 Numeric prefixes stabilize ordering. Journal material is subjective; Resources are objective. Ideas may graduate from Journal to atomic Resource zettels.
 
-First-class PARA entities are directories with typed entrypoints: `PROJECT.md`, `AREA.md`, and `RESOURCE.md`. This keeps stable links and predictable agent bootstrap paths as an entity grows supporting notes. Atomic zettels remain standalone because each is already a single self-contained knowledge unit.
+First-class PARA entities are directories with typed entrypoints: `PROJECT.md`, `AREA.md`, and `RESOURCE.md`. This keeps stable links and predictable agent bootstrap paths as an entity grows supporting notes. Projects map many-to-many to Areas through entrypoint membership tags; the [Project and Area Contract](../10_Agents/docs/project-area-contract.md) defines identity, active targets, lifecycle, derived rollups, and closeout. Atomic zettels remain standalone because each is already a single self-contained knowledge unit.
 
 Areas may progressively adopt the [Area Wiki Specification](area-wiki-spec.md) for multi-source or independently changing knowledge. `AREA.md` stays the index, existing note types fill wiki roles, and simple Areas require no extra scaffolding.
 
@@ -162,7 +162,7 @@ Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` ins
 
 ### 9.4 `brain` and generated data
 
-`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/SPEC.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
+`brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/SPEC.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, canonical Project/Area inventory, rollups, rollback-capable whole-directory archival, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
 
 The committed index and VS Code snippets are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
 
@@ -174,7 +174,7 @@ Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may u
 
 ### 10.2 Tags
 
-[CONVENTIONS](CONVENTIONS.md#tag-namespaces) is the single authoritative taxonomy. The current namespaces cover audience, type, topic, workflow, status, and `restricted/private`; other documents summarize rather than redefine that table.
+[CONVENTIONS](CONVENTIONS.md#tag-namespaces) is the single authoritative taxonomy. The current namespaces cover audience, type, topic, Project and Area identity/membership, workflow, status, and `restricted/private`; other documents summarize rather than redefine that table.
 
 ### 10.3 Restriction semantics
 
@@ -201,13 +201,14 @@ Notification configuration is separate machine-local state, not tracked fork pol
 
 ## 12. Templates
 
-Stable templates cover project, area, resource, zettel, five review cadences, decision, media, and comparison. The Area template exposes the optional wiki knowledge model without requiring supporting pages. Top-level templates generate VS Code snippets; `variants/` are onboarding inputs only.
+Stable templates cover project, area, resource, zettel, five review cadences, decision, media, and comparison. Project/Area templates encode canonical slugs, mappings, active targets, completion criteria, and derived rollups; the Area template also exposes the optional wiki knowledge model without requiring supporting pages. Top-level templates generate VS Code snippets; `variants/` are onboarding inputs only.
 
 ## 13. Current functional requirements
 
 - Clean clones include structure, bootstrap, both editor configs, templates, skills, harness wiring, and validation.
 - Adoption completes without manual link or generated-file repair.
 - Capture, query, links, tasks, reviews, curation, and expression work locally.
+- Canonical Project inventory lists each active entity once with all Areas and target state; Home, AYMT, validation, and Area rollups consume that same registry.
 - Validation reports content, secret, restriction, and curation findings without crashing on unreadable files.
 - Template sync previews classified changes, preserves owner content, and never pushes upstream.
 - Generated integrations are draft, environment-scoped, and credential-free in tracked content.
@@ -251,13 +252,13 @@ Agents check overlaps, use collision-safe Inbox names, preserve unrelated edits,
 
 ## 18. Validation and enforcement
 
-`brain validate` is authoritative: `0` clean, `1` errors, `2` warnings. The test runner discovers tool suites. Hooks regenerate and block errors; CI runs tests, adoption smoke, validation, and freshness. Copilot adds a cloud-agent stop gate. Warnings are debt, not blockers.
+`brain validate` is authoritative: `0` clean, `1` errors, `2` warnings. Project/Area membership, lifecycle, target, criteria, collision, and rollup findings are warning-only during editing; focused migration/release checks require that family to be empty. The test runner discovers tool suites. Hooks regenerate and block errors; CI runs tests, adoption smoke, validation, and freshness. Copilot adds a cloud-agent stop gate. Warnings are debt, not blockers.
 
 `brain` changes are spec-first and tested; editor changes check both surfaces. Completion requires targeted tests, full validation, freshness, and adversarial review for contradictions, privacy, destructive behavior, portability, and false shipped claims.
 
 ## 19. Shipped milestones and Ready roadmap
 
-### 19.1 Shipped M0–M13
+### 19.1 Shipped M0–M14
 
 | Milestone | Shipped capability |
 |---|---|
@@ -271,6 +272,7 @@ Agents check overlaps, use collision-safe Inbox names, preserve unrelated edits,
 | M11 | Markdown task tracking and optional semantic search |
 | M12 | Pull-only template sync and the propose/review/record self-improvement loop |
 | M13 | Local action brief plus deterministic offline link-graph and health-dashboard artifacts |
+| M14 | Canonical Project/Area identity, lifecycle, multi-Area mappings, derived rollups, and safe whole-directory Project archival |
 
 Release detail belongs in [CHANGELOG](CHANGELOG.md), not in this current-state specification.
 

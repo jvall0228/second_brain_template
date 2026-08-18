@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -26,6 +26,7 @@ The default path is local-only and never invokes GitHub, a connector, or the net
 ## Safety contract
 
 - Restricted notes, notes targeting restricted content, generated AYMT/Home, Archives, Templates, untracked files, and every environment note body are excluded before candidate construction.
+- Projects come only from the canonical Project/Area registry. Supporting notes and stale NOW bullets do not create duplicate Projects; inactive Project-directory tasks stay excluded. Estimated and overdue targets remain visible in the candidate wording and caveat.
 - Unconfigured environment state is useful and valid. A malformed or ambiguous configured selection fails without exposing selection detail.
 - `--check` and preview are zero-write. `--write` may change exactly `00_Meta/AYMT.md`, refuses foreign or modified content, and fails closed when safe mutation is unavailable.
 - Source links in the generated file remain source-relative Markdown; sanitized GitHub issues use computed canonical HTTPS links.

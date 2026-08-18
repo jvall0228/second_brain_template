@@ -2,8 +2,9 @@
 title: "DR: Static-Site Framework Choice"
 tags:
   - type/decision
+  - project/example-project
   - audience/human
-updated: 2025-01-10
+updated: 2026-08-18
 ---
 
 # Static-Site Framework Choice

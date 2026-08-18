@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-12
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -42,6 +42,8 @@ Every command accepts `--json` for machine-readable output, `--vault PATH` to ov
 | `list` | Note paths; filters: `--dir PREFIX`, `--tag TAG` (repeatable; `type/*` matches a namespace), `--type X` |
 | `search <query>` | Case-insensitive substring over titles, headings, and body. `--semantic` ranks whole notes by embedding similarity instead (spec §18.4), degrading to keyword search on a vectorless vault; `--query-vector` reads the query embedding from stdin, `--top N` caps results |
 | `links <note>` | Outgoing links, backlinks, and unresolved targets for one note |
+| `projects` | Canonical active Project inventory with all Areas, targets, criteria/overdue attention, and rollup drift/blockers (spec §27). `--write-rollups` compare-and-swap updates only Area `## Active Projects` sections and preserves concurrent owner edits |
+| `archive-project <slug>` | Preview the exact approved whole-directory move/link plan (spec §27.4; use `--json` for every row/digest). `--write --approve-archive` requires a clean tree, repairs links, stages plan-bound blobs, reindexes, validates, and rolls back recognized failures; `--recover` authenticates interrupted evidence or reports that owner inspection is required |
 | `aymt` | Deterministic local Actions You May Take brief (spec §23). Preview is read-only; `--json` explains scores and selection, `--check` verifies `00_Meta/AYMT.md` without writing, and explicit `--write` updates only the recognized generated file. Optional `--github-input PATH\|-` accepts a strict sanitized snapshot; brain never invokes GitHub or the network |
 | `home` | Deterministic local Home (spec §24) built from structured AYMT plus safe tracked tasks, Inbox, active work, reviews, current state, health, environment metadata, and navigation. Preview/JSON/check are zero-write; explicit `--write` updates only recognized generated `00_Meta/HOME.md`. Optional `--github-input PATH\|-` affects only AYMT actions; brain never invokes GitHub or the network |
 | `artifacts` | Deterministic offline link graph and health dashboard (spec §25). Preview/`--json` are read-only; `--check` verifies the exact generated inventory; `--write` updates only recognized files under `08_Assets/artifacts/`; `--open` opens fresh local HTML. `--as-of YYYY-MM-DD` controls the source timestamp |

@@ -806,7 +806,7 @@ class CorpusPerformanceTests(unittest.TestCase):
     def test_live_corpus_placeholder_and_resolution_regression(self):
         notes, assets = brain.walk_corpus(ROOT)
         index = brain.build_index(ROOT, notes, assets)
-        self.assertEqual(index["linkCounts"]["placeholder"], 21)
+        self.assertEqual(index["linkCounts"]["placeholder"], 20)
         unresolved_paths = [
             (path, link["raw"])
             for path, record in index["notes"].items()

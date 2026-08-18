@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -22,7 +22,7 @@ Note surgery. Detection and proposal live elsewhere ([vault-maintenance](../vaul
 2. **Read every involved note in full** before touching any of them.
 3. **Rewrite the survivor:** fold the losers' content in by replacement — conflicting or overlapping sections are rewritten into one current claim, never concatenated side by side or left under "supersedes" banners. The result must read as a single coherent note; git history is the archive for what was dropped.
 4. **Retarget inbound links:** `brain links <loser> --json` lists each loser's backlinks; point every one at the survivor (or its matching section anchor), preserving display text.
-5. **Archive the losers** to the matching `07_Archives/` subdirectory with `status/done` — their content now lives in the survivor.
+5. **Archive ordinary loser notes** to the matching `07_Archives/` subdirectory with `status/done` — their content now lives in the survivor. If a loser is a canonical Project entity, close it in place first (`closed:` plus `## Final Outcome`), reconcile rollups, preview `brain archive-project <slug>`, and run its explicit write only with separate owner approval. A generic note move must not relocate a Project directory.
 6. **Finish:** bump `updated:` on every edited note, reindex, `validate --check-index` to zero errors, commit stating what merged into what.
 
 ## Split — one note has outgrown one topic
@@ -53,3 +53,4 @@ Note surgery. Detection and proposal live elsewhere ([vault-maintenance](../vaul
 - [link-repair](../link-repair/SKILL.md) — fixing links outside a surgery context
 - `10_Agents/tools/brain/README.md` — the `links` command
 - [OPERATING-RULES](../../docs/OPERATING-RULES.md) — update by replacement; canonical handling
+- [Project and Area Contract](../../docs/project-area-contract.md) — Project closeout and whole-directory archive boundary
