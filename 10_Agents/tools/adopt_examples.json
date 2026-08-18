@@ -5,7 +5,7 @@
   "delete": [
     "04_Projects/example-project/",
     "05_Areas/example-area/",
-    "06_Resources/example-resource.md",
+    "06_Resources/example-resource/",
     "03_Journal/people/example-person.md",
     "03_Journal/ideas/example-idea.md",
     "03_Journal/periodic/daily/2025-01-15.md",

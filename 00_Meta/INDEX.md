@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-17
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -42,6 +42,7 @@ expires: 2027-08-11
   - [People](../03_Journal/people/README.md) — Character studies
   - [Plans](../03_Journal/plans/README.md) — Strategies and approaches
 - [Areas](../05_Areas/README.md) — Ongoing responsibilities
+  - [Area Wiki Specification](area-wiki-spec.md) — Optional compounding knowledge layer for complex Areas
   - [Example Area](../05_Areas/example-area/AREA.md) — Sample; delete once you've seen the pattern
 
 ## Maintenance

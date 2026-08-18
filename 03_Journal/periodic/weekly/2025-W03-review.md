@@ -3,7 +3,7 @@ title: "2025-W03 Review"
 tags:
   - type/journal
   - audience/human
-updated: 2025-01-19
+updated: 2026-08-18
 ---
 
 # 2025-W03 Review
@@ -23,7 +23,7 @@ updated: 2025-01-19
 
 ## Get Current — Areas
 
-- [Example Area](../../../05_Areas/example-area/README.md) — worked out twice; aiming for three next week.
+- [Example Area](../../../05_Areas/example-area/AREA.md) — worked out twice; aiming for three next week.
 
 ## Review
 

@@ -5,10 +5,16 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-17
+updated: 2026-08-18
 ---
 
 # Changelog
+
+## [2026-08-18] adopt-area-wiki | Add progressive knowledge layers to Areas
+
+- Adapted the evidence → synthesis → schema model and ingest/query/lint loop into a reusable optional Area Wiki Specification.
+- Kept adoption progressive: `AREA.md` replaces a separate wiki index, existing vault types represent page roles, and simple Areas require no additional scaffolding.
+- Integrated the contract with the Area template, PRD, conventions, READMEs, and vault index while preserving portable links, Inbox-first writes, privacy rules, and human review.
 
 ## [2026-08-17] standardize-para-entrypoints | Add AREA.md and RESOURCE.md
 

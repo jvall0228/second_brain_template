@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-12
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -63,6 +63,8 @@ Numeric prefixes stabilize ordering. Journal material is subjective; Resources a
 
 First-class PARA entities are directories with typed entrypoints: `PROJECT.md`, `AREA.md`, and `RESOURCE.md`. This keeps stable links and predictable agent bootstrap paths as an entity grows supporting notes. Atomic zettels remain standalone because each is already a single self-contained knowledge unit.
 
+Areas may progressively adopt the [Area Wiki Specification](area-wiki-spec.md) for multi-source or independently changing knowledge. `AREA.md` stays the index, existing note types fill wiki roles, and simple Areas require no extra scaffolding.
+
 ### 5.2 Portability boundary
 
 Tracked paths are vault-relative and case-sensitive. Markdown/Git are durable; `.obsidian/`, `.vscode/`, `.github/`, and `.claude/` are adapters outside the note corpus. Credentials, absolute paths, embeddings, and user-scope machine-state install manifests stay untracked or external.
@@ -119,6 +121,7 @@ Gaps need an editor-neutral route or documentation. Navigation, template, link, 
 - Template paths are stable; work specialization rewrites only documented periodic templates.
 - Maintained content uses source-relative inline Markdown links with explicit extensions and GitHub-compatible heading slugs; `brain` reports resolution, ambiguity, encoding, fragment, and case findings. Legacy wikilinks are import-only and must be migrated before acceptance.
 - INDEX is the human map and is not overwritten by dynamic summaries.
+- Area wikis preserve evidence → synthesis → schema, surface uncertainty, deduplicate at write time, and use `AREA.md` instead of `index.md`.
 
 ## 8. Agent model
 
@@ -167,7 +170,7 @@ The committed index and VS Code snippets are deterministic tracked outputs. Hook
 
 ### 10.1 Frontmatter
 
-Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may use placeholders. Agent Inbox drafts record `author` and, when available, `session`. `expires` is expected outside documented exemptions.
+Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may use placeholders. Agent Inbox drafts record `author` and, when available, `session`. `expires` is expected outside documented exemptions. Evidence-dependent Area notes may add `sources`, `verification`, and `verified`; `updated` does not imply re-verification.
 
 ### 10.2 Tags
 
@@ -198,7 +201,7 @@ Notification configuration is separate machine-local state, not tracked fork pol
 
 ## 12. Templates
 
-Stable templates cover project, area, resource, zettel, five review cadences, decision, media, and comparison. Top-level templates generate VS Code snippets; `variants/` are onboarding inputs only.
+Stable templates cover project, area, resource, zettel, five review cadences, decision, media, and comparison. The Area template exposes the optional wiki knowledge model without requiring supporting pages. Top-level templates generate VS Code snippets; `variants/` are onboarding inputs only.
 
 ## 13. Current functional requirements
 

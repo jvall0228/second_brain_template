@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-17
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -36,7 +36,7 @@ Use **kebab-case** by default for filenames: `my-note-title.md`.
 
 Allowed exceptions:
 - Entrypoints: exact uppercase `AGENTS.md`, `CLAUDE.md`, and `README.md`, at the root or any directory level.
-- PARA entity entrypoints: exact uppercase `PROJECT.md`, `AREA.md`, and `RESOURCE.md` at `04_Projects/<project-name>/PROJECT.md`, `05_Areas/<area-name>/AREA.md`, and `06_Resources/<resource-name>/RESOURCE.md`. Supporting notes inside an entity directory use kebab-case filenames. Nested organizational directories still use `README.md`, as do the three PARA roots. Atomic `type/zettel` notes remain standalone kebab-case files under `06_Resources/`.
+- PARA entity entrypoints are exact uppercase `PROJECT.md`, `AREA.md`, and `RESOURCE.md` under `04_Projects/`, `05_Areas/`, and `06_Resources/`. Supporting notes are kebab-case; nested directories use `README.md`. Atomic zettels remain standalone under Resources. Multi-source Areas may activate the [Area Wiki Specification](area-wiki-spec.md), with `AREA.md` as the wiki index.
 - Framework core: `00_Meta/{CONVENTIONS,INDEX,CHANGELOG,PRD,STATUS}.md`, `01_Profile/{NOW,PREFERENCES,DEFAULTS,IDENTITY,WORK,TOOLING-STACK,LONG-RUNNING-THEMES}.md`, and `10_Agents/docs/{OPERATING-RULES,TASK-PATTERNS}.md`. These 14 paths require this exact case; the exception does not extend to other notes with the same basename.
 - Generated: exact `00_Meta/{AYMT,HOME}.md` via matching `brain {aymt,home} --write`.
 - Generated assets: the exact lowercase inventory under `08_Assets/artifacts/` (`brain artifacts --write`).

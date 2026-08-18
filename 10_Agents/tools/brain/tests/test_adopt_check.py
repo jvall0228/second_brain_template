@@ -74,7 +74,7 @@ class AdoptCheckTest(unittest.TestCase):
         index = self.copy / "00_Meta" / "INDEX.md"
         index.write_text(
             index.read_text(encoding="utf-8")
-            + "\n- [pinned reference](../06_Resources/example-resource.md)\n",
+            + "\n- [pinned reference](../06_Resources/example-resource/RESOURCE.md)\n",
             encoding="utf-8",
         )
         proc = run_adopt_check(self.copy)
@@ -614,7 +614,7 @@ class AdoptCheckTest(unittest.TestCase):
         manifest.write_text(json.dumps(data), encoding="utf-8")
         with self.assertRaisesRegex(AdoptionError, "unsafe manifest path"):
             build_plan(self.copy)
-        data["delete"][-1] = "06_Resources/EXAMPLE-RESOURCE.md"
+        data["delete"][-1] = "06_Resources/EXAMPLE-RESOURCE/"
         manifest.write_text(json.dumps(data), encoding="utf-8")
         with self.assertRaisesRegex(AdoptionError, "case-colliding"):
             build_plan(self.copy)
@@ -626,8 +626,8 @@ class AdoptCheckTest(unittest.TestCase):
 
         data = dict(original)
         data["delete"] = [
-            "06_resources/example-resource.md"
-            if path == "06_Resources/example-resource.md"
+            "06_resources/example-resource/"
+            if path == "06_Resources/example-resource/"
             else path
             for path in original["delete"]
         ]

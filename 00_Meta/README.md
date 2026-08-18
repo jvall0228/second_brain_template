@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-11
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -15,6 +15,7 @@ Vault-level conventions, navigation, and structural documentation. Files here go
 ## Contents
 
 - [CONVENTIONS](CONVENTIONS.md) — Naming, tagging, directory layout, change-control rules
+- [Area Wiki Specification](area-wiki-spec.md) — Optional compounding knowledge layer for complex Areas
 - [INDEX](INDEX.md) — Global map of content (Map of Content)
 - [CHANGELOG](CHANGELOG.md) — Structural change log
 - [PRD](PRD.md) — Product requirements document
