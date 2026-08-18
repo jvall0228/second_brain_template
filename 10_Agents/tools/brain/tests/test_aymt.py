@@ -324,8 +324,33 @@ class AymtCollectorTests(unittest.TestCase):
         kinds = {row["kind"] for row in filled_payload["candidates"]}
         outcomes = {row["outcome"] for row in filled_payload["candidates"]}
         self.assertNotIn("profile-readiness", kinds)
-        self.assertIn("Real Project", outcomes)
+        # NOW is a curated priority view, not the Project source of truth.
+        self.assertNotIn("Real Project", outcomes)
         self.assertIn("Launch: 2026-08-15", outcomes)
+
+    def test_canonical_project_target_is_visible_and_support_note_is_not_duplicated(self):
+        self.vault.write(
+            "05_Areas/work/AREA.md",
+            note("Work", "## Active Projects\n", ("type/area", "status/active", "area/work")),
+            tracked=True,
+        )
+        project = note(
+            "Canonical",
+            "## Outcome\n\nShip it.\n\n## Completion Criteria\n\n- Verified.\n\n- [ ] Next move",
+            ("type/project", "status/active", "project/canonical", "area/work"),
+        ).replace("updated: 2026-08-11", "target: 2026-08-20\ntarget_status: estimated\nupdated: 2026-08-11")
+        self.vault.write("04_Projects/canonical/PROJECT.md", project, tracked=True)
+        self.vault.write(
+            "04_Projects/canonical/support.md",
+            note("Support", "Reference.", ("type/note", "project/canonical")),
+            tracked=True,
+        )
+
+        payload = self.vault.build(today_d=date(2026, 8, 21))
+        projects = [row for row in payload["candidates"] if row["kind"] == "project"]
+
+        self.assertEqual(len(projects), 1)
+        self.assertIn("estimated, overdue", projects[0]["outcome"])
 
     def test_restricted_profile_is_filtered_before_readiness(self):
         rel = brain.CORE_FRAMEWORK_PATHS["identity"]

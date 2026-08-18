@@ -38,6 +38,16 @@ from pathlib import Path
 from urllib.parse import quote, unquote_to_bytes, urlsplit
 
 SCHEMA_VERSION = 2
+ENTITY_REGISTRY_SCHEMA_VERSION = 1
+PROJECT_ENTRY_RE = re.compile(r"^04_Projects/([^/]+)/PROJECT\.md$")
+ARCHIVED_PROJECT_ENTRY_RE = re.compile(
+    r"^07_Archives/projects/([^/]+)/PROJECT\.md$"
+)
+AREA_ENTRY_RE = re.compile(r"^05_Areas/([^/]+)/AREA\.md$")
+ARCHIVED_AREA_ENTRY_RE = re.compile(r"^07_Archives/areas/([^/]+)/AREA\.md$")
+ENTITY_SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+PROJECT_LIFECYCLES = frozenset({"active", "deprioritized", "someday", "done"})
+PROJECT_TARGET_STATUSES = frozenset({"estimated", "confirmed"})
 LINK_MIGRATION_SCHEMA_VERSION = 1
 LINK_MIGRATION_JOURNAL_RELPATH = ".brain-link-migration.json"
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
@@ -2475,6 +2485,377 @@ def build_index(
     }
 
 
+# ---------------------------------------------------------------------------
+# Project/Area entity registry
+
+
+def _entity_text(root: Path, rel: str, note_texts: dict[str, str | None] | None) -> str | None:
+    if note_texts is not None:
+        return note_texts.get(rel)
+    try:
+        raw = _read_nofollow_bytes(root, rel)
+    except OSError:
+        return None
+    return _decode_note_bytes(raw)[0]
+
+
+def _heading_section(text: str | None, heading: str) -> tuple[str, int, int] | None:
+    """Return body text and one-based line bounds for an exact H2 section."""
+    if text is None:
+        return None
+    lines = text.split("\n")
+    wanted = heading.casefold()
+    start: int | None = None
+    end = len(lines) + 1
+    for index, line in enumerate(lines, start=1):
+        match = re.match(r"^##\s+(.+?)\s*#*\s*$", line)
+        if not match:
+            continue
+        if start is None and match.group(1).strip().casefold() == wanted:
+            start = index + 1
+            continue
+        if start is not None:
+            end = index
+            break
+    if start is None:
+        return None
+    return "\n".join(lines[start - 1 : end - 1]).strip(), start, end
+
+
+def _substantive_completion_criteria(text: str | None) -> bool:
+    section = _heading_section(text, "Completion Criteria")
+    if section is None:
+        return False
+    body = re.sub(r"<!--.*?-->", "", section[0], flags=re.DOTALL).strip()
+    if not body or "{{" in body:
+        return False
+    normalized = re.sub(r"^[\s>*_`#-]+|[\s*_`]+$", "", body).strip().casefold()
+    if normalized in {"", "none", "n/a", "tbd", "todo", "to be defined"}:
+        return False
+    meaningful = []
+    for line in body.splitlines():
+        value = re.sub(r"^\s*(?:[-*+]\s+)?(?:\[(?: |x|X)\]\s*)?", "", line).strip()
+        if value and value not in {"{{COMPLETION_CRITERIA}}", "{{completion_criteria}}"}:
+            meaningful.append(value)
+    return bool(meaningful)
+
+
+def _entity_finding(path: str, rule: str, message: str) -> dict:
+    return {"line": None, "message": message, "path": path, "rule": rule}
+
+
+def _status_values(tags: list[str]) -> list[str]:
+    return sorted({tag.split("/", 1)[1] for tag in tags if tag.startswith("status/")})
+
+
+def _membership_values(tags: list[str], namespace: str) -> list[str]:
+    prefix = namespace + "/"
+    return sorted({tag[len(prefix) :] for tag in tags if tag.startswith(prefix)})
+
+
+def _rollup_project_paths(rec: dict, bounds: tuple[str, int, int] | None) -> set[str]:
+    if bounds is None:
+        return set()
+    _body, start, end = bounds
+    return {
+        link["resolved"]
+        for link in rec.get("links", [])
+        if start <= link["line"] < end
+        and isinstance(link.get("resolved"), str)
+        and (
+            PROJECT_ENTRY_RE.fullmatch(link["resolved"])
+            or ARCHIVED_PROJECT_ENTRY_RE.fullmatch(link["resolved"])
+        )
+    }
+
+
+def build_entity_registry(
+    root: Path,
+    index: dict,
+    *,
+    today_d: date,
+    note_texts: dict[str, str | None] | None = None,
+) -> dict:
+    """Build the deterministic Project/Area source of truth from entrypoints."""
+    notes = index["notes"]
+    findings: list[dict] = []
+    active_candidates: dict[str, dict] = {}
+    archived_candidates: dict[str, dict] = {}
+    areas: dict[str, dict] = {}
+    archived_areas: dict[str, dict] = {}
+
+    for rel in sorted(notes):
+        rec = notes[rel]
+        tags = frontmatter_tags(rec)
+        match = PROJECT_ENTRY_RE.fullmatch(rel)
+        archived = False
+        if match is None:
+            match = ARCHIVED_PROJECT_ENTRY_RE.fullmatch(rel)
+            archived = match is not None
+        if match is not None:
+            slug = match.group(1)
+            text = _entity_text(root, rel, note_texts)
+            statuses = _status_values(tags)
+            lifecycle = statuses[0] if len(statuses) == 1 else None
+            target = rec["frontmatter"].get("target")
+            target_status = rec["frontmatter"].get("target_status")
+            target_date = iso_date(target) if isinstance(target, str) else None
+            area_slugs = _membership_values(tags, "area")
+            attention: list[str] = []
+            if lifecycle == "active" and target_status == "estimated":
+                attention.append("estimated-target")
+            overdue = bool(lifecycle == "active" and target_date and target_date < today_d)
+            if overdue:
+                attention.append("overdue")
+            project = {
+                "archived": archived,
+                "areas": [],
+                "attention": attention,
+                "hasCompletionCriteria": _substantive_completion_criteria(text),
+                "lifecycle": lifecycle,
+                "overdue": overdue,
+                "path": rel,
+                "slug": slug,
+                "statusValues": statuses,
+                "target": target if isinstance(target, str) else None,
+                "targetStatus": target_status if isinstance(target_status, str) else None,
+                "title": rec.get("title") or slug,
+            }
+            (archived_candidates if archived else active_candidates)[slug] = project
+
+            if not ENTITY_SLUG_RE.fullmatch(slug):
+                findings.append(_entity_finding(rel, "project-slug", "Project directory name is not kebab-case"))
+            if "type/project" not in tags:
+                findings.append(_entity_finding(rel, "project-type", "Project entrypoint must carry type/project"))
+            if f"project/{slug}" not in tags:
+                findings.append(_entity_finding(rel, "project-tag", f"Project entrypoint must carry project/{slug}"))
+            if len(statuses) != 1 or any(value not in PROJECT_LIFECYCLES for value in statuses):
+                findings.append(_entity_finding(rel, "project-lifecycle", "Project must have exactly one supported status/* lifecycle"))
+            elif archived and lifecycle != "done":
+                findings.append(_entity_finding(rel, "project-archive-status", "Archived Project must have status/done"))
+            if "active" in statuses:
+                if not area_slugs:
+                    findings.append(_entity_finding(rel, "project-area-missing", "Active Project must map to at least one Area"))
+                if target is None:
+                    findings.append(_entity_finding(rel, "project-target-missing", "Active Project must declare target: YYYY-MM-DD"))
+                elif target_date is None:
+                    findings.append(_entity_finding(rel, "project-target-invalid", "Active Project target must be a real YYYY-MM-DD date"))
+                if target_status not in PROJECT_TARGET_STATUSES:
+                    findings.append(_entity_finding(rel, "project-target-status", "Active Project target_status must be estimated or confirmed"))
+                if not project["hasCompletionCriteria"]:
+                    findings.append(_entity_finding(rel, "project-completion-criteria", "Active Project must have substantive Completion Criteria"))
+                outcome = _heading_section(text, "Outcome")
+                if outcome is None or not outcome[0].strip() or "{{" in outcome[0]:
+                    findings.append(_entity_finding(rel, "project-outcome", "Active Project must have a substantive Outcome"))
+                if overdue:
+                    findings.append(_entity_finding(rel, "project-target-overdue", f"Active Project target {target} is overdue"))
+            elif target is not None or target_status is not None:
+                findings.append(_entity_finding(rel, "project-inactive-target", "Inactive Project must not retain active target fields"))
+            if not archived and lifecycle == "done":
+                findings.append(_entity_finding(rel, "project-archive-pending", "Closed Project is ready for a separately approved archive move"))
+            continue
+
+        match = AREA_ENTRY_RE.fullmatch(rel)
+        area_archived = False
+        if match is None:
+            match = ARCHIVED_AREA_ENTRY_RE.fullmatch(rel)
+            area_archived = match is not None
+        if match is not None:
+            slug = match.group(1)
+            text = _entity_text(root, rel, note_texts)
+            area = {
+                "archived": area_archived,
+                "path": rel,
+                "rollupPaths": sorted(_rollup_project_paths(rec, _heading_section(text, "Active Projects"))),
+                "slug": slug,
+                "title": rec.get("title") or slug,
+            }
+            (archived_areas if area_archived else areas)[slug] = area
+            if not ENTITY_SLUG_RE.fullmatch(slug):
+                findings.append(_entity_finding(rel, "area-slug", "Area directory name is not kebab-case"))
+            if "type/area" not in tags:
+                findings.append(_entity_finding(rel, "area-type", "Area entrypoint must carry type/area"))
+            if f"area/{slug}" not in tags:
+                findings.append(_entity_finding(rel, "area-tag", f"Area entrypoint must carry area/{slug}"))
+
+    collisions = sorted(set(active_candidates) & set(archived_candidates))
+    for slug in collisions:
+        findings.append(_entity_finding(active_candidates[slug]["path"], "project-collision", f"Project {slug!r} exists in active and archived roots"))
+
+    projects = dict(sorted({**archived_candidates, **active_candidates}.items()))
+    for project in projects.values():
+        tags = frontmatter_tags(notes[project["path"]])
+        for slug in _membership_values(tags, "area"):
+            area = areas.get(slug)
+            project["areas"].append(
+                {
+                    "path": area["path"] if area else None,
+                    "slug": slug,
+                    "title": area["title"] if area else None,
+                }
+            )
+            if area is None:
+                findings.append(_entity_finding(project["path"], "project-area-missing", f"Project maps to missing Area {slug!r}"))
+            if "active" in project["statusValues"]:
+                expected = project["path"]
+                if area is None or expected not in area["rollupPaths"]:
+                    findings.append(_entity_finding(project["path"], "project-rollup-missing", f"Area {slug!r} does not list this active Project"))
+        project["areas"].sort(key=lambda row: row["slug"])
+
+    projects_by_path = {project["path"]: project for project in projects.values()}
+    for area in areas.values():
+        for project_path in area["rollupPaths"]:
+            project = projects_by_path.get(project_path)
+            mapped = project is not None and any(
+                row["slug"] == area["slug"] for row in project["areas"]
+            )
+            if project is None or project["archived"] or project["lifecycle"] != "active" or not mapped:
+                findings.append(
+                    _entity_finding(
+                        area["path"],
+                        "area-rollup-drift",
+                        f"Active Projects rollup contains inactive, archived, or unmapped entry {project_path}",
+                    )
+                )
+
+    for rel in sorted(notes):
+        if rel.endswith("/README.md"):
+            continue
+        rec = notes[rel]
+        tags = frontmatter_tags(rec)
+        if "type/meta" in tags:
+            continue
+        project_match = re.match(r"^04_Projects/([^/]+)/.+\.md$", rel)
+        archived_project_match = re.match(r"^07_Archives/projects/([^/]+)/.+\.md$", rel)
+        owner = project_match or archived_project_match
+        if owner and not (PROJECT_ENTRY_RE.fullmatch(rel) or ARCHIVED_PROJECT_ENTRY_RE.fullmatch(rel)):
+            slug = owner.group(1)
+            if f"project/{slug}" not in tags:
+                findings.append(_entity_finding(rel, "project-membership-missing", f"Supporting note must carry project/{slug}"))
+            if any(tag.startswith("area/") for tag in tags):
+                findings.append(_entity_finding(rel, "project-area-on-supporting-note", "Project-to-Area mappings belong only on PROJECT.md"))
+        area_match = re.match(r"^05_Areas/([^/]+)/.+\.md$", rel)
+        if area_match and not AREA_ENTRY_RE.fullmatch(rel):
+            slug = area_match.group(1)
+            if f"area/{slug}" not in tags:
+                findings.append(_entity_finding(rel, "area-membership-missing", f"Supporting note must carry area/{slug}"))
+        for slug in _membership_values(tags, "project"):
+            if slug not in projects:
+                findings.append(_entity_finding(rel, "project-membership-unknown", f"project/{slug} does not resolve to a Project"))
+        for slug in _membership_values(tags, "area"):
+            if slug not in areas and slug not in archived_areas:
+                findings.append(_entity_finding(rel, "area-membership-unknown", f"area/{slug} does not resolve to an Area"))
+
+        if re.fullmatch(r"04_Projects/[^/]+\.md", rel):
+            findings.append(_entity_finding(rel, "project-entrypoint-nonstandard", "Project entrypoint must be 04_Projects/<slug>/PROJECT.md"))
+        if re.fullmatch(r"05_Areas/[^/]+\.md", rel):
+            findings.append(_entity_finding(rel, "area-entrypoint-nonstandard", "Area entrypoint must be 05_Areas/<slug>/AREA.md"))
+
+    active_projects = sorted(
+        slug
+        for slug, project in projects.items()
+        if not project["archived"] and project["lifecycle"] == "active"
+    )
+    findings.sort(key=lambda row: (row["path"], row["rule"], row["message"]))
+    return {
+        "activeProjects": active_projects,
+        "areas": dict(sorted(areas.items())),
+        "archivedAreas": dict(sorted(archived_areas.items())),
+        "collisions": collisions,
+        "findings": findings,
+        "projects": projects,
+        "schemaVersion": ENTITY_REGISTRY_SCHEMA_VERSION,
+    }
+
+
+def _replace_active_projects_section(text: str, desired: str) -> str:
+    lines = text.split("\n")
+    section = _heading_section(text, "Active Projects")
+    if section is None:
+        suffix = "" if text.endswith("\n") else "\n"
+        return text + suffix + "\n## Active Projects\n\n" + desired + "\n"
+    _body, start, end = section
+    updated = lines[: start - 1] + desired.split("\n") + lines[end - 1 :]
+    return "\n".join(updated)
+
+
+def reconcile_project_rollups(root: Path, model: dict, *, write: bool = False) -> dict:
+    """Preview or atomically apply the owned Active Projects Area sections."""
+    changes: list[dict] = []
+    for slug, area in model["areas"].items():
+        rel = area["path"]
+        try:
+            before = _read_nofollow_bytes(root, rel)
+            text = _decode_note_bytes(before)[0]
+        except OSError:
+            continue
+        if text is None:
+            continue
+        rows = [
+            model["projects"][project_slug]
+            for project_slug in model["activeProjects"]
+            if any(row["slug"] == slug for row in model["projects"][project_slug]["areas"])
+        ]
+        rows.sort(key=lambda row: (fold(row["title"]), row["slug"]))
+        desired = "\n".join(
+            f"- [{row['title']}](../../{row['path']})" for row in rows
+        ) or "_No active Projects currently map to this Area._"
+        after = _replace_active_projects_section(text, desired).encode("utf-8")
+        if after == before:
+            continue
+        changes.append(
+            {
+                "after": after,
+                "afterDigest": hashlib.sha256(after).hexdigest(),
+                "before": before,
+                "beforeDigest": hashlib.sha256(before).hexdigest(),
+                "path": rel,
+            }
+        )
+    result = {
+        "changes": [
+            {key: row[key] for key in ("afterDigest", "beforeDigest", "path")}
+            for row in changes
+        ],
+        "written": False,
+    }
+    if not write or not changes:
+        return result
+
+    written: list[dict] = []
+    staged: list[tuple[Path, Path, int]] = []
+    try:
+        for row in changes:
+            path = root / row["path"]
+            current = _read_nofollow_bytes(root, row["path"])
+            if hashlib.sha256(current).hexdigest() != row["beforeDigest"]:
+                raise OSError("Area changed after rollup preview")
+            mode = stat.S_IMODE(path.stat().st_mode)
+            descriptor, name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+            stage = Path(name)
+            try:
+                os.write(descriptor, row["after"])
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+            os.chmod(stage, mode)
+            staged.append((path, stage, mode))
+        for row, (path, stage, _mode) in zip(changes, staged):
+            os.replace(stage, path)
+            written.append(row)
+    except (OSError, KeyboardInterrupt):
+        for row in reversed(written):
+            (root / row["path"]).write_bytes(row["before"])
+        for _path, stage, _mode in staged:
+            try:
+                stage.unlink()
+            except FileNotFoundError:
+                pass
+        raise
+    result["written"] = True
+    return result
+
+
 # §8.3 restricted-note reduction (issue #17). Frontmatter tags only —
 # bodyTags are informal (§10.2 posture) and never trigger restriction.
 RESTRICTED_TAG = "restricted/private"
@@ -3272,6 +3653,20 @@ def run_validate(
     for f in cfg_warnings:
         warn(CONFIG_RELPATH, f["rule"], f["message"], f["line"])
 
+    # Project/Area contract findings remain warning-only during ordinary
+    # editing. Focused verification can require this warning family to be
+    # empty without making unrelated vault warnings block day-to-day work.
+    entity_registry = build_entity_registry(
+        root, index, today_d=vault_today(config)
+    )
+    for finding in entity_registry["findings"]:
+        warn(
+            finding["path"],
+            finding["rule"],
+            finding["message"],
+            finding["line"],
+        )
+
     errors.extend(scan_secrets(root, notes + assets))
 
     # §10.2 future-updated horizon: exact with a configured timezone; one
@@ -3774,7 +4169,7 @@ def compute_report(
                     {"count": counts[tag], "reason": "unknown-value", "tag": tag}
                 )
             else:
-                if taxonomy[namespace] is None:
+                if taxonomy[namespace] is None and namespace not in {"area", "project"}:
                     open_values.setdefault(namespace, set()).add(value)
                     if counts[tag] == 1:
                         single_use.append(tag)
@@ -6161,24 +6556,6 @@ def build_aymt(
                     staleness=0,
                 )
             )
-        for project in _aymt_heading_items(snapshot_texts.get(now_rel), "Active Projects")[:8]:
-            candidates.append(
-                _aymt_candidate(
-                    kind="now-project",
-                    outcome=project,
-                    section="keep-warm",
-                    why_now="This project is explicitly active on the Now page.",
-                    next_step="Open the project source and confirm its next action.",
-                    caveat="Prefer the project note when its status conflicts with Now.",
-                    sources=[_aymt_source(now_rel, "Now — Active Projects")],
-                    urgency=1,
-                    leverage=3,
-                    effort=2,
-                    confidence=4,
-                    dependency=0,
-                    staleness=0,
-                )
-            )
         for key_date in _aymt_heading_items(snapshot_texts.get(now_rel), "Key Dates / Deadlines")[:6]:
             if fold(key_date) in {"none", "none right now", "no hard deadlines at the moment."}:
                 continue
@@ -6236,8 +6613,13 @@ def build_aymt(
                 staleness=1,
             )
         )
+    entities = context["entities"]
+    active_project_slugs = set(entities["activeProjects"])
     for rel in sorted(allowed):
         rec = allowed[rel]
+        project_directory = re.match(r"^04_Projects/([^/]+)/", rel)
+        if project_directory and project_directory.group(1) not in active_project_slugs:
+            continue
         owner_lane = rel.startswith(("03_Journal/", "04_Projects/", "05_Areas/"))
         for task in rec.get("tasks", []):
             if task.get("status") != "open":
@@ -6296,23 +6678,35 @@ def build_aymt(
                     staleness=min(4, max(0, (today_d - iso_date(rec.get("updated"))).days // 30)) if iso_date(rec.get("updated")) else 0,
                 )
             )
-    active_projects = [
-        (rel, rec)
-        for rel, rec in sorted(allowed.items())
-        if rel.startswith("04_Projects/") and "status/active" in frontmatter_tags(rec)
-    ]
-    for rel, rec in active_projects:
+    for slug in entities["activeProjects"]:
+        project = entities["projects"][slug]
+        rel = project["path"]
+        rec = allowed[rel]
         next_step, caveat = _aymt_first_next_action(root, rel, rec)
+        target_d = iso_date(project["target"])
+        days_until = (target_d - today_d).days if target_d else None
+        urgent = project["overdue"] or (days_until is not None and days_until <= 7)
+        target_state = project["targetStatus"] or "unknown"
+        if project["overdue"]:
+            target_state += ", overdue"
         candidates.append(
             _aymt_candidate(
                 kind="project",
-                outcome=f"Advance {rec.get('title') or rel.rsplit('/', 1)[-1]}",
-                section="keep-warm",
-                why_now="The project is tagged status/active.",
+                outcome=f"Advance {project['title']} — target {project['target']} ({target_state})",
+                section="do-next" if urgent else "keep-warm",
+                why_now=(
+                    f"The canonical Project target {project['target']} is overdue."
+                    if project["overdue"]
+                    else f"The canonical Project target is {project['target']} ({project['targetStatus']})."
+                ),
                 next_step=next_step,
-                caveat=caveat,
+                caveat=(
+                    caveat + " Recalibrate or confirm the estimated target during review."
+                    if project["targetStatus"] == "estimated"
+                    else caveat
+                ),
                 sources=[_aymt_source(rel)],
-                urgency=1,
+                urgency=4 if project["overdue"] else 3 if urgent else 1,
                 leverage=4,
                 effort=2,
                 confidence=4,
@@ -6683,10 +7077,17 @@ def _build_action_context(root: Path, today_d: date, selection: dict) -> dict:
     report = compute_report(
         {**index, "notes": safe_notes}, today_d, report_thresholds(config), None
     )
+    entities = build_entity_registry(
+        root,
+        {**index, "notes": safe_notes},
+        today_d=today_d,
+        note_texts={rel: snapshot_texts.get(rel) for rel in safe_notes},
+    )
     return {
         "allowed": allowed,
         "authoritySnapshots": authority_snapshots,
         "environment": environment,
+        "entities": entities,
         "index": index,
         "indexFresh": _home_safe_index_fresh(committed_index, freshness_index),
         "report": report,
@@ -6770,6 +7171,8 @@ def build_home(
         raise HomeError("Home inputs are unavailable") from None
     allowed = context["allowed"]
     report = context["report"]
+    entities = context["entities"]
+    active_project_slugs = set(entities["activeProjects"])
 
     global_actions = sorted(
         aymt["candidates"],
@@ -6787,6 +7190,9 @@ def build_home(
     overdue: list[dict] = []
     due: list[dict] = []
     for rel, rec in sorted(allowed.items()):
+        project_directory = re.match(r"^04_Projects/([^/]+)/", rel)
+        if project_directory and project_directory.group(1) not in active_project_slugs:
+            continue
         for task in rec.get("tasks", []):
             if task.get("status") != "open" or task.get("malformed"):
                 continue
@@ -6817,14 +7223,20 @@ def build_home(
         )
     )
     active_projects = [
-        _home_path_row(rel, rec)
-        for rel, rec in sorted(allowed.items())
-        if rel.startswith("04_Projects/") and "status/active" in frontmatter_tags(rec)
+        {
+            **_home_path_row(project["path"], allowed[project["path"]]),
+            "areas": [area["slug"] for area in project["areas"]],
+            "overdue": project["overdue"],
+            "target": project["target"],
+            "targetStatus": project["targetStatus"],
+        }
+        for slug in entities["activeProjects"]
+        for project in [entities["projects"][slug]]
     ][:HOME_ACTIVE_CAP]
     active_areas = [
-        _home_path_row(rel, rec)
-        for rel, rec in sorted(allowed.items())
-        if rel.startswith("05_Areas/") and "status/active" in frontmatter_tags(rec)
+        _home_path_row(area["path"], allowed[area["path"]])
+        for _slug, area in entities["areas"].items()
+        if "status/active" in frontmatter_tags(allowed[area["path"]])
     ][:HOME_ACTIVE_CAP]
 
     review_rows = _home_review_rows(today_d, allowed)
@@ -6987,7 +7399,14 @@ def render_home(payload: dict) -> bytes:
         if not rows:
             lines.append("_No safe tracked item is tagged active._")
         for row in rows:
-            lines.append(f"- {_home_link(HOME_RELPATH, row['path'], row['title'])} — updated {row['updated']}")
+            detail = f"updated {row['updated']}"
+            if heading == "Projects":
+                status = row["targetStatus"] + (", overdue" if row["overdue"] else "")
+                detail = (
+                    f"target {row['target']} ({status}); "
+                    f"Areas: {', '.join(row['areas'])}"
+                )
+            lines.append(f"- {_home_link(HOME_RELPATH, row['path'], row['title'])} — {detail}")
         lines.append("")
 
     lines.extend(["## Cadence and reviews", ""])
@@ -7546,6 +7965,43 @@ def cmd_links(root: Path, args) -> int:
     lines.extend(f"  {b}" for b in rec["backlinks"])
     if unresolved:
         lines.append("unresolved: " + ", ".join(unresolved))
+    emit(payload, args.json, lines)
+    return 0
+
+
+def cmd_projects(root: Path, args) -> int:
+    """List canonical active Projects and preview/apply derived Area rollups."""
+    notes, assets = walk_corpus(root, selected_environment=None)
+    index = build_index(root, notes, assets)
+    config, _findings = load_config(root)
+    model = build_entity_registry(root, index, today_d=vault_today(config))
+    try:
+        rollups = reconcile_project_rollups(
+            root, model, write=getattr(args, "write_rollups", False)
+        )
+    except (OSError, KeyboardInterrupt):
+        if args.json:
+            print(json.dumps({"error": "Project rollup write failed safely"}, indent=1, sort_keys=True))
+        else:
+            print("error: Project rollup write failed safely", file=sys.stderr)
+        return 1
+    rows = [model["projects"][slug] for slug in model["activeProjects"]]
+    payload = {
+        "findings": model["findings"],
+        "projects": rows,
+        "rollups": rollups,
+        "schemaVersion": ENTITY_REGISTRY_SCHEMA_VERSION,
+    }
+    lines = [f"active Projects: {len(rows)}"]
+    for row in rows:
+        area_list = ", ".join(area["slug"] for area in row["areas"]) or "(none)"
+        target = row["target"] or "(missing)"
+        lines.append(f"  {row['slug']}  target {target}  Areas: {area_list}")
+    lines.append(f"Area rollup changes: {len(rollups['changes'])}")
+    for change in rollups["changes"]:
+        lines.append(f"  {change['path']}")
+    if model["findings"]:
+        lines.append(f"contract findings: {len(model['findings'])}")
     emit(payload, args.json, lines)
     return 0
 
@@ -9534,6 +9990,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     p = add("links", help="outgoing links, backlinks, unresolved targets")
     p.add_argument("note")
+    p = add("projects", help="canonical active Projects and derived Area rollups")
+    p.add_argument(
+        "--write-rollups",
+        action="store_true",
+        help="source-hash and write only Area Active Projects sections",
+    )
     p = add(
         "migrate-links",
         help="preview/check/write legacy wikilinks as relative Markdown",
@@ -9778,6 +10240,7 @@ def main(argv: list[str] | None = None) -> int:
         "list": cmd_list,
         "search": cmd_search,
         "links": cmd_links,
+        "projects": cmd_projects,
         "migrate-links": cmd_migrate_links,
         "aymt": cmd_aymt,
         "home": cmd_home,
@@ -9809,6 +10272,7 @@ def main(argv: list[str] | None = None) -> int:
             "install",
             "artifacts",
             "notify",
+            "projects",
         }:
             try:
                 selector = (

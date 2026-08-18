@@ -106,22 +106,24 @@ class HomeCollectorTests(unittest.TestCase):
 
     def test_due_overdue_active_inbox_and_health_sections(self):
         self.vault.write(
-            "04_Projects/real.md",
+            "04_Projects/real/PROJECT.md",
             note(
                 "Real",
+                "## Outcome\n\nShip it.\n\n## Completion Criteria\n\n- Verified.\n\n"
                 "- [ ] Overdue task 📅 2026-08-10\n- [ ] Due task 📅 2026-08-12",
-                ("type/project", "status/active"),
+                ("type/project", "status/active", "project/real", "area/health"),
                 updated="2026-01-01",
-            ),
+            ).replace("updated: 2026-01-01", "target: 2026-08-20\ntarget_status: estimated\nupdated: 2026-01-01"),
             tracked=True,
         )
-        self.vault.write("05_Areas/health.md", note("Health", "Maintain.", ("type/area", "status/active")), tracked=True)
+        self.vault.write("05_Areas/health/AREA.md", note("Health", "Maintain.", ("type/area", "status/active", "area/health")), tracked=True)
         self.vault.write("02_Inbox/2026-07-01-old.md", note("Old", "Capture."), tracked=True)
         payload = self.vault.build()
         self.assertEqual([row["text"] for row in payload["tasks"]["overdue"]], ["Overdue task"])
         self.assertEqual([row["text"] for row in payload["tasks"]["due"]], ["Due task"])
-        self.assertEqual(payload["active"]["projects"][0]["path"], "04_Projects/real.md")
-        self.assertEqual(payload["active"]["areas"][0]["path"], "05_Areas/health.md")
+        self.assertEqual(payload["active"]["projects"][0]["path"], "04_Projects/real/PROJECT.md")
+        self.assertEqual(payload["active"]["projects"][0]["targetStatus"], "estimated")
+        self.assertEqual(payload["active"]["areas"][0]["path"], "05_Areas/health/AREA.md")
         self.assertEqual(payload["inbox"]["count"], 1)
         self.assertEqual(payload["health"]["staleActiveCount"], 1)
 
