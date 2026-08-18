@@ -68,9 +68,11 @@ How was your sleep this quarter? Anything out of the ordinary? What contributed 
 
 ### Alignment
 
+- Run `brain projects`; recalibrate all estimated or overdue targets, mappings, criteria, and rollup drift.
 - Does each active project serve something on the [Now page](../01_Profile/NOW.md)?
 - Is anything on the Now page not being moved by any project?
-- Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).
+- Should any deprioritized Project reactivate, remain paused, or close?
+- Close completed, cancelled, or superseded Projects now; archive directories only through the separate approved move.
 - Rewrite the [Now page](../01_Profile/NOW.md) as part of this review — it should describe the quarter ahead, not the one that ended.
 
 ## Reflection

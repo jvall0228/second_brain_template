@@ -127,6 +127,65 @@ class HomeCollectorTests(unittest.TestCase):
         self.assertEqual(payload["inbox"]["count"], 1)
         self.assertEqual(payload["health"]["staleActiveCount"], 1)
 
+    def test_malformed_active_project_renders_with_explicit_missing_target(self):
+        self.vault.write(
+            "04_Projects/incomplete/PROJECT.md",
+            note(
+                "Incomplete",
+                "## Outcome\n\nShip it.\n\n## Completion Criteria\n\n- Verified.",
+                ("type/project", "status/active", "project/incomplete", "area/health"),
+            ),
+            tracked=True,
+        )
+        self.vault.write(
+            "05_Areas/health/AREA.md",
+            note("Health", "Maintain.", ("type/area", "status/active", "area/health")),
+            tracked=True,
+        )
+
+        payload = self.vault.build()
+        rendered = brain.render_home(payload).decode()
+
+        self.assertIn("target missing (unknown)", rendered)
+
+    def test_only_explicitly_inactive_project_tasks_are_suppressed(self):
+        self.vault.write(
+            "05_Areas/work/AREA.md",
+            note("Work", "Maintain.", ("type/area", "status/active", "area/work")),
+            tracked=True,
+        )
+        self.vault.write(
+            "04_Projects/malformed/PROJECT.md",
+            note(
+                "Malformed",
+                "- [ ] Visible malformed Project task 📅 2026-08-10",
+                ("type/project", "project/malformed", "area/work"),
+            ),
+            tracked=True,
+        )
+        self.vault.write(
+            "04_Projects/paused/PROJECT.md",
+            note(
+                "Paused",
+                "- [ ] Hidden inactive Project task 📅 2026-08-10",
+                (
+                    "type/project",
+                    "status/deprioritized",
+                    "project/paused",
+                    "area/work",
+                ),
+            ),
+            tracked=True,
+        )
+
+        payload = self.vault.build()
+
+        self.assertIn(
+            "Visible malformed Project task",
+            [row["text"] for row in payload["tasks"]["overdue"]],
+        )
+        self.assertNotIn("Hidden inactive Project task", json.dumps(payload))
+
     def test_existing_current_daily_and_weekly_reviews_are_live_links(self):
         daily = "03_Journal/periodic/daily/2026-08-11.md"
         weekly = "03_Journal/periodic/weekly/2026-W33-review.md"

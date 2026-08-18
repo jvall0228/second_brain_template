@@ -3,8 +3,10 @@ title: "Example Area"
 tags:
   - type/area
   - status/active
+  - area/example-area
   - audience/human
-updated: 2026-08-17
+  - audience/agent
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -24,7 +26,10 @@ What does "good" look like? — *Exercise 3× a week, sleep 7+ hours a night, an
 
 What's the priority right now? — *Rebuild a consistent morning workout routine.*
 
-## Related
+## Active Projects
 
-- Projects: [Example Project](../../04_Projects/example-project/PROJECT.md)
-- Resources: [Example Resource](../../06_Resources/example-resource/RESOURCE.md)
+- [Example Project](../../04_Projects/example-project/PROJECT.md)
+
+## Related Resources
+
+- [Example Resource](../../06_Resources/example-resource/RESOURCE.md)

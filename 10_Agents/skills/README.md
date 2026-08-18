@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-12
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -42,7 +42,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | Skill | Does |
 |-------|------|
 | [triage-inbox](triage-inbox/SKILL.md) | Process the Inbox for review: atomize, extract action items, classify, propose propagation edits |
-| [periodic-review](periodic-review/SKILL.md) | Weekly/monthly/quarterly/yearly reviews — cadence is a parameter; *the weekly review is the vault's Organize heartbeat* |
+| [periodic-review](periodic-review/SKILL.md) | Review active and inactive Project lifecycles, closeouts, owner-approved archives, Areas, and cadence evidence; *the weekly review is the vault's Organize heartbeat* |
 
 ### Distill
 

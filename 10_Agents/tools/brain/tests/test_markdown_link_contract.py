@@ -76,7 +76,7 @@ class RepositoryMarkdownContractTests(unittest.TestCase):
         counts = self.index["linkCounts"]
         self.assertEqual(counts["legacy"], 0)
         self.assertEqual(counts["wikilink"], 0)
-        self.assertEqual(counts["markdown"], 841)
+        self.assertEqual(counts["markdown"], 855)
         failures = []
         for path, record in self.index["notes"].items():
             for link in record["links"]:
@@ -99,14 +99,14 @@ class RepositoryMarkdownContractTests(unittest.TestCase):
         self.assertEqual(citation["resolved"], "06_Resources/harness-primitives-research.md")
         self.assertEqual(citation["resolution"]["status"], "resolved")
 
-    def test_all_twenty_one_placeholders_use_labeled_markdown_destinations(self):
+    def test_all_twenty_placeholders_use_labeled_markdown_destinations(self):
         placeholders = [
             (path, link)
             for path, record in self.index["notes"].items()
             for link in record["links"]
             if link["placeholder"]
         ]
-        self.assertEqual(len(placeholders), 21)
+        self.assertEqual(len(placeholders), 20)
         for path, link in placeholders:
             with self.subTest(path=path, line=link["line"]):
                 self.assertTrue(path.startswith("09_Templates/"))

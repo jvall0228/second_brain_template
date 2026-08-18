@@ -25,7 +25,7 @@ expires: 2027-08-11
 
 ## Active Work
 - [Home](HOME.md) — Generated local startup and navigation surface; refresh with `brain home --write`
-- [Projects](../04_Projects/README.md) — Outcomes with deadlines
+- [Projects](../04_Projects/README.md) — Bounded outcomes; run `brain projects` for the canonical active inventory
   - [Example Project](../04_Projects/example-project/PROJECT.md) — Sample; delete once you've seen the pattern
 - [Inbox](../02_Inbox/README.md) — Triage queue
 - [Outbox](../02_Outbox/README.md) — Outbound deliverables awaiting the owner's review and shipping
@@ -60,5 +60,6 @@ expires: 2027-08-11
 ## Agent Docs
 - [README](../10_Agents/README.md) — Agent behavior and write rules
 - [Agent docs](../10_Agents/docs/README.md) — Operating rules, task patterns
+  - [Project and Area Contract](../10_Agents/docs/project-area-contract.md) — Identity, mappings, lifecycle, targets, rollups, and closeout
 - [Harness adapters](../10_Agents/harnesses/README.md) — Per-harness wiring
 - [The CODE loop](../10_Agents/skills/README.md) — Skill catalog + cadence table

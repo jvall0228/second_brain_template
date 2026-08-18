@@ -69,9 +69,11 @@ How was your sleep this month? Anything out of the ordinary? What contributed to
 
 ### Alignment
 
+- Run `brain projects`; review every Area mapping, estimated or overdue target, completion criterion, and rollup finding.
 - Does each active project serve something on the [Now page](../01_Profile/NOW.md)?
 - Is anything on the Now page not being moved by any project?
-- Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).
+- Should any deprioritized Project reactivate, remain paused, or close?
+- Close completed, cancelled, or superseded Projects now; archive directories only through the separate approved move.
 
 ## Reflection
 

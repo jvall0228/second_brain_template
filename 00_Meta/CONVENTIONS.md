@@ -22,7 +22,7 @@ Top-level directories use **numeric prefixes** for deterministic sort order. Eac
 - `02_Inbox/` — Landing zone for all new and unsorted content.
 - `02_Outbox/` — Outbound deliverables awaiting owner review and shipping (shares the `02_` prefix: both are review gates, no renumbering).
 - `03_Journal/` — Personal knowledge and experience (periodic notes + ideas, insights, memories, people, plans).
-- `04_Projects/` — Active projects with defined outcomes (PARA: Projects).
+- `04_Projects/` — Projects with bounded outcomes (PARA: Projects).
 - `05_Areas/` — Ongoing responsibilities (PARA: Areas).
 - `06_Resources/` — Reference material and topic notes (PARA: Resources).
 - `07_Archives/` — Inactive or completed items (PARA: Archives).
@@ -87,7 +87,7 @@ Default TTLs by volatility:
 | Retrieval-dated research | 6 months | resource notes built from web sources |
 | Evergreen / canonical | 12 months | conventions, zettels, project and area notes |
 
-**Exempt** (events, not claims — never need `expires:`): `03_Journal/`, `07_Archives/`, `10_Agents/solutions/`, the changelog, `00_Meta/STATUS.md`, and any note tagged `type/decision` (a decision record is an event dated at the point it was made, wherever it lives). `02_Inbox/` is exempt because capture is zero-friction — `expires:` is assigned at triage when the note files. `02_Outbox/` is exempt because packets are ephemeral snapshots — their lifecycle is the archive path, not a TTL. (`09_Templates/` and the root `CLAUDE.md` are exempt too, via their own frontmatter exception sections above.) Enforcement is warn-only: `brain validate` flags missing or over-cap dates but never blocks a commit; the authoritative thresholds live in the constants block of `brain.py` (spec §14).
+Event and transient lanes (`02_Inbox/`, `02_Outbox/`, `03_Journal/`, `07_Archives/`, `09_Templates/`, solutions, decisions, status/changelog, and `CLAUDE.md`) are exempt. Enforcement is warn-only; exact rules and thresholds live in `brain.py` (spec §14).
 
 ### Template Placeholder Exception
 
@@ -106,8 +106,10 @@ Tags use **slash-delimited namespaces**. **This table is the authoritative tag t
 | `audience/*` | Who the note is for | `agent`, `human` |
 | `type/*` | Kind of content | `meta`, `reference`, `log`, `note`, `idea`, `plan`, `project`, `area`, `resource`, `zettel`, `journal`, `decision`, `solution` |
 | `topic/*` | Subject matter | Free-form (e.g., `software`, `physics`, `health`, `ttrpg`, `finance`, `identity`) |
+| `project/*` | Project identity and membership | Free-form kebab-case slug resolving to `04_Projects/<slug>/PROJECT.md` or its archive |
+| `area/*` | Area identity, membership, and Project mapping | Free-form kebab-case slug resolving to `05_Areas/<slug>/AREA.md` or its archive |
 | `workflow/*` | Lifecycle stage | `canonical`, `draft`, `review`, `needs-review` |
-| `status/*` | Actionability | `active`, `someday`, `done` |
+| `status/*` | Actionability | `active`, `deprioritized`, `someday`, `done` |
 | `restricted/*` | Privacy marking | `private` |
 
 Notes tagged `workflow/canonical` require a PR or explicit human approval to modify.

@@ -6,7 +6,7 @@ Behavior is governed by SPEC.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: ./brain <command> [options]
-Commands: index, list, search, links, migrate-links, aymt, home, artifacts, notify, tags, show, recent,
+Commands: index, list, search, links, migrate-links, projects, archive-project, aymt, home, artifacts, notify, tags, show, recent,
           validate, curate, context, config, report, tasks, embed,
           remote-safety, env
 """
@@ -25,6 +25,7 @@ import os
 import posixpath
 import re
 import secrets
+import shutil
 import signal
 import stat
 import subprocess
@@ -48,6 +49,9 @@ ARCHIVED_AREA_ENTRY_RE = re.compile(r"^07_Archives/areas/([^/]+)/AREA\.md$")
 ENTITY_SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PROJECT_LIFECYCLES = frozenset({"active", "deprioritized", "someday", "done"})
 PROJECT_TARGET_STATUSES = frozenset({"estimated", "confirmed"})
+PROJECT_ARCHIVE_SCHEMA_VERSION = 2
+PROJECT_ARCHIVE_JOURNAL_RELPATH = ".brain-project-archive.json"
+PROJECT_ARCHIVE_TRANSACTION_PREFIX = ".brain-project-archive-transaction-"
 LINK_MIGRATION_SCHEMA_VERSION = 1
 LINK_MIGRATION_JOURNAL_RELPATH = ".brain-link-migration.json"
 INDEX_RELPATH = "10_Agents/tools/brain/vault-index.json"
@@ -2489,25 +2493,43 @@ def build_index(
 # Project/Area entity registry
 
 
-def _entity_text(root: Path, rel: str, note_texts: dict[str, str | None] | None) -> str | None:
+def _entity_snapshot(
+    root: Path, rel: str, note_texts: dict[str, str | None] | None
+) -> tuple[str | None, str | None]:
+    """Return normalized text plus a digest suitable for source authentication."""
     if note_texts is not None:
-        return note_texts.get(rel)
+        text = note_texts.get(rel)
+        return (
+            text,
+            _sha256_bytes(text.encode("utf-8"))
+            if text is not None
+            else None,
+        )
     try:
         raw = _read_nofollow_bytes(root, rel)
     except OSError:
-        return None
-    return _decode_note_bytes(raw)[0]
+        return None, None
+    return _decode_note_bytes(raw)[0], _sha256_bytes(raw)
 
 
-def _heading_section(text: str | None, heading: str) -> tuple[str, int, int] | None:
-    """Return body text and one-based line bounds for an exact H2 section."""
-    if text is None:
-        return None
-    lines = text.split("\n")
+def _heading_section_indices(
+    lines: list[str], heading: str
+) -> tuple[int, int] | None:
+    """Return zero-based body bounds for an exact, unfenced H2 section."""
     wanted = heading.casefold()
     start: int | None = None
-    end = len(lines) + 1
-    for index, line in enumerate(lines, start=1):
+    fence: tuple[str, int] | None = None
+    for index, line in enumerate(lines):
+        fence_match = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
+        if fence is not None:
+            marker, length = fence
+            if re.match(rf"^ {{0,3}}{re.escape(marker)}{{{length},}}[ \t]*$", line):
+                fence = None
+            continue
+        if fence_match:
+            run = fence_match.group(1)
+            fence = (run[0], len(run))
+            continue
         match = re.match(r"^##\s+(.+?)\s*#*\s*$", line)
         if not match:
             continue
@@ -2515,29 +2537,49 @@ def _heading_section(text: str | None, heading: str) -> tuple[str, int, int] | N
             start = index + 1
             continue
         if start is not None:
-            end = index
-            break
-    if start is None:
+            return start, index
+    return None if start is None else (start, len(lines))
+
+
+def _heading_section(text: str | None, heading: str) -> tuple[str, int, int] | None:
+    """Return body text and one-based line bounds for an exact H2 section."""
+    if text is None:
         return None
-    return "\n".join(lines[start - 1 : end - 1]).strip(), start, end
+    lines = text.split("\n")
+    bounds = _heading_section_indices(lines, heading)
+    if bounds is None:
+        return None
+    start, end = bounds
+    return "\n".join(lines[start:end]).strip(), start + 1, end + 1
 
 
-def _substantive_completion_criteria(text: str | None) -> bool:
-    section = _heading_section(text, "Completion Criteria")
+SECTION_PLACEHOLDER_VALUES = frozenset(
+    {"", "none", "n/a", "tbd", "todo", "to be defined"}
+)
+
+
+def _substantive_heading_section(text: str | None, heading: str) -> bool:
+    """Return whether an exact H2 contains more than a placeholder response."""
+    section = _heading_section(text, heading)
     if section is None:
         return False
     body = re.sub(r"<!--.*?-->", "", section[0], flags=re.DOTALL).strip()
     if not body or "{{" in body:
         return False
-    normalized = re.sub(r"^[\s>*_`#-]+|[\s*_`]+$", "", body).strip().casefold()
-    if normalized in {"", "none", "n/a", "tbd", "todo", "to be defined"}:
-        return False
-    meaningful = []
     for line in body.splitlines():
-        value = re.sub(r"^\s*(?:[-*+]\s+)?(?:\[(?: |x|X)\]\s*)?", "", line).strip()
-        if value and value not in {"{{COMPLETION_CRITERIA}}", "{{completion_criteria}}"}:
-            meaningful.append(value)
-    return bool(meaningful)
+        value = re.sub(
+            r"^\s*(?:>\s*)*(?:[-*+]\s+)?(?:\[(?: |x|X)\]\s*)?",
+            "",
+            line,
+        ).strip()
+        normalized = re.sub(r"^[\s*_`#~.:-]+|[\s*_`#~.:-]+$", "", value)
+        if normalized.strip().casefold() not in SECTION_PLACEHOLDER_VALUES:
+            return True
+    return False
+
+
+def _substantive_completion_criteria(text: str | None) -> bool:
+    return _substantive_heading_section(text, "Completion Criteria")
 
 
 def _entity_finding(path: str, rule: str, message: str) -> dict:
@@ -2594,11 +2636,12 @@ def build_entity_registry(
             archived = match is not None
         if match is not None:
             slug = match.group(1)
-            text = _entity_text(root, rel, note_texts)
+            text, content_digest = _entity_snapshot(root, rel, note_texts)
             statuses = _status_values(tags)
             lifecycle = statuses[0] if len(statuses) == 1 else None
             target = rec["frontmatter"].get("target")
             target_status = rec["frontmatter"].get("target_status")
+            closed = rec["frontmatter"].get("closed")
             target_date = iso_date(target) if isinstance(target, str) else None
             area_slugs = _membership_values(tags, "area")
             attention: list[str] = []
@@ -2611,6 +2654,8 @@ def build_entity_registry(
                 "archived": archived,
                 "areas": [],
                 "attention": attention,
+                "closed": closed if isinstance(closed, str) else None,
+                "contentDigest": content_digest,
                 "hasCompletionCriteria": _substantive_completion_criteria(text),
                 "lifecycle": lifecycle,
                 "overdue": overdue,
@@ -2620,6 +2665,7 @@ def build_entity_registry(
                 "target": target if isinstance(target, str) else None,
                 "targetStatus": target_status if isinstance(target_status, str) else None,
                 "title": rec.get("title") or slug,
+                "restricted": is_restricted(rec),
             }
             (archived_candidates if archived else active_candidates)[slug] = project
 
@@ -2644,8 +2690,7 @@ def build_entity_registry(
                     findings.append(_entity_finding(rel, "project-target-status", "Active Project target_status must be estimated or confirmed"))
                 if not project["hasCompletionCriteria"]:
                     findings.append(_entity_finding(rel, "project-completion-criteria", "Active Project must have substantive Completion Criteria"))
-                outcome = _heading_section(text, "Outcome")
-                if outcome is None or not outcome[0].strip() or "{{" in outcome[0]:
+                if not _substantive_heading_section(text, "Outcome"):
                     findings.append(_entity_finding(rel, "project-outcome", "Active Project must have a substantive Outcome"))
                 if overdue:
                     findings.append(_entity_finding(rel, "project-target-overdue", f"Active Project target {target} is overdue"))
@@ -2653,6 +2698,11 @@ def build_entity_registry(
                 findings.append(_entity_finding(rel, "project-inactive-target", "Inactive Project must not retain active target fields"))
             if not archived and lifecycle == "done":
                 findings.append(_entity_finding(rel, "project-archive-pending", "Closed Project is ready for a separately approved archive move"))
+            if lifecycle == "done":
+                if not isinstance(closed, str) or iso_date(closed) is None:
+                    findings.append(_entity_finding(rel, "project-closeout-date", "Done Project must declare closed: YYYY-MM-DD"))
+                if not _substantive_heading_section(text, "Final Outcome"):
+                    findings.append(_entity_finding(rel, "project-final-outcome", "Done Project must record a substantive Final Outcome"))
             continue
 
         match = AREA_ENTRY_RE.fullmatch(rel)
@@ -2662,10 +2712,12 @@ def build_entity_registry(
             area_archived = match is not None
         if match is not None:
             slug = match.group(1)
-            text = _entity_text(root, rel, note_texts)
+            text, content_digest = _entity_snapshot(root, rel, note_texts)
             area = {
                 "archived": area_archived,
+                "contentDigest": content_digest,
                 "path": rel,
+                "restricted": is_restricted(rec),
                 "rollupPaths": sorted(_rollup_project_paths(rec, _heading_section(text, "Active Projects"))),
                 "slug": slug,
                 "title": rec.get("title") or slug,
@@ -2681,12 +2733,16 @@ def build_entity_registry(
     collisions = sorted(set(active_candidates) & set(archived_candidates))
     for slug in collisions:
         findings.append(_entity_finding(active_candidates[slug]["path"], "project-collision", f"Project {slug!r} exists in active and archived roots"))
+    area_collisions = sorted(set(areas) & set(archived_areas))
+    for slug in area_collisions:
+        findings.append(_entity_finding(areas[slug]["path"], "area-collision", f"Area {slug!r} exists in active and archived roots"))
 
     projects = dict(sorted({**archived_candidates, **active_candidates}.items()))
     for project in projects.values():
         tags = frontmatter_tags(notes[project["path"]])
         for slug in _membership_values(tags, "area"):
-            area = areas.get(slug)
+            active_area = areas.get(slug)
+            area = active_area or archived_areas.get(slug)
             project["areas"].append(
                 {
                     "path": area["path"] if area else None,
@@ -2698,7 +2754,7 @@ def build_entity_registry(
                 findings.append(_entity_finding(project["path"], "project-area-missing", f"Project maps to missing Area {slug!r}"))
             if "active" in project["statusValues"]:
                 expected = project["path"]
-                if area is None or expected not in area["rollupPaths"]:
+                if active_area is None or expected not in active_area["rollupPaths"]:
                     findings.append(_entity_finding(project["path"], "project-rollup-missing", f"Area {slug!r} does not list this active Project"))
         project["areas"].sort(key=lambda row: row["slug"])
 
@@ -2735,8 +2791,14 @@ def build_entity_registry(
             if any(tag.startswith("area/") for tag in tags):
                 findings.append(_entity_finding(rel, "project-area-on-supporting-note", "Project-to-Area mappings belong only on PROJECT.md"))
         area_match = re.match(r"^05_Areas/([^/]+)/.+\.md$", rel)
-        if area_match and not AREA_ENTRY_RE.fullmatch(rel):
-            slug = area_match.group(1)
+        archived_area_match = re.match(
+            r"^07_Archives/areas/([^/]+)/.+\.md$", rel
+        )
+        area_owner = area_match or archived_area_match
+        if area_owner and not (
+            AREA_ENTRY_RE.fullmatch(rel) or ARCHIVED_AREA_ENTRY_RE.fullmatch(rel)
+        ):
+            slug = area_owner.group(1)
             if f"area/{slug}" not in tags:
                 findings.append(_entity_finding(rel, "area-membership-missing", f"Supporting note must carry area/{slug}"))
         for slug in _membership_values(tags, "project"):
@@ -2759,6 +2821,8 @@ def build_entity_registry(
     findings.sort(key=lambda row: (row["path"], row["rule"], row["message"]))
     return {
         "activeProjects": active_projects,
+        "areaCollisions": area_collisions,
+        "asOf": today_d.isoformat(),
         "areas": dict(sorted(areas.items())),
         "archivedAreas": dict(sorted(archived_areas.items())),
         "collisions": collisions,
@@ -2768,92 +2832,2001 @@ def build_entity_registry(
     }
 
 
-def _replace_active_projects_section(text: str, desired: str) -> str:
-    lines = text.split("\n")
-    section = _heading_section(text, "Active Projects")
-    if section is None:
-        suffix = "" if text.endswith("\n") else "\n"
-        return text + suffix + "\n## Active Projects\n\n" + desired + "\n"
-    _body, start, end = section
-    updated = lines[: start - 1] + desired.split("\n") + lines[end - 1 :]
-    return "\n".join(updated)
+def _preferred_markdown_newline(raw: bytes) -> bytes:
+    match = re.search(rb"\r\n|\n|\r", raw)
+    return match.group(0) if match else b"\n"
+
+
+def _ends_with_line_ending(raw: bytes) -> bool:
+    return raw.endswith((b"\n", b"\r"))
+
+
+def _replace_active_projects_section(raw: bytes, desired: str) -> bytes:
+    """Replace only the owned section while preserving the surrounding bytes."""
+    try:
+        _text, lines, offsets, bom_bytes = _raw_document(raw)
+    except LinkMigrationError:
+        raise OSError("Area rollup source is not UTF-8") from None
+    bounds = _heading_section_indices(lines, "Active Projects")
+    newline = _preferred_markdown_newline(raw)
+    desired_bytes = desired.replace("\n", newline.decode("ascii")).encode("utf-8")
+    had_final_newline = _ends_with_line_ending(raw)
+
+    if bounds is None:
+        has_content = len(raw) > bom_bytes
+        separator = (
+            newline
+            if has_content and had_final_newline
+            else newline * 2
+            if has_content
+            else b""
+        )
+        final = newline if had_final_newline else b""
+        return (
+            raw
+            + separator
+            + b"## Active Projects"
+            + newline * 2
+            + desired_bytes
+            + final
+        )
+
+    start, end = bounds
+    start_offset = offsets[start] if start < len(offsets) else len(raw)
+    end_offset = offsets[end] if end < len(offsets) else len(raw)
+    prefix = raw[:start_offset]
+    suffix = raw[end_offset:]
+    leading = newline if _ends_with_line_ending(prefix) else newline * 2
+    trailing = newline * 2 if suffix else newline if had_final_newline else b""
+    return prefix + leading + desired_bytes + trailing + suffix
+
+
+class ProjectRollupRecoveryRequired(RuntimeError):
+    """A rollup write stopped because safe automatic rollback was impossible."""
+
+
+def _project_rollup_blocker(path: str, rule: str, message: str) -> dict:
+    return {"message": message, "path": path, "rule": rule}
 
 
 def reconcile_project_rollups(root: Path, model: dict, *, write: bool = False) -> dict:
     """Preview or atomically apply the owned Active Projects Area sections."""
+    blockers: list[dict] = []
     changes: list[dict] = []
+    projects_by_area: dict[str, list[dict]] = {}
+    for project_slug in model["activeProjects"]:
+        project = model["projects"][project_slug]
+        for area in project["areas"]:
+            projects_by_area.setdefault(area["slug"], []).append(project)
+        try:
+            _current, state = _archive_read_regular(root / project["path"])
+        except (OSError, ProjectArchiveError):
+            state = None
+        if state is None or state["sha256"] != project["contentDigest"]:
+            blockers.append(
+                _project_rollup_blocker(
+                    project["path"],
+                    "project-rollup-source-changed",
+                    "Project mapping source changed before rollup reconciliation",
+                )
+            )
     for slug, area in model["areas"].items():
         rel = area["path"]
         try:
-            before = _read_nofollow_bytes(root, rel)
-            text = _decode_note_bytes(before)[0]
-        except OSError:
+            before, before_state = _archive_read_regular(root / rel)
+        except (OSError, ProjectArchiveError):
+            blockers.append(
+                _project_rollup_blocker(
+                    rel,
+                    "area-rollup-source-unreadable",
+                    "Area rollup source could not be read safely",
+                )
+            )
             continue
-        if text is None:
+        if before_state["sha256"] != area["contentDigest"]:
+            blockers.append(
+                _project_rollup_blocker(
+                    rel,
+                    "area-rollup-source-changed",
+                    "Area changed before rollup reconciliation",
+                )
+            )
             continue
-        rows = [
-            model["projects"][project_slug]
-            for project_slug in model["activeProjects"]
-            if any(row["slug"] == slug for row in model["projects"][project_slug]["areas"])
-        ]
+        rows = projects_by_area.get(slug, [])
         rows.sort(key=lambda row: (fold(row["title"]), row["slug"]))
+        if not area["restricted"] and any(row["restricted"] for row in rows):
+            blockers.append(
+                _project_rollup_blocker(
+                    rel,
+                    "restricted-project-unrestricted-area",
+                    "Restricted Project mapping cannot enter an unrestricted Area rollup",
+                )
+            )
+            continue
         desired = "\n".join(
-            f"- [{row['title']}](../../{row['path']})" for row in rows
+            f"- [{_escape_markdown_label(row['title'])}]"
+            f"({_encoded_relative_path(rel, row['path'])})"
+            for row in rows
         ) or "_No active Projects currently map to this Area._"
-        after = _replace_active_projects_section(text, desired).encode("utf-8")
+        after = _replace_active_projects_section(before, desired)
         if after == before:
             continue
         changes.append(
             {
                 "after": after,
-                "afterDigest": hashlib.sha256(after).hexdigest(),
+                "afterDigest": _sha256_bytes(after),
                 "before": before,
-                "beforeDigest": hashlib.sha256(before).hexdigest(),
+                "beforeDigest": _sha256_bytes(before),
+                "beforeState": before_state,
                 "path": rel,
             }
         )
     result = {
+        "blockers": blockers,
         "changes": [
             {key: row[key] for key in ("afterDigest", "beforeDigest", "path")}
             for row in changes
         ],
         "written": False,
     }
-    if not write or not changes:
+    if not write or not changes or blockers:
         return result
 
-    written: list[dict] = []
-    staged: list[tuple[Path, Path, int]] = []
+    written: list[tuple[dict, dict]] = []
     try:
         for row in changes:
             path = root / row["path"]
-            current = _read_nofollow_bytes(root, row["path"])
-            if hashlib.sha256(current).hexdigest() != row["beforeDigest"]:
-                raise OSError("Area changed after rollup preview")
-            mode = stat.S_IMODE(path.stat().st_mode)
-            descriptor, name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
-            stage = Path(name)
+            installed_state = _archive_write_guarded(
+                path,
+                row["after"],
+                row["beforeState"]["mode"],
+                row["beforeState"],
+            )
+            written.append((row, installed_state))
+    except BaseException as cause:
+        rollback_failed = False
+        for row, installed_state in reversed(written):
             try:
-                os.write(descriptor, row["after"])
-                os.fsync(descriptor)
-            finally:
-                os.close(descriptor)
-            os.chmod(stage, mode)
-            staged.append((path, stage, mode))
-        for row, (path, stage, _mode) in zip(changes, staged):
-            os.replace(stage, path)
-            written.append(row)
-    except (OSError, KeyboardInterrupt):
-        for row in reversed(written):
-            (root / row["path"]).write_bytes(row["before"])
-        for _path, stage, _mode in staged:
-            try:
-                stage.unlink()
-            except FileNotFoundError:
-                pass
+                _archive_write_guarded(
+                    root / row["path"],
+                    row["before"],
+                    row["beforeState"]["mode"],
+                    installed_state,
+                )
+            except BaseException:
+                rollback_failed = True
+        if rollback_failed:
+            raise ProjectRollupRecoveryRequired(
+                "Area rollup recovery requires manual inspection"
+            ) from cause
         raise
     result["written"] = True
     return result
+
+
+class ProjectArchiveError(RuntimeError):
+    """A Project archive preview or transaction could not proceed safely."""
+
+
+class ProjectArchiveRecoveryRequired(ProjectArchiveError):
+    """Automatic rollback stopped because transaction evidence changed."""
+
+
+def _archive_blocker(path: str, rule: str, message: str) -> dict:
+    return {"message": message, "path": path, "rule": rule}
+
+
+ARCHIVE_GIT_ENVIRONMENT_SELECTORS = frozenset(
+    {
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_COMMON_DIR",
+        "GIT_CONFIG",
+        "GIT_DIR",
+        "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+        "GIT_IMPLICIT_WORK_TREE",
+        "GIT_INDEX_FILE",
+        "GIT_NAMESPACE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_PREFIX",
+        "GIT_QUARANTINE_PATH",
+        "GIT_WORK_TREE",
+    }
+)
+
+
+def _archive_git_environment(*, index_path: Path | None = None) -> dict[str, str]:
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in ARCHIVE_GIT_ENVIRONMENT_SELECTORS
+        and not key.startswith("GIT_CONFIG_")
+    }
+    if index_path is not None:
+        environment["GIT_INDEX_FILE"] = str(index_path)
+    return environment
+
+
+def _archive_git(
+    root: Path,
+    args: list[str],
+    *,
+    check: bool = True,
+    input_bytes: bytes | None = None,
+) -> subprocess.CompletedProcess:
+    try:
+        return subprocess.run(
+            ["git", "-C", str(root), *args],
+            capture_output=True,
+            check=check,
+            env=_archive_git_environment(),
+            input=input_bytes,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        raise ProjectArchiveError("Git operation failed safely") from None
+
+
+def _archive_git_with_index(
+    root: Path, args: list[str], index_path: Path
+) -> subprocess.CompletedProcess:
+    try:
+        return subprocess.run(
+            ["git", "-C", str(root), *args],
+            capture_output=True,
+            check=True,
+            env=_archive_git_environment(index_path=index_path),
+        )
+    except (OSError, subprocess.CalledProcessError):
+        raise ProjectArchiveError("Git operation failed safely") from None
+
+
+def _archive_git_tracked(root: Path) -> set[str]:
+    out = _archive_git(root, ["ls-files", "-z", "--cached"]).stdout
+    try:
+        return {nfc(path.decode("utf-8")) for path in out.split(b"\0") if path}
+    except UnicodeDecodeError:
+        raise ProjectArchiveError("Git tracked paths are not valid UTF-8") from None
+
+
+def _archive_index_corpus(root: Path) -> tuple[list[str], list[str]]:
+    notes, assets = walk_corpus(root, selected_environment=None)
+    tracked = _archive_git_tracked(root)
+    return [path for path in notes if path in tracked], [
+        path for path in assets if path in tracked
+    ]
+
+
+def _archive_worktree_clean(root: Path, *, owned_journal: bool = False) -> bool:
+    raw = _archive_git(
+        root, ["status", "--porcelain=v1", "-z", "--untracked-files=all"]
+    ).stdout
+    if not raw:
+        return True
+    if not owned_journal:
+        return False
+    rows = [row for row in raw.split(b"\0") if row]
+    return rows == [f"?? {PROJECT_ARCHIVE_JOURNAL_RELPATH}".encode("utf-8")]
+
+
+def _archive_inventory(root: Path, prefix: str) -> dict[str, dict]:
+    base = root / prefix
+    if base.is_symlink() or not base.is_dir():
+        raise ProjectArchiveError("Project source directory is missing or unsafe")
+    rows: dict[str, dict] = {}
+    for parent, directories, files in os.walk(base, followlinks=False):
+        parent_path = Path(parent)
+        for name in sorted([*directories, *files]):
+            path = parent_path / name
+            if path.is_symlink():
+                raise ProjectArchiveError("Project directory contains a symlink")
+            if name in files and not path.is_file():
+                raise ProjectArchiveError("Project directory contains a non-regular file")
+        for name in sorted(files):
+            path = parent_path / name
+            rel = nfc(path.relative_to(root).as_posix())
+            if rel in rows:
+                raise ProjectArchiveError(
+                    "Project directory contains normalization-colliding paths"
+                )
+            raw, rows[rel] = _archive_read_regular(path)
+            rows[rel]["_raw"] = raw
+    return rows
+
+
+def _archive_destination_parts(raw: str) -> tuple[str, str, bool]:
+    """Return exact link prefix/title suffix and angle-destination style."""
+    open_index = 1 if raw.startswith("![") else 0
+    label_end = _balanced_close(raw, open_index, "[", "]")
+    if label_end is None or raw[label_end + 1 : label_end + 2] != "(":
+        raise ProjectArchiveError("Parsed Markdown link cannot be rendered safely")
+    body = raw[label_end + 2 : -1]
+    if body.startswith("<"):
+        end = next(
+            (index for index in range(1, len(body)) if body[index] == ">" and not _is_escaped(body, index)),
+            None,
+        )
+        if end is None:
+            raise ProjectArchiveError("Parsed Markdown destination is malformed")
+        return raw[: label_end + 2], body[end + 1 :], True
+    end = len(body)
+    for index, char in enumerate(body):
+        if char.isspace() and not _is_escaped(body, index):
+            end = index
+            break
+    return raw[: label_end + 2], body[end:], False
+
+
+def _render_archived_markdown_link(
+    source: str, target: str, link: dict
+) -> tuple[str, str]:
+    prefix, title_suffix, angle = _archive_destination_parts(link["raw"])
+    if link.get("target") == "" and source == target:
+        destination = ""
+    else:
+        destination = _encoded_relative_path(source, target)
+    if link.get("fragment"):
+        fragment = link.get("resolution", {}).get("fragment")
+        if not isinstance(fragment, dict) or not isinstance(fragment.get("slug"), str):
+            raise ProjectArchiveError("Project archive cannot preserve an unresolved fragment")
+        destination += "#" + quote(fragment["slug"], safe="-._~")
+    if angle:
+        destination = f"<{destination}>"
+    public_destination = destination[1:-1] if angle else destination
+    return prefix + destination + title_suffix + ")", public_destination
+
+
+def _apply_raw_replacements(raw: bytes, replacements: list[dict]) -> bytes:
+    result = raw
+    for replacement in sorted(replacements, key=lambda row: row["start"], reverse=True):
+        start, end = replacement["start"], replacement["end"]
+        if result[start:end] != replacement["before"]:
+            raise ProjectArchiveError("Project archive link plan became stale")
+        result = result[:start] + replacement["after"] + result[end:]
+    return result
+
+
+def _public_archive_plan(plan: dict) -> dict:
+    public_edits = []
+    for row in plan.get("edits", []):
+        public_edits.append(
+            {
+                "path": row["path"],
+                "replacementCount": len(row["replacements"]),
+                "resultPath": row["resultPath"],
+                "resultSha256": row["resultSha256"],
+                "sourceSha256": row["sourceSha256"],
+            }
+        )
+    return {
+        "blockers": plan["blockers"],
+        "destination": plan["destination"],
+        "edits": public_edits,
+        "linkRewrites": plan["linkRewrites"],
+        "moves": plan["moves"],
+        "planId": plan["planId"],
+        "schemaVersion": PROJECT_ARCHIVE_SCHEMA_VERSION,
+        "slug": plan["slug"],
+        "source": plan["source"],
+        "status": plan["status"],
+        "summary": plan["summary"],
+    }
+
+
+def build_project_archive_plan(
+    root: Path, slug: str, *, _journal_guard: dict | None = None
+) -> dict:
+    """Build a byte-hashed, zero-write whole-directory archive plan."""
+    if not ENTITY_SLUG_RE.fullmatch(slug):
+        blockers = [
+            _archive_blocker(
+                "archive-project", "archive-slug", "Project slug must be kebab-case"
+            )
+        ]
+        public_for_id = {
+            "blockers": blockers,
+            "destination": "",
+            "edits": [],
+            "linkRewrites": [],
+            "moves": [],
+            "schemaVersion": PROJECT_ARCHIVE_SCHEMA_VERSION,
+            "slug": slug,
+            "source": "",
+            "summary": {"filesMoved": 0, "linksRewritten": 0, "notesEdited": 0},
+        }
+        return {
+            **public_for_id,
+            "_baselineEntityFindings": set(),
+            "_inventory": {},
+            "_sourceDirectoryIdentity": None,
+            "planId": _sha256_bytes(_canonical_json(public_for_id)),
+            "status": "blocked",
+        }
+    blockers: list[dict] = []
+    source = f"04_Projects/{slug}"
+    destination = f"07_Archives/projects/{slug}"
+    if os.path.lexists(root / PROJECT_ARCHIVE_JOURNAL_RELPATH) and not (
+        _journal_guard is not None
+        and _archive_journal_guard_matches(root, _journal_guard)
+    ):
+        blockers.append(_archive_blocker(PROJECT_ARCHIVE_JOURNAL_RELPATH, "archive-interrupted", "An interrupted Project archive requires --recover"))
+    if os.path.lexists(root / destination):
+        blockers.append(_archive_blocker(destination, "archive-destination-exists", "Archive destination already exists"))
+
+    try:
+        tracked = _archive_git_tracked(root)
+    except ProjectArchiveError:
+        blockers.append(_archive_blocker(source, "archive-git-unavailable", "Git is required for a Project archive"))
+        tracked = set()
+    try:
+        inventory = _archive_inventory(root, source)
+    except ProjectArchiveError as exc:
+        blockers.append(_archive_blocker(source, "archive-source-unsafe", str(exc)))
+        inventory = {}
+    tracked_source = {path for path in tracked if path == source or path.startswith(source + "/")}
+    if inventory and set(inventory) != tracked_source:
+        blockers.append(_archive_blocker(source, "archive-untracked-content", "Every file in the Project directory must be tracked or staged"))
+
+    working_notes, working_assets = walk_corpus(root, selected_environment=None)
+    notes = sorted(path for path in working_notes if path in tracked)
+    assets = sorted(path for path in working_assets if path in tracked)
+    index = build_index(root, notes, assets)
+    config, _config_findings = load_config(root)
+    model = build_entity_registry(root, index, today_d=vault_today(config))
+    project = model["projects"].get(slug)
+    entrypoint = f"{source}/PROJECT.md"
+    if project is None or project["path"] != entrypoint or project["archived"]:
+        blockers.append(_archive_blocker(entrypoint, "archive-project-missing", "Canonical active-root Project entrypoint is missing"))
+    else:
+        if project["lifecycle"] != "done" or project["statusValues"] != ["done"]:
+            blockers.append(_archive_blocker(entrypoint, "archive-project-open", "Project must carry exactly status/done before archival"))
+        if project["target"] is not None or project["targetStatus"] is not None:
+            blockers.append(_archive_blocker(entrypoint, "archive-project-target", "Done Project must remove active target fields"))
+        if f"project/{slug}" not in frontmatter_tags(index["notes"][entrypoint]):
+            blockers.append(_archive_blocker(entrypoint, "archive-project-tag", "Project identity tag must be preserved before archival"))
+    relevant_findings = [
+        row
+        for row in model["findings"]
+        if (row["path"] == entrypoint or row["path"].startswith(source + "/"))
+        and row["rule"] != "project-archive-pending"
+    ]
+    for finding in relevant_findings:
+        blockers.append(_archive_blocker(finding["path"], finding["rule"], finding["message"]))
+    if project is not None:
+        for area in project["areas"]:
+            area_record = model["areas"].get(area["slug"])
+            if area_record and entrypoint in area_record["rollupPaths"]:
+                blockers.append(_archive_blocker(area_record["path"], "archive-rollup-active", "Done Project must be removed from the Area active rollup before archival"))
+
+    resolver = Resolver(notes, assets, {path: index["notes"][path]["title"] for path in notes})
+    edits: list[dict] = []
+    for rel in notes:
+        source_inside = rel.startswith(source + "/")
+        try:
+            raw = _read_nofollow_bytes(root, rel)
+            links, _headings = _migration_links(raw)
+        except (OSError, LinkMigrationError):
+            if source_inside:
+                blockers.append(_archive_blocker(rel, "archive-source-unreadable", "Project note is unreadable or unsafe"))
+            continue
+        replacements: list[dict] = []
+        for link in links:
+            if link["placeholder"]:
+                continue
+            _resolve_link_record(link, rel, resolver, index["notes"])
+            target_inside = isinstance(link.get("resolved"), str) and (
+                link["resolved"] == source or link["resolved"].startswith(source + "/")
+            )
+            if not source_inside and not target_inside:
+                continue
+            if link["format"] != "markdown":
+                blockers.append(_archive_blocker(rel, "archive-legacy-link", "Affected legacy link must be migrated before archival"))
+                continue
+            if link.get("resolved") is None:
+                blockers.append(_archive_blocker(rel, "archive-unresolved-link", "Affected link is unresolved and cannot be rebased safely"))
+                continue
+            new_source = (
+                destination + rel[len(source) :] if source_inside else rel
+            )
+            resolved = link["resolved"]
+            new_target = (
+                destination + resolved[len(source) :] if target_inside else resolved
+            )
+            try:
+                rendered, new_destination = _render_archived_markdown_link(
+                    new_source, new_target, link
+                )
+            except ProjectArchiveError as exc:
+                blockers.append(_archive_blocker(rel, "archive-link-render", str(exc)))
+                continue
+            rendered_bytes = rendered.encode("utf-8")
+            before = link["raw"].encode("utf-8")
+            if rendered_bytes == before:
+                continue
+            replacements.append(
+                {
+                    "after": rendered_bytes,
+                    "before": before,
+                    "end": link["range"]["end"]["offset"],
+                    "line": link["line"],
+                    "newDestination": new_destination,
+                    "oldDestination": (
+                        quote(link["destination"], safe="/-._~")
+                        + (
+                            "#"
+                            + quote(
+                                link["resolution"]["fragment"]["slug"],
+                                safe="-._~",
+                            )
+                            if link.get("fragment")
+                            else ""
+                        )
+                    ),
+                    "start": link["range"]["start"]["offset"],
+                }
+            )
+        result = _apply_raw_replacements(raw, replacements)
+        result_path = destination + rel[len(source) :] if source_inside else rel
+        if result != raw or result_path != rel:
+            edits.append(
+                {
+                    "_result": result,
+                    "_source": raw,
+                    "path": rel,
+                    "replacements": replacements,
+                    "resultPath": result_path,
+                    "resultSha256": _sha256_bytes(result),
+                    "sourceSha256": _sha256_bytes(raw),
+                }
+            )
+
+    summary = {
+        "filesMoved": len(inventory),
+        "linksRewritten": sum(len(row["replacements"]) for row in edits),
+        "notesEdited": len(edits),
+    }
+    edit_by_path = {row["path"]: row for row in edits}
+    moves = [
+        {
+            "resultPath": destination + path[len(source) :],
+            "resultSha256": edit_by_path.get(path, {}).get(
+                "resultSha256", row["sha256"]
+            ),
+            "sourcePath": path,
+            "sourceSha256": row["sha256"],
+        }
+        for path, row in sorted(inventory.items())
+    ]
+    link_rewrites = [
+        {
+            "line": replacement["line"],
+            "newDestination": replacement["newDestination"],
+            "oldDestination": replacement["oldDestination"],
+            "resultPath": row["resultPath"],
+            "resultSha256": row["resultSha256"],
+            "sourcePath": row["path"],
+            "sourceSha256": row["sourceSha256"],
+        }
+        for row in edits
+        for replacement in row["replacements"]
+    ]
+    public_for_id = {
+        "blockers": blockers,
+        "destination": destination,
+        "edits": [
+            {
+                "path": row["path"],
+                "replacementCount": len(row["replacements"]),
+                "resultPath": row["resultPath"],
+                "resultSha256": row["resultSha256"],
+                "sourceSha256": row["sourceSha256"],
+            }
+            for row in edits
+        ],
+        "linkRewrites": link_rewrites,
+        "moves": moves,
+        "schemaVersion": PROJECT_ARCHIVE_SCHEMA_VERSION,
+        "slug": slug,
+        "source": source,
+        "summary": summary,
+    }
+    plan_id = _sha256_bytes(_canonical_json(public_for_id))
+    return {
+        **public_for_id,
+        "_baselineEntityFindings": {
+            (row["path"], row["rule"], row["message"])
+            for row in model["findings"]
+            if not (
+                row["rule"] == "project-archive-pending"
+                and (
+                    row["path"] == entrypoint
+                    or row["path"].startswith(source + "/")
+                )
+            )
+        },
+        "_inventory": inventory,
+        "_sourceDirectoryIdentity": (
+            _archive_identity((root / source).lstat()) if inventory else None
+        ),
+        "edits": edits,
+        "planId": plan_id,
+        "status": "blocked" if blockers else "ready",
+    }
+
+
+def _archive_git_index_path(root: Path) -> Path:
+    try:
+        top = Path(
+            _archive_git(root, ["rev-parse", "--show-toplevel"])
+            .stdout.decode("utf-8")
+            .strip()
+        ).resolve(strict=True)
+        git_directory = Path(
+            _archive_git(root, ["rev-parse", "--absolute-git-dir"])
+            .stdout.decode("utf-8")
+            .strip()
+        ).resolve(strict=True)
+        raw = (
+            _archive_git(root, ["rev-parse", "--git-path", "index"])
+            .stdout.decode("utf-8")
+            .strip()
+        )
+    except (OSError, UnicodeError):
+        raise ProjectArchiveError("Git repository location is unsafe") from None
+    if top != root.resolve(strict=True):
+        raise ProjectArchiveError("Git worktree does not match the vault root")
+    path = Path(raw)
+    path = path if path.is_absolute() else root / path
+    try:
+        resolved = path.resolve(strict=True)
+        resolved.relative_to(git_directory)
+    except (OSError, ValueError):
+        raise ProjectArchiveError("Git index is outside the vault worktree metadata") from None
+    if path.is_symlink() or not path.is_file() or resolved != path.resolve():
+        raise ProjectArchiveError("Git index is missing or unsafe")
+    return resolved
+
+
+def _archive_git_mode(mode: int) -> str:
+    return "100755" if mode & 0o111 else "100644"
+
+
+def _archive_git_object_id(value: str) -> bool:
+    return re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", value) is not None
+
+
+def _archive_parse_staged_entries(raw: bytes) -> dict[str, tuple[str, str]]:
+    rows: dict[str, tuple[str, str]] = {}
+    try:
+        for record in (item for item in raw.split(b"\0") if item):
+            metadata, encoded_path = record.split(b"\t", 1)
+            mode, object_id, stage = metadata.decode("ascii").split(" ")
+            path = nfc(encoded_path.decode("utf-8"))
+            if stage != "0" or path in rows:
+                raise ValueError
+            rows[path] = (mode, object_id)
+    except (UnicodeError, ValueError):
+        raise ProjectArchiveError("Git index verification output is malformed") from None
+    return rows
+
+
+def _archive_index_entries(
+    root: Path, index_path: Path, paths: set[str]
+) -> dict[str, tuple[str, str]]:
+    return _archive_parse_staged_entries(
+        _archive_git_with_index(
+            root,
+            ["ls-files", "--stage", "-z", "--", *sorted(paths)],
+            index_path,
+        ).stdout
+    )
+
+
+def _archive_entry_git_mode(row: dict) -> str:
+    mode = row.get("gitMode")
+    if isinstance(mode, str) and mode in {"100644", "100755"}:
+        return mode
+    return _archive_git_mode(row["mode"])
+
+
+def _archive_build_exact_index(
+    root: Path,
+    *,
+    base_index: Path,
+    output_index: Path,
+    removals: set[str],
+    updates: dict[str, dict],
+    expected_entries: dict[str, dict],
+    expected_changed: set[str],
+) -> tuple[bytes, dict]:
+    shutil.copy2(base_index, output_index)
+    for path in sorted(removals):
+        _archive_git_with_index(
+            root, ["update-index", "--force-remove", "--", path], output_index
+        )
+    expected_object_ids: dict[str, tuple[str, str]] = {}
+    for path, row in sorted(expected_entries.items()):
+        object_id = (
+            _archive_git(root, ["hash-object", "-w", "--stdin"], input_bytes=row["raw"])
+            .stdout.decode("ascii")
+            .strip()
+        )
+        if not _archive_git_object_id(object_id):
+            raise ProjectArchiveError("Git object creation returned an unsafe identifier")
+        expected_object_ids[path] = (_archive_entry_git_mode(row), object_id)
+    for path, row in sorted(updates.items()):
+        mode, object_id = expected_object_ids[path]
+        _archive_git_with_index(
+            root,
+            ["update-index", "--add", "--cacheinfo", f"{mode},{object_id},{path}"],
+            output_index,
+        )
+    selected = sorted({*removals, *expected_entries})
+    staged = _archive_parse_staged_entries(
+        _archive_git_with_index(
+            root, ["ls-files", "--stage", "-z", "--", *selected], output_index
+        ).stdout
+    )
+    if any(path in staged for path in removals):
+        raise ProjectArchiveError("Git index retained an archived source path")
+    if {
+        path: staged.get(path) for path in expected_entries
+    } != expected_object_ids:
+        raise ProjectArchiveError("Git index content does not match the archive plan")
+    changed_raw = _archive_git_with_index(
+        root,
+        ["diff", "--cached", "--name-only", "--no-renames", "-z"],
+        output_index,
+    ).stdout
+    try:
+        changed = {
+            nfc(path.decode("utf-8"))
+            for path in changed_raw.split(b"\0")
+            if path
+        }
+    except UnicodeDecodeError:
+        raise ProjectArchiveError("Git staged paths are not valid UTF-8") from None
+    if changed != expected_changed:
+        raise ProjectArchiveError("Git index changed paths do not match the archive plan")
+    return _archive_read_regular(output_index)
+
+
+def _archive_identity(info: os.stat_result) -> list[int]:
+    return [info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode)]
+
+
+def _archive_read_regular(path: Path) -> tuple[bytes, dict]:
+    descriptor = os.open(
+        path,
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0),
+    )
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode):
+            raise ProjectArchiveError("Archive evidence contains a non-regular file")
+        raw = _read_descriptor_bytes(descriptor)
+        return raw, {
+            "identity": _archive_identity(info),
+            "mode": stat.S_IMODE(info.st_mode),
+            "sha256": _sha256_bytes(raw),
+        }
+    finally:
+        os.close(descriptor)
+
+
+def _archive_read_regular_at(parent: int, name: str) -> tuple[bytes, dict]:
+    descriptor = os.open(
+        name,
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0),
+        dir_fd=parent,
+    )
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode):
+            raise ProjectArchiveError("Archive target is not a regular file")
+        raw = _read_descriptor_bytes(descriptor)
+        return raw, {
+            "identity": _archive_identity(info),
+            "mode": stat.S_IMODE(info.st_mode),
+            "sha256": _sha256_bytes(raw),
+        }
+    finally:
+        os.close(descriptor)
+
+
+def _archive_open_parent_guard(path: Path) -> dict:
+    descriptor = os.open(
+        path,
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0),
+    )
+    info = os.fstat(descriptor)
+    guard = {
+        "descriptor": descriptor,
+        "identity": _archive_identity(info),
+        "mode": stat.S_IMODE(info.st_mode),
+        "path": path,
+        "uid": info.st_uid,
+    }
+    if not _archive_parent_guard_matches(guard):
+        os.close(descriptor)
+        raise ProjectArchiveError("Archive parent ownership changed")
+    return guard
+
+
+def _archive_parent_guard_matches(guard: dict) -> bool:
+    try:
+        descriptor_info = os.fstat(guard["descriptor"])
+        path_info = guard["path"].lstat()
+        return (
+            stat.S_ISDIR(descriptor_info.st_mode)
+            and stat.S_ISDIR(path_info.st_mode)
+            and _archive_identity(descriptor_info) == guard["identity"]
+            and _archive_identity(path_info) == guard["identity"]
+            and stat.S_IMODE(path_info.st_mode) == guard["mode"]
+            and path_info.st_uid == guard["uid"]
+        )
+    except (OSError, KeyError):
+        return False
+
+
+def _archive_close_parent_guard(guard: dict | None) -> None:
+    if guard is not None:
+        try:
+            os.close(guard["descriptor"])
+        except OSError:
+            pass
+
+
+def _archive_rename_guarded(
+    source_guard: dict,
+    source_name: str,
+    destination_guard: dict,
+    destination_name: str,
+    source_identity: list[int],
+) -> None:
+    if not (
+        _archive_parent_guard_matches(source_guard)
+        and _archive_parent_guard_matches(destination_guard)
+    ):
+        raise ProjectArchiveError("Project archive parent ownership changed")
+    source_info = os.stat(
+        source_name, dir_fd=source_guard["descriptor"], follow_symlinks=False
+    )
+    if _archive_identity(source_info) != source_identity:
+        raise ProjectArchiveError("Project archive source identity changed")
+    try:
+        os.stat(
+            destination_name,
+            dir_fd=destination_guard["descriptor"],
+            follow_symlinks=False,
+        )
+    except FileNotFoundError:
+        pass
+    else:
+        raise ProjectArchiveError("Project archive destination appeared")
+    os.rename(
+        source_name,
+        destination_name,
+        src_dir_fd=source_guard["descriptor"],
+        dst_dir_fd=destination_guard["descriptor"],
+    )
+    os.fsync(source_guard["descriptor"])
+    os.fsync(destination_guard["descriptor"])
+    if not (
+        _archive_parent_guard_matches(source_guard)
+        and _archive_parent_guard_matches(destination_guard)
+    ):
+        raise ProjectArchiveError("Project archive parent ownership changed")
+
+
+def _archive_write_guarded(
+    path: Path, content: bytes, mode: int, expected: dict | None
+) -> dict:
+    guard = _archive_open_parent_guard(path.parent)
+    stage_name = f".{path.name}.archive-{secrets.token_hex(12)}"
+    descriptor = None
+    try:
+        if expected is None:
+            try:
+                os.stat(path.name, dir_fd=guard["descriptor"], follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                raise ProjectArchiveError("Archive target appeared before installation")
+        else:
+            _raw, current = _archive_read_regular_at(guard["descriptor"], path.name)
+            if any(
+                current[key] != expected[key]
+                for key in ("sha256", "mode", "identity")
+            ):
+                raise ProjectArchiveError("Project archive plan became stale")
+        if not _archive_parent_guard_matches(guard):
+            raise ProjectArchiveError("Archive parent ownership changed")
+        descriptor = os.open(
+            stage_name,
+            os.O_WRONLY
+            | os.O_CREAT
+            | os.O_EXCL
+            | getattr(os, "O_NOFOLLOW", 0)
+            | getattr(os, "O_CLOEXEC", 0),
+            0o600,
+            dir_fd=guard["descriptor"],
+        )
+        offset = 0
+        while offset < len(content):
+            offset += os.write(descriptor, content[offset:])
+        os.fchmod(descriptor, mode)
+        os.fsync(descriptor)
+        os.close(descriptor)
+        descriptor = None
+        if not _archive_parent_guard_matches(guard):
+            raise ProjectArchiveError("Archive parent ownership changed")
+        os.replace(
+            stage_name,
+            path.name,
+            src_dir_fd=guard["descriptor"],
+            dst_dir_fd=guard["descriptor"],
+        )
+        os.fsync(guard["descriptor"])
+        if not _archive_parent_guard_matches(guard):
+            raise ProjectArchiveError("Archive parent ownership changed")
+        _raw, installed = _archive_read_regular_at(guard["descriptor"], path.name)
+        if (
+            installed["sha256"] != _sha256_bytes(content)
+            or installed["mode"] != mode
+        ):
+            raise ProjectArchiveError("Archive target installation changed")
+        return installed
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        try:
+            os.unlink(stage_name, dir_fd=guard["descriptor"])
+        except FileNotFoundError:
+            pass
+        _archive_close_parent_guard(guard)
+
+
+def _archive_fsync_directory(path: Path) -> None:
+    descriptor = os.open(
+        path,
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_CLOEXEC", 0),
+    )
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _archive_fsync_tree(path: Path) -> None:
+    for parent, directories, files in os.walk(path, topdown=False, followlinks=False):
+        parent_path = Path(parent)
+        for name in [*directories, *files]:
+            if (parent_path / name).is_symlink():
+                raise ProjectArchiveError("Archive snapshot contains a symlink")
+        for name in files:
+            descriptor = os.open(
+                parent_path / name,
+                os.O_RDONLY
+                | getattr(os, "O_NOFOLLOW", 0)
+                | getattr(os, "O_CLOEXEC", 0),
+            )
+            try:
+                if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+                    raise ProjectArchiveError("Archive snapshot is not regular")
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+        _archive_fsync_directory(parent_path)
+
+
+def _atomic_write_bytes(
+    path: Path, content: bytes, mode: int, *, stage_prefix: str | None = None
+) -> None:
+    if path.parent.is_symlink() or not path.parent.is_dir():
+        raise ProjectArchiveError("Archive write parent is missing or unsafe")
+    descriptor, name = tempfile.mkstemp(
+        prefix=stage_prefix or f".{path.name}.archive-", dir=path.parent
+    )
+    stage = Path(name)
+    try:
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.chmod(stage, mode)
+        os.replace(stage, path)
+        _archive_fsync_directory(path.parent)
+    finally:
+        try:
+            stage.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def _archive_write_json(path: Path, value: dict) -> None:
+    _atomic_write_bytes(
+        path,
+        _canonical_json(value) + b"\n",
+        0o600,
+        stage_prefix=f".{path.name}.",
+    )
+
+
+def _archive_safe_relative(value: object) -> bool:
+    if not isinstance(value, str) or not value or "\0" in value or "\\" in value:
+        return False
+    parts = value.split("/")
+    if value.startswith("/") or any(part in {"", ".", ".."} for part in parts):
+        return False
+    return True
+
+
+def _archive_digest(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and ENVIRONMENT_DIGEST_RE.fullmatch(value) is not None
+    )
+
+
+def _archive_journal_guard_matches(root: Path, guard: dict) -> bool:
+    try:
+        path_info = (root / PROJECT_ARCHIVE_JOURNAL_RELPATH).lstat()
+        descriptor_info = os.fstat(guard["descriptor"])
+        return (
+            _archive_identity(path_info) == guard["identity"]
+            and _archive_identity(descriptor_info) == guard["identity"]
+            and stat.S_IMODE(path_info.st_mode) == 0o600
+            and path_info.st_uid == os.getuid()
+            and _read_descriptor_bytes(guard["descriptor"]) == guard["contents"]
+        )
+    except (OSError, KeyError):
+        return False
+
+
+def _archive_remove_created_journal(root: Path, identity: list[int]) -> None:
+    """Remove the journal inode created by this attempt, never a replacement."""
+    path = root / PROJECT_ARCHIVE_JOURNAL_RELPATH
+    try:
+        current = path.lstat()
+    except FileNotFoundError:
+        _archive_fsync_directory(root)
+        return
+    if _archive_identity(current) != identity:
+        raise ProjectArchiveError("Project archive journal ownership changed")
+    quarantine = root / (
+        PROJECT_ARCHIVE_JOURNAL_RELPATH + ".failed-" + secrets.token_hex(12)
+    )
+    os.rename(path, quarantine)
+    moved = quarantine.lstat()
+    if _archive_identity(moved) != identity:
+        try:
+            os.link(quarantine, path)
+        except FileExistsError:
+            pass
+        raise ProjectArchiveError("Project archive journal ownership changed")
+    quarantine.unlink()
+    _archive_fsync_directory(root)
+
+
+def _archive_create_journal(root: Path, payload: dict) -> dict:
+    raw = (
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+    path = root / PROJECT_ARCHIVE_JOURNAL_RELPATH
+    try:
+        descriptor = os.open(
+            path,
+            os.O_RDWR
+            | os.O_CREAT
+            | os.O_EXCL
+            | getattr(os, "O_NOFOLLOW", 0)
+            | getattr(os, "O_CLOEXEC", 0),
+            0o600,
+        )
+    except FileExistsError:
+        raise ProjectArchiveError("Another Project archive is active") from None
+    created_identity = _archive_identity(os.fstat(descriptor))
+    guard = None
+    try:
+        offset = 0
+        while offset < len(raw):
+            offset += os.write(descriptor, raw[offset:])
+        os.fsync(descriptor)
+        info = os.fstat(descriptor)
+        guard = {
+            "contents": raw,
+            "descriptor": descriptor,
+            "identity": _archive_identity(info),
+        }
+        _archive_fsync_directory(root)
+        if not _archive_journal_guard_matches(root, guard):
+            raise ProjectArchiveError("Project archive journal ownership changed")
+        return guard
+    except BaseException as creation_error:
+        cleanup_error = None
+        try:
+            _archive_remove_created_journal(root, created_identity)
+        except BaseException as exc:
+            cleanup_error = exc
+        try:
+            os.close(descriptor)
+        except OSError as exc:
+            cleanup_error = cleanup_error or exc
+        if cleanup_error is not None:
+            raise ProjectArchiveRecoveryRequired(
+                "Project archive journal creation cleanup requires owner inspection"
+            ) from cleanup_error
+        raise creation_error
+
+
+def _archive_read_journal(root: Path) -> tuple[dict, dict]:
+    path = root / PROJECT_ARCHIVE_JOURNAL_RELPATH
+    raw, state = _archive_read_regular(path)
+    if state["mode"] != 0o600 or path.lstat().st_uid != os.getuid():
+        raise ProjectArchiveError("Project archive recovery journal is unsafe")
+    descriptor = os.open(
+        path,
+        os.O_RDONLY
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_CLOEXEC", 0),
+    )
+    guard = {
+        "contents": raw,
+        "descriptor": descriptor,
+        "identity": state["identity"],
+    }
+    if not _archive_journal_guard_matches(root, guard):
+        os.close(descriptor)
+        raise ProjectArchiveError("Project archive recovery journal changed")
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeError, json.JSONDecodeError):
+        os.close(descriptor)
+        raise ProjectArchiveError("Project archive recovery journal is malformed") from None
+    return payload, guard
+
+
+def _archive_remove_journal(root: Path, guard: dict) -> None:
+    if not _archive_journal_guard_matches(root, guard):
+        raise ProjectArchiveError("Project archive journal ownership changed")
+    quarantine = f"{PROJECT_ARCHIVE_JOURNAL_RELPATH}.old-{secrets.token_hex(12)}"
+    os.rename(root / PROJECT_ARCHIVE_JOURNAL_RELPATH, root / quarantine)
+    _archive_fsync_directory(root)
+    if _archive_identity((root / quarantine).lstat()) != guard["identity"]:
+        try:
+            os.link(root / quarantine, root / PROJECT_ARCHIVE_JOURNAL_RELPATH)
+            (root / quarantine).unlink()
+            _archive_fsync_directory(root)
+        except FileExistsError:
+            pass
+        raise ProjectArchiveError("Project archive journal ownership changed")
+    if os.path.lexists(root / PROJECT_ARCHIVE_JOURNAL_RELPATH):
+        (root / quarantine).unlink()
+        _archive_fsync_directory(root)
+        raise ProjectArchiveError("Project archive journal ownership changed")
+    (root / quarantine).unlink()
+    _archive_fsync_directory(root)
+
+
+def _archive_close_journal(guard: dict | None) -> None:
+    if guard is not None:
+        try:
+            os.close(guard["descriptor"])
+        except OSError:
+            pass
+
+
+def _archive_validate_journal(journal: dict, slug: str) -> None:
+    source = f"04_Projects/{slug}"
+    destination = f"07_Archives/projects/{slug}"
+    transaction = journal.get("transaction")
+    if not (
+        isinstance(journal, dict)
+        and ENTITY_SLUG_RE.fullmatch(slug) is not None
+        and journal.get("owner") == "brain-project-archive"
+        and journal.get("schemaVersion") == PROJECT_ARCHIVE_SCHEMA_VERSION
+        and type(journal.get("pid")) is int
+        and journal.get("slug") == slug
+        and journal.get("source") == source
+        and journal.get("destination") == destination
+        and _archive_digest(journal.get("planId"))
+        and isinstance(transaction, str)
+        and re.fullmatch(
+            re.escape(PROJECT_ARCHIVE_TRANSACTION_PREFIX) + r"[0-9a-f]{24}",
+            transaction,
+        )
+    ):
+        raise ProjectArchiveError("Project archive recovery journal is malformed")
+
+
+def _archive_validate_hash_map(value: object) -> bool:
+    return isinstance(value, dict) and all(
+        _archive_safe_relative(path) and _archive_digest(digest)
+        for path, digest in value.items()
+    )
+
+
+def _archive_validate_mode_map(value: object, paths: set[str]) -> bool:
+    return isinstance(value, dict) and set(value) == paths and all(
+        type(mode) is int and 0 <= mode <= 0o7777 for mode in value.values()
+    )
+
+
+def _archive_assert_state(path: Path, expected: dict) -> dict:
+    _raw, current = _archive_read_regular(path)
+    if any(current[key] != expected[key] for key in ("sha256", "mode", "identity")):
+        raise ProjectArchiveError("Project archive plan became stale")
+    return current
+
+
+def _archive_assert_tree_state(root: Path, prefix: str, expected: dict[str, dict]) -> None:
+    if _archive_inventory(root, prefix) != expected:
+        raise ProjectArchiveError("Project archive tree changed after recovery validation")
+
+
+def _archive_restore_transaction(
+    root: Path, journal: dict, slug: str, guard: dict
+) -> None:
+    _archive_validate_journal(journal, slug)
+    transaction_name = journal.get("transaction")
+    transaction = root / transaction_name
+    manifest_path = transaction / "manifest.json"
+    transaction_info = transaction.lstat()
+    if (
+        not stat.S_ISDIR(transaction_info.st_mode)
+        or stat.S_IMODE(transaction_info.st_mode) != 0o700
+        or transaction_info.st_uid != os.getuid()
+    ):
+        raise ProjectArchiveError("Project archive recovery evidence is missing or unsafe")
+    try:
+        manifest_raw, manifest_state = _archive_read_regular(manifest_path)
+        manifest = json.loads(manifest_raw.decode("utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError, ProjectArchiveError):
+        raise ProjectArchiveError("Project archive recovery manifest is malformed") from None
+    if manifest_state["mode"] != 0o600 or manifest_path.lstat().st_uid != os.getuid():
+        raise ProjectArchiveError("Project archive recovery manifest is unsafe")
+    source = manifest.get("source")
+    destination = manifest.get("destination")
+    source_hashes = manifest.get("sourceFiles")
+    destination_hashes = manifest.get("destinationFiles")
+    source_modes = manifest.get("sourceModes")
+    destination_modes = manifest.get("destinationModes")
+    if not (
+        manifest.get("owner") == "brain-project-archive"
+        and manifest.get("schemaVersion") == PROJECT_ARCHIVE_SCHEMA_VERSION
+        and manifest.get("planId") == journal["planId"]
+        and manifest.get("slug") == slug
+        and source == f"04_Projects/{slug}"
+        and destination == f"07_Archives/projects/{slug}"
+        and _archive_validate_hash_map(source_hashes)
+        and _archive_validate_hash_map(destination_hashes)
+        and set(source_hashes) == set(destination_hashes)
+        and _archive_validate_mode_map(source_modes, set(source_hashes))
+        and _archive_validate_mode_map(destination_modes, set(source_hashes))
+    ):
+        raise ProjectArchiveError("Project archive recovery manifest has an unsupported shape")
+
+    snapshot_prefix = f"{transaction_name}/source"
+    snapshot_inventory = _archive_inventory(root, snapshot_prefix)
+    snapshot_hashes = {
+        path[len(snapshot_prefix) + 1 :]: row["sha256"]
+        for path, row in snapshot_inventory.items()
+    }
+    snapshot_modes = {
+        path[len(snapshot_prefix) + 1 :]: row["mode"]
+        for path, row in snapshot_inventory.items()
+    }
+    if snapshot_hashes != source_hashes or snapshot_modes != source_modes:
+        raise ProjectArchiveError("Project source recovery snapshot changed")
+
+    external = manifest.get("externalEdits")
+    if not isinstance(external, list):
+        raise ProjectArchiveError("Project archive external-edit recovery is malformed")
+    external_directory = transaction / "external"
+    external_info = external_directory.lstat()
+    if (
+        not stat.S_ISDIR(external_info.st_mode)
+        or stat.S_IMODE(external_info.st_mode) != 0o700
+        or external_info.st_uid != os.getuid()
+    ):
+        raise ProjectArchiveError("Project archive external snapshots are unsafe")
+    external_prefix = f"{transaction_name}/external"
+    external_inventory = _archive_inventory(root, external_prefix)
+    if {
+        path[len(external_prefix) + 1 :] for path in external_inventory
+    } != {str(index) for index in range(len(external))}:
+        raise ProjectArchiveError("Project archive external snapshots are malformed")
+    external_states = []
+    for index_number, row in enumerate(external):
+        rel = row.get("path") if isinstance(row, dict) else None
+        if not (
+            isinstance(row, dict)
+            and _archive_safe_relative(rel)
+            and not rel.startswith((".git/", PROJECT_ARCHIVE_TRANSACTION_PREFIX))
+            and rel not in {PROJECT_ARCHIVE_JOURNAL_RELPATH, INDEX_RELPATH}
+            and not rel.startswith((source + "/", destination + "/"))
+            and _archive_digest(row.get("beforeSha256"))
+            and _archive_digest(row.get("afterSha256"))
+            and type(row.get("mode")) is int
+        ):
+            raise ProjectArchiveError("Project archive external-edit recovery is malformed")
+        snapshot = transaction / "external" / str(index_number)
+        snapshot_raw, snapshot_state = _archive_read_regular(snapshot)
+        if (
+            snapshot_state["sha256"] != row["beforeSha256"]
+            or snapshot_state["mode"] != row["mode"]
+        ):
+            raise ProjectArchiveError("Project archive external snapshot changed")
+        current_raw, current_state = _archive_read_regular(root / rel)
+        if (
+            current_state["sha256"] not in {row["beforeSha256"], row["afterSha256"]}
+            or current_state["mode"] != row["mode"]
+        ):
+            raise ProjectArchiveError("Edited backlink changed; recovery preserved it")
+        external_states.append((row, snapshot_raw, current_state))
+
+    git_index = _archive_git_index_path(root)
+    git_index_snapshot = transaction / "git-index"
+    git_snapshot_raw, git_snapshot_state = _archive_read_regular(git_index_snapshot)
+    allowed_git = manifest.get("gitIndexAllowedSha256")
+    if not (
+        isinstance(allowed_git, list)
+        and allowed_git
+        and all(_archive_digest(value) for value in allowed_git)
+        and git_snapshot_state["sha256"] == manifest.get("gitIndexBeforeSha256")
+        and git_snapshot_state["mode"] == manifest.get("gitIndexMode")
+    ):
+        raise ProjectArchiveError("Project archive Git-index recovery is malformed")
+    _git_raw, git_current_state = _archive_read_regular(git_index)
+    if git_current_state["sha256"] not in set(allowed_git):
+        raise ProjectArchiveError("Git index changed; recovery preserved it")
+
+    index_snapshot = transaction / "vault-index"
+    index_present = manifest.get("vaultIndexPresent")
+    if type(index_present) is not bool:
+        raise ProjectArchiveError("Vault index recovery evidence is malformed")
+    if index_present:
+        vault_snapshot_raw, vault_snapshot_state = _archive_read_regular(index_snapshot)
+        if (
+            vault_snapshot_state["sha256"] != manifest.get("vaultIndexBeforeSha256")
+            or vault_snapshot_state["mode"] != manifest.get("vaultIndexMode")
+        ):
+            raise ProjectArchiveError("Vault index recovery snapshot changed")
+    else:
+        vault_snapshot_raw = b""
+        if os.path.lexists(index_snapshot):
+            raise ProjectArchiveError("Vault index recovery snapshot is unexpected")
+
+    source_path, destination_path = root / source, root / destination
+    current_destination = None
+    if os.path.lexists(destination_path):
+        destination_inventory = _archive_inventory(root, destination)
+        current_destination = {
+            path[len(destination) + 1 :]: row for path, row in destination_inventory.items()
+        }
+        if (
+            set(current_destination) != set(destination_hashes)
+            or any(
+                row["sha256"] not in {source_hashes[rel], destination_hashes[rel]}
+                or row["mode"] != destination_modes[rel]
+                for rel, row in current_destination.items()
+            )
+        ):
+            raise ProjectArchiveError("Archive destination changed; recovery preserved it")
+    current_source = None
+    if os.path.lexists(source_path):
+        source_inventory = _archive_inventory(root, source)
+        current_source = {
+            path[len(source) + 1 :]: row for path, row in source_inventory.items()
+        }
+        if (
+            {path: row["sha256"] for path, row in current_source.items()} != source_hashes
+            or {path: row["mode"] for path, row in current_source.items()} != source_modes
+        ):
+            raise ProjectArchiveError("Project source changed; recovery preserved it")
+
+    vault_index = root / INDEX_RELPATH
+    vault_current = None
+    if index_present:
+        if not vault_index.is_file() or vault_index.is_symlink():
+            raise ProjectArchiveError("Vault index changed; recovery preserved state")
+        _vault_raw, vault_current = _archive_read_regular(vault_index)
+        allowed_vault = {
+            value
+            for value in (
+                manifest.get("vaultIndexBeforeSha256"),
+                manifest.get("vaultIndexAfterSha256"),
+            )
+            if _archive_digest(value)
+        }
+        if vault_current["sha256"] not in allowed_vault:
+            raise ProjectArchiveError("Vault index changed; recovery preserved it")
+    elif os.path.lexists(vault_index):
+        _vault_raw, vault_current = _archive_read_regular(vault_index)
+        if vault_current["sha256"] != manifest.get("vaultIndexAfterSha256"):
+            raise ProjectArchiveError("Vault index changed; recovery preserved it")
+
+    if not _archive_journal_guard_matches(root, guard):
+        raise ProjectArchiveError("Project archive journal ownership changed")
+
+    if current_destination is not None:
+        _archive_assert_tree_state(root, destination, destination_inventory)
+        shutil.rmtree(destination_path)
+        _archive_fsync_directory(destination_path.parent)
+    elif os.path.lexists(destination_path):
+        raise ProjectArchiveError("Archive destination appeared during recovery")
+    if current_source is not None:
+        _archive_assert_tree_state(root, source, source_inventory)
+        pass
+    else:
+        if os.path.lexists(source_path):
+            raise ProjectArchiveError("Project source appeared during recovery")
+        _archive_assert_tree_state(root, snapshot_prefix, snapshot_inventory)
+        snapshot = transaction / "source"
+        shutil.copytree(snapshot, source_path, copy_function=shutil.copy2)
+        _archive_fsync_tree(source_path)
+        _archive_fsync_directory(source_path.parent)
+
+    for row, snapshot_raw, current_state in external_states:
+        _archive_assert_state(root / row["path"], current_state)
+        _archive_write_guarded(
+            root / row["path"], snapshot_raw, row["mode"], current_state
+        )
+
+    if index_present:
+        _archive_assert_state(vault_index, vault_current)
+        _archive_write_guarded(
+            vault_index,
+            vault_snapshot_raw,
+            manifest["vaultIndexMode"],
+            vault_current,
+        )
+    elif vault_current is not None:
+        _archive_assert_state(vault_index, vault_current)
+        vault_index.unlink()
+        _archive_fsync_directory(vault_index.parent)
+    elif os.path.lexists(vault_index):
+        raise ProjectArchiveError("Vault index appeared during recovery")
+    _archive_assert_state(git_index, git_current_state)
+    _archive_write_guarded(
+        git_index, git_snapshot_raw, manifest["gitIndexMode"], git_current_state
+    )
+
+    _archive_remove_journal(root, guard)
+    shutil.rmtree(transaction)
+    _archive_fsync_directory(root)
+
+
+def recover_project_archive(root: Path, slug: str) -> dict:
+    if ENTITY_SLUG_RE.fullmatch(slug) is None:
+        raise ProjectArchiveError("Project archive recovery slug is invalid")
+    path = root / PROJECT_ARCHIVE_JOURNAL_RELPATH
+    if path.is_symlink() or not path.is_file():
+        raise ProjectArchiveError("No safe interrupted Project archive is available")
+    guard = None
+    try:
+        journal, guard = _archive_read_journal(root)
+        _archive_restore_transaction(root, journal, slug, guard)
+        return {
+            "recovered": True,
+            "schemaVersion": PROJECT_ARCHIVE_SCHEMA_VERSION,
+            "slug": slug,
+        }
+    except (ProjectArchiveError, OSError) as exc:
+        raise ProjectArchiveRecoveryRequired(
+            "Authenticated Project archive recovery requires owner inspection"
+        ) from exc
+    finally:
+        _archive_close_journal(guard)
+
+
+def _archive_discard_unpublished_transaction(
+    root: Path, transaction: Path, transaction_identity: list[int], guard: dict
+) -> None:
+    """Retire an unusable journal, then remove only its unpublished evidence."""
+    _archive_remove_journal(root, guard)
+    info = transaction.lstat()
+    if (
+        _archive_identity(info) != transaction_identity
+        or not stat.S_ISDIR(info.st_mode)
+        or stat.S_IMODE(info.st_mode) != 0o700
+        or info.st_uid != os.getuid()
+    ):
+        raise ProjectArchiveError("Project archive transaction ownership changed")
+    shutil.rmtree(transaction)
+    _archive_fsync_directory(root)
+
+
+def _archive_cleanup_warning(*, evidence_retained: bool) -> dict:
+    return {
+        "code": "project-archive-cleanup-pending",
+        "evidenceRetained": evidence_retained,
+        "message": "Archive committed; local transaction cleanup remains pending",
+    }
+
+
+def _archive_assert_planned_outputs(
+    root: Path,
+    destination: str,
+    destination_entries: dict[str, dict],
+    external_edits: list[dict],
+) -> None:
+    inventory = _archive_inventory(root, destination)
+    expected = {
+        path: (row["sha256"], row["mode"])
+        for path, row in destination_entries.items()
+    }
+    actual = {
+        path: (row["sha256"], row["mode"])
+        for path, row in inventory.items()
+    }
+    if actual != expected:
+        raise ProjectArchiveError("Archived Project content changed before staging")
+    for row in external_edits:
+        _archive_assert_state(root / row["resultPath"], row["_installedState"])
+
+
+def apply_project_archive_plan(root: Path, plan: dict) -> dict:
+    if plan["status"] != "ready" or plan["blockers"]:
+        raise ProjectArchiveError("Blocked Project archive plan cannot be written")
+    if os.name != "posix":
+        raise ProjectArchiveError("Project archive writes currently require a POSIX host")
+    transaction_name = PROJECT_ARCHIVE_TRANSACTION_PREFIX + secrets.token_hex(12)
+    journal = {
+        "destination": plan["destination"],
+        "owner": "brain-project-archive",
+        "pid": os.getpid(),
+        "planId": plan["planId"],
+        "schemaVersion": PROJECT_ARCHIVE_SCHEMA_VERSION,
+        "slug": plan["slug"],
+        "source": plan["source"],
+        "transaction": transaction_name,
+    }
+    journal_guard = _archive_create_journal(root, journal)
+    transaction = root / transaction_name
+    transaction_created = False
+    transaction_identity = None
+    manifest_published = False
+    external_mutation_started = False
+    try:
+        if not _archive_worktree_clean(root, owned_journal=True):
+            raise ProjectArchiveError(
+                "Project archive requires a completely clean worktree and Git index"
+            )
+        refreshed = build_project_archive_plan(
+            root, plan["slug"], _journal_guard=journal_guard
+        )
+        if refreshed["planId"] != plan["planId"] or refreshed["status"] != "ready":
+            raise ProjectArchiveError("Project archive plan became stale")
+        plan = refreshed
+        source_path = root / plan["source"]
+        destination_path = root / plan["destination"]
+        if destination_path.parent.is_symlink() or not destination_path.parent.is_dir():
+            raise ProjectArchiveError("Project archive root is missing or unsafe")
+        external_edits = [
+            row
+            for row in plan["edits"]
+            if not row["path"].startswith(plan["source"] + "/")
+        ]
+        project_edits = {
+            row["path"]: row
+            for row in plan["edits"]
+            if row["path"].startswith(plan["source"] + "/")
+        }
+        for row in plan["edits"]:
+            info = (root / row["path"]).lstat()
+            row["_sourceMode"] = stat.S_IMODE(info.st_mode)
+            row["_sourceIdentity"] = _archive_identity(info)
+
+        os.mkdir(transaction, 0o700)
+        transaction_created = True
+        transaction_identity = _archive_identity(transaction.lstat())
+        _archive_fsync_directory(root)
+        shutil.copytree(source_path, transaction / "source", copy_function=shutil.copy2)
+        (transaction / "external").mkdir(mode=0o700)
+        manifest_external = []
+        for index_number, row in enumerate(external_edits):
+            path = root / row["path"]
+            shutil.copy2(path, transaction / "external" / str(index_number))
+            manifest_external.append(
+                {
+                    "afterSha256": row["resultSha256"],
+                    "beforeSha256": row["sourceSha256"],
+                    "mode": row["_sourceMode"],
+                    "path": row["path"],
+                }
+            )
+        git_index = _archive_git_index_path(root)
+        shutil.copy2(git_index, transaction / "git-index")
+        _git_index_raw, git_index_before = _archive_read_regular(git_index)
+        original_index_entries = _archive_index_entries(
+            root,
+            git_index,
+            {
+                *plan["_inventory"],
+                *(row["path"] for row in external_edits),
+                INDEX_RELPATH,
+            },
+        )
+        required_index_paths = {
+            *plan["_inventory"], *(row["path"] for row in external_edits)
+        }
+        if not required_index_paths.issubset(original_index_entries):
+            raise ProjectArchiveError("Archive plan paths are missing from the Git index")
+        vault_index = root / INDEX_RELPATH
+        vault_index_present = vault_index.is_file() and not vault_index.is_symlink()
+        if vault_index_present:
+            shutil.copy2(vault_index, transaction / "vault-index")
+            _vault_index_raw, vault_index_before = _archive_read_regular(vault_index)
+        else:
+            vault_index_before = None
+        _archive_fsync_tree(transaction)
+        _archive_fsync_directory(root)
+        source_files = {
+            path[len(plan["source"]) + 1 :]: row["sha256"]
+            for path, row in plan["_inventory"].items()
+        }
+        source_modes = {
+            path[len(plan["source"]) + 1 :]: row["mode"]
+            for path, row in plan["_inventory"].items()
+        }
+        destination_files = dict(source_files)
+        destination_modes = dict(source_modes)
+        for path, row in project_edits.items():
+            destination_files[path[len(plan["source"]) + 1 :]] = row["resultSha256"]
+        snapshot_prefix = f"{transaction_name}/source"
+        snapshot_inventory = _archive_inventory(root, snapshot_prefix)
+        if (
+            {
+                path[len(snapshot_prefix) + 1 :]: row["sha256"]
+                for path, row in snapshot_inventory.items()
+            }
+            != source_files
+            or {
+                path[len(snapshot_prefix) + 1 :]: row["mode"]
+                for path, row in snapshot_inventory.items()
+            }
+            != source_modes
+        ):
+            raise ProjectArchiveError("Project archive snapshot became stale")
+        for index_number, row in enumerate(external_edits):
+            _snapshot_raw, snapshot_state = _archive_read_regular(
+                transaction / "external" / str(index_number)
+            )
+            if (
+                snapshot_state["sha256"] != row["sourceSha256"]
+                or snapshot_state["mode"] != row["_sourceMode"]
+            ):
+                raise ProjectArchiveError("Project archive snapshot became stale")
+        _git_snapshot_raw, git_snapshot_state = _archive_read_regular(
+            transaction / "git-index"
+        )
+        if (
+            git_snapshot_state["sha256"] != git_index_before["sha256"]
+            or git_snapshot_state["mode"] != git_index_before["mode"]
+        ):
+            raise ProjectArchiveError("Git index changed during snapshot")
+        if vault_index_before is not None:
+            _vault_snapshot_raw, vault_snapshot_state = _archive_read_regular(
+                transaction / "vault-index"
+            )
+            if (
+                vault_snapshot_state["sha256"] != vault_index_before["sha256"]
+                or vault_snapshot_state["mode"] != vault_index_before["mode"]
+            ):
+                raise ProjectArchiveError("Vault index changed during snapshot")
+        manifest = {
+            "destination": plan["destination"],
+            "destinationFiles": destination_files,
+            "destinationModes": destination_modes,
+            "externalEdits": manifest_external,
+            "gitIndexAllowedSha256": [git_index_before["sha256"]],
+            "gitIndexBeforeSha256": git_index_before["sha256"],
+            "gitIndexMode": git_index_before["mode"],
+            "owner": "brain-project-archive",
+            "planId": plan["planId"],
+            "schemaVersion": PROJECT_ARCHIVE_SCHEMA_VERSION,
+            "slug": plan["slug"],
+            "source": plan["source"],
+            "sourceFiles": source_files,
+            "sourceModes": source_modes,
+            "vaultIndexAfterSha256": None,
+            "vaultIndexBeforeSha256": (
+                vault_index_before["sha256"] if vault_index_before is not None
+                else None
+            ),
+            "vaultIndexMode": (
+                vault_index_before["mode"] if vault_index_before is not None else None
+            ),
+            "vaultIndexPresent": vault_index_present,
+        }
+        _archive_write_json(transaction / "manifest.json", manifest)
+        manifest_published = True
+
+        # Reauthenticate the complete source, every external edit, and the Git
+        # index after the refreshed plan and immediately before the first move.
+        current_inventory = _archive_inventory(root, plan["source"])
+        if current_inventory != plan["_inventory"]:
+            raise ProjectArchiveError("Project archive plan became stale")
+        if _archive_identity(source_path.lstat()) != plan["_sourceDirectoryIdentity"]:
+            raise ProjectArchiveError("Project archive source identity changed")
+        for row in external_edits:
+            _archive_assert_state(
+                root / row["path"],
+                {
+                    "identity": row["_sourceIdentity"],
+                    "mode": row["_sourceMode"],
+                    "sha256": row["sourceSha256"],
+                },
+            )
+        _archive_assert_state(git_index, git_index_before)
+        if not _archive_journal_guard_matches(root, journal_guard):
+            raise ProjectArchiveError("Project archive journal ownership changed")
+        external_mutation_started = True
+        source_parent_guard = None
+        destination_parent_guard = None
+        try:
+            source_parent_guard = _archive_open_parent_guard(source_path.parent)
+            destination_parent_guard = _archive_open_parent_guard(
+                destination_path.parent
+            )
+            _archive_rename_guarded(
+                source_parent_guard,
+                source_path.name,
+                destination_parent_guard,
+                destination_path.name,
+                plan["_sourceDirectoryIdentity"],
+            )
+        finally:
+            _archive_close_parent_guard(source_parent_guard)
+            _archive_close_parent_guard(destination_parent_guard)
+        for row in plan["edits"]:
+            if not _archive_journal_guard_matches(root, journal_guard):
+                raise ProjectArchiveError("Project archive journal ownership changed")
+            path = root / row["resultPath"]
+            row["_installedState"] = _archive_write_guarded(
+                path,
+                row["_result"],
+                row["_sourceMode"],
+                {
+                    "identity": row["_sourceIdentity"],
+                    "mode": row["_sourceMode"],
+                    "sha256": row["sourceSha256"],
+                },
+            )
+
+        destination_entries = {}
+        for source_rel, inventory_row in plan["_inventory"].items():
+            result_rel = plan["destination"] + source_rel[len(plan["source"]) :]
+            edit = project_edits.get(source_rel)
+            raw = edit["_result"] if edit is not None else inventory_row["_raw"]
+            destination_entries[result_rel] = {
+                "gitMode": original_index_entries[source_rel][0],
+                "mode": inventory_row["mode"],
+                "raw": raw,
+                "sha256": _sha256_bytes(raw),
+            }
+        external_entries = {
+            row["resultPath"]: {
+                "gitMode": original_index_entries[row["path"]][0],
+                "mode": row["_sourceMode"],
+                "raw": row["_result"],
+                "sha256": row["resultSha256"],
+            }
+            for row in external_edits
+        }
+        if {
+            row["resultPath"]: row["resultSha256"] for row in plan["moves"]
+        } != {
+            path: row["sha256"] for path, row in destination_entries.items()
+        }:
+            raise ProjectArchiveError("Archive staging diverged from the public move plan")
+        if {
+            row["resultPath"]: row["resultSha256"]
+            for row in plan["edits"]
+            if not row["path"].startswith(plan["source"] + "/")
+        } != {
+            path: row["sha256"] for path, row in external_entries.items()
+        }:
+            raise ProjectArchiveError("Archive staging diverged from the public edit plan")
+        planned_entries = {**destination_entries, **external_entries}
+        source_removals = set(plan["_inventory"])
+        staged_changed = {*source_removals, *planned_entries}
+        _archive_assert_planned_outputs(
+            root, plan["destination"], destination_entries, external_edits
+        )
+        _archive_assert_state(git_index, git_index_before)
+        if not _archive_journal_guard_matches(root, journal_guard):
+            raise ProjectArchiveError("Project archive journal ownership changed")
+        staged_index_path = transaction / "git-index-stage"
+        git_index_stage_raw, git_index_stage = _archive_build_exact_index(
+            root,
+            base_index=git_index,
+            output_index=staged_index_path,
+            removals=source_removals,
+            updates=planned_entries,
+            expected_entries=planned_entries,
+            expected_changed=staged_changed,
+        )
+        _archive_assert_planned_outputs(
+            root, plan["destination"], destination_entries, external_edits
+        )
+        manifest["gitIndexAllowedSha256"].append(git_index_stage["sha256"])
+        _archive_write_json(transaction / "manifest.json", manifest)
+        _archive_assert_planned_outputs(
+            root, plan["destination"], destination_entries, external_edits
+        )
+        _archive_assert_state(git_index, git_index_before)
+        if not _archive_journal_guard_matches(root, journal_guard):
+            raise ProjectArchiveError("Project archive journal ownership changed")
+        git_index_stage_live = _archive_write_guarded(
+            git_index,
+            git_index_stage_raw,
+            git_index_before["mode"],
+            git_index_before,
+        )
+        if (
+            git_index_stage_live["sha256"] != git_index_stage["sha256"]
+            or git_index_stage_live["mode"] != git_index_before["mode"]
+        ):
+            raise ProjectArchiveError("Git index installation changed")
+        indexed_notes, indexed_assets = _archive_index_corpus(root)
+        index_bytes = serialize(
+            reduce_restricted(build_index(root, indexed_notes, indexed_assets))
+        )
+        manifest["vaultIndexAfterSha256"] = _sha256_bytes(index_bytes)
+        # Publish recovery recognition before the new index generation.
+        _archive_write_json(transaction / "manifest.json", manifest)
+        if vault_index_before is not None:
+            _archive_assert_state(vault_index, vault_index_before)
+            index_mode = vault_index_before["mode"]
+        else:
+            if os.path.lexists(vault_index):
+                raise ProjectArchiveError("Vault index changed before installation")
+            index_mode = 0o644
+        if not _archive_journal_guard_matches(root, journal_guard):
+            raise ProjectArchiveError("Project archive journal ownership changed")
+        vault_index_installed = _archive_write_guarded(
+            vault_index, index_bytes, index_mode, vault_index_before
+        )
+        _archive_assert_state(git_index, git_index_stage_live)
+        final_index_path = transaction / "git-index-final"
+        index_entry = {
+            INDEX_RELPATH: {
+                "gitMode": original_index_entries.get(
+                    INDEX_RELPATH, (_archive_git_mode(index_mode), "")
+                )[0],
+                "mode": index_mode,
+                "raw": index_bytes,
+                "sha256": _sha256_bytes(index_bytes),
+            }
+        }
+        final_entries = {**planned_entries, **index_entry}
+        git_index_final_raw, git_index_final = _archive_build_exact_index(
+            root,
+            base_index=git_index,
+            output_index=final_index_path,
+            removals=source_removals,
+            updates=index_entry,
+            expected_entries=final_entries,
+            expected_changed={*staged_changed, INDEX_RELPATH},
+        )
+        _archive_assert_state(vault_index, vault_index_installed)
+        _archive_assert_planned_outputs(
+            root, plan["destination"], destination_entries, external_edits
+        )
+        manifest["gitIndexAllowedSha256"].append(git_index_final["sha256"])
+        _archive_write_json(transaction / "manifest.json", manifest)
+        _archive_assert_state(git_index, git_index_stage_live)
+        if not _archive_journal_guard_matches(root, journal_guard):
+            raise ProjectArchiveError("Project archive journal ownership changed")
+        git_index_final_live = _archive_write_guarded(
+            git_index,
+            git_index_final_raw,
+            git_index_before["mode"],
+            git_index_stage_live,
+        )
+        if (
+            git_index_final_live["sha256"] != git_index_final["sha256"]
+            or git_index_final_live["mode"] != git_index_before["mode"]
+        ):
+            raise ProjectArchiveError("Git index installation changed")
+        errors, warnings = run_validate(
+            root, True, _tracked_override=_archive_git_tracked(root)
+        )
+        if errors:
+            raise ProjectArchiveError("Archived Project failed post-write validation")
+        entity_warnings = {
+            (row["path"], row["rule"], row["message"])
+            for row in warnings
+            if row["rule"].startswith("project-") or row["rule"].startswith("area-")
+        }
+        if entity_warnings - plan["_baselineEntityFindings"]:
+            raise ProjectArchiveError("Archived Project introduced Project/Area contract warnings")
+    except BaseException as archive_error:
+        if (
+            transaction_created
+            and not manifest_published
+            and not external_mutation_started
+        ):
+            try:
+                _archive_discard_unpublished_transaction(
+                    root, transaction, transaction_identity, journal_guard
+                )
+            except BaseException as recovery_error:
+                _archive_close_journal(journal_guard)
+                raise ProjectArchiveRecoveryRequired(
+                    "Project archive preflight cleanup requires owner inspection"
+                ) from recovery_error
+        elif transaction_created:
+            try:
+                _archive_restore_transaction(
+                    root, journal, plan["slug"], journal_guard
+                )
+            except BaseException as recovery_error:
+                _archive_close_journal(journal_guard)
+                raise ProjectArchiveRecoveryRequired(
+                    "Project archive failed and automatic rollback requires manual recovery"
+                ) from recovery_error
+        else:
+            try:
+                _archive_remove_journal(root, journal_guard)
+            except BaseException as recovery_error:
+                _archive_close_journal(journal_guard)
+                raise ProjectArchiveRecoveryRequired(
+                    "Project archive failed and journal cleanup requires manual recovery"
+                ) from recovery_error
+        _archive_close_journal(journal_guard)
+        raise archive_error
+
+    cleanup_warnings = []
+    try:
+        _archive_remove_journal(root, journal_guard)
+    except BaseException as cleanup_error:
+        journal_retired = not os.path.lexists(
+            root / PROJECT_ARCHIVE_JOURNAL_RELPATH
+        )
+        _archive_close_journal(journal_guard)
+        journal_guard = None
+        if not journal_retired:
+            raise ProjectArchiveRecoveryRequired(
+                "Committed Project archive journal requires owner inspection"
+            ) from cleanup_error
+        cleanup_warnings.append(_archive_cleanup_warning(evidence_retained=True))
+    _archive_close_journal(journal_guard)
+    journal_guard = None
+    if not cleanup_warnings:
+        try:
+            shutil.rmtree(transaction)
+            _archive_fsync_directory(root)
+        except (OSError, ProjectArchiveError):
+            cleanup_warnings.append(
+                _archive_cleanup_warning(
+                    evidence_retained=os.path.lexists(transaction)
+                )
+            )
+    public = _public_archive_plan(plan)
+    return {
+        **public,
+        "cleanupWarnings": cleanup_warnings,
+        "rollbackPaths": sorted(
+            {plan["source"], plan["destination"], INDEX_RELPATH, *(row["path"] for row in external_edits)}
+        ),
+        "staged": True,
+        "written": True,
+    }
+
+
 
 
 # §8.3 restricted-note reduction (issue #17). Frontmatter tags only —
@@ -3611,6 +5584,8 @@ def run_validate(
     root: Path,
     check_index: bool,
     requested_environment: str | None = None,
+    *,
+    _tracked_override: set[str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     errors: list[dict] = []
     warnings: list[dict] = []
@@ -3895,7 +5870,14 @@ def run_validate(
             )
 
     if check_index:
-        tnotes, tassets = index_corpus(root)
+        if _tracked_override is None:
+            tnotes, tassets = index_corpus(root)
+        else:
+            working_notes, working_assets = walk_corpus(
+                root, selected_environment=None
+            )
+            tnotes = [path for path in working_notes if path in _tracked_override]
+            tassets = [path for path in working_assets if path in _tracked_override]
         fresh = serialize(reduce_restricted(build_index(root, tnotes, tassets)))
         index_path = root / INDEX_RELPATH
         if not index_path.exists() or index_path.read_bytes() != fresh:
@@ -6614,11 +8596,18 @@ def build_aymt(
             )
         )
     entities = context["entities"]
-    active_project_slugs = set(entities["activeProjects"])
+    inactive_project_slugs = {
+        slug
+        for slug, project in entities["projects"].items()
+        if project["lifecycle"] in PROJECT_LIFECYCLES - {"active"}
+    }
     for rel in sorted(allowed):
         rec = allowed[rel]
         project_directory = re.match(r"^04_Projects/([^/]+)/", rel)
-        if project_directory and project_directory.group(1) not in active_project_slugs:
+        if (
+            project_directory
+            and project_directory.group(1) in inactive_project_slugs
+        ):
             continue
         owner_lane = rel.startswith(("03_Journal/", "04_Projects/", "05_Areas/"))
         for task in rec.get("tasks", []):
@@ -6687,17 +8676,18 @@ def build_aymt(
         days_until = (target_d - today_d).days if target_d else None
         urgent = project["overdue"] or (days_until is not None and days_until <= 7)
         target_state = project["targetStatus"] or "unknown"
+        target_label = project["target"] or "missing"
         if project["overdue"]:
             target_state += ", overdue"
         candidates.append(
             _aymt_candidate(
                 kind="project",
-                outcome=f"Advance {project['title']} — target {project['target']} ({target_state})",
+                outcome=f"Advance {project['title']} — target {target_label} ({target_state})",
                 section="do-next" if urgent else "keep-warm",
                 why_now=(
-                    f"The canonical Project target {project['target']} is overdue."
+                    f"The canonical Project target {target_label} is overdue."
                     if project["overdue"]
-                    else f"The canonical Project target is {project['target']} ({project['targetStatus']})."
+                    else f"The canonical Project target is {target_label} ({target_state})."
                 ),
                 next_step=next_step,
                 caveat=(
@@ -7172,7 +9162,11 @@ def build_home(
     allowed = context["allowed"]
     report = context["report"]
     entities = context["entities"]
-    active_project_slugs = set(entities["activeProjects"])
+    inactive_project_slugs = {
+        slug
+        for slug, project in entities["projects"].items()
+        if project["lifecycle"] in PROJECT_LIFECYCLES - {"active"}
+    }
 
     global_actions = sorted(
         aymt["candidates"],
@@ -7191,7 +9185,10 @@ def build_home(
     due: list[dict] = []
     for rel, rec in sorted(allowed.items()):
         project_directory = re.match(r"^04_Projects/([^/]+)/", rel)
-        if project_directory and project_directory.group(1) not in active_project_slugs:
+        if (
+            project_directory
+            and project_directory.group(1) in inactive_project_slugs
+        ):
             continue
         for task in rec.get("tasks", []):
             if task.get("status") != "open" or task.get("malformed"):
@@ -7227,8 +9224,8 @@ def build_home(
             **_home_path_row(project["path"], allowed[project["path"]]),
             "areas": [area["slug"] for area in project["areas"]],
             "overdue": project["overdue"],
-            "target": project["target"],
-            "targetStatus": project["targetStatus"],
+            "target": project["target"] or "missing",
+            "targetStatus": project["targetStatus"] or "unknown",
         }
         for slug in entities["activeProjects"]
         for project in [entities["projects"][slug]]
@@ -7979,9 +9976,39 @@ def cmd_projects(root: Path, args) -> int:
         rollups = reconcile_project_rollups(
             root, model, write=getattr(args, "write_rollups", False)
         )
-    except (OSError, KeyboardInterrupt):
+        if rollups["written"]:
+            notes, assets = walk_corpus(root, selected_environment=None)
+            index = build_index(root, notes, assets)
+            model = build_entity_registry(root, index, today_d=vault_today(config))
+    except ProjectRollupRecoveryRequired:
+        payload = {
+            "code": "project-rollup-recovery-required",
+            "error": "Project rollup recovery requires manual inspection",
+            "recoveryRequired": True,
+            "remediation": (
+                "Inspect the affected Area rollups, preserve owner edits, then rerun "
+                "brain projects --write-rollups"
+            ),
+        }
         if args.json:
-            print(json.dumps({"error": "Project rollup write failed safely"}, indent=1, sort_keys=True))
+            print(json.dumps(payload, indent=1, sort_keys=True))
+        else:
+            print(f"error: {payload['error']}", file=sys.stderr)
+            print(f"remediation: {payload['remediation']}", file=sys.stderr)
+        return 2
+    except (OSError, ProjectArchiveError, KeyboardInterrupt):
+        if args.json:
+            print(
+                json.dumps(
+                    {
+                        "code": "project-rollup-failed-safely",
+                        "error": "Project rollup write failed safely",
+                        "recoveryRequired": False,
+                    },
+                    indent=1,
+                    sort_keys=True,
+                )
+            )
         else:
             print("error: Project rollup write failed safely", file=sys.stderr)
         return 1
@@ -7996,14 +10023,128 @@ def cmd_projects(root: Path, args) -> int:
     for row in rows:
         area_list = ", ".join(area["slug"] for area in row["areas"]) or "(none)"
         target = row["target"] or "(missing)"
-        lines.append(f"  {row['slug']}  target {target}  Areas: {area_list}")
+        target_status = row["targetStatus"] or "unknown"
+        criteria = "yes" if row["hasCompletionCriteria"] else "no"
+        attention = ", ".join(row["attention"]) or "none"
+        lines.append(
+            f"  {row['slug']}  target {target} ({target_status})  "
+            f"criteria: {criteria}  attention: {attention}  Areas: {area_list}"
+        )
     lines.append(f"Area rollup changes: {len(rollups['changes'])}")
     for change in rollups["changes"]:
-        lines.append(f"  {change['path']}")
+        lines.append(
+            f"  {change['path']}  {change['beforeDigest']} -> "
+            f"{change['afterDigest']}"
+        )
+    for blocker in rollups["blockers"]:
+        lines.append(
+            f"BLOCKED {blocker['path']} {blocker['rule']}: {blocker['message']}"
+        )
     if model["findings"]:
         lines.append(f"contract findings: {len(model['findings'])}")
+        for finding in model["findings"]:
+            lines.append(
+                f"  {finding['rule']}  {finding['path']}: {finding['message']}"
+            )
     emit(payload, args.json, lines)
-    return 0
+    return 1 if getattr(args, "write_rollups", False) and rollups["blockers"] else 0
+
+
+def _archive_plan_lines(payload: dict) -> list[str]:
+    lines = [
+        f"Project archive plan: {payload['status']}",
+        f"  {payload['source']} -> {payload['destination']}",
+        f"  files moved: {payload['summary']['filesMoved']}",
+        f"  links rewritten: {payload['summary']['linksRewritten']}",
+    ]
+    preview_limit = 20
+    for row in payload["moves"][:preview_limit]:
+        lines.append(f"  MOVE {row['sourcePath']} -> {row['resultPath']}")
+    if len(payload["moves"]) > preview_limit:
+        lines.append(
+            f"  ... {len(payload['moves']) - preview_limit} more moves (use --json)"
+        )
+    for row in payload["linkRewrites"][:preview_limit]:
+        lines.append(
+            f"  LINK {row['sourcePath']}:{row['line']} "
+            f"{row['oldDestination']} -> {row['newDestination']}"
+        )
+    if len(payload["linkRewrites"]) > preview_limit:
+        lines.append(
+            f"  ... {len(payload['linkRewrites']) - preview_limit} more link rewrites (use --json)"
+        )
+    for blocker in payload["blockers"]:
+        lines.append(
+            f"  BLOCKED {blocker['path']} {blocker['rule']}: {blocker['message']}"
+        )
+    return lines
+
+
+def cmd_archive_project(root: Path, args) -> int:
+    """Preview, recover, or execute an approved whole-Project archive."""
+    try:
+        if args.recover:
+            payload = recover_project_archive(root, args.slug)
+            lines = ["interrupted Project archive recovered"]
+        else:
+            plan = build_project_archive_plan(root, args.slug)
+            if args.write:
+                if not args.approve_archive:
+                    raise ProjectArchiveError(
+                        "--write requires explicit --approve-archive"
+                    )
+                if plan["status"] == "blocked":
+                    payload = _public_archive_plan(plan)
+                    lines = _archive_plan_lines(payload)
+                else:
+                    payload = apply_project_archive_plan(root, plan)
+                    lines = [
+                        f"archived {payload['source']} -> {payload['destination']}",
+                        f"staged files; links rewritten: {payload['summary']['linksRewritten']}",
+                        "commit these exact staged changes to retire the Git rollback path",
+                    ]
+                    for warning in payload.get("cleanupWarnings", []):
+                        lines.append(
+                            f"WARNING {warning['code']}: {warning['message']}"
+                        )
+            else:
+                if args.approve_archive:
+                    raise ProjectArchiveError(
+                        "--approve-archive is valid only with --write"
+                    )
+                payload = _public_archive_plan(plan)
+                lines = _archive_plan_lines(payload)
+        emit(payload, args.json, lines)
+        return 1 if payload.get("status") == "blocked" else 0
+    except ProjectArchiveRecoveryRequired:
+        message = "Project archive requires authenticated manual recovery"
+        remediation = (
+            "Inspect preserved archive evidence before retrying "
+            f"brain archive-project {args.slug} --recover"
+        )
+        if args.json:
+            print(
+                json.dumps(
+                    {
+                        "code": "project-archive-recovery-required",
+                        "error": message,
+                        "recoveryRequired": True,
+                        "remediation": remediation,
+                    },
+                    indent=1,
+                    sort_keys=True,
+                )
+            )
+        else:
+            print(f"error: {message}; run: {remediation}", file=sys.stderr)
+        return 2
+    except (ProjectArchiveError, OSError, KeyboardInterrupt):
+        message = "Project archive failed safely"
+        if args.json:
+            print(json.dumps({"error": message}, indent=1, sort_keys=True))
+        else:
+            print(f"error: {message}", file=sys.stderr)
+        return 1
 
 
 def cmd_tags(root: Path, args) -> int:
@@ -9997,6 +12138,27 @@ def main(argv: list[str] | None = None) -> int:
         help="source-hash and write only Area Active Projects sections",
     )
     p = add(
+        "archive-project",
+        help="preview or execute an approved whole-directory Project archive",
+    )
+    p.add_argument("slug", help="canonical Project directory slug")
+    archive_mode = p.add_mutually_exclusive_group()
+    archive_mode.add_argument(
+        "--write",
+        action="store_true",
+        help="apply, stage, reindex, and validate the archive transaction",
+    )
+    archive_mode.add_argument(
+        "--recover",
+        action="store_true",
+        help="roll back an interrupted transaction from authenticated evidence",
+    )
+    p.add_argument(
+        "--approve-archive",
+        action="store_true",
+        help="owner approval for this structural archive (required with --write)",
+    )
+    p = add(
         "migrate-links",
         help="preview/check/write legacy wikilinks as relative Markdown",
     )
@@ -10241,6 +12403,7 @@ def main(argv: list[str] | None = None) -> int:
         "search": cmd_search,
         "links": cmd_links,
         "projects": cmd_projects,
+        "archive-project": cmd_archive_project,
         "migrate-links": cmd_migrate_links,
         "aymt": cmd_aymt,
         "home": cmd_home,
@@ -10273,6 +12436,7 @@ def main(argv: list[str] | None = None) -> int:
             "artifacts",
             "notify",
             "projects",
+            "archive-project",
         }:
             try:
                 selector = (

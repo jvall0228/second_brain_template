@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-18
 expires: 2027-08-11
 ---
 
@@ -19,9 +19,10 @@ Retrieval discipline for questions the vault should answer. The vault is the sou
 ## Steps
 
 1. **Search the vault, in order** — stop as soon as you have enough to answer:
-   1. `brain search "<term>"` — title and full-text hits (try synonyms and abbreviations too).
-   2. [INDEX](../../../00_Meta/INDEX.md) and the relevant directory READMEs — where a topic *should* live, even if search missed it.
-   3. `grep` across the vault — phrasings the index search didn't catch.
+   1. For Project status, portfolio, target, or Area-ownership questions, start with `brain projects --json`, then read the cited `PROJECT.md` and `AREA.md` entrypoints. It is the canonical entity inventory; NOW is only a priority view.
+   2. Otherwise, `brain search "<term>"` — title and full-text hits (try synonyms and abbreviations too).
+   3. [INDEX](../../../00_Meta/INDEX.md) and the relevant directory READMEs — where a topic *should* live, even if search missed it.
+   4. `grep` across the vault — phrasings the index search didn't catch.
 2. **Read the notes you found.** Answer from note content, never from search snippets or filenames alone.
 3. **Cite every vault claim with a source-relative Markdown link** to the note it came from, e.g. the [harness research](../../../06_Resources/harness-primitives-research.md) says… when writing from a skill directory. An answer without citations is an answer the human can't verify or follow.
 4. **Keep vault knowledge and model knowledge separate.** If you supplement with general knowledge, label it explicitly ("the vault doesn't cover this, but generally…"). Check freshness while reading: if a note looks stale (`updated:` long ago for a volatile topic), say so alongside the answer.

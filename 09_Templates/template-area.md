@@ -3,6 +3,7 @@ title: "{{AREA_NAME}}"
 tags:
   - type/area
   - status/active
+  - area/{{AREA_SLUG}}
   - workflow/draft
   - audience/human
   - audience/agent
@@ -20,6 +21,12 @@ What does "good" look like for this area?
 
 What's the priority right now?
 
+## Active Projects
+
+_No active Projects currently map to this Area._
+
+This section is derived from Project `area/*` tags by `brain projects --write-rollups`; keep other Area prose outside it.
+
 ## Knowledge Model (Optional)
 
 Delete this section when the Area is simple. For a multi-source Area, follow the [Area Wiki Specification]({{AREA_WIKI_SPEC}}) and record:
@@ -28,7 +35,6 @@ Delete this section when the Area is simple. For a multi-source Area, follow the
 - The curated map of entity, concept, summary, plan, and log notes
 - Domain-specific verification and ingest rules
 
-## Related
+## Related Resources
 
-- Projects: [Related project]({{RELATED_PROJECT}})
-- Resources: [Related resource]({{RELATED_RESOURCE}})
+- [Related resource]({{RELATED_RESOURCE}})

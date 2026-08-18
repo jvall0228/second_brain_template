@@ -21,11 +21,11 @@ updated: {{date}}
 
 ## Get Current — Projects
 
-Review active projects, update next actions.
+Run `brain projects`. Review every active target, estimated/overdue signal, Area mapping, completion criterion, and next action.
 
 ## Get Current — Areas
 
-Review ongoing responsibilities.
+Review ongoing responsibilities and whether their derived active-Project rollups still reflect ownership.
 
 ## Preview
 
@@ -94,7 +94,8 @@ How was your sleep this week? Anything out of the ordinary? Any notable dreams?
 
 - Does each active project serve something on the [Now page](../01_Profile/NOW.md)?
 - Is anything on the Now page not being moved by any project?
-- Any project or area actually done, cancelled, or dead? Flag it for archiving (see the periodic-review skill's archive path).
+- Should any deprioritized Project reactivate, remain paused, or close?
+- Any Project completed, cancelled, or superseded? Set it to `status/done` and reconcile active navigation now; archive its directory only through the separate approved move.
 
 ## Reflection
 

@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-17
+updated: 2026-08-18
 ---
 
 # Templates
@@ -15,8 +15,8 @@ Reusable note templates for creating structured content. Use these when creating
 
 | Note Type | Template | Required Tags | Destination |
 |-----------|----------|---------------|-------------|
-| New project | `template-project.md` | `type/project`, `status/active` | `04_Projects/<project-name>/PROJECT.md` |
-| Area of responsibility | `template-area.md` | `type/area` | `05_Areas/<area-name>/AREA.md` |
+| New Project | `template-project.md` | `type/project`, one lifecycle, `project/<slug>`, one or more `area/<slug>` | `04_Projects/<project-name>/PROJECT.md` |
+| Area of responsibility | `template-area.md` | `type/area`, `status/active`, `area/<slug>` | `05_Areas/<area-name>/AREA.md` |
 | Named Resource | `template-resource.md` | `type/resource` | `06_Resources/<resource-name>/RESOURCE.md` |
 | Atomic evergreen note | `template-zettel.md` | `type/zettel` | `06_Resources/` |
 | Daily log | `template-daily-log.md` | `type/journal` | `03_Journal/periodic/daily/` |
@@ -29,6 +29,8 @@ Reusable note templates for creating structured content. Use these when creating
 | Comparison | `template-comparison.md` | `type/reference` | `06_Resources/` |
 
 All templates also carry `workflow/draft` in their suggested tags — an instantiated note keeps it until triage (see [CONVENTIONS](../00_Meta/CONVENTIONS.md#tag-namespaces)).
+
+An active Project also replaces `target`, `target_status`, Outcome, and Completion Criteria placeholders. Repeat the `area/*` tag and Area link for every mapping. The [Project and Area Contract](../10_Agents/docs/project-area-contract.md) defines inactive transitions and derived rollups.
 
 ## Variants (`variants/`)
 

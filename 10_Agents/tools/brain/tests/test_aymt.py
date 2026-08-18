@@ -352,6 +352,69 @@ class AymtCollectorTests(unittest.TestCase):
         self.assertEqual(len(projects), 1)
         self.assertIn("estimated, overdue", projects[0]["outcome"])
 
+    def test_active_project_with_missing_target_never_renders_python_none(self):
+        self.vault.write(
+            "05_Areas/work/AREA.md",
+            note(
+                "Work",
+                "## Active Projects\n",
+                ("type/area", "status/active", "area/work"),
+            ),
+            tracked=True,
+        )
+        self.vault.write(
+            "04_Projects/incomplete/PROJECT.md",
+            note(
+                "Incomplete",
+                "## Outcome\n\nShip it.\n\n## Completion Criteria\n\n- Verified.",
+                ("type/project", "status/active", "project/incomplete", "area/work"),
+            ),
+            tracked=True,
+        )
+
+        payload = self.vault.build()
+        project = next(
+            row for row in payload["candidates"] if row["kind"] == "project"
+        )
+
+        self.assertIn("target missing (unknown)", project["outcome"])
+        self.assertNotIn("None", project["outcome"] + project["whyNow"])
+
+    def test_only_explicitly_inactive_project_tasks_are_suppressed(self):
+        self.vault.write(
+            "05_Areas/work/AREA.md",
+            note("Work", "Maintain.", ("type/area", "status/active", "area/work")),
+            tracked=True,
+        )
+        self.vault.write(
+            "04_Projects/malformed/PROJECT.md",
+            note(
+                "Malformed",
+                "- [ ] VISIBLE-MALFORMED-PROJECT-TASK 📅 2026-08-10",
+                ("type/project", "project/malformed", "area/work"),
+            ),
+            tracked=True,
+        )
+        self.vault.write(
+            "04_Projects/paused/PROJECT.md",
+            note(
+                "Paused",
+                "- [ ] HIDDEN-INACTIVE-PROJECT-TASK 📅 2026-08-10",
+                (
+                    "type/project",
+                    "status/deprioritized",
+                    "project/paused",
+                    "area/work",
+                ),
+            ),
+            tracked=True,
+        )
+
+        serialized = json.dumps(self.vault.build())
+
+        self.assertIn("VISIBLE-MALFORMED-PROJECT-TASK", serialized)
+        self.assertNotIn("HIDDEN-INACTIVE-PROJECT-TASK", serialized)
+
     def test_restricted_profile_is_filtered_before_readiness(self):
         rel = brain.CORE_FRAMEWORK_PATHS["identity"]
         self.vault.write(
