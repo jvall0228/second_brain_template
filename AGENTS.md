@@ -4,7 +4,7 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -30,19 +30,24 @@ After reading all four, the agent has enough context to begin work.
 
 ## Where Agents Write
 
-Agent writes are **two-lane**, both review-gated:
+Write authority follows **execution class**. This section is the single full statement; other documents point here.
 
-- Output **for the vault** (captures, research, reports, proposals) goes to **`02_Inbox/`** unless explicitly directed elsewhere. This is the **Inbox-first rule** — a human reviews and triages Inbox contents into the appropriate PARA directory.
-- Deliverables **for the world** (briefs, outlines, draft posts/emails) go to **`02_Outbox/`** via [express-packet](10_Agents/skills/express-packet/SKILL.md) — the owner reviews and ships; **agents never ship**. See [README](02_Outbox/README.md).
+**Execution class.** Every run is **interactive** or **autonomous**. The class comes from execution mode, not owner presence: an interactive session is a foreground, user-directed conversation; scheduled, headless, recurring, and automation-driven runs are autonomous. Missing trusted execution metadata defaults to **autonomous**. The owner temporarily stepping away does not change an established class. Subagents inherit the parent session's class but act only within the scope the parent delegated.
 
-Standing exceptions:
+**Interactive sessions** may directly create or edit any appropriate non-generated vault location — including `workflow/canonical` notes — when the change is reasonably required by the current user-directed task. This removes file-by-file approval, not task scope. Canonical changes still receive a scoped diff, required validation, and a [CHANGELOG](00_Meta/CHANGELOG.md) entry when the canonical contract calls for one.
+
+**Autonomous sessions** are review-gated: new vault content goes to **`02_Inbox/`** (the **Inbox-first rule** — a human triages it into the appropriate PARA directory), and existing notes change only through the named standing exceptions below.
+
+**Either class:** deliverables **for the world** (briefs, outlines, draft posts/emails) go to **`02_Outbox/`** via [express-packet](10_Agents/skills/express-packet/SKILL.md) — the owner reviews and ships; **agents never ship** (see [README](02_Outbox/README.md)). Generated files remain owned by their generators regardless of class: edit the source of truth and run the owning regeneration command, never hand-edit generated output.
+
+Standing exceptions (the edits autonomous sessions may make to existing content):
 
 - Agents may append solution notes to `10_Agents/solutions/` — see [README](10_Agents/README.md) — and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (the self-improve loop's memory).
 - `brain {aymt,home} --write` owns its generated `00_Meta/` file; `brain projects --write-rollups` owns each Area's `## Active Projects`; generic/hand edits remain forbidden.
 - `brain artifacts --write` alone owns the three generated files in `08_Assets/artifacts/README.md`; generic writes and hand edits are forbidden.
 - Notify: [contract](10_Agents/skills/configure-notifications/SKILL.md).
 - A live, user-invoked [agent-orientation](10_Agents/skills/agent-orientation/SKILL.md) session may write draft outputs to `10_Agents/environments/<env-slug>/`, `10_Agents/tools/<source>/`, and `10_Agents/skills/<source>-capture/`. Markdown uses `workflow/draft`; other bundle files inherit it until owner promotion.
-- During a live [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) session, agents write interview results directly to `01_Profile/`, `03_Journal/people/` (owner-confirmed people notes), `04_Projects/`, and `05_Areas/` — and, in its context-specialization stage, rewrite the periodic templates in `09_Templates/` from `09_Templates/variants/` and record `context:` in `00_Meta/config.yaml`. The owner's in-the-moment approval is the review. Outside that session, Inbox-first applies as usual.
+- During a live [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) session, agents write interview results directly to `01_Profile/`, `03_Journal/people/` (owner-confirmed people notes), `04_Projects/`, and `05_Areas/` — and, in its context-specialization stage, rewrite the periodic templates in `09_Templates/` from `09_Templates/variants/` and record `context:` in `00_Meta/config.yaml`. The owner's in-the-moment approval is the review. Outside that session, the execution-class contract above applies as usual.
 
 Template-shipped skills/tools, `00_Meta/config.yaml`, and named tagless entrypoint/editor/harness adapters are **canonical-by-policy** and use canonical change control. Location alone does not confer that state; orientation bundles stay draft until owner promotion.
 

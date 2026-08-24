@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2026-11-11
 ---
 
@@ -37,21 +37,29 @@ brain <command> --json
 ## Harness-specific notes
 
 - **`.vscode/` applies as-is:** Cursor is a VS Code fork and honors the vault's shipped workspace config ([PRD](../../../00_Meta/PRD.md) §6.5) unchanged — settings, the first-party extension recommendations, the brain/daily-note/homepage tasks, and the template-generated snippets all work in Cursor with zero extra wiring.
-- **The only harness with a real repo ignore file:** `.cursorignore` gives genuine access exclusion — the one place the vault's privacy marking (`restricted/private`, issue #17 closing PRD §21's open question) can be enforced natively today — see the Restricted content section below. `overlay/cursorignore-template.txt` shows the shape.
+- **The only harness with a real repo ignore file:** `.cursorignore` gives genuine path-based read exclusion — no other supported harness has an equivalent. That makes it available as an **owner-selected opt-in** read restriction, not the enforcement layer for the vault's privacy marking: `restricted/private` is publication classification, not agent access control ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). See the Restricted content section below; `overlay/cursorignore-template.txt` shows the shape.
 - **Glob-scoped rules:** `.cursor/rules/*.mdc` can scope guidance per PARA directory (`overlay/rules/inbox-conventions.mdc`); use sparingly — `AGENTS.md` remains the portable rule layer.
 - **MCP:** `.cursor/mcp.json`; the vault ships none (M7 registers external sources here).
 - **Cloud Automations** can cron scheduled runs (e.g. weekly-review drafts into `02_Inbox/`) — an M7 concern.
 
-## Restricted content → `.cursorignore`
+## Restricted content → `.cursorignore` (opt-in owner-selected read restriction)
 
-The vault's privacy marking is the `restricted/private` tag ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#tag-namespaces), issue #17) — advisory everywhere except mechanically-enforced surfaces, and Cursor is the one harness where real enforcement exists. Generate `.cursorignore` entries from the restricted-tagged paths:
+The vault's privacy marking is the `restricted/private` tag — **publication classification, not agent access control** ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate) owns the contract). Agents read and use private content locally by default. If — and only if — the owner additionally wants this harness blocked from reading restricted notes, `.cursorignore` is the recipe: default overlay installation skips it (the artifact is marked `owner_opt_in` in `overlay/manifest.json`), and `onboard-harness` runs it only on the owner's explicit selection.
+
+When the owner chooses it, generate `.cursorignore` entries from the restricted-tagged paths:
 
 ```
 brain list --tag restricted/private
 ```
 
-Rewrite the managed block between the `# BEGIN second-brain restricted/private (generated)` and `# END` markers in the vault-root `.cursorignore` wholesale with one line per printed path (create the file from `overlay/cursorignore-template.txt` if absent; owner lines outside the markers are never touched). Rewriting the whole block is what makes the sync idempotent and lets a note that *loses* the tag drop back out. This is a documented manual step — run it during `onboard-harness` and re-run it whenever notes gain or lose the tag; nothing regenerates the file for you, so a stale `.cursorignore` silently under-excludes. Only path-listed notes are excluded: Cursor knows nothing about tags, so the tag alone protects nothing here until its path lands in the file.
+Rewrite the managed block between the `# BEGIN second-brain restricted/private (generated)` and `# END` markers in the vault-root `.cursorignore` wholesale with one line per printed path (create the file from `overlay/cursorignore-template.txt` if absent; owner lines outside the markers are never touched). Rewriting the whole block is what makes the sync idempotent and lets a note that *loses* the tag drop back out.
+
+Know what this does and does not give you — it is **path-based, Cursor-specific, and incomplete**:
+
+- Only path-listed notes are excluded: Cursor knows nothing about tags, so the tag alone protects nothing here until its path lands in the file.
+- The sync is a documented manual step — re-run it whenever notes gain or lose the tag; nothing regenerates the file for you, so a stale `.cursorignore` silently under-excludes.
+- No other supported harness has an equivalent mechanism, so this restriction does not travel with the vault.
 
 ## Reference configs
 
-The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); [onboard-harness](../../skills/onboard-harness/SKILL.md) performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`), `overlay/cursorignore-template.txt` (seed for `.cursorignore` — the `restricted/private` generation step above is the shipping privacy policy since 2026-08-11).
+The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); [onboard-harness](../../skills/onboard-harness/SKILL.md) performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`, default install) and `overlay/cursorignore-template.txt` (seed for `.cursorignore` — owner-opt-in only; the generation step above runs solely when the owner selects harness-level read restriction).

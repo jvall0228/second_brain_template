@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -33,13 +33,13 @@ Write a new note to `02_Inbox/` that passes validation on the first try.
    ---
    ```
    Pick the `type/*` that fits (see the authoritative table in `00_Meta/CONVENTIONS.md` § Tag Namespaces); add free-form `topic/*` tags as useful. Agent-created notes always carry `audience/agent` and start `workflow/draft`. Add the provenance fields (`00_Meta/CONVENTIONS.md` § Provenance): `author:` is your harness identifier (`claude-code`, `copilot`, `cursor`, …); `session:` is the session URL, PR, or task reference — omit it when none exists. `brain validate` warns (`missing-author`) on an agent-tagged Inbox draft without `author:`.
-3. **Write the body.** Link related notes with source-relative Markdown and explicit `.md` extensions: `[Display](../06_Resources/example-resource.md)` from Inbox, or `[Display](neighbor.md)` within one directory. Percent-encode spaces and Unicode bytes in destinations.
+3. **Write the body.** A bare link to a `restricted/private` note does not make this capture restricted; copying, summarizing, or transforming its private substance does — then the capture carries `restricted/private` too, and you say so ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Link related notes with source-relative Markdown and explicit `.md` extensions: `[Display](../06_Resources/example-resource.md)` from Inbox, or `[Display](neighbor.md)` within one directory. Percent-encode spaces and Unicode bytes in destinations.
 4. **Validate:** `brain validate` — fix any error it reports before committing.
 5. **Commit** with a short descriptive message (the pre-commit hook re-validates and refreshes the index).
 
 ## Rules
 
-- `02_Inbox/` is the only default destination; write elsewhere only when the human explicitly directs it (or use the `solution-capture` skill for `10_Agents/solutions/`).
+- `02_Inbox/` is the default landing zone under the execution-class write contract ([AGENTS](../../../AGENTS.md#where-agents-write)): autonomous output always lands here, and undirected interactive output does too; an interactive session filing to a note's durable home is that contract's business, not this skill's (use `solution-capture` for `10_Agents/solutions/`).
 - A human triages the Inbox later (`triage-inbox` skill) — don't move your own notes out.
 
 ## References

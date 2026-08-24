@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -84,7 +84,7 @@ Structured writes or navigation beyond Inbox also require `00_Meta/INDEX.md` and
 
 ### 6.2 Agent write pattern
 
-Agent captures, research, reports, and proposals default to `02_Inbox/`; outside deliverables go to `02_Outbox/` via `express-packet`, then the owner ships. Standing exceptions cover solution notes, the append-only rejection log, `onboard-owner` session outputs, `agent-orientation` inventories plus paired draft capture skill/tool bundles, and `configure-notifications`' ignored environment state plus explicitly approved local file tests. The notification exception requires an owner-named and acknowledged private destination and per-category opt-in; it does not authorize a real-provider send, inbound action, restricted content, or Outbox shipping. A user-invoked canonical skill may direct only its documented session writes. Generated orientation bundles are not canonical-by-policy until owner promotion; `write_exceptions` may add directories but cannot weaken canonical or privacy rules. Other destinations require current owner direction.
+Write authority follows the execution-class contract in [AGENTS](../AGENTS.md#where-agents-write): interactive user-directed sessions edit the appropriate durable home directly, while autonomous captures, research, reports, and proposals default to `02_Inbox/`; outside deliverables go to `02_Outbox/` via `express-packet`, then the owner ships. Standing exceptions cover solution notes, the append-only rejection log, `onboard-owner` session outputs, `agent-orientation` inventories plus paired draft capture skill/tool bundles, and `configure-notifications`' ignored environment state plus explicitly approved local file tests. The notification exception requires an owner-named and acknowledged private destination and per-category opt-in; it does not authorize a real-provider send, inbound action, restricted content, or Outbox shipping. A user-invoked canonical skill may direct only its documented session writes. Generated orientation bundles are not canonical-by-policy until owner promotion; `write_exceptions` may add directories but cannot weaken canonical or privacy rules. Other destinations require current owner direction.
 
 ### 6.3 Change control
 
@@ -178,7 +178,7 @@ Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may u
 
 ### 10.3 Restriction semantics
 
-`restricted/private` forbids spreading content beyond its note but is not access control. Agents do not quote it into unrestricted notes. Mechanical protections reduce index data, exclude embeddings/task carry-over, warn on links, and support Cursor ignore. Paths, titles, frontmatter, and targets may remain visible; most harnesses lack repository ignore.
+`restricted/private` is publication classification and leak resistance, not access control; [CONVENTIONS](CONVENTIONS.md#restrictedprivate) owns the full contract. Agents may read, search, and derive from private content locally; a note that carries private substance inherits the tag, while a bare link does not. Mechanical protections cover the committed index, notifications, generated artifacts, AYMT/Home, link-migration output, task carry-over, and Project-to-Area rollups; public export excludes private content by default with a per-operation owner override. Harness-level read restriction (e.g. Cursor ignore) is owner-selected opt-in, and the local semantic sidecar includes private notes. Paths, titles, frontmatter, and targets may remain visible; most harnesses lack repository ignore.
 
 ## 11. Canonical and config contracts
 
@@ -238,7 +238,7 @@ New assets land under `08_Assets/`, append-only by default, and are secret-scann
 
 Connected agents and Git collaborators may read the vault. Never commit credentials or material that must not reach them. `03_Journal/people/` notes concern **third parties** — keep them factual and respectful, and write nothing you would not stand behind if read back. For health, financial, or otherwise sensitive content, remember that anything committed is visible to every agent and service with repo access; keep out material that must not reach them. Legal and relationship-conflict detail also requires owner judgment. Separate work/personal forks.
 
-Restrictions cannot replace permissions or separate forks. External authentication stays in CLI sessions, keychains, connector stores, or environment variables.
+Restrictions classify publication sensitivity, not local agent access ([CONVENTIONS](CONVENTIONS.md#restrictedprivate)); they cannot replace permissions or separate forks. External authentication stays in CLI sessions, keychains, connector stores, or environment variables.
 
 Notification setup, delivery history, and local file-test output stay in the ignored selected-environment overlay. The central notification filter rejects `restricted/private`, credentials, absolute paths, tracking URLs, and unsafe links before provider formatting; outbound callbacks and inbound actions are out of scope.
 

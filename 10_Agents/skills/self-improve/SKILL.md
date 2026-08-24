@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -18,7 +18,7 @@ Make the fork **self-improving** (issue #22): agents observe how the owner actua
 
 ## Ground rules (guardrails)
 
-- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([PRD](../../../00_Meta/PRD.md) §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [AGENTS](../../../AGENTS.md) / [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Agent Write Rules and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
+- **Propose-only.** The loop never edits canonical content directly and never merges its own proposals. Canonical-doc changes ([PRD](../../../00_Meta/PRD.md) §6.3 — `workflow/canonical` notes, `00_Meta/`, `10_Agents/docs/`) go **by PR only**, with one carved exception: `10_Agents/docs/rejected-proposals.md` is an **append-only agent log** (`type/log`, non-canonical) that the loop appends to directly — the standing exception is granted in [AGENTS](../../../AGENTS.md#where-agents-write) (echoed by [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Agent Write Rules) and enforced in brain's write gate. Everything else goes as an `02_Inbox/` proposal note tagged `workflow/needs-review`. The owner's merge/close (or triage accept/reject) **is** the decision.
 - **Rate limit: max 3 proposals open at once** (open PRs + untriaged Inbox proposal notes from this loop, counted together). Issue #22 requires a rate limit ("max N open at once") without fixing N; this skill sets N = 3 so the owner is never spammed into rubber-stamping. At the limit, hold further proposals for the next cycle — rank and keep the best three.
 - **Owner content is out of bounds** except as read-only evidence. The loop maintains the fork's *spec* (conventions, skills, templates, agent docs, tooling); journal/profile/PARA notes are never proposal targets — they are only observed.
 - **Never push upstream.** The fork pulls from the public upstream template ([sync-upstream](../sync-upstream/SKILL.md) is pull-only); this loop personalizes the fork in the opposite direction and inherits the same hard rule: agents never push, open PRs, or write in any form to the upstream public repo unless operating as its owner. A fork improvement worth generalizing is flagged to the owner as "worth upstreaming?" — the owner carries it upstream by hand if they choose. (Also stated in [OPERATING-RULES](../../docs/OPERATING-RULES.md).)
@@ -34,7 +34,7 @@ Gather evidence of friction from real usage — the loop proposes only what the 
 3. **Triage outcomes:** what the owner rejects, rewrites, or re-files during Inbox triage. A capture pattern the owner always renames, a frontmatter shape they always correct, a section they always delete — each is a candidate change to the capture skill or template that produced it.
 4. **Friction notes:** `10_Agents/solutions/` — solution notes record problems agents already hit; recurring ones point at the spec gap that caused them. Also: templates whose sections stay empty or always get renamed (issue #12 targets), tags invented ad hoc (taxonomy candidates), skills whose steps get overridden every run, preferences stated in conversation but recorded nowhere.
 
-Evidence is collected read-only. Owner content read here is quoted into proposals only as far as the restricted-containment rule allows (never quote `restricted/*` content — link it).
+Evidence is collected read-only. Owner content may be cited in proposals. A vault proposal note that quotes, summarizes, or transforms private substance from a `restricted/*` source inherits `restricted/private` ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). PR titles and descriptions are an off-vault surface with a hard bar: private substance never enters them — when a proposal must carry it, put the substance in a restricted-tagged vault note and bare-link it from the PR body (bare links propagate nothing).
 
 ## Propose
 

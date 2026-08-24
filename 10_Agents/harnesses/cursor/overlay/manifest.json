@@ -1,8 +1,8 @@
 {
   "overlay_version": 1,
   "harness": "cursor",
-  "description": "Cursor-native primitives layered on top of the universal skills/entrypoint: a glob-scoped .mdc rule for Inbox conventions and the .cursorignore privacy-exclusion template generated from restricted-tagged paths.",
-  "standards_gap": "Glob-scoped .cursor/rules/*.mdc activation and .cursorignore access exclusion are Cursor-only mechanisms; AGENTS.md and the Agent Skills standard cannot express per-directory rule scoping or enforce the restricted/private privacy marking.",
+  "description": "Cursor-native primitives layered on top of the universal skills/entrypoint: a glob-scoped .mdc rule for Inbox conventions (default install) and an owner-opt-in .cursorignore read-restriction template generated from restricted-tagged paths.",
+  "standards_gap": "Glob-scoped .cursor/rules/*.mdc activation and .cursorignore access exclusion are Cursor-only mechanisms; AGENTS.md and the Agent Skills standard cannot express per-directory rule scoping or path-based read exclusion.",
   "artifacts": [
     {
       "id": "inbox-rule",
@@ -28,14 +28,15 @@
         "method": "generate",
         "target": "<vault>/.cursorignore",
         "scope": "project",
+        "owner_opt_in": true,
         "generator": "brain list --tag restricted/private",
-        "generator_semantics": "Seed the target from the template if absent. On every sync, rewrite the managed block between the '# BEGIN second-brain restricted/private (generated)' and '# END' markers wholesale with one line per path printed by the generator command — idempotent, handles both gained and lost tags, and never touches owner lines outside the markers. Re-run whenever notes gain or lose the restricted/private tag; the file does not regenerate itself."
+        "generator_semantics": "Owner-opt-in only: default overlay installation skips this artifact entirely; install it only when the owner explicitly chooses harness-level read restriction. When selected: seed the target from the template if absent. On every sync, rewrite the managed block between the '# BEGIN second-brain restricted/private (generated)' and '# END' markers wholesale with one line per path printed by the generator command — idempotent, handles both gained and lost tags, and never touches owner lines outside the markers. Re-run whenever notes gain or lose the restricted/private tag; the file does not regenerate itself, and a stale file under-excludes."
       },
       "reverse": {
         "method": "delete",
         "condition": "only when the machine manifest records this overlay as the file's creator; a pre-existing user .cursorignore is user-owned"
       },
-      "notes": "See the Restricted content section of ../wiring.md - the wiring doc is authoritative for the generation step."
+      "notes": "Owner-selected read restriction, not the restricted/private tag's enforcement layer (see 00_Meta/CONVENTIONS.md, restricted/private). Path-based, Cursor-specific, and incomplete. See the Restricted content section of ../wiring.md - the wiring doc is authoritative for the generation step."
     }
   ]
 }

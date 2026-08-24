@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -19,7 +19,7 @@ Distillation here is structural, not decorative: a captured note becomes an atom
 ## Steps
 
 1. **Read the source note and find the atomic claim** — the one idea the note exists to carry. If it carries several independent claims, it needs atomizing first (one claim per note; at triage that's [triage-inbox](../triage-inbox/SKILL.md)'s job), then distill each piece.
-2. **Check for an existing home:** `brain search "<claim terms>"` — if a zettel or resource note already covers this claim, merge into it (update by replacement) instead of minting a duplicate. One topic, one note. If that existing note is `workflow/canonical`, propose the merge via Inbox rather than editing it directly (canonical change control still applies, even on the owner-direct path).
+2. **Check for an existing home:** `brain search "<claim terms>"` — if a zettel or resource note already covers this claim, merge into it (update by replacement) instead of minting a duplicate. One topic, one note. If that existing note is `workflow/canonical`, follow the execution-class contract in [AGENTS](../../../AGENTS.md#where-agents-write): an interactive session merges directly under canonical change control; an autonomous run proposes the merge via Inbox.
 3. **Reshape onto [template-zettel](../../../09_Templates/template-zettel.md):**
    - Title = the claim itself, stated declaratively ("Index-first retrieval beats embeddings at personal scale"), never a topic label ("Retrieval notes").
    - The body opens with a **summary layer**: 1–3 sentences stating the claim and why it matters, readable entirely on its own.
@@ -34,6 +34,7 @@ Distillation here is structural, not decorative: a captured note becomes an atom
 ## Rules
 
 - Distilled means shorter and sharper — if the zettel is as long as its source, it isn't distilled yet.
+- A zettel distilled from a `restricted/private` source carries its private substance by construction, so it inherits `restricted/private` — the transformation doesn't launder the tag; only a bare link propagates nothing. Surface the classification when filing ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)).
 - The summary layer asserts; the body supports. Keep the claim separable from its evidence.
 - Invoked at triage, filing follows the triage report's approval gate; invoked directly by the owner, their direction is the review.
 

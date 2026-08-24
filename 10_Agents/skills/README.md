@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -105,3 +105,5 @@ Ad hoc, not scheduled: capture and retrieval ([inbox-capture](inbox-capture/SKIL
 - Template-shipped skills are canonical ([PRD](../../00_Meta/PRD.md) §9.3): changes need human approval.
 - Agent-generated skills may be added here directly, tagged `workflow/draft` until the human promotes them; they must pass `brain validate` (which checks `name` = folder name and a non-empty `description`).
 - Skills reference vault files by path and invoke `brain …`. A clean checkout uses `./brain` (POSIX) or `brain.cmd` (Windows); the universal fallback is `python3 10_Agents/tools/brain/brain.py …`. Managed installation is optional and preview-first (`brain install`).
+- Privacy follows [restricted/private](../../00_Meta/CONVENTIONS.md#restrictedprivate): a bare link to a restricted note propagates nothing; a note that carries its private substance inherits the tag, and any tag flip is surfaced.
+- Destinations follow the execution-class write contract in [AGENTS](../../AGENTS.md#where-agents-write); each skill states only its own lane and delta.

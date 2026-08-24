@@ -5,10 +5,18 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-18
+updated: 2026-08-24
 ---
 
 # Changelog
+
+## [2026-08-24] execution-class-write-authority-privacy | Execution-class write authority and publication-classification privacy
+
+- Write authority now follows execution class ([AGENTS](../AGENTS.md#where-agents-write) is the single owner): interactive user-directed sessions edit any appropriate vault location directly, canonical notes included, with scoped diff, validation, and changelog; autonomous sessions stay Inbox-first with named standing exceptions; generated files remain generator-owned.
+- Redefined `restricted/private` as publication classification plus leak resistance, owned by [CONVENTIONS](CONVENTIONS.md#restrictedprivate): agents read, search, and derive from private content locally; a note carrying private substance inherits the tag (bare links propagate nothing); tag flips are surfaced; the containment prohibition became a lower-blast-radius linking recommendation.
+- `brain`: search/list/recent/tasks/semantic JSON rows carry a `restricted` field (human rows labeled except `list`, whose plain path lines feed the documented `.cursorignore` generator); `restricted-link` reworded as an informational provenance check; new `restricted-transition` validate advisory reports tag flips against the tracked Git baseline (worktree and staged index, rename-following, constant subprocess count via one `git cat-file --batch -Z`); the local semantic sidecar now embeds and ranks private notes; `agent_write_allowed()` documented as the autonomous destination contract.
+- Retained and regression-pinned every outward boundary: committed-index reduction, notifications, artifacts, AYMT/Home, link-migration redaction, daily carry-over skip, and restricted-Project rollup blocking (restricted-to-restricted rollups proceed). Cursor `.cursorignore` became an owner-opt-in read restriction (`install.owner_opt_in`), no longer the tag's default enforcement layer. Bootstrap per-doc budgets recalibrated for the grown contracts; the total stays pinned to the 32 KiB cross-harness cap.
+- Aligned the derivation and query skills with source-aware propagation; express-packet packets inherit `restricted/private`, and public shipping of such packets requires an explicit per-operation owner override. Backported from the shared_brain adopter fork, where the policy was ratified by owner decision on 2026-08-24.
 
 ## [2026-08-18] add-project-area-contract | Canonical lifecycle, relationships, and safe archive
 
