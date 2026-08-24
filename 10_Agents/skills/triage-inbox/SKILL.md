@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -30,7 +30,7 @@ Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the s
    - Personal experience, log, or reflection → the right `03_Journal/` subtree
    - Done or dead → `07_Archives/inbox/`
    - Solved-problem knowledge → `10_Agents/solutions/<category>/`
-5. **Respect `restricted/*`.** A capture tagged `restricted/private` (or splitting out of one) keeps the tag through triage, and its content is never quoted or summarized into the triage report or any non-restricted note — the report row carries path and proposed destination only. See [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#tag-namespaces) and the operating-rules containment duty.
+5. **Respect `restricted/*`.** A capture tagged `restricted/private` (or splitting out of one) keeps the tag through triage. A bare link to it propagates nothing, but any report row, split piece, or propagation edit that copies, summarizes, or transforms its private substance carries `restricted/private` too — keep the report non-restricted by holding its rows to path, proposed destination, and tag changes, and call out every tag flip a proposed edit would cause. See [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate).
 6. **Propagate.** A new source rarely touches only its own note: for each capture, find the existing notes whose claims it extends, corrects, or contradicts (`brain search` on its key terms) and propose those edits alongside the filing. Filing without propagation is how a vault drifts into self-contradiction.
 7. **Hand zettels to [distill-note](../distill-note/SKILL.md).** Anything classified `type/zettel` gets reshaped by that skill (atomic claim, summary layer, links) before filing — procedure detail lives there, not here.
 8. **Write a triage report** as a new Inbox note (use `inbox-capture`; slug `triage-report`): one table row per note — path, one-line summary, proposed destination, proposed filename (kebab-case), tag changes (including `project/*` or `area/*` membership), action items, propagation edits, and open questions. A proposed active Project also shows proposed Areas, completion criteria, target, and whether the date is owner-confirmed or agent-estimated.

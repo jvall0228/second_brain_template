@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -112,11 +112,34 @@ Tags use **slash-delimited namespaces**. **This table is the authoritative tag t
 | `status/*` | Actionability | `active`, `deprioritized`, `someday`, `done` |
 | `restricted/*` | Privacy marking | `private` |
 
-Notes tagged `workflow/canonical` require a PR or explicit human approval to modify.
+Notes tagged `workflow/canonical` use canonical change control (see [Change Control](#change-control)).
 
 ### restricted/private
 
-`restricted/private` marks content that must not spread beyond its note. **Not access control** ([PRD](PRD.md) §10.3); leak resistance only, **advisory except on mechanically-enforced surfaces** — index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published), the `restricted-link` warning, Cursor `.cursorignore` exclusion. Agents never quote or summarize restricted content into non-restricted notes (see PRD §16.2).
+`restricted/private` is **publication classification plus leak resistance, not access control**. It marks content that public publishing or export must exclude; it does not restrict what agents may read or use locally. This section is the single full statement of the contract (adopted 2026-08-24; see [CHANGELOG](CHANGELOG.md)); other documents point here.
+
+**Local access.** Agents may read, search, link, quote, summarize, create, and edit private content by default. Local keyword and semantic search include restricted notes; the machine-local semantic sidecar is working context, not a publication surface, and includes private notes. Per-agent access restriction belongs to harness hooks or permissions, not this tag — Cursor's `.cursorignore` exclusion is an owner-selected opt-in, and such path exclusion is harness-specific and incomplete.
+
+**Propagation.** A note that quotes, summarizes, or otherwise carries private substance from a restricted source also carries `restricted/private` — including when the transformation obscures the provenance. A bare link does not propagate the tag. A link from a non-restricted note to a restricted note is valid; the `restricted-link` validation warning is an informational provenance check asking whether nearby prose carries private substance and therefore requires propagation.
+
+**Blast radius.** The tag is note-granular: moving one private claim into a broad review or rollup makes the entire destination private. Linking instead of copying stays the recommended lower-blast-radius practice — a recommendation, not a prohibition.
+
+**Tag flips.** A change that adds or removes `restricted/private` on an existing note must be surfaced in the diff or validation output, because generated and publication-facing surfaces may change what they include.
+
+**Retained mechanical boundaries.** These outward filters remain enforced and non-optional:
+
+- committed index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published);
+- notification filtering;
+- generated artifact filtering;
+- AYMT and Home exclusion;
+- link-migration plan redaction;
+- daily task carry-over skipping;
+- restricted Project → non-restricted Area rollup blocking; and
+- the `restricted-link` provenance warning above.
+
+Public publishing and export exclude private content automatically; inclusion requires an explicit owner override for that individual operation.
+
+**Accepted residual risk.** An agent may fail to recognize that text earlier in its context originated in a private note; export filters are the final mechanical boundary.
 
 ## Tasks
 
@@ -131,16 +154,7 @@ Checkbox tasks (`- [ ]` open, `- [x]` done) live **where their context lives** �
 
 ## Agent Write Rules
 
-Agent writes are **two-lane**: content *for the vault* goes to `02_Inbox/` by default; deliverables *for the outside world* go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Agents may write elsewhere only when the human explicitly directs the destination. Every agent-created note needs `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
-
-**Exceptions:**
-
-- Agents may append solution notes to `10_Agents/solutions/` (`type/solution`; see [README](../10_Agents/README.md)) and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (self-improve's memory; the file itself stays non-canonical `type/log`).
-- Only matching `brain {aymt,home} --write` replaces exact `00_Meta/{AYMT,HOME}.md`; no hand edits.
-- Only `brain artifacts --write` replaces the exact generated inventory under `08_Assets/artifacts/`; no hand edits or generic directory authority.
-- Notifications: configure-notifications only.
-- Live, user-invoked [agent-orientation](../10_Agents/skills/agent-orientation/SKILL.md) may write its documented draft inventory, access tool, and capture skill. Markdown uses `workflow/draft`; other files inherit it until promotion.
-- A live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) session writes interview results to `01_Profile/`, `03_Journal/people/`, `04_Projects/`, `05_Areas/`; its specialization stage rewrites `09_Templates/` from `variants/` and sets `context:` in the config. In-the-moment owner approval is the review; live-session-scoped.
+Write authority is owned by the execution-class contract in [AGENTS](../AGENTS.md#where-agents-write): interactive user-directed sessions edit the appropriate durable home directly; autonomous sessions are Inbox-first with named standing exceptions (among them, a live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) session writing owner-confirmed notes to `01_Profile/` and `03_Journal/people/`); deliverables for the outside world go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Conventions-specific requirements: every agent-created note needs `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
 
 **Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`; check first, on collision append a numeric suffix (`-2`), never overwrite another agent's note.
 
@@ -150,8 +164,8 @@ See [README](../02_Inbox/README.md) for Inbox-specific guidance.
 
 | Scope | Method |
 |-------|--------|
-| `workflow/canonical` notes | PR or explicit human approval required |
-| Canonical-by-policy artifacts without note tags | PR or explicit human approval required |
+| `workflow/canonical` notes | PR, explicit human approval, or an interactive session's current user-directed task ([AGENTS](../AGENTS.md#where-agents-write)) — with scoped diff, validation, and changelog entry when the contract calls for one |
+| Canonical-by-policy artifacts without note tags | Same as `workflow/canonical` notes |
 | `02_Inbox/` content | Direct commits allowed |
 | All other notes | Direct commits allowed |
 

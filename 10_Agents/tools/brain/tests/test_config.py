@@ -158,6 +158,58 @@ class WriteExceptionTests(unittest.TestCase):
             )
         )
 
+    def test_generated_files_denied_to_generic_writes(self):
+        # Characterization: generated surfaces are generator-owned — the
+        # predicate never authorizes a generic write to them, with defaults
+        # or with a widened config (config only ever ADDS directories that
+        # do not contain these files).
+        generated = [
+            "00_Meta/AYMT.md",
+            "00_Meta/HOME.md",
+            "10_Agents/tools/brain/vault-index.json",
+            ".vscode/second-brain.code-snippets",
+            "08_Assets/artifacts/link-graph.html",
+            "08_Assets/artifacts/health-dashboard.html",
+            "08_Assets/artifacts/manifest.json",
+        ]
+        widened = {"write_exceptions": ["06_Resources/"]}
+        for rel in generated:
+            self.assertFalse(brain.agent_write_allowed(rel, {}), rel)
+            self.assertFalse(brain.agent_write_allowed(rel, widened), rel)
+
+    def test_normalization_of_allowed_paths(self):
+        # Characterization: Windows separators, a leading './', and
+        # surrounding whitespace normalize before matching — for default
+        # prefixes and for the exact-file standing exceptions alike.
+        for rel in [
+            "02_Inbox\\note.md",
+            "./02_Inbox/note.md",
+            " 02_Inbox/note.md ",
+            "10_Agents\\docs\\rejected-proposals.md",
+            "./10_Agents/docs/rejected-proposals.md",
+        ]:
+            self.assertTrue(brain.agent_write_allowed(rel, {}), rel)
+
+    def test_non_list_and_non_string_exceptions_fall_back_to_defaults(self):
+        # Characterization: a non-list `write_exceptions` value grants
+        # nothing at the enforcement layer (check_config reports the shape
+        # error separately), and non-string entries inside a list are
+        # skipped without disturbing well-formed siblings.
+        for bad in ("06_Resources", {"dir": "06_Resources"}, None, 7):
+            config = {"write_exceptions": bad}
+            self.assertEqual(
+                brain.write_exception_prefixes(config),
+                brain.AGENT_WRITE_DEFAULT_PREFIXES,
+                repr(bad),
+            )
+            self.assertFalse(brain.agent_write_allowed("06_Resources/x.md", config))
+        mixed = {"write_exceptions": [42, None, "06_Resources/"]}
+        self.assertEqual(
+            brain.write_exception_prefixes(mixed),
+            (*brain.AGENT_WRITE_DEFAULT_PREFIXES, "06_Resources/"),
+        )
+        self.assertTrue(brain.agent_write_allowed("06_Resources/x.md", mixed))
+
     def test_traversal_in_checked_path_fails_closed(self):
         # The checked rel is untrusted input: a prefix match must not
         # authorize climbing back out of the allowed directory.

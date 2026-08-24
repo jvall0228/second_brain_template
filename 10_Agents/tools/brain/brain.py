@@ -154,12 +154,19 @@ VALIDATE_CURATION_WARNINGS = True
 # bootstrap docs; issues #74/#23 raise only their per-file ceilings. Actual
 # aggregate size remains below 32 KiB.
 BOOTSTRAP_BUDGETS = {
-    CORE_FRAMEWORK_PATHS["conventions"]: 13312,
+    # conventions + AGENTS budgets raised 2026-08-24 with the execution-class
+    # write-authority and publication-classification privacy contracts,
+    # matching the established precedent of recalibrating per-file ceilings
+    # alongside a legitimate rule addition. The total stays pinned to the
+    # smallest harness project-doc cap (Codex `project_doc_max_bytes`,
+    # 32 KiB); a bootstrap-budget-total warning is an honest signal to trim,
+    # never a number to recalibrate away.
+    CORE_FRAMEWORK_PATHS["conventions"]: 15360,
     CORE_FRAMEWORK_PATHS["index"]: 4096,
     CORE_FRAMEWORK_PATHS["defaults"]: 2048,
     CORE_FRAMEWORK_PATHS["now"]: 2048,
     CORE_FRAMEWORK_PATHS["preferences"]: 3072,
-    "AGENTS.md": 8832,
+    "AGENTS.md": 10240,
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
 
@@ -167,6 +174,9 @@ BOOTSTRAP_TOTAL_BUDGET = 32768
 # contract. Provider and git subprocess text never crosses the output boundary.
 REMOTE_SAFETY_SCHEMA_VERSION = 1
 REMOTE_SAFETY_GIT_TIMEOUT = 5
+# Local read-only git plumbing (transition baselines): whole-tree diffs on a
+# cold or networked filesystem legitimately outlast the remote-config budget.
+LOCAL_GIT_TIMEOUT = 30
 REMOTE_SAFETY_PROVIDER_TIMEOUT = 10
 NO_PUSH_SENTINELS = frozenset({"disabled", "no_push", "no-push"})
 GITHUB_COMPONENT_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
@@ -4742,7 +4752,13 @@ def apply_project_archive_plan(root: Path, plan: dict) -> dict:
         ):
             raise ProjectArchiveError("Git index installation changed")
         errors, warnings = run_validate(
-            root, True, _tracked_override=_archive_git_tracked(root)
+            root,
+            True,
+            # The archive check reads only errors and project-/area- warnings;
+            # transition detection would spawn git per moved note for rows
+            # nothing consumes, inside the transaction's critical section.
+            detect_transitions=False,
+            _tracked_override=_archive_git_tracked(root),
         )
         if errors:
             raise ProjectArchiveError("Archived Project failed post-write validation")
@@ -4843,6 +4859,169 @@ def is_restricted(rec: dict) -> bool:
     return RESTRICTED_TAG in note_frontmatter_tags(rec)
 
 
+def restricted_transitions(root: Path, index: dict) -> list[dict]:
+    """§10.2 restricted-transition (KTD4/R8): compare each changed tracked
+    note's frontmatter restricted/private state against its HEAD baseline and
+    report `{path, direction}` rows (`direction` ∈ `added` | `removed`).
+
+    Advisory only. The comparison runs only against a trustworthy baseline:
+    git must run, the vault root must be the repository toplevel (an inode
+    comparison, so path case never disables detection), and the note must
+    exist in HEAD — untracked new notes are never transitions. Both the
+    worktree and the staged index are compared against HEAD, so a staged-only
+    flip still warns at the pre-commit moment; renames are followed so a flip
+    riding a `git mv` keeps its old-path baseline. Any git or baseline-read
+    failure skips detection silently (normal validation is unaffected). Cost
+    is a constant number of subprocesses per call: one `rev-parse`, two
+    rename-aware `git diff --name-status` prefilters (every changed or
+    renamed `.md` path is a candidate — no `-G` content filter, since a
+    duplicate-`tags:`-block flip or a gitattributes `-diff` rule can change
+    the parsed restriction state without the tag's literal text appearing in
+    the diff), and one `git cat-file --batch -Z` supplying every baseline and
+    staged blob at once. Tree paths are handed to git as the raw bytes it
+    emitted (NFC normalization is for index lookups only). Only path and
+    direction are ever reported — no title or body prose."""
+    git_env = _safe_subprocess_env()
+    # Pre-commit hooks for partial commits (`git commit -- <paths>`) point
+    # GIT_INDEX_FILE at the commit's temporary index; preserving it (a repo
+    # path selector, not config) keeps the --cached comparison reading the
+    # exact content that will be committed.
+    if "GIT_INDEX_FILE" in os.environ:
+        git_env["GIT_INDEX_FILE"] = os.environ["GIT_INDEX_FILE"]
+    git_kwargs: dict = {
+        "capture_output": True,
+        "check": True,
+        "stdin": subprocess.DEVNULL,
+        "env": git_env,
+        "timeout": LOCAL_GIT_TIMEOUT,
+    }
+
+    def read_blobs(specs: list[bytes]) -> dict[bytes, bytes]:
+        """All requested git blobs (`HEAD:path` / `:0:path` as raw bytes) in
+        one `cat-file --batch -Z` subprocess; missing/unreadable specs are
+        simply absent from the result. Raises into the caller's silent-skip
+        handler on any subprocess failure."""
+        if not specs:
+            return {}
+        batch_kwargs = {k: v for k, v in git_kwargs.items() if k != "stdin"}
+        out = subprocess.run(
+            ["git", "-C", str(root), "cat-file", "--batch", "-Z"],
+            input=b"\0".join(specs) + b"\0",
+            **batch_kwargs,
+        ).stdout
+        blobs: dict[bytes, bytes] = {}
+        pos = 0
+        for spec in specs:
+            nul = out.find(b"\0", pos)
+            if nul < 0:
+                break  # truncated output: remaining specs stay absent
+            header = out[pos:nul]
+            pos = nul + 1
+            parts = header.rsplit(b" ", 2)
+            if len(parts) == 3 and parts[2].isdigit():
+                size = int(parts[2])
+                blobs[spec] = out[pos : pos + size]
+                pos += size + 1  # content plus its trailing NUL
+            # else: "<spec> missing" / "ambiguous" — nothing to consume
+        return blobs
+
+    def blob_restricted(blob: bytes | None) -> bool | None:
+        """Restricted state of blob bytes, or None when absent/undecodable."""
+        if blob is None:
+            return None
+        text, _size = _decode_note_bytes(blob)
+        if text is None:
+            return None
+        fm, _errs, _body_start, _has_fm = parse_frontmatter(text.split("\n"))
+        return is_restricted({"frontmatter": fm})
+
+    def diff_entries(*extra: str) -> list[tuple[bytes, bytes, bytes]]:
+        """(status, baseline path, current path) triples from a rename-aware
+        diff against HEAD."""
+        out = subprocess.run(
+            [
+                "git", "-C", str(root), "diff", "--name-status", "-z", "-M",
+                *extra, "HEAD", "--", ".",
+            ],
+            **git_kwargs,
+        ).stdout
+        tokens = [t for t in out.split(b"\0")]
+        entries: list[tuple[bytes, bytes, bytes]] = []
+        i = 0
+        while i < len(tokens) and tokens[i]:
+            status = tokens[i]
+            if status[:1] in (b"R", b"C"):
+                if i + 2 >= len(tokens):
+                    break
+                entries.append((status, tokens[i + 1], tokens[i + 2]))
+                i += 3
+            else:
+                if i + 1 >= len(tokens):
+                    break
+                entries.append((status, tokens[i + 1], tokens[i + 1]))
+                i += 2
+        return entries
+
+    try:
+        toplevel = (
+            subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+                **git_kwargs,
+            )
+            .stdout.decode("utf-8", "replace")
+            .strip()
+        )
+        if not os.path.samefile(toplevel, str(root)):
+            return []  # vault nested inside a foreign repo: paths untrustworthy
+        # Worktree flips (what an editing session sees) and staged flips (what
+        # the next commit ships) both compare against HEAD; a flip present in
+        # both dedupes below.
+        candidates = [
+            (entry, source)
+            for source, extra in (("worktree", ()), ("staged", ("--cached",)))
+            for entry in diff_entries(*extra)
+            # Corpus notes only, and only statuses with both a baseline and a
+            # current state (new/copied notes have no baseline; deleted notes
+            # no current; unmerged paths no trustworthy either).
+            if entry[2].endswith(b".md") and entry[0][:1] not in (b"A", b"C", b"D", b"U")
+        ]
+        specs = [b"HEAD:" + old_raw for (_s, old_raw, _n), _src in candidates] + [
+            b":0:" + new_raw
+            for (_s, _o, new_raw), source in candidates
+            if source == "staged"
+        ]
+        blobs = read_blobs(list(dict.fromkeys(specs)))
+    except (OSError, UnicodeError, subprocess.SubprocessError):
+        return []  # no git, no repo, no HEAD, or unreadable root: skip silently
+    seen: set[tuple[str, str]] = set()
+    transitions: list[dict] = []
+    for (status, old_raw, new_raw), source in candidates:
+        rel = nfc(new_raw.decode("utf-8", "replace"))
+        was_restricted = blob_restricted(blobs.get(b"HEAD:" + old_raw))
+        if was_restricted is None:
+            continue  # not tracked in HEAD or unreadable: no trustworthy baseline
+        if source == "staged":
+            # Both states come from blobs — the worktree copy is irrelevant,
+            # so a staged flip whose worktree file was since deleted (and thus
+            # has no index record) still warns at the pre-commit moment.
+            now_restricted = blob_restricted(blobs.get(b":0:" + new_raw))
+            if now_restricted is None:
+                continue
+        else:
+            rec = index["notes"].get(rel)
+            if rec is None:
+                continue  # deleted from worktree, or not a corpus note
+            now_restricted = is_restricted(rec)
+        if was_restricted != now_restricted:
+            direction = "added" if now_restricted else "removed"
+            if (rel, direction) in seen:
+                continue
+            seen.add((rel, direction))
+            transitions.append({"direction": direction, "path": rel})
+    transitions.sort(key=lambda t: (t["path"], t["direction"]))
+    return transitions
+
+
 def reduce_restricted(index: dict) -> dict:
     """§8.3: reduce restricted notes for the COMMITTED index — keep
     path/title/frontmatter(tags)/updated/sizeBytes/frontmatterErrors/links/
@@ -4938,7 +5117,7 @@ def load_taxonomy(root: Path) -> dict[str, list[str] | None] | None:
 #   parse_config(text)             -> (config map, findings)
 #   check_config(root, config, findings) -> (errors, warnings) — validate rows
 #   write_exception_prefixes(config) -> tuple of dir prefixes agents may write
-#   agent_write_allowed(rel, config) -> bool  (Inbox-first + exceptions)
+#   agent_write_allowed(rel, config) -> bool  (autonomous destination contract)
 #   extension_trust(config)        -> policy string (default "first-party")
 #   vault_context(config)          -> context string (default "personal")
 #   template_version(config)       -> recorded upstream version or None
@@ -4978,8 +5157,9 @@ REPORT_CONFIG_KEYS = frozenset({"inbox_days", "stale_days"})
 TASKS_CONFIG_KEYS = frozenset({"carry_over"})
 TASKS_CARRY_OVER_VALUES = frozenset({"off", "on"})
 DEFAULT_TASKS_CARRY_OVER = True  # carry_over: on
-# Inbox-first defaults (PRD §6.2 / AGENTS.md): always writable, config only
-# ever ADDS to this set. Session-scoped carve-outs (onboard-owner interviews,
+# Autonomous (Inbox-first) defaults (AGENTS.md § Where Agents Write / PRD
+# §6.2): destinations an unattended run may always write; config only ever
+# ADDS to this set. Session-scoped carve-outs (onboard-owner interviews,
 # agent-generated skills/tools) are policy prose, not path constants.
 AGENT_WRITE_DEFAULT_PREFIXES = ("02_Inbox/", "02_Outbox/", "10_Agents/solutions/")
 # Single-file standing exceptions: append-only agent logs that live inside
@@ -5122,9 +5302,10 @@ def load_config(root: Path) -> tuple[dict, list[dict]]:
 
 
 def write_exception_prefixes(config: dict) -> tuple[str, ...]:
-    """Directory prefixes agents may write to: the Inbox-first defaults plus
-    any well-formed `write_exceptions` entries (normalized to a trailing /).
-    Malformed entries are ignored here — check_config reports them."""
+    """Directory prefixes autonomous runs may write to: the Inbox-first
+    defaults plus any well-formed `write_exceptions` entries (normalized to
+    a trailing /). Malformed entries are ignored here — check_config
+    reports them."""
     prefixes = list(AGENT_WRITE_DEFAULT_PREFIXES)
     extras = config.get("write_exceptions")
     for entry in extras if isinstance(extras, list) else []:
@@ -5145,9 +5326,14 @@ def write_exception_prefixes(config: dict) -> tuple[str, ...]:
 
 
 def agent_write_allowed(rel: str, config: dict) -> bool:
-    """Whether an agent may write vault-relative path `rel` under the
-    Inbox-first rule plus configured exceptions. The enforcement point for
-    harness write-gates; with no config it is exactly current policy."""
+    """Autonomous destination contract: whether an unattended run may write
+    vault-relative path `rel` under the Inbox-first rule plus configured
+    exceptions. Models autonomous destinations only — not interactive write
+    authority or task scope, which are prose policy (AGENTS.md § Where
+    Agents Write): no tracked caller supplies trusted session metadata, so
+    every caller receives this conservative fallback. The enforcement point
+    for harness write-gates; with no config it is exactly the default
+    autonomous policy."""
     rel = nfc(rel.strip()).replace("\\", "/").removeprefix("./")
     # Fail closed on traversal and non-vault-relative shapes: a prefix match
     # means nothing if the path can climb back out of the allowed directory.
@@ -5585,6 +5771,7 @@ def run_validate(
     check_index: bool,
     requested_environment: str | None = None,
     *,
+    detect_transitions: bool = True,
     _tracked_override: set[str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     errors: list[dict] = []
@@ -5619,8 +5806,9 @@ def run_validate(
 
     # §15 vault config: parse + semantic findings land on the config file
     # itself (per-file, never a crash); write_exception_prefixes(config) is
-    # where the Inbox-first write-destination policy is materialized for
-    # enforcement (harness write-gates call agent_write_allowed).
+    # where the autonomous (Inbox-first) write-destination policy is
+    # materialized for enforcement (harness write-gates call
+    # agent_write_allowed).
     config, cfg_findings = load_config(root)
     cfg_errors, cfg_warnings = check_config(root, config, cfg_findings)
     for f in cfg_errors:
@@ -5662,9 +5850,21 @@ def run_validate(
                 "collides case-insensitively with " + ", ".join(group[1:]),
             )
 
-    # §8.3/§10.2 restricted containment: notes tagged restricted/private
+    # §8.3/§10.2 restricted classification: notes tagged restricted/private
     # (frontmatter tags only — bodyTags never trigger restriction).
     restricted_paths = {p for p, r in index["notes"].items() if is_restricted(r)}
+
+    # §10.2 restricted-transition (KTD4/R8): advisory surfacing of privacy
+    # tag flips against the tracked Git baseline; silently absent without a
+    # trustworthy baseline. Path + direction only — never note prose.
+    for transition in restricted_transitions(root, index) if detect_transitions else []:
+        warn(
+            transition["path"],
+            "restricted-transition",
+            f"restricted/private {transition['direction']} since HEAD — "
+            "generated surfaces (committed index, AYMT, Home, artifacts) "
+            "change inclusion; rerun their owning generators",
+        )
 
     for rel in notes:
         rec = index["notes"][rel]
@@ -5803,14 +6003,19 @@ def run_validate(
                 err(rel, "unresolved-link", message, link["line"])
             else:
                 if link["resolved"] in restricted_paths and rel not in restricted_paths:
-                    # §10.2 restricted-link (issue #17): context bleed —
+                    # §10.2 restricted-link (issue #17, reframed per the
+                    # 2026-08-24 privacy policy): an informational provenance
+                    # check, not a containment ban — a bare link never
+                    # propagates the tag; carried substance does.
                     # restricted -> restricted links stay clean.
                     warn(
                         rel,
                         "restricted-link",
                         f"{link['raw']} links a restricted/private note "
-                        f"({link['resolved']}) from a non-restricted one — "
-                        "never quote or summarize its content here",
+                        f"({link['resolved']}) — informational: check whether "
+                        "nearby prose carries private substance; if it does, "
+                        "this note must also carry restricted/private (a bare "
+                        "link alone does not propagate the tag)",
                         link["line"],
                     )
                 for w in link["warnings"]:
@@ -6357,14 +6562,15 @@ def note_hashes(root: Path, index: dict) -> dict[str, str | None]:
 
 
 def fresh_entries(index: dict, store: dict, hashes: dict) -> dict[str, list[float]]:
-    """§18.2 freshness ∩ §18.1 restricted containment: path -> vector for
-    every sidecar entry that is current (note exists, hash matches, length
-    == dim) and whose note is not currently restricted/private. Everything
-    else is stale — excluded, never re-ranked."""
+    """§18.2 freshness: path -> vector for every sidecar entry that is
+    current (note exists, hash matches, length == dim). Everything else is
+    stale — excluded, never re-ranked. Restricted notes are ordinary
+    entries (§18.1 — the sidecar is local working context, 2026-08-24
+    privacy policy)."""
     fresh: dict[str, list[float]] = {}
     for rel, entry in store["notes"].items():
         rec = index["notes"].get(rel)
-        if rec is None or is_restricted(rec):
+        if rec is None:
             continue
         if (
             hashes.get(rel) is not None
@@ -6376,12 +6582,9 @@ def fresh_entries(index: dict, store: dict, hashes: dict) -> dict[str, list[floa
 
 
 def embeddable_notes(index: dict, hashes: dict) -> list[str]:
-    """§18.3: the embeddable universe — readable, non-restricted notes."""
-    return sorted(
-        rel
-        for rel, rec in index["notes"].items()
-        if hashes[rel] is not None and not is_restricted(rec)
-    )
+    """§18.3: the embeddable universe — every readable note. Restricted
+    notes are included (§18.1); only unreadable notes are excluded."""
+    return sorted(rel for rel in index["notes"] if hashes[rel] is not None)
 
 
 def local_embedder(model_name: str):
@@ -6491,16 +6694,6 @@ def cmd_embed(root: Path, args) -> int:
                 file=sys.stderr,
             )
             return 1
-        skipped_restricted = sorted(
-            rel for rel in vectors if is_restricted(index["notes"][rel])
-        )
-        for rel in skipped_restricted:
-            del vectors[rel]
-            print(
-                f"notice: skipping restricted note {rel} — restricted/private "
-                "content never enters the embeddings sidecar (spec §18.1)",
-                file=sys.stderr,
-            )
         skipped_unreadable = sorted(rel for rel in vectors if hashes[rel] is None)
         for rel in skipped_unreadable:
             del vectors[rel]
@@ -6522,7 +6715,7 @@ def cmd_embed(root: Path, args) -> int:
             merged = {
                 rel: entry
                 for rel, entry in store["notes"].items()
-                if rel in index["notes"] and not is_restricted(index["notes"][rel])
+                if rel in index["notes"]
             }
         for rel, vec in vectors.items():
             merged[rel] = {"hash": hashes[rel], "vector": vec}
@@ -6534,7 +6727,6 @@ def cmd_embed(root: Path, args) -> int:
             "dim": dim,
             "model": model,
             "path": EMBED_RELPATH,
-            "skippedRestricted": skipped_restricted,
             "skippedUnreadable": skipped_unreadable,
             "stored": len(vectors),
         }
@@ -6545,7 +6737,6 @@ def cmd_embed(root: Path, args) -> int:
                 f"stored {len(vectors)} vectors (model {model}, dim {dim}) "
                 f"-> {EMBED_RELPATH}"
             ]
-            + [f"skipped restricted: {r}" for r in skipped_restricted]
             + [f"skipped unreadable: {r}" for r in skipped_unreadable],
         )
         return 0
@@ -6578,8 +6769,9 @@ def cmd_embed(root: Path, args) -> int:
     dim = store["dim"]
     merged = {rel: store["notes"][rel] for rel in fresh}
     if not todo and not merged:
-        # Nothing to embed and nothing retained: writing a {"dim": null}
-        # store would be shape-invalid (§18.1) — report and leave it absent.
+        # Nothing to embed and nothing retained (empty vault, or every note
+        # unreadable): writing a {"dim": null} store would be shape-invalid
+        # (§18.1) — report and leave it absent.
         print("nothing to embed — sidecar unchanged", file=sys.stderr)
         return 0
     for rel, vec in zip(todo, vecs):
@@ -6677,6 +6869,7 @@ def semantic_search(root: Path, index: dict, args) -> int:
             {
                 "keywordHits": kw,
                 "path": rel,
+                "restricted": is_restricted(rec),
                 "score": round(
                     SEMANTIC_WEIGHT * sem_raw + KEYWORD_WEIGHT * (1.0 if kw else 0.0), 6
                 ),
@@ -6690,7 +6883,9 @@ def semantic_search(root: Path, index: dict, args) -> int:
         rows,
         args.json,
         (
-            f"{r['score']:.6f}  {r['path']}" + (f"  ({r['title']})" if r["title"] else "")
+            f"{r['score']:.6f}  {r['path']}"
+            + (f"  ({r['title']})" if r["title"] else "")
+            + restricted_label(r)
             for r in rows
         ),
     )
@@ -9875,7 +10070,18 @@ def cmd_list(root: Path, args) -> int:
         tags = effective_tags(rec)
         if not all(tag_matches(t, tags) for t in filters):
             continue
-        rows.append({"path": rel, "title": rec["title"], "updated": rec["updated"]})
+        rows.append(
+            {
+                "path": rel,
+                "restricted": is_restricted(rec),
+                "title": rec["title"],
+                "updated": rec["updated"],
+            }
+        )
+    # Human output stays bare paths — no [restricted] label — because the
+    # documented .cursorignore generator (harnesses/cursor/wiring.md) consumes
+    # each printed line verbatim as a path. Provenance rides on the JSON rows'
+    # additive `restricted` field instead.
     emit(rows, args.json, (r["path"] for r in rows))
     return 0
 
@@ -9883,22 +10089,34 @@ def cmd_list(root: Path, args) -> int:
 def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) -> list[dict]:
     """§9 search: case-insensitive substring hits over title, headings, and
     body. Shared by plain search, semantic degradation, and the §18.4 keyword
-    component."""
+    component. Each hit carries the note's privacy classification (§9/R11 —
+    KTD3): downstream agents must be able to preserve provenance."""
     query = query.lower()
     hits: list[dict] = []
     for rel in sorted(index["notes"]):
         rec = index["notes"][rel]
         if tag_filters and not all(tag_matches(t, effective_tags(rec)) for t in tag_filters):
             continue
+        restricted = is_restricted(rec)
+
+        def hit(field: str, line: int | None, snippet: str) -> dict:
+            # One row shape for every field type — a provenance key added here
+            # reaches title/heading/body rows together (R11/KTD3).
+            return {
+                "field": field,
+                "line": line,
+                "path": rel,
+                "restricted": restricted,
+                "snippet": snippet,
+            }
+
         if rec["title"] and query in rec["title"].lower():
-            hits.append({"field": "title", "line": None, "path": rel, "snippet": rec["title"]})
+            hits.append(hit("title", None, rec["title"]))
         heading_lines = set()
         for h in rec["headings"]:
             heading_lines.add(h["line"])
             if query in h["text"].lower():
-                hits.append(
-                    {"field": "heading", "line": h["line"], "path": rel, "snippet": h["text"]}
-                )
+                hits.append(hit("heading", h["line"], h["text"]))
         try:
             text, _ = load_text(root, rel)
         except OSError:  # §3 read failure: skip, best-effort
@@ -9909,8 +10127,13 @@ def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) ->
             if i in heading_lines:
                 continue
             if query in line.lower():
-                hits.append({"field": "body", "line": i, "path": rel, "snippet": line.strip()})
+                hits.append(hit("body", i, line.strip()))
     return hits
+
+
+def restricted_label(row: dict) -> str:
+    """§9 (R11): the human-output marker for a restricted row, or ''."""
+    return "  [restricted]" if row.get("restricted") else ""
 
 
 def emit_keyword_hits(hits: list[dict], as_json: bool) -> None:
@@ -9918,9 +10141,12 @@ def emit_keyword_hits(hits: list[dict], as_json: bool) -> None:
         hits,
         as_json,
         (
-            f"{h['path']}: title: {h['snippet']}"
-            if h["line"] is None
-            else f"{h['path']}:{h['line']}: {h['snippet']}"
+            (
+                f"{h['path']}: title: {h['snippet']}"
+                if h["line"] is None
+                else f"{h['path']}:{h['line']}: {h['snippet']}"
+            )
+            + restricted_label(h)
             for h in hits
         ),
     )
@@ -10205,10 +10431,22 @@ def cmd_recent(root: Path, args) -> int:
     entries.sort(key=lambda kv: kv[1]["updated"] or "", reverse=True)
     entries = entries[: args.n]
     rows = [
-        {"path": rel, "title": rec["title"], "updated": rec["updated"]}
+        {
+            "path": rel,
+            "restricted": is_restricted(rec),
+            "title": rec["title"],
+            "updated": rec["updated"],
+        }
         for rel, rec in entries
     ]
-    emit(rows, args.json, (f"{r['updated'] or '----------'}  {r['path']}" for r in rows))
+    emit(
+        rows,
+        args.json,
+        (
+            f"{r['updated'] or '----------'}  {r['path']}" + restricted_label(r)
+            for r in rows
+        ),
+    )
     return 0
 
 
@@ -10398,6 +10636,7 @@ def cmd_tasks(root: Path, args) -> int:
     for rel in sorted(index["notes"]):
         if project and not rel.startswith(project):
             continue
+        restricted = is_restricted(index["notes"][rel])
         for t in index["notes"][rel]["tasks"]:
             if args.open and t["status"] != "open":
                 continue
@@ -10409,7 +10648,7 @@ def cmd_tasks(root: Path, args) -> int:
                 t["status"] == "open" and t["due"] is not None and t["due"] < today_iso
             ):
                 continue
-            rows.append({**t, "path": rel})
+            rows.append({**t, "path": rel, "restricted": restricted})
     rows.sort(key=lambda r: (r["due"] is None, r["due"] or "", r["path"], r["line"]))
     lines = []
     for r in rows:
@@ -10426,6 +10665,7 @@ def cmd_tasks(root: Path, args) -> int:
         lines.append(
             f"{r['path']}:{r['line']}  {box} {r['text']}"
             + (f"  ({extras})" if extras else "")
+            + restricted_label(r)
         )
     emit(rows, args.json, lines)
     return 0

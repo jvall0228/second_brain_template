@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-12
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -34,7 +34,7 @@ For [PRD](../../00_Meta/PRD.md) specifically, edit superseded requirements in pl
 
 ## Canonical Note Handling
 
-Notes tagged `workflow/canonical` are vault infrastructure. The same protection applies to canonical-by-policy artifacts without note tags: template-shipped skills/tools, `00_Meta/config.yaml`, and named entrypoint/editor/harness adapters. Agents modify either class only through a pull request or current, explicit human approval.
+Notes tagged `workflow/canonical` are vault infrastructure. The same protection applies to canonical-by-policy artifacts without note tags: template-shipped skills/tools, `00_Meta/config.yaml`, and named entrypoint/editor/harness adapters. Agents modify either class only through a pull request, current explicit human approval, or an interactive session's current user-directed task per the execution-class contract in [AGENTS](../../AGENTS.md#where-agents-write) — with a scoped diff, validation, and a changelog entry when the canonical contract calls for one.
 
 Location alone does not make an artifact canonical. A live, user-invoked `agent-orientation` session may create the inventory and paired access-tool/capture-skill bundle at the paths in its contract. The inventory, skill, and tool documentation remain `workflow/draft`; non-note files inherit that bundle state until the owner promotes the whole bundle.
 
@@ -64,12 +64,12 @@ Before writing any note, verify:
 - [ ] Tags use defined namespaces (see [CONVENTIONS](../../00_Meta/CONVENTIONS.md#tag-namespaces))
 - [ ] Filename follows [CONVENTIONS](../../00_Meta/CONVENTIONS.md#filename-convention) and does not collide with an existing note
 - [ ] Agent-authored Inbox notes carry provenance: `author:` (harness identifier, e.g. `claude-code`) plus `session:` when a session URL / PR / task reference exists (see [CONVENTIONS](../../00_Meta/CONVENTIONS.md) § Provenance)
-- [ ] Destination is the right lane: `02_Inbox/` for vault content, `02_Outbox/` for outbound packets via express-packet, or a documented standing exception (solutions, rejection log, live `onboard-owner`, live user-invoked `agent-orientation` inventory plus paired draft bundle, or `configure-notifications`' ignored state and explicitly approved local file test)
+- [ ] Destination matches the execution-class contract in [AGENTS](../../AGENTS.md#where-agents-write): interactive user-directed edits go to the note's durable home; autonomous output goes to `02_Inbox/`, to `02_Outbox/` for outbound packets via express-packet, or through a documented standing exception (solutions, rejection log, live `onboard-owner`, live user-invoked `agent-orientation` inventory plus paired draft bundle, or `configure-notifications`' ignored state and explicitly approved local file test)
 - [ ] Generated AYMT changes came only from explicit `brain aymt --write`; generic agents and `agent_write_allowed()` cannot hand-edit `00_Meta/AYMT.md`, and no config exception was added
 - [ ] Generated Home changes came only from explicit `brain home --write`; generic agents and `agent_write_allowed()` cannot hand-edit `00_Meta/HOME.md`, and no config exception was added
 - [ ] Generated local artifact changes came only from explicit `brain artifacts --write`; the exact two HTML files and manifest passed `--check`, and no generic `08_Assets/` write exception, hosting, or notification claim was added
 - [ ] A generated orientation bundle is still draft: its inventory, skill, and tool documentation say `workflow/draft`, and no non-note file is treated as canonical-by-policy before owner promotion
-- [ ] **Restricted containment** ([restricted/private](../../00_Meta/CONVENTIONS.md#tag-namespaces)): never quote or summarize `restricted/*` content into non-restricted notes — link it instead (validate warns `restricted-link` even on the bare link, as a reminder). The tag is advisory outside mechanically-enforced surfaces; your restraint *is* the mechanism.
+- [ ] **Privacy propagation** ([restricted/private](../../00_Meta/CONVENTIONS.md#restrictedprivate)): a note that carries private substance from a `restricted/private` source also carries `restricted/private`, even when the transformation obscures the provenance; a bare link does not propagate (the `restricted-link` warning is an informational provenance check). Linking instead of copying stays the lower-blast-radius practice, and any tag flip your edit causes must be surfaced.
 - [ ] Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [brain](../tools/brain/README.md))
 - [ ] **Editor-surface parity** ([PRD](../../00_Meta/PRD.md) §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping
 

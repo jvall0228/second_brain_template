@@ -1,15 +1,19 @@
-"""Tests for the restricted/private namespace (spec §8.3, §10.2 restricted-link;
-issue #17): taxonomy acceptance, validate containment warning, and committed-index
-reduction.
+"""Tests for the restricted/private namespace (spec §8.3, §10.2 restricted-link
+and restricted-transition; issue #17): taxonomy acceptance, validate provenance
+warning, committed-index reduction, query-row privacy metadata, and
+tag-transition diagnostics against the tracked Git baseline.
 
 Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests
 """
 
+import io
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -162,6 +166,294 @@ class RestrictedLinkWarningTests(unittest.TestCase):
                 for f in warnings
             )
         )
+
+
+def run_cli(root: Path, *argv: str) -> tuple[int, str]:
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        rc = brain.main([*argv, "--vault", str(root)])
+    return rc, buf.getvalue()
+
+
+class RestrictedLinkWordingTests(unittest.TestCase):
+    """R7/AE5: restricted-link is an informational provenance check, not a
+    containment ban — and it never auto-propagates the tag."""
+
+    def test_message_is_provenance_check_not_containment(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            _, warnings = brain.run_validate(root, check_index=False)
+            hits = [f for f in warnings if f["rule"] == "restricted-link"]
+            self.assertTrue(hits)
+            for f in hits:
+                self.assertIn("informational", f["message"])
+                self.assertIn("restricted/private", f["message"])
+                self.assertNotIn("never quote or summarize", f["message"])
+
+    def test_bare_link_gets_no_auto_propagation(self):
+        # The warning is advisory: validate never rewrites the linking note
+        # and the linker stays classified non-restricted.
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            before = (root / "normal.md").read_text(encoding="utf-8")
+            errors, warnings = brain.run_validate(root, check_index=False)
+            self.assertEqual((root / "normal.md").read_text(encoding="utf-8"), before)
+            self.assertFalse(any(f["rule"] == "restricted-link" for f in errors))
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            self.assertFalse(brain.is_restricted(index["notes"]["normal.md"]))
+
+
+class RestrictedQueryMetadataTests(unittest.TestCase):
+    """R11/AE7 (KTD3): content-bearing query rows carry the privacy
+    classification in JSON and a visible [restricted] label in human output;
+    every pre-existing key survives unchanged."""
+
+    def test_search_json_rows_carry_restricted(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            rc, out = run_cli(root, "search", "sensitive", "--json")
+            self.assertEqual(rc, 0)
+            rows = json.loads(out)
+            self.assertTrue(rows)
+            for row in rows:
+                self.assertEqual(
+                    sorted(row), ["field", "line", "path", "restricted", "snippet"]
+                )
+            self.assertTrue(all(r["restricted"] for r in rows))
+            rc, out = run_cli(root, "search", "Nothing", "--json")
+            rows = [r for r in json.loads(out) if r["path"] == "plain.md"]
+            self.assertTrue(rows)
+            self.assertTrue(all(r["restricted"] is False for r in rows))
+
+    def test_search_human_output_labels_restricted_rows(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            rc, out = run_cli(root, "search", "Secret Heading")
+            self.assertEqual(rc, 0)
+            secret_lines = [l for l in out.splitlines() if l.startswith("secret.md")]
+            self.assertTrue(secret_lines)
+            self.assertTrue(all("[restricted]" in l for l in secret_lines))
+            rc, out = run_cli(root, "search", "Normal Heading")
+            normal_lines = [l for l in out.splitlines() if l.startswith("normal.md")]
+            self.assertTrue(normal_lines)
+            self.assertTrue(all("[restricted]" not in l for l in normal_lines))
+
+    def test_recent_json_rows_carry_restricted(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            rc, out = run_cli(root, "recent", "10", "--json")
+            self.assertEqual(rc, 0)
+            rows = json.loads(out)
+            for row in rows:
+                self.assertEqual(
+                    sorted(row), ["path", "restricted", "title", "updated"]
+                )
+            by_path = {r["path"]: r for r in rows}
+            self.assertTrue(by_path["secret.md"]["restricted"])
+            self.assertFalse(by_path["plain.md"]["restricted"])
+
+    def test_recent_human_output_labels_restricted_rows(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            rc, out = run_cli(root, "recent", "10")
+            self.assertEqual(rc, 0)
+            lines = {l.split()[-2] if l.endswith("[restricted]") else l.split()[-1]: l
+                     for l in out.splitlines()}
+            self.assertIn("[restricted]", lines["secret.md"])
+            self.assertNotIn("[restricted]", lines["plain.md"])
+
+    def test_list_rows_carry_restricted_like_other_title_bearing_rows(self):
+        # `list` rows expose titles, so they carry the same additive
+        # `restricted` field as `recent` (R11: provenance rides on every
+        # content-bearing row shape) — but ONLY in JSON. Human output must
+        # stay bare paths with no [restricted] label: the documented
+        # .cursorignore generator (harnesses/cursor/wiring.md) consumes each
+        # printed line verbatim as a path.
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            rc, out = run_cli(root, "list", "--json")
+            self.assertEqual(rc, 0)
+            rows = {row["path"]: row for row in json.loads(out)}
+            for row in rows.values():
+                self.assertEqual(sorted(row), ["path", "restricted", "title", "updated"])
+            self.assertTrue(rows["secret.md"]["restricted"])
+            self.assertFalse(rows["plain.md"]["restricted"])
+            rc, human = run_cli(root, "list")
+            self.assertEqual(rc, 0)
+            human_lines = human.splitlines()
+            self.assertIn("secret.md", human_lines)
+            self.assertIn("plain.md", human_lines)
+            for line in human_lines:
+                self.assertNotIn("[restricted]", line)
+                self.assertEqual(line, line.strip())
+
+
+def git(root: Path, *argv: str) -> None:
+    subprocess.run(
+        ["git", "-C", str(root), *argv],
+        check=True,
+        capture_output=True,
+    )
+
+
+def git_vault(td: Path, files: dict[str, str]) -> Path:
+    root = make_vault(td, files)
+    git(root, "init", "-q")
+    git(root, "add", "-A")
+    git(
+        root,
+        "-c", "user.email=test@example.invalid",
+        "-c", "user.name=Test",
+        "commit", "-q", "-m", "baseline",
+    )
+    return root
+
+
+class RestrictedTransitionTests(unittest.TestCase):
+    """R8/AE6 (KTD4): adding or removing restricted/private on a tracked note
+    emits a bounded advisory warning — path + direction, no title or body
+    prose — and detection skips silently without a trustworthy Git baseline."""
+
+    def transitions(self, root: Path) -> tuple[list[dict], list[dict]]:
+        errors, warnings = brain.run_validate(root, check_index=False)
+        return errors, [f for f in warnings if f["rule"] == "restricted-transition"]
+
+    def test_tag_added_reports_path_and_direction_only(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            (root / "plain.md").write_text(
+                "---\ntitle: Plain\ntags:\n  - type/note\n  - restricted/private\n"
+                "updated: 2026-08-11\n---\n\nNothing.\n",
+                encoding="utf-8",
+            )
+            errors, hits = self.transitions(root)
+            self.assertEqual([f["path"] for f in hits], ["plain.md"])
+            self.assertIn("added", hits[0]["message"])
+            # Fixed reminder about generated surfaces, never note content.
+            self.assertIn("committed index", hits[0]["message"])
+            self.assertNotIn("Plain", hits[0]["message"])
+            self.assertNotIn("Nothing", hits[0]["message"])
+            # Warning severity only: validate still exits without new errors.
+            self.assertFalse(any(f["rule"] == "restricted-transition" for f in errors))
+
+    def test_tag_removed_reports_removed_direction(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            (root / "secret.md").write_text(
+                "---\ntitle: Secret Plans\ntags:\n  - type/note\n"
+                "updated: 2026-08-11\n---\n\n# Secret Heading\n\nBody.\n",
+                encoding="utf-8",
+            )
+            _, hits = self.transitions(root)
+            self.assertEqual([f["path"] for f in hits], ["secret.md"])
+            self.assertIn("removed", hits[0]["message"])
+            self.assertNotIn("Secret Plans", hits[0]["message"])
+
+    def test_staged_only_flip_still_warns(self):
+        # The next commit ships the staged index, not the worktree: a flip
+        # that is staged while the worktree copy was reverted to HEAD bytes
+        # must still warn at the pre-commit moment.
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            original = (root / "plain.md").read_text(encoding="utf-8")
+            (root / "plain.md").write_text(
+                "---\ntitle: Plain\ntags:\n  - type/note\n  - restricted/private\n"
+                "updated: 2026-08-11\n---\n\nNothing.\n",
+                encoding="utf-8",
+            )
+            git(root, "add", "plain.md")
+            (root / "plain.md").write_text(original, encoding="utf-8")
+            _, hits = self.transitions(root)
+            self.assertEqual([f["path"] for f in hits], ["plain.md"])
+            self.assertIn("added", hits[0]["message"])
+
+    def test_staged_flip_with_deleted_worktree_copy_still_warns(self):
+        # Staged candidates derive BOTH states from blobs (HEAD vs :0:), so a
+        # staged de-restriction whose worktree file was since deleted (and
+        # thus has no index record) must still warn — the next commit ships
+        # the staged content regardless of the worktree.
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            original = (root / "secret.md").read_text(encoding="utf-8")
+            (root / "secret.md").write_text(
+                original.replace("  - restricted/private\n", ""),
+                encoding="utf-8",
+            )
+            git(root, "add", "secret.md")
+            (root / "secret.md").unlink()
+            _, hits = self.transitions(root)
+            self.assertEqual([f["path"] for f in hits], ["secret.md"])
+            self.assertIn("removed", hits[0]["message"])
+
+    def test_rename_with_flip_keeps_old_path_baseline(self):
+        # A flip riding a `git mv` must not lose its baseline to the rename:
+        # the old path's HEAD state is compared against the new path's state.
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            git(root, "mv", "secret.md", "topic.md")
+            moved = (root / "topic.md").read_text(encoding="utf-8")
+            (root / "topic.md").write_text(
+                moved.replace("  - restricted/private\n", ""), encoding="utf-8"
+            )
+            git(root, "add", "topic.md")
+            _, hits = self.transitions(root)
+            self.assertEqual([f["path"] for f in hits], ["topic.md"])
+            self.assertIn("removed", hits[0]["message"])
+
+    def test_pure_rename_is_not_a_transition(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            git(root, "mv", "secret.md", "moved-secret.md")
+            _, hits = self.transitions(root)
+            self.assertEqual(hits, [])
+
+    def test_unchanged_tracked_vault_has_no_transitions(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            _, hits = self.transitions(root)
+            self.assertEqual(hits, [])
+
+    def test_untracked_new_note_is_not_a_transition(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = git_vault(Path(td), base_files())
+            (root / "fresh-secret.md").write_text(
+                "---\ntitle: Fresh\ntags:\n  - type/note\n  - restricted/private\n"
+                "updated: 2026-08-11\n---\n\nNew.\n",
+                encoding="utf-8",
+            )
+            _, hits = self.transitions(root)
+            self.assertEqual(hits, [])
+
+    def test_no_git_repo_skips_silently(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            errors, hits = self.transitions(root)
+            self.assertEqual(hits, [])
+            # Normal validation is unaffected by the missing baseline.
+            self.assertFalse(any(f["rule"] == "restricted-transition" for f in errors))
+
+    def test_vault_nested_in_foreign_repo_skips_silently(self):
+        # The baseline is only trustworthy when the vault root is the repo
+        # toplevel; a vault folder inside some other repo must skip.
+        with tempfile.TemporaryDirectory() as td:
+            outer = Path(td)
+            git_vault(outer, {"unrelated.txt": "outer repo file\n"})
+            root = make_vault(outer / "vault", base_files())
+            git(outer, "add", "-A")
+            git(
+                outer,
+                "-c", "user.email=test@example.invalid",
+                "-c", "user.name=Test",
+                "commit", "-q", "-m", "add vault",
+            )
+            (root / "plain.md").write_text(
+                "---\ntitle: Plain\ntags:\n  - type/note\n  - restricted/private\n"
+                "updated: 2026-08-11\n---\n\nNothing.\n",
+                encoding="utf-8",
+            )
+            _, hits = self.transitions(root)
+            self.assertEqual(hits, [])
 
 
 class RestrictedIndexReductionTests(unittest.TestCase):

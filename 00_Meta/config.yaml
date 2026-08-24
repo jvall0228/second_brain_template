@@ -17,8 +17,10 @@
 # Implemented keys — uncomment an example line to override (keep the
 # explanation lines commented; only the bare key/value lines are grammar).
 #
-# Extra directories agents may write to, beyond the Inbox-first defaults
-# (02_Inbox/, 02_Outbox/, 10_Agents/solutions/). Vault-relative dirs only.
+# Extra directories autonomous (unattended) runs may write to, beyond the
+# Inbox-first defaults (02_Inbox/, 02_Outbox/, 10_Agents/solutions/).
+# Vault-relative dirs only. Interactive write authority is prose policy
+# (AGENTS.md § Where Agents Write), not modeled by this key.
 #
 # write_exceptions:
 #   - 06_Resources/

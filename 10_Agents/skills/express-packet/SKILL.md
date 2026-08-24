@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -25,8 +25,8 @@ The Express stage: knowledge only pays off when it leaves the vault. This skill 
    - **Comparison** — side-by-side evaluation
    - **Draft post / email** — ready-to-edit prose in the owner's voice (see [PREFERENCES](../../../01_Profile/PREFERENCES.md))
 2. **Gather sources vault-first** ([vault-answer](../vault-answer/SKILL.md) discipline): brain search → index → grep, read the actual notes, note gaps. Missing knowledge → offer [research-to-resource](../research-to-resource/SKILL.md) first, or flag the gap in the packet.
-3. **Privacy gate — before writing a word:** packets never include `01_Profile/` or `03_Journal/` content unless the owner directed it *for this packet*. When personal-context notes do feed a packet (with per-packet direction), open the draft with a flag line such as `> Personal-context source: [Owner preferences](../01_Profile/PREFERENCES.md) — review before shipping.` Blanket permissions don't exist; the gate resets every packet.
-4. **Write to `02_Outbox/`** (`YYYY-MM-DD-slug.md`, suffix on collision): frontmatter with `title`, `tags` (`audience/human`, `workflow/draft`, `type/*` fitting the shape), `updated:`; a one-line header stating audience and purpose; then the deliverable itself — polished enough to ship after one owner pass, not a dump of source notes.
+3. **Privacy gate — before writing a word:** packets never include `01_Profile/` or `03_Journal/` content unless the owner directed it *for this packet*. When personal-context notes do feed a packet (with per-packet direction), open the draft with a flag line such as `> Personal-context source: [Owner preferences](../01_Profile/PREFERENCES.md) — review before shipping.` Blanket permissions don't exist; the gate resets every packet. Separately, when the packet quotes, summarizes, or otherwise carries private substance from a `restricted/private` source, the packet note inherits `restricted/private` — a bare source link propagates nothing ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Tell the owner about the tag when handing off: shipping such a packet to a public audience requires their explicit per-operation override.
+4. **Write to `02_Outbox/`** (`YYYY-MM-DD-slug.md`, suffix on collision): frontmatter with `title`, `tags` (`audience/human`, `workflow/draft`, `restricted/private` when step 3 requires it, `type/*` fitting the shape), `updated:`; a one-line header stating audience and purpose; then the deliverable itself — polished enough to ship after one owner pass, not a dump of source notes.
 5. **Provenance:** end with a `## Sources` section linking every vault note the packet draws on with source-relative Markdown (and external sources with retrieval dates). The owner must be able to check any claim in one hop.
 6. **Hand off, don't ship:** tell the owner the packet is ready for review. Shipping — sending, posting, delivering — is theirs alone (see [README](../../../02_Outbox/README.md)).
 7. **Close the loop:** after the owner ships, offer to recapture what shipping taught (feedback, corrections, reusable fragments) to the Inbox, and move the packet to `07_Archives/outbox/` with `status/done`.
@@ -41,4 +41,5 @@ The Express stage: knowledge only pays off when it leaves the vault. This skill 
 
 - [README](../../../02_Outbox/README.md) — the lane this writes to, and its lifecycle
 - [vault-answer](../vault-answer/SKILL.md) — the retrieval discipline for step 2
-- [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Agent Write Rules — the two-lane write rule
+- [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Agent Write Rules — pointer to the execution-class write contract; the Outbox is its outbound lane in every class
+- [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate) — propagation and the per-operation public override

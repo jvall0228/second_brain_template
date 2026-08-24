@@ -1,9 +1,15 @@
-# .cursorignore — privacy exclusions for restricted/private-tagged notes.
-# Shipping policy since 2026-08-11 (issue #17 closed PRD section 21's open
-# question): the managed block below is rewritten from
+# .cursorignore — OWNER-SELECTED opt-in read restriction for
+# restricted/private-tagged notes. Installed only when the owner chooses
+# harness-level read restriction; default overlay installation skips it.
+# The restricted/private tag itself is publication classification, not
+# access control — see 00_Meta/CONVENTIONS.md (restricted/private).
+# This exclusion is path-based, Cursor-specific, and incomplete: only
+# listed paths are excluded, a stale file under-excludes, and other
+# harnesses have no equivalent.
+# The managed block below is rewritten from
 #   brain list --tag restricted/private
-# by the onboard-harness overlay step — do not hand-edit inside the markers.
+# per 10_Agents/harnesses/cursor/wiring.md (Restricted content) — do not
+# hand-edit inside the markers.
 # Lines outside the markers are yours (add extra owner exclusions freely).
-# See 10_Agents/harnesses/cursor/wiring.md (Restricted content).
 # BEGIN second-brain restricted/private (generated)
 # END second-brain restricted/private (generated)

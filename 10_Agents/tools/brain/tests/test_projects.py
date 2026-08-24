@@ -531,6 +531,77 @@ class ProjectRollupTests(unittest.TestCase):
         self.assertNotIn(b"PRIVATE PROJECT TITLE", path.read_bytes())
         self.assertNotIn(b"private-project", path.read_bytes())
 
+    def test_rollup_writes_restricted_project_into_restricted_area(self):
+        # AE9's positive half (2026-08-24 privacy policy): a restricted
+        # Project mapping to a restricted Area is NOT a blocker — the rollup
+        # succeeds, and disclosure stays confined to the already-restricted
+        # Area note itself.
+        self.vault.write(
+            "05_Areas/private-life/AREA.md",
+            note(
+                "Private Life",
+                (
+                    "type/area",
+                    "status/active",
+                    "area/private-life",
+                    "restricted/private",
+                ),
+                "## Standard to Maintain\n\nKeep it healthy.\n\n"
+                "## Active Projects\n\n_None._",
+            ),
+        )
+        self.vault.area("home")
+        self.vault.project(
+            "private-project",
+            title="PRIVATE PROJECT TITLE",
+            areas=("private-life",),
+            target="2026-12-01",
+            extra_tags=("restricted/private",),
+        )
+        self.vault.project(
+            "public-project", title="Public Project", target="2026-12-01"
+        )
+        model = self.vault.model()
+
+        preview = brain.reconcile_project_rollups(self.vault.root, model, write=False)
+        self.assertEqual(preview["blockers"], [])
+        self.assertEqual(
+            sorted(row["path"] for row in preview["changes"]),
+            ["05_Areas/home/AREA.md", "05_Areas/private-life/AREA.md"],
+        )
+
+        applied = brain.reconcile_project_rollups(self.vault.root, model, write=True)
+        self.assertEqual(applied["blockers"], [])
+        self.assertTrue(applied["written"])
+        restricted_area = (
+            self.vault.root / "05_Areas/private-life/AREA.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "[PRIVATE PROJECT TITLE](../../04_Projects/private-project/PROJECT.md)",
+            restricted_area,
+        )
+        # Disclosure boundary: no file other than the restricted Area note
+        # and the restricted Project's own entrypoint gains the private
+        # title or slug.
+        allowed = {
+            "05_Areas/private-life/AREA.md",
+            "04_Projects/private-project/PROJECT.md",
+        }
+        for md in sorted(self.vault.root.rglob("*.md")):
+            rel = md.relative_to(self.vault.root).as_posix()
+            if rel in allowed:
+                continue
+            content = md.read_text(encoding="utf-8")
+            self.assertNotIn("PRIVATE PROJECT TITLE", content, rel)
+            self.assertNotIn("private-project", content, rel)
+
+        second = brain.reconcile_project_rollups(
+            self.vault.root, self.vault.model(), write=True
+        )
+        self.assertEqual(second["blockers"], [])
+        self.assertEqual(second["changes"], [])
+        self.assertFalse(second["written"])
+
     def test_rollup_escapes_labels_and_encodes_destinations(self):
         self.vault.area("home")
         self.vault.project(

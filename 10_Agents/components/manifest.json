@@ -77,7 +77,7 @@
       "id": "cursor-overlay",
       "kind": "overlay",
       "provenance": "first-party",
-      "description": "Cursor-native overlay: a glob-scoped Inbox .mdc rule and the .cursorignore privacy template. The overlay's own manifest is the authority for its artifacts.",
+      "description": "Cursor-native overlay: a glob-scoped Inbox .mdc rule (default install) and an owner-opt-in .cursorignore read-restriction template that default installation skips. The overlay's own manifest is the authority for its artifacts.",
       "license": "n/a",
       "signoff": "default-ok",
       "source": {

@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2026-11-11
 ---
 
@@ -53,12 +53,13 @@ An adapter may additionally ship an **overlay**: installable harness-native prim
 Every overlay contains a `manifest.json` describing what it installs, where, and how to reverse it:
 
 - **Top level:** `overlay_version` (schema version, currently `1`), `harness` (must equal the adapter directory name), `description`, `standards_gap` (the explicit justification — which capability no cross-harness standard reaches), and `artifacts`.
-- **Per artifact:** a unique `id`, `kind`, `source` + `source_root` (`overlay` = payload file inside `overlay/`; `repo` = working config already shipped elsewhere in the repository, e.g. Copilot's `.github/` files), an `install` object (`method`, portable `target`, `scope`), and a `reverse` object (`method`, optional `condition`).
+- **Per artifact:** a unique `id`, `kind`, `source` + `source_root` (`overlay` = payload file inside `overlay/`; `repo` = working config already shipped elsewhere in the repository, e.g. Copilot's `.github/` files), an `install` object (`method`, portable `target`, `scope`, optional `owner_opt_in`), and a `reverse` object (`method`, optional `condition`).
+- **Opt-in artifacts:** `install.owner_opt_in: true` marks an artifact that **default installation skips entirely** — it installs only when the owner explicitly selects it (currently Cursor's `.cursorignore` read-restriction artifact: harness-level read restriction is an owner choice, not the `restricted/private` tag's default enforcement — see [CONVENTIONS](../../00_Meta/CONVENTIONS.md#restrictedprivate)).
 - **Install methods:** `copy` (place the payload at the target; foreign files are never overwritten), `marker-block` (merge a marker-delimited block into a user-owned config file), `generate` (produce the target by running the recorded `generator` command, seeded from the payload template), `shipped-in-repo` (the artifact is tracked repo config present in every clone — nothing to install).
 - **Reverse methods:** `delete`, `remove-marker-block`, `none` (only valid for `shipped-in-repo` — removing tracked config is a repo change, not an uninstall action).
 
 Install and uninstall are performed by [onboard-harness](../skills/onboard-harness/SKILL.md) under the **same M6 contract as everything else it touches** — idempotent, reversible, marker-managed where it merges into user-owned files, every action recorded in the machine-local manifest (`~/.agents/second-brain-manifest.json`); there is no second install model. The template portability invariant applies in full: overlay files and manifests are tracked template content, so targets use only portable placeholders (`<vault>`, `~`) and never an adopter-specific path. Manifest shape is enforced mechanically by `10_Agents/tools/brain/tests/test_harness_overlays.py`.
 
-Shipped overlays: [Cursor](cursor/wiring.md) (glob-scoped Inbox rule, `.cursorignore` privacy template) and [Copilot](copilot/wiring.md) (`shipped-in-repo` catalogue of the `.github/` instructions shim + cloud-agent validate hook).
+Shipped overlays: [Cursor](cursor/wiring.md) (glob-scoped Inbox rule installed by default, plus the owner-opt-in `.cursorignore` read-restriction template) and [Copilot](copilot/wiring.md) (`shipped-in-repo` catalogue of the `.github/` instructions shim + cloud-agent validate hook).
 
 Facts are grounded in [the 2026-08-11 harness research](../../06_Resources/harness-primitives-research.md) (sources linked there; its Copilot section was re-verified in depth the same day for the P0 promotion). Harness surfaces move fast — **re-verify a wiring doc against its sources before relying on it**, and bump `updated:` when you do.

@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -23,7 +23,7 @@ Retrieval discipline for questions the vault should answer. The vault is the sou
    2. Otherwise, `brain search "<term>"` — title and full-text hits (try synonyms and abbreviations too).
    3. [INDEX](../../../00_Meta/INDEX.md) and the relevant directory READMEs — where a topic *should* live, even if search missed it.
    4. `grep` across the vault — phrasings the index search didn't catch.
-2. **Read the notes you found.** Answer from note content, never from search snippets or filenames alone.
+2. **Read the notes you found.** Answer from note content, never from search snippets or filenames alone. Query results carry each note's privacy classification — a `restricted` boolean on JSON rows, a `[restricted]` label in human-readable output; restricted notes are fully usable here, but keep the classification attached to what you take from them.
 3. **Cite every vault claim with a source-relative Markdown link** to the note it came from, e.g. the [harness research](../../../06_Resources/harness-primitives-research.md) says… when writing from a skill directory. An answer without citations is an answer the human can't verify or follow.
 4. **Keep vault knowledge and model knowledge separate.** If you supplement with general knowledge, label it explicitly ("the vault doesn't cover this, but generally…"). Check freshness while reading: if a note looks stale (`updated:` long ago for a volatile topic), say so alongside the answer.
 5. **Offer to capture substantive answers** — answers are assets. If answering took real synthesis (a comparison, a cross-note summary, a decision input), offer to save it to `02_Inbox/` via [inbox-capture](../inbox-capture/SKILL.md) so the exploration compounds instead of evaporating in chat. Skip the offer for simple lookups.
@@ -32,8 +32,9 @@ Retrieval discipline for questions the vault should answer. The vault is the sou
 ## Rules
 
 - Never present model knowledge as vault knowledge — the separation in step 4 is mandatory, not stylistic.
+- Preserve privacy provenance: an answer that quotes or summarizes substance from a restricted note is itself private material — note it alongside the citations, and a captured version of that answer carries `restricted/private` ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Citing a restricted note by bare link propagates nothing.
 - If two vault notes conflict, don't silently pick one: present both with the conflict flagged, and follow the Stuck/Escalation Protocol in [OPERATING-RULES](../../docs/OPERATING-RULES.md) so the conflict gets resolved in the notes, not just in chat.
-- Captured answers follow the Inbox-first rule and normal triage — this skill never files directly to PARA directories.
+- Captured answers land through [inbox-capture](../inbox-capture/SKILL.md)'s default lane and normal triage; filing an answer directly to its durable home is the execution-class contract's call ([AGENTS](../../../AGENTS.md#where-agents-write)), not this skill's.
 
 ## References
 

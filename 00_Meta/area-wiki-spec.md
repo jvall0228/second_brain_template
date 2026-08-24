@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-08-24
 expires: 2027-08-18
 ---
 
@@ -78,7 +78,7 @@ When durable source material arrives or a live system changes:
 7. Append the Area log only for a material ingest, reconciliation, or state change.
 8. Mark unverified or disputed claims explicitly, then run the normal link and vault validation checks.
 
-Inbox-first still applies when the destination or interpretation is uncertain. Explicit owner direction, triage, or a documented skill may authorize direct Area updates.
+Destinations follow the execution-class contract in [AGENTS](../AGENTS.md#where-agents-write): interactive user-directed work updates the affected Area pages directly, while autonomous ingest is Inbox-first unless a documented standing exception applies. In either class, uncertain destination or interpretation goes to the Inbox for triage.
 
 ## Query Workflow
 
@@ -104,7 +104,7 @@ Area-wiki maintenance is part of normal vault maintenance:
 - **Write-time deduplication:** Search before creating a page; merge overlapping claims into the strongest existing home.
 - **Incremental synthesis:** Update the pages whose meaning changed, not the whole Area.
 - **Portable linking:** Use relative Markdown links, not legacy wikilinks or machine-specific absolute paths.
-- **Privacy:** A summary must be safer than its source. Omit credentials and unnecessary identifiers; apply `restricted/private` when content must not spread beyond its note.
+- **Privacy:** A summary must be safer than its source. Omit credentials and unnecessary identifiers; a page that carries private substance from a `restricted/private` source also carries `restricted/private`, while a bare link does not propagate the tag (see [CONVENTIONS](CONVENTIONS.md#restrictedprivate)).
 - **Human and agent co-maintenance:** The template does not adopt the source model's single-LLM writer constraint. Git history, write lanes, and review handle concurrent stewardship.
 - **Reversibility:** Deactivating the wiki pattern requires no file migration; the notes remain ordinary Area notes and unused scaffolding can be removed through normal review.
 

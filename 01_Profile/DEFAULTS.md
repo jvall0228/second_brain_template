@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-11
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -35,7 +35,7 @@ Machine-readable defaults for agent output. Agents apply these unless you overri
 
 | Setting | Value |
 |---------|-------|
-| Default write location | `02_Inbox/` |
+| Default write location | `02_Inbox/` (autonomous; [AGENTS](../AGENTS.md#where-agents-write)) |
 | Default tags for new notes | `audience/agent`, `workflow/draft` |
 | Filename format | `kebab-case.md` |
 | Frontmatter fields required | `title`, `tags`, `updated` |

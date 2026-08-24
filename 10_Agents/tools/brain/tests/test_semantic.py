@@ -1,6 +1,9 @@
 """Tests for semantic search (spec §18, issue #8 QMD): sidecar round-trip,
 hash staleness, hybrid-ranking determinism, keyword degradation, the
-`embed --stdin-json` contract, and restricted/private containment.
+`embed --stdin-json` contract, and restricted/private inclusion (the
+2026-08-24 privacy policy: the gitignored sidecar is local working
+context, so restricted notes embed and rank like any other note while
+the committed-index reduction stays intact).
 
 Run from the vault root:
     python3 -m unittest discover -s 10_Agents/tools/brain/tests
@@ -212,10 +215,12 @@ class EmbedStdinJsonTests(unittest.TestCase):
             code, out, _err = run(["embed", "--status", "--json", "--vault", str(root)])
             self.assertEqual(code, 0)
             status = json.loads(out)
-            # secret.md is restricted — outside the embeddable universe.
-            self.assertEqual(status["notes"], 2)
+            # secret.md is restricted but embeddable — the sidecar is local
+            # working context (2026-08-24 policy); only unreadable notes are
+            # outside the universe.
+            self.assertEqual(status["notes"], 3)
             self.assertEqual(status["embedded"], 1)
-            self.assertEqual(status["missing"], 1)
+            self.assertEqual(status["missing"], 2)
             self.assertEqual(status["stale"], 0)
 
     @unittest.skipIf(HAVE_LOCAL_MODEL, "optional dependency is installed here")
@@ -286,8 +291,8 @@ class SemanticRankingTests(unittest.TestCase):
             rows = json.loads(out)
             # alpha:  sem = (1+1)/2 = 1.0, kw hit -> 0.7*1 + 0.3 = 1.0 (rank 1)
             # beta:   sem = (0+1)/2 = 0.5, no kw -> 0.35
-            # secret: restricted, no vector, but its body mentions gardening —
-            #         keyword component only (§18.1), 0.3.
+            # secret: no vector ingested, but its body mentions gardening —
+            #         keyword component only, 0.3.
             self.assertEqual(
                 [(r["path"], r["score"]) for r in rows],
                 [("alpha.md", 1.0), ("beta.md", 0.35), ("secret.md", 0.3)],
@@ -380,25 +385,102 @@ class DegradationTests(unittest.TestCase):
             self.assertIn("no query embedding source", err)
 
 
-class RestrictedContainmentTests(unittest.TestCase):
-    """§18.1: restricted/private notes never enter or rank via the sidecar."""
+class RestrictedInclusionTests(unittest.TestCase):
+    """2026-08-24 privacy policy (R12/KTD5): the gitignored sidecar is local
+    working context — restricted/private notes embed and rank like any other
+    note, semantic rows carry privacy metadata (R11/KTD3), and the committed
+    index still reduces the same note (§8.3 untouched)."""
 
-    def test_embed_skips_restricted_with_notice(self):
+    def test_embed_accepts_restricted_via_stdin_json(self):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(Path(td), base_files())
             code, out, err = ingest(
                 root, {"alpha.md": [1.0, 0.0], "secret.md": [1.0, 0.0]}
             )
             self.assertEqual(code, 0)
-            self.assertIn("restricted/private", err)
+            self.assertNotIn("skipping restricted", err)
             summary = json.loads(out)
-            self.assertEqual(summary["skippedRestricted"], ["secret.md"])
-            self.assertEqual(summary["stored"], 1)
-            self.assertNotIn("secret.md", brain.load_embeddings(root)["notes"])
+            self.assertNotIn("skippedRestricted", summary)
+            self.assertEqual(summary["stored"], 2)
+            store = brain.load_embeddings(root)
+            self.assertIn("secret.md", store["notes"])
+            text, _ = brain.load_text(root, "secret.md")
+            self.assertEqual(
+                store["notes"]["secret.md"]["hash"], brain.note_content_hash(text)
+            )
 
-    def test_search_ignores_sidecar_entry_for_now_restricted_note(self):
-        # A vector embedded before the note was tagged restricted must stop
-        # ranking the moment the tag lands, sidecar regeneration or not.
+    def test_restricted_note_is_embeddable_and_survives_merge(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            notes, assets = brain.walk_corpus(root)
+            index = brain.build_index(root, notes, assets)
+            hashes = brain.note_hashes(root, index)
+            self.assertIn("secret.md", brain.embeddable_notes(index, hashes))
+            # A restricted entry is an ordinary entry: a later partial update
+            # for another note must not prune it from the sidecar.
+            ingest(root, {"secret.md": [1.0, 0.0]})
+            ingest(root, {"alpha.md": [0.0, 1.0]})
+            self.assertEqual(
+                set(brain.load_embeddings(root)["notes"]), {"alpha.md", "secret.md"}
+            )
+
+    def test_restricted_note_ranks_with_privacy_metadata(self):
+        # AE7: a restricted note ranks for a semantic match, and the row
+        # carries the same restricted boolean/label keyword rows carry.
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            ingest(root, {"alpha.md": [0.0, 1.0], "secret.md": [1.0, 0.0]})
+            code, out, _err = run(
+                ["search", "--semantic", "zzz", "--json", "--query-vector", "--vault", str(root)],
+                "[1.0, 0.0]",
+            )
+            self.assertEqual(code, 0)
+            rows = json.loads(out)
+            self.assertEqual([r["path"] for r in rows], ["secret.md", "alpha.md"])
+            self.assertEqual(rows[0]["semanticScore"], 1.0)
+            by_path = {r["path"]: r for r in rows}
+            self.assertIs(by_path["secret.md"]["restricted"], True)
+            self.assertIs(by_path["alpha.md"]["restricted"], False)
+            # Human output labels the restricted row.
+            code, out, _err = run(
+                ["search", "--semantic", "zzz", "--query-vector", "--vault", str(root)],
+                "[1.0, 0.0]",
+            )
+            self.assertEqual(code, 0)
+            lines = out.strip().split("\n")
+            secret_line = next(l for l in lines if "secret.md" in l)
+            alpha_line = next(l for l in lines if "alpha.md" in l)
+            self.assertIn("  [restricted]", secret_line)
+            self.assertNotIn("[restricted]", alpha_line)
+
+    def test_local_embeds_restricted_notes(self):
+        # --local path via a monkeypatched encoder — the optional
+        # sentence-transformers dependency is never imported here.
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+
+            def fake_embedder(model_name):
+                # (built via list() so the repo's raw legacy-literal scan
+                # in test_markdown_link_contract stays clean)
+                vec = [1.0, 0.0]
+                return lambda texts: [list(vec) for _ in texts]
+
+            original = brain.local_embedder
+            brain.local_embedder = fake_embedder
+            try:
+                code, out, _err = run(
+                    ["embed", "--local", "--json", "--vault", str(root)]
+                )
+            finally:
+                brain.local_embedder = original
+            self.assertEqual(code, 0)
+            summary = json.loads(out)
+            self.assertEqual(summary["embedded"], 3)
+            self.assertIn("secret.md", brain.load_embeddings(root)["notes"])
+
+    def test_tag_transition_keeps_note_queryable(self):
+        # Gaining the tag no longer removes a fresh vector from ranking;
+        # losing it after an incremental refresh keeps the note ranked too.
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(Path(td), base_files())
             ingest(root, {"alpha.md": [1.0, 0.0], "beta.md": [0.0, 1.0]})
@@ -406,7 +488,7 @@ class RestrictedContainmentTests(unittest.TestCase):
                 "tags:\n  - type/note\n", "tags:\n  - type/note\n  - restricted/private\n"
             )
             (root / "alpha.md").write_text(tagged, encoding="utf-8")
-            # Recompute the hash so ONLY restriction (not staleness) excludes it.
+            # Recompute the hash so freshness (not the edit) is what's tested.
             text, _ = brain.load_text(root, "alpha.md")
             store = brain.load_embeddings(root)
             store["notes"]["alpha.md"]["hash"] = brain.note_content_hash(text)
@@ -416,7 +498,36 @@ class RestrictedContainmentTests(unittest.TestCase):
                 "[1.0, 0.0]",
             )
             self.assertEqual(code, 0)
-            self.assertEqual([r["path"] for r in json.loads(out)], ["beta.md"])
+            rows = {r["path"]: r for r in json.loads(out)}
+            self.assertIn("alpha.md", rows)
+            self.assertIs(rows["alpha.md"]["restricted"], True)
+            # Remove the tag and incrementally refresh: still queryable.
+            (root / "alpha.md").write_text(NOTE_ALPHA, encoding="utf-8")
+            ingest(root, {"alpha.md": [1.0, 0.0]})
+            code, out, _err = run(
+                ["search", "--semantic", "zzz", "--json", "--query-vector", "--vault", str(root)],
+                "[1.0, 0.0]",
+            )
+            self.assertEqual(code, 0)
+            rows = {r["path"]: r for r in json.loads(out)}
+            self.assertIn("alpha.md", rows)
+            self.assertIs(rows["alpha.md"]["restricted"], False)
+            self.assertIsNotNone(rows["alpha.md"]["semanticScore"])
+
+    def test_committed_index_still_reduces_with_vector_in_sidecar(self):
+        # §8.3 retained: the sidecar holding a restricted note's vector does
+        # not weaken the committed-index reduction of that same note.
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            ingest(root, {"secret.md": [1.0, 0.0]})
+            self.assertIn("secret.md", brain.load_embeddings(root)["notes"])
+            notes, assets = brain.walk_corpus(root)
+            reduced = brain.reduce_restricted(brain.build_index(root, notes, assets))
+            rec = reduced["notes"]["secret.md"]
+            self.assertEqual(rec["headings"], [])
+            self.assertEqual(rec["bodyTags"], [])
+            self.assertEqual(rec["tasks"], [])
+            self.assertEqual(rec["title"], "Secret")
 
 
 if __name__ == "__main__":

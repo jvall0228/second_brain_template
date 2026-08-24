@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-12
+updated: 2026-08-24
 expires: 2027-08-11
 ---
 
@@ -14,12 +14,14 @@ Rules for agent-created output in this vault. For general conventions, see [CONV
 
 ## Default Write Location
 
-Agent output goes to `02_Inbox/` by default unless the human explicitly names a different destination or a documented standing exception below applies. This is the **Inbox-first rule**.
+Write authority is owned by the execution-class contract in [AGENTS](../../AGENTS.md#where-agents-write). Interactive (foreground, user-directed) sessions edit the appropriate durable home directly within the current task. Autonomous sessions — and any run without trusted execution metadata — send new vault content to `02_Inbox/` (the **Inbox-first rule**) and edit existing notes only through named standing exceptions.
 
 ## Destination Policy
 
-- Current active policy: write to `02_Inbox/` by default
-- Other non-Inbox destinations require the human to name them in the current request
+This section records path-level detail for autonomous sessions; the contract itself lives in [AGENTS](../../AGENTS.md#where-agents-write).
+
+- Autonomous active policy: write new content to `02_Inbox/` by default
+- Other non-Inbox destinations require the human to name them in the current request or a standing exception below
 - Standing exception: solution notes may be added to `10_Agents/solutions/` (include `type/solution` in tags; see [README](../README.md))
 - Standing exception: a live, user-invoked `agent-orientation` session may write its environment inventory and paired draft bundle to `10_Agents/environments/<env-slug>/`, `10_Agents/tools/<source>/`, and `10_Agents/skills/<source>-capture/`; note files stay `workflow/draft`, and non-note tool files inherit that state
 - Standing exception: a live `onboard-owner` session may write only the profile, people, project, area, template-specialization, and config outputs documented in that skill

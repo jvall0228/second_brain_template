@@ -698,12 +698,12 @@ class CurationTests(unittest.TestCase):
             self.assertEqual(cur["missingExpires"], [])
 
     def test_context_report_and_budget_warning(self):
-        files = {"AGENTS.md": "a" * 9000}
+        files = {"AGENTS.md": "a" * 11000}
         with tempfile.TemporaryDirectory() as td:
             root = self.vault(td, files)
             ctx = brain.context_report(root)
             by_path = {r["path"]: r for r in ctx["docs"]}
-            self.assertEqual(by_path["AGENTS.md"]["sizeBytes"], 9000)
+            self.assertEqual(by_path["AGENTS.md"]["sizeBytes"], 11000)
             self.assertIsNone(by_path["01_Profile/NOW.md"]["sizeBytes"])
             with mock.patch.object(brain, "VALIDATE_CURATION_WARNINGS", True):
                 _, warnings = brain.run_validate(root, check_index=False)

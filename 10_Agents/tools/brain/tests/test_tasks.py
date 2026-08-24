@@ -261,7 +261,9 @@ class TasksCommandTests(unittest.TestCase):
         )
         for r in rows:
             self.assertEqual(
-                sorted(r), ["due", "line", "malformed", "path", "priority", "status", "text"]
+                sorted(r),
+                ["due", "line", "malformed", "path", "priority", "restricted",
+                 "status", "text"],
             )
 
     def test_open_filter(self):
@@ -309,6 +311,50 @@ class TasksCommandTests(unittest.TestCase):
 
     def test_json_output_is_deterministic(self):
         self.assertEqual(self.json_rows("--open"), self.json_rows("--open"))
+
+
+class TasksRestrictedMetadataTests(unittest.TestCase):
+    """R11/AE7 (KTD3): task rows carry the privacy classification in JSON and
+    a visible [restricted] label in human output; existing keys unchanged."""
+
+    FILES = {
+        "00_Meta/CONVENTIONS.md": CONVENTIONS,
+        "secret.md": note(
+            "- [ ] secret errand 📅 2026-08-15\n",
+            title="Secret",
+            extra_tags="  - restricted/private\n",
+        ),
+        "plain.md": note("- [ ] public errand\n", title="Plain"),
+    }
+
+    def run_tasks(self, *argv: str):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), dict(self.FILES))
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = brain.main(["tasks", "--vault", str(root), *argv])
+        return rc, buf.getvalue()
+
+    def test_json_rows_carry_restricted(self):
+        rc, out = self.run_tasks("--json")
+        self.assertEqual(rc, 0)
+        rows = json.loads(out)
+        by_path = {r["path"]: r for r in rows}
+        self.assertTrue(by_path["secret.md"]["restricted"])
+        self.assertFalse(by_path["plain.md"]["restricted"])
+        for r in rows:
+            self.assertEqual(
+                sorted(r),
+                ["due", "line", "malformed", "path", "priority", "restricted",
+                 "status", "text"],
+            )
+
+    def test_human_output_labels_restricted_rows(self):
+        rc, out = self.run_tasks()
+        self.assertEqual(rc, 0)
+        lines = {l.split(":", 1)[0]: l for l in out.splitlines()}
+        self.assertIn("[restricted]", lines["secret.md"])
+        self.assertNotIn("[restricted]", lines["plain.md"])
 
 
 class TasksHardeningTests(unittest.TestCase):
