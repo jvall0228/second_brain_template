@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-08-27
 ---
 
 # Templates
@@ -17,7 +17,7 @@ Reusable note templates for creating structured content. Use these when creating
 |-----------|----------|---------------|-------------|
 | New Project | `template-project.md` | `type/project`, one lifecycle, `project/<slug>`, one or more `area/<slug>` | `04_Projects/<project-name>/PROJECT.md` |
 | Area of responsibility | `template-area.md` | `type/area`, `status/active`, `area/<slug>` | `05_Areas/<area-name>/AREA.md` |
-| Named Resource | `template-resource.md` | `type/resource` | `06_Resources/<resource-name>/RESOURCE.md` |
+| Named Resource | `template-resource.md` | `type/resource` | `06_Resources/<kebab-topic>.md` — flat file is the default; only a multi-note resource gets `06_Resources/<resource-name>/RESOURCE.md` |
 | Atomic evergreen note | `template-zettel.md` | `type/zettel` | `06_Resources/` |
 | Daily log | `template-daily-log.md` | `type/journal` | `03_Journal/periodic/daily/` |
 | Weekly review | `template-weekly-review.md` | `type/journal` | `03_Journal/periodic/weekly/` |

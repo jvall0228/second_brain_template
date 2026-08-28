@@ -32,7 +32,7 @@
  ],
  "linkCounts": {
   "legacy": 0,
-  "markdown": 888,
+  "markdown": 890,
   "placeholder": 20,
   "unsupportedBlockReference": 0,
   "wikilink": 0
@@ -22301,7 +22301,7 @@
      "audience/agent"
     ],
     "title": "Templates",
-    "updated": "2026-08-18"
+    "updated": "2026-08-27"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -22350,12 +22350,12 @@
       "end": {
        "column": 171,
        "line": 31,
-       "offset": 1812
+       "offset": 1906
       },
       "start": {
        "column": 116,
        "line": 31,
-       "offset": 1757
+       "offset": 1851
       }
      },
      "raw": "[CONVENTIONS](../00_Meta/CONVENTIONS.md#tag-namespaces)",
@@ -22385,12 +22385,12 @@
       "end": {
        "column": 238,
        "line": 33,
-       "offset": 2054
+       "offset": 2148
       },
       "start": {
        "column": 167,
        "line": 33,
-       "offset": 1983
+       "offset": 2077
       }
      },
      "raw": "[Project and Area Contract](../10_Agents/docs/project-area-contract.md)",
@@ -22417,12 +22417,12 @@
       "end": {
        "column": 193,
        "line": 37,
-       "offset": 2330
+       "offset": 2424
       },
       "start": {
        "column": 134,
        "line": 37,
-       "offset": 2271
+       "offset": 2365
       }
      },
      "raw": "[onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md)",
@@ -22449,12 +22449,12 @@
       "end": {
        "column": 429,
        "line": 37,
-       "offset": 2566
+       "offset": 2660
       },
       "start": {
        "column": 401,
        "line": 37,
-       "offset": 2538
+       "offset": 2632
       }
      },
      "raw": "[README](variants/README.md)",
@@ -22481,12 +22481,12 @@
       "end": {
        "column": 30,
        "line": 47,
-       "offset": 3043
+       "offset": 3137
       },
       "start": {
        "column": 2,
        "line": 47,
-       "offset": 3015
+       "offset": 3109
       }
      },
      "raw": "[INDEX](../00_Meta/INDEX.md)",
@@ -22513,12 +22513,12 @@
       "end": {
        "column": 42,
        "line": 48,
-       "offset": 3105
+       "offset": 3199
       },
       "start": {
        "column": 2,
        "line": 48,
-       "offset": 3065
+       "offset": 3159
       }
      },
      "raw": "[CONVENTIONS](../00_Meta/CONVENTIONS.md)",
@@ -22533,10 +22533,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3140,
+   "sizeBytes": 3234,
    "tasks": [],
    "title": "Templates",
-   "updated": "2026-08-18"
+   "updated": "2026-08-27"
   },
   "09_Templates/template-area.md": {
    "backlinks": [
@@ -22590,12 +22590,18 @@
     {
      "level": 2,
      "line": 30,
+     "slug": "scope-boundary",
+     "text": "Scope Boundary"
+    },
+    {
+     "level": 2,
+     "line": 34,
      "slug": "knowledge-model-optional",
      "text": "Knowledge Model (Optional)"
     },
     {
      "level": 2,
-     "line": 38,
+     "line": 42,
      "slug": "related-resources",
      "text": "Related Resources"
     }
@@ -22608,18 +22614,18 @@
      "format": "markdown",
      "fragment": null,
      "label": "Area Wiki Specification",
-     "line": 32,
+     "line": 36,
      "placeholder": true,
      "range": {
       "end": {
        "column": 126,
-       "line": 32,
-       "offset": 674
+       "line": 36,
+       "offset": 854
       },
       "start": {
        "column": 81,
-       "line": 32,
-       "offset": 629
+       "line": 36,
+       "offset": 809
       }
      },
      "raw": "[Area Wiki Specification]({{AREA_WIKI_SPEC}})",
@@ -22640,18 +22646,18 @@
      "format": "markdown",
      "fragment": null,
      "label": "Related resource",
-     "line": 40,
+     "line": 44,
      "placeholder": true,
      "range": {
       "end": {
        "column": 42,
-       "line": 40,
-       "offset": 904
+       "line": 44,
+       "offset": 1084
       },
       "start": {
        "column": 2,
-       "line": 40,
-       "offset": 864
+       "line": 44,
+       "offset": 1044
       }
      },
      "raw": "[Related resource]({{RELATED_RESOURCE}})",
@@ -22666,7 +22672,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 905,
+   "sizeBytes": 1085,
    "tasks": [],
    "title": "{{AREA_NAME}}",
    "updated": null
@@ -22834,55 +22840,55 @@
     },
     {
      "level": 3,
-     "line": 34,
+     "line": 27,
      "slug": "schedule",
      "text": "Schedule"
     },
     {
      "level": 2,
-     "line": 45,
+     "line": 38,
      "slug": "review",
      "text": "Review"
     },
     {
      "level": 3,
-     "line": 47,
+     "line": 40,
      "slug": "activity-log",
      "text": "Activity Log"
     },
     {
      "level": 3,
-     "line": 51,
+     "line": 44,
      "slug": "backlog",
      "text": "Backlog"
     },
     {
      "level": 3,
-     "line": 57,
+     "line": 50,
      "slug": "health",
      "text": "Health"
     },
     {
      "level": 3,
-     "line": 63,
+     "line": 56,
      "slug": "mood",
      "text": "Mood"
     },
     {
      "level": 3,
-     "line": 69,
+     "line": 62,
      "slug": "practice-log",
      "text": "Practice Log"
     },
     {
      "level": 2,
-     "line": 75,
+     "line": 68,
      "slug": "reflection",
      "text": "Reflection"
     },
     {
      "level": 3,
-     "line": 91,
+     "line": 84,
      "slug": "thoughts",
      "text": "Thoughts"
     }
@@ -22953,8 +22959,17 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 1650,
-   "tasks": [],
+   "sizeBytes": 1685,
+   "tasks": [
+    {
+     "due": null,
+     "line": 23,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "**{{CONTEXT}}:** {{GOAL}}"
+    }
+   ],
    "title": "{{date}}",
    "updated": null
   },
@@ -22990,8 +23005,8 @@
     {
      "level": 2,
      "line": 12,
-     "slug": "status",
-     "text": "Status"
+     "slug": "status-optional",
+     "text": "Status (Optional)"
     },
     {
      "level": 2,
@@ -23020,6 +23035,12 @@
     {
      "level": 2,
      "line": 33,
+     "slug": "follow-ups",
+     "text": "Follow-ups"
+    },
+    {
+     "level": 2,
+     "line": 37,
      "slug": "related",
      "text": "Related"
     }
@@ -23032,18 +23053,18 @@
      "format": "markdown",
      "fragment": null,
      "label": "Related project",
-     "line": 35,
+     "line": 39,
      "placeholder": true,
      "range": {
       "end": {
        "column": 49,
-       "line": 35,
-       "offset": 527
+       "line": 39,
+       "offset": 790
       },
       "start": {
        "column": 11,
-       "line": 35,
-       "offset": 489
+       "line": 39,
+       "offset": 752
       }
      },
      "raw": "[Related project]({{RELATED_PROJECT}})",
@@ -23058,8 +23079,17 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 528,
-   "tasks": [],
+   "sizeBytes": 791,
+   "tasks": [
+    {
+     "due": null,
+     "line": 35,
+     "malformed": [],
+     "priority": null,
+     "status": "open",
+     "text": "Concrete actions this decision requires, as checkboxes (visible to `brain tasks`)"
+    }
+   ],
    "title": "DR: {{DECISION_TITLE}}",
    "updated": null
   },
@@ -27510,7 +27540,8 @@
   "10_Agents/environments/README.md": {
    "backlinks": [
     "10_Agents/README.md",
-    "10_Agents/skills/agent-orientation/SKILL.md"
+    "10_Agents/skills/agent-orientation/SKILL.md",
+    "10_Agents/solutions/vault-tooling/environment-selection-no-fingerprint-match.md"
    ],
    "bodyTags": [],
    "frontmatter": {
@@ -35961,7 +35992,7 @@
      "workflow/canonical"
     ],
     "title": "Skill: Sync Upstream",
-    "updated": "2026-08-11"
+    "updated": "2026-08-27"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -36125,12 +36156,12 @@
       "end": {
        "column": 32,
        "line": 150,
-       "offset": 12695
+       "offset": 12694
       },
       "start": {
        "column": 2,
        "line": 150,
-       "offset": 12665
+       "offset": 12664
       }
      },
      "raw": "[PRD](../../../00_Meta/PRD.md)",
@@ -36145,10 +36176,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 13102,
+   "sizeBytes": 13101,
    "tasks": [],
    "title": "Skill: Sync Upstream",
-   "updated": "2026-08-11"
+   "updated": "2026-08-27"
   },
   "10_Agents/skills/triage-inbox/SKILL.md": {
    "backlinks": [
@@ -36169,7 +36200,7 @@
      "workflow/canonical"
     ],
     "title": "Skill: Triage Inbox",
-    "updated": "2026-08-24"
+    "updated": "2026-08-27"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -36206,12 +36237,12 @@
       "end": {
        "column": 536,
        "line": 33,
-       "offset": 3096
+       "offset": 3429
       },
       "start": {
        "column": 472,
        "line": 33,
-       "offset": 3032
+       "offset": 3365
       }
      },
      "raw": "[CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)",
@@ -36241,12 +36272,12 @@
       "end": {
        "column": 61,
        "line": 35,
-       "offset": 3470
+       "offset": 3803
       },
       "start": {
        "column": 21,
        "line": 35,
-       "offset": 3430
+       "offset": 3763
       }
      },
      "raw": "[distill-note](../distill-note/SKILL.md)",
@@ -36273,12 +36304,12 @@
       "end": {
        "column": 42,
        "line": 44,
-       "offset": 4824
+       "offset": 5467
       },
       "start": {
        "column": 2,
        "line": 44,
-       "offset": 4784
+       "offset": 5427
       }
      },
      "raw": "[distill-note](../distill-note/SKILL.md)",
@@ -36305,12 +36336,12 @@
       "end": {
        "column": 66,
        "line": 45,
-       "offset": 4923
+       "offset": 5566
       },
       "start": {
        "column": 2,
        "line": 45,
-       "offset": 4859
+       "offset": 5502
       }
      },
      "raw": "[Project and Area Contract](../../docs/project-area-contract.md)",
@@ -36325,10 +36356,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 4986,
+   "sizeBytes": 5629,
    "tasks": [],
    "title": "Skill: Triage Inbox",
-   "updated": "2026-08-24"
+   "updated": "2026-08-27"
   },
   "10_Agents/skills/vault-answer/SKILL.md": {
    "backlinks": [
@@ -37885,7 +37916,7 @@
      "raw": "[Notification transaction contract](../../tools/brain/SPEC.md#263-preview-and-local-file-delivery)",
      "resolution": {
       "fragment": {
-       "line": 883,
+       "line": 891,
        "slug": "263-preview-and-local-file-delivery"
       },
       "path": "10_Agents/tools/brain/SPEC.md",
@@ -38016,7 +38047,7 @@
      "audience/agent"
     ],
     "title": "Solutions: Vault Tooling",
-    "updated": "2026-08-11"
+    "updated": "2026-08-28"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -38059,12 +38090,136 @@
      "resolved": "10_Agents/solutions/vault-tooling/index-merge-conflicts.md",
      "target": "index-merge-conflicts.md",
      "warnings": []
+    },
+    {
+     "destination": "environment-selection-no-fingerprint-match.md",
+     "display": "Environment Selection Fails: no-fingerprint-match",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Environment Selection Fails: no-fingerprint-match",
+     "line": 14,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 100,
+       "line": 14,
+       "offset": 444
+      },
+      "start": {
+       "column": 2,
+       "line": 14,
+       "offset": 346
+      }
+     },
+     "raw": "[Environment Selection Fails: no-fingerprint-match](environment-selection-no-fingerprint-match.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "10_Agents/solutions/vault-tooling/environment-selection-no-fingerprint-match.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "10_Agents/solutions/vault-tooling/environment-selection-no-fingerprint-match.md",
+     "target": "environment-selection-no-fingerprint-match.md",
+     "warnings": []
     }
    ],
-   "sizeBytes": 344,
+   "sizeBytes": 523,
    "tasks": [],
    "title": "Solutions: Vault Tooling",
-   "updated": "2026-08-11"
+   "updated": "2026-08-28"
+  },
+  "10_Agents/solutions/vault-tooling/environment-selection-no-fingerprint-match.md": {
+   "backlinks": [
+    "10_Agents/solutions/vault-tooling/README.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/solution",
+     "audience/agent",
+     "topic/software"
+    ],
+    "title": "Environment Selection Fails: no-fingerprint-match",
+    "updated": "2026-08-28"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "slug": "environment-selection-fails-no-fingerprint-match",
+     "text": "Environment Selection Fails: no-fingerprint-match"
+    },
+    {
+     "level": 2,
+     "line": 12,
+     "slug": "problem",
+     "text": "Problem"
+    },
+    {
+     "level": 2,
+     "line": 16,
+     "slug": "symptoms",
+     "text": "Symptoms"
+    },
+    {
+     "level": 2,
+     "line": 22,
+     "slug": "solution",
+     "text": "Solution"
+    },
+    {
+     "level": 2,
+     "line": 33,
+     "slug": "prevention",
+     "text": "Prevention"
+    },
+    {
+     "level": 2,
+     "line": 38,
+     "slug": "related",
+     "text": "Related"
+    }
+   ],
+   "links": [
+    {
+     "destination": "../../environments/README.md",
+     "display": "Environments registry",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Environments registry",
+     "line": 40,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 55,
+       "line": 40,
+       "offset": 2368
+      },
+      "start": {
+       "column": 2,
+       "line": 40,
+       "offset": 2315
+      }
+     },
+     "raw": "[Environments registry](../../environments/README.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "10_Agents/environments/README.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "10_Agents/environments/README.md",
+     "target": "../../environments/README.md",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 2499,
+   "tasks": [],
+   "title": "Environment Selection Fails: no-fingerprint-match",
+   "updated": "2026-08-28"
   },
   "10_Agents/solutions/vault-tooling/index-merge-conflicts.md": {
    "backlinks": [
@@ -38949,187 +39104,187 @@
     },
     {
      "level": 3,
-     "line": 682,
+     "line": 690,
      "slug": "204-commands-and-migration",
      "text": "20.4 Commands and migration"
     },
     {
      "level": 2,
-     "line": 704,
+     "line": 712,
      "slug": "21-portable-brain-resolver-and-installer",
      "text": "21. Portable `brain` resolver and installer"
     },
     {
      "level": 3,
-     "line": 706,
+     "line": 714,
      "slug": "211-repository-launchers",
      "text": "21.1 Repository launchers"
     },
     {
      "level": 3,
-     "line": 729,
+     "line": 737,
      "slug": "212-managed-path-installation",
      "text": "21.2 Managed PATH installation"
     },
     {
      "level": 3,
-     "line": 768,
+     "line": 776,
      "slug": "213-host-capability-boundary",
      "text": "21.3 Host capability boundary"
     },
     {
      "level": 2,
-     "line": 776,
+     "line": 784,
      "slug": "22-legacy-link-migration-brain-migrate-links-issue-74",
      "text": "22. Legacy link migration (`brain migrate-links`) — issue #74"
     },
     {
      "level": 3,
-     "line": 778,
+     "line": 786,
      "slug": "221-preview-and-plan",
      "text": "22.1 Preview and plan"
     },
     {
      "level": 3,
-     "line": 786,
+     "line": 794,
      "slug": "222-write-refusal-and-transaction",
      "text": "22.2 Write refusal and transaction"
     },
     {
      "level": 3,
-     "line": 792,
+     "line": 800,
      "slug": "223-crash-recovery-and-idempotence",
      "text": "22.3 Crash recovery and idempotence"
     },
     {
      "level": 2,
-     "line": 798,
+     "line": 806,
      "slug": "23-actions-you-may-take-brain-aymt-issue-79",
      "text": "23. Actions You May Take (`brain aymt`) — issue #79"
     },
     {
      "level": 3,
-     "line": 800,
+     "line": 808,
      "slug": "231-inputs-and-privacy-boundary",
      "text": "23.1 Inputs and privacy boundary"
     },
     {
      "level": 3,
-     "line": 806,
+     "line": 814,
      "slug": "232-candidates-scoring-and-selection",
      "text": "23.2 Candidates, scoring, and selection"
     },
     {
      "level": 3,
-     "line": 814,
+     "line": 822,
      "slug": "233-rendering-freshness-and-write-ownership",
      "text": "23.3 Rendering, freshness, and write ownership"
     },
     {
      "level": 2,
-     "line": 820,
+     "line": 828,
      "slug": "24-home-brain-home-issue-78",
      "text": "24. Home (`brain home`) — issue #78"
     },
     {
      "level": 3,
-     "line": 822,
+     "line": 830,
      "slug": "241-inputs-sections-and-privacy",
      "text": "24.1 Inputs, sections, and privacy"
     },
     {
      "level": 3,
-     "line": 830,
+     "line": 838,
      "slug": "242-output-and-editor-surfaces",
      "text": "24.2 Output and editor surfaces"
     },
     {
      "level": 3,
-     "line": 836,
+     "line": 844,
      "slug": "243-freshness-and-exact-file-ownership",
      "text": "24.3 Freshness and exact-file ownership"
     },
     {
      "level": 2,
-     "line": 841,
+     "line": 849,
      "slug": "25-local-offline-artifacts-brain-artifacts-issue-23",
      "text": "25. Local offline artifacts (`brain artifacts`) — issue #23"
     },
     {
      "level": 3,
-     "line": 843,
+     "line": 851,
      "slug": "251-authenticated-source-and-derived-data-boundary",
      "text": "25.1 Authenticated source and derived-data boundary"
     },
     {
      "level": 3,
-     "line": 851,
+     "line": 859,
      "slug": "252-offline-rendering-and-manifest",
      "text": "25.2 Offline rendering and manifest"
     },
     {
      "level": 3,
-     "line": 859,
+     "line": 867,
      "slug": "253-modes-ownership-and-local-opening",
      "text": "25.3 Modes, ownership, and local opening"
     },
     {
      "level": 2,
-     "line": 867,
+     "line": 875,
      "slug": "26-push-only-owner-notifications-brain-notify-issue-21",
      "text": "26. Push-only owner notifications (`brain notify`) — issue #21"
     },
     {
      "level": 3,
-     "line": 871,
+     "line": 879,
      "slug": "261-version-1-envelope-and-privacy-filter",
      "text": "26.1 Version-1 envelope and privacy filter"
     },
     {
      "level": 3,
-     "line": 877,
+     "line": 885,
      "slug": "262-selected-environment-setup",
      "text": "26.2 Selected-environment setup"
     },
     {
      "level": 3,
-     "line": 883,
+     "line": 891,
      "slug": "263-preview-and-local-file-delivery",
      "text": "26.3 Preview and local file delivery"
     },
     {
      "level": 3,
-     "line": 891,
+     "line": 899,
      "slug": "264-closure-gate",
      "text": "26.4 Closure gate"
     },
     {
      "level": 2,
-     "line": 895,
+     "line": 903,
      "slug": "27-project-and-area-registry-brain-projects",
      "text": "27. Project and Area registry (`brain projects`)"
     },
     {
      "level": 3,
-     "line": 897,
+     "line": 905,
      "slug": "271-identity-and-model",
      "text": "27.1 Identity and model"
     },
     {
      "level": 3,
-     "line": 903,
+     "line": 911,
      "slug": "272-inventory-and-rollups",
      "text": "27.2 Inventory and rollups"
     },
     {
      "level": 3,
-     "line": 909,
+     "line": 917,
      "slug": "273-consumers-and-validation-posture",
      "text": "27.3 Consumers and validation posture"
     },
     {
      "level": 3,
-     "line": 913,
+     "line": 921,
      "slug": "274-whole-directory-archive",
      "text": "27.4 Whole-directory archive"
     }
@@ -39407,12 +39562,12 @@
       "end": {
        "column": 243,
        "line": 381,
-       "offset": 52512
+       "offset": 52790
       },
       "start": {
        "column": 172,
        "line": 381,
-       "offset": 52441
+       "offset": 52719
       }
      },
      "raw": "[vscode-editor-support](../../../06_Resources/vscode-editor-support.md)",
@@ -39439,12 +39594,12 @@
       "end": {
        "column": 115,
        "line": 382,
-       "offset": 52759
+       "offset": 53037
       },
       "start": {
        "column": 63,
        "line": 382,
-       "offset": 52707
+       "offset": 52985
       }
      },
      "raw": "[onboard-owner](../../skills/onboard-owner/SKILL.md)",
@@ -39471,12 +39626,12 @@
       "end": {
        "column": 315,
        "line": 389,
-       "offset": 54865
+       "offset": 55143
       },
       "start": {
        "column": 263,
        "line": 389,
-       "offset": 54813
+       "offset": 55091
       }
      },
      "raw": "[sync-upstream](../../skills/sync-upstream/SKILL.md)",
@@ -39503,12 +39658,12 @@
       "end": {
        "column": 378,
        "line": 430,
-       "offset": 64110
+       "offset": 64801
       },
       "start": {
        "column": 332,
        "line": 430,
-       "offset": 64064
+       "offset": 64755
       }
      },
      "raw": "[CONVENTIONS](../../../00_Meta/CONVENTIONS.md)",
@@ -39523,7 +39678,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 135056,
+   "sizeBytes": 136475,
    "tasks": [],
    "title": "brain Spec — Parsing, Link Resolution, and Index Schema",
    "updated": "2026-08-24"

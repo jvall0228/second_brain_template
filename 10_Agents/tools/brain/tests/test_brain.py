@@ -680,6 +680,9 @@ class CurationTests(unittest.TestCase):
             "fresh.md": note("[expired](expired.md) ![used](08_Assets/used.png)", expires="2999-01-01"),
             "stale-hub.md": note("[fresh](fresh.md)", updated="2020-01-01", expires="2999-01-01"),
             "orphan.md": note(expires="2999-01-01"),
+            # Frozen lanes: as old as stale-hub, but never stale signals.
+            "03_Journal/periodic/daily/2020-01-01.md": note(updated="2020-01-01"),
+            "07_Archives/done.md": note(updated="2020-01-01"),
             "08_Assets/used.png": b"x",
             "08_Assets/unused.png": b"x",
         }

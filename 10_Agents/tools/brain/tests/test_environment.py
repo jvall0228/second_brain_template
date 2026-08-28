@@ -365,6 +365,48 @@ class PrivacyAndDiagnosticsTests(unittest.TestCase):
             self.assertNotIn("a" * 64, output)
             self.assertNotIn(str(root), output)
 
+    def test_selection_failure_names_reason_and_remedy(self):
+        # §20.3: fingerprint failures stay fail-closed but the stderr path
+        # names the stable code and the explicit-selection remedies.
+        with tempfile.TemporaryDirectory() as td, mock.patch.object(
+            brain, "machine_fingerprints", return_value=local_fingerprint("c" * 64)
+        ):
+            root = Path(td)
+            write_environment(root, "alpha", "a" * 64)
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = brain.main(["list", "--vault", str(root)])
+            self.assertEqual(code, 1)
+            message = err.getvalue()
+            self.assertIn("no-fingerprint-match", message)
+            self.assertIn("--env <slug>", message)
+            self.assertIn("SECOND_BRAIN_ENV", message)
+            self.assertIn(".second-brain/environment", message)
+            self.assertNotIn("a" * 64, message)
+            self.assertNotIn(str(root), message)
+
+    def test_aymt_stderr_failure_names_reason_code_json_stays_bare(self):
+        with tempfile.TemporaryDirectory() as td, mock.patch.object(
+            brain, "machine_fingerprints", return_value=local_fingerprint("c" * 64)
+        ):
+            root = Path(td)
+            write_environment(root, "alpha", "a" * 64)
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = brain.main(["aymt", "--vault", str(root)])
+            self.assertEqual(code, 1)
+            message = err.getvalue()
+            self.assertIn("AYMT generation failed safely", message)
+            self.assertIn("no-fingerprint-match", message)
+            self.assertNotIn(str(root), message)
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = brain.main(["aymt", "--json", "--vault", str(root)])
+            self.assertEqual(code, 1)
+            self.assertEqual(
+                json.loads(out.getvalue()), {"error": "AYMT generation failed safely"}
+            )
+
     @unittest.skipUnless(os.name == "posix", "symlink check")
     def test_symlinked_environments_root_is_rejected_without_following(self):
         with tempfile.TemporaryDirectory() as td:

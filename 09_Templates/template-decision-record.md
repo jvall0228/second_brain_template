@@ -9,9 +9,9 @@ updated: {{date}}
 
 # {{DECISION_TITLE}}
 
-## Status
+## Status (Optional)
 
-{{STATUS}} <!-- Proposed | Accepted | Superseded -->
+{{STATUS}} <!-- Proposed | Accepted | Superseded — most records are Accepted at write time; delete this section then, and add it back only when a record is genuinely Proposed or later Superseded -->
 
 ## Context
 
@@ -29,6 +29,10 @@ What was decided and why?
 ## Consequences
 
 What changes as a result of this decision?
+
+## Follow-ups
+
+- [ ] Concrete actions this decision requires, as checkboxes (visible to `brain tasks`)
 
 ## Related
 

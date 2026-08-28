@@ -116,6 +116,9 @@ CONVENTIONS_RELPATH = CORE_FRAMEWORK_PATHS["conventions"]
 CURATE_MAX_LINES = 400
 CURATE_MAX_BYTES = 20_000
 CURATE_STALE_DAYS = 180
+# Frozen-by-design lanes where age is a fact, not a re-review signal: dated
+# periodic records and archived content never refresh their updated: date.
+CURATE_STALE_EXEMPT_PREFIXES = ("03_Journal/periodic/", "07_Archives/")
 EXPIRES_CAP_DAYS = 366
 
 # Events, not claims — never asked for an expires: date. 02_Inbox/ is exempt
@@ -6160,7 +6163,7 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
                 oversized.append(
                     {"lines": lines, "path": rel, "sizeBytes": rec["sizeBytes"]}
                 )
-        if upd_d:
+        if upd_d and not rel.startswith(CURATE_STALE_EXEMPT_PREFIXES):
             days = (today_d - upd_d).days
             if days > CURATE_STALE_DAYS:
                 stale.append(
@@ -6236,15 +6239,27 @@ def frontmatter_tags(rec: dict) -> list[str]:
     return [t for t in tags if isinstance(t, str) and "{{" not in t]
 
 
-def is_abbreviation(short: str, long: str) -> bool:
+def is_near_duplicate(short: str, long: str) -> bool:
     """§16.1 near-duplicate heuristic: `short` (folded, ≥ 2 chars, strictly
-    shorter) shares its first character with `long` and is an in-order
-    subsequence of it — catches both prefixes (`tool`/`tools`) and
-    abbreviations (`sw`/`software`)."""
-    if len(short) < 2 or len(short) >= len(long) or short[0] != long[0]:
+    shorter) matches `long` by strict prefix (`tool`/`tools`), whole
+    hyphen-segment run containment (`art`/`ai-art`), or segment-initial
+    acronym (`ml`/`machine-learning`). The former in-order-subsequence
+    clause was retired: it matched unrelated tags whose letters merely
+    appear in order, producing mostly false positives."""
+    if len(short) < 2 or len(short) >= len(long):
         return False
-    it = iter(long)
-    return all(ch in it for ch in short)
+    if long.startswith(short):
+        return True
+    long_segments = long.split("-")
+    short_segments = short.split("-")
+    for start in range(len(long_segments) - len(short_segments) + 1):
+        if long_segments[start : start + len(short_segments)] == short_segments:
+            return True
+    return (
+        "-" not in short
+        and len(long_segments) > 1
+        and short == "".join(seg[0] for seg in long_segments if seg)
+    )
 
 
 def age_bucket(days: int) -> str:
@@ -6364,7 +6379,7 @@ def compute_report(
             values = sorted(open_values[namespace])
             for a in values:
                 for b in values:
-                    if a != b and is_abbreviation(fold(a), fold(b)):
+                    if a != b and is_near_duplicate(fold(a), fold(b)):
                         near_duplicates.append({"namespace": namespace, "values": [a, b]})
 
     # 5. Unresolved links (--since-scoped) — same population validate errors on.
@@ -12686,17 +12701,36 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 selection = selector(root, requested=getattr(args, "requested_env", None))
             except EnvironmentSelectionError as exc:
+                # §20.3: reason codes are stable and non-identifying, so the
+                # human path may name them and the documented remedy; JSON
+                # output keeps the bare safe-failure object for consumers.
+                remedy = (
+                    "hint: select explicitly — `brain env list` shows registered"
+                    " slugs; then `brain --env <slug> ...`, export"
+                    " SECOND_BRAIN_ENV=<slug>, or write the slug to"
+                    " .second-brain/environment"
+                    if exc.code in {"no-fingerprint-match", "ambiguous-fingerprint"}
+                    else None
+                )
                 if args.command in {"aymt", "home"}:
                     label = "AYMT" if args.command == "aymt" else "Home"
                     if args.json:
                         print(json.dumps({"error": f"{label} generation failed safely"}, indent=1, sort_keys=True))
                     else:
-                        print(f"error: {label} generation failed safely", file=sys.stderr)
+                        print(
+                            f"error: {label} generation failed safely"
+                            f" (environment selection failed: {exc.code})",
+                            file=sys.stderr,
+                        )
+                        if remedy:
+                            print(remedy, file=sys.stderr)
                     return 1
                 print(
                     f"error: environment selection failed ({exc.code})",
                     file=sys.stderr,
                 )
+                if remedy:
+                    print(remedy, file=sys.stderr)
                 return 1
             _ACTIVE_ENVIRONMENT = selection["slug"]
             if args.command == "aymt":

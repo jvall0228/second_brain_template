@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-08-27
 expires: 2027-08-11
 ---
 
@@ -25,7 +25,7 @@ Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the s
    - Established work with a bounded outcome, completion criteria, one or more Areas, and a defensible target → `04_Projects/<project>/` as `status/active`
    - Established work intentionally paused by priority, dependency, or resources → `status/deprioritized` Project with no active target fields
    - Uncommitted possibility → `status/someday`, not an active Project
-   - Ongoing responsibility → `05_Areas/<area>/`
+   - Ongoing responsibility → `05_Areas/<area>/`. Apply this test before the Project branches: work whose context has no completion date — a property, account, practice, or system being kept healthy — belongs to an Area even when the capture arrives as tasks and outcomes; carve the bounded piece out as a Project mapped to that Area rather than filing the whole context as one
    - Reference material or evergreen idea → `06_Resources/` (atomic evergreen → `type/zettel`)
    - Personal experience, log, or reflection → the right `03_Journal/` subtree
    - Done or dead → `07_Archives/inbox/`
@@ -35,7 +35,7 @@ Turn the raw Inbox into a reviewed set of filing proposals. **Proposing is the s
 7. **Hand zettels to [distill-note](../distill-note/SKILL.md).** Anything classified `type/zettel` gets reshaped by that skill (atomic claim, summary layer, links) before filing — procedure detail lives there, not here.
 8. **Write a triage report** as a new Inbox note (use `inbox-capture`; slug `triage-report`): one table row per note — path, one-line summary, proposed destination, proposed filename (kebab-case), tag changes (including `project/*` or `area/*` membership), action items, propagation edits, and open questions. A proposed active Project also shows proposed Areas, completion criteria, target, and whether the date is owner-confirmed or agent-estimated.
 9. **Present the report** to the human. Apply moves and propagation edits only after explicit approval, updating each edited note's `updated:` date and re-checking its source-relative Markdown links (see `10_Agents/solutions/obsidian-issues/wikilink-resolution-rules.md`). Propagation edits to `workflow/canonical` notes follow canonical change control even after triage approval.
-10. After approved relationship or lifecycle changes, run `brain projects --write-rollups`; then `brain validate` and commit. Require zero new Project/Area membership or lifecycle warnings.
+10. After approved relationship or lifecycle changes, run `brain projects --write-rollups`; then `brain validate` and commit. Require zero new Project/Area membership or lifecycle warnings. When the approved application is committed, archive the report itself in the same commit — move it to `07_Archives/inbox/`, replacing `workflow/draft`/`workflow/review` with `status/done` — so a triage report never re-enters the queue; only a report with rows still awaiting approval stays in `02_Inbox/`.
 
 ## References
 

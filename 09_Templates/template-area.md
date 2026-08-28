@@ -27,6 +27,10 @@ _No active Projects currently map to this Area._
 
 This section is derived from Project `area/*` tags by `brain projects --write-rollups`; keep other Area prose outside it.
 
+## Scope Boundary
+
+What belongs to this Area, and what belongs to its neighbors? Name the adjacent Areas or Projects that own the nearby territory, so captures file consistently.
+
 ## Knowledge Model (Optional)
 
 Delete this section when the Area is simple. For a multi-source Area, follow the [Area Wiki Specification]({{AREA_WIKI_SPEC}}) and record:
