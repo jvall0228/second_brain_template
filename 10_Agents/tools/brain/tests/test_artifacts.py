@@ -171,7 +171,7 @@ class ArtifactRenderingTests(unittest.TestCase):
             "ENVIRONMENT-TITLE",
             "ENVIRONMENT-BODY",
             str(self.vault.root),
-            Path.home().name,
+            str(Path.home()),
         ):
             self.assertNotIn(forbidden, rendered)
 

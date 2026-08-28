@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-08-27
 expires: 2027-08-11
 ---
 
@@ -129,7 +129,7 @@ Where a new upstream convention applies to existing fork content (a new frontmat
 Every run — dry-run or apply — ends with a sync report note in `02_Inbox/`, written per the `inbox-capture` rules:
 
 - Filename `YYYY-MM-DD-upstream-sync-report.md` (collision suffix per inbox-capture).
-- Frontmatter: `title`, `tags` (`audience/agent`, `audience/human`, `type/note`, `workflow/draft`), `updated`, and provenance `author:` + `session:` (conventions § Provenance).
+- Frontmatter: `title`, `tags` (`audience/agent`, `audience/human`, `type/log`, `workflow/draft`), `updated`, and provenance `author:` + `session:` (conventions § Provenance).
 - Body sections: **mode** (dry-run or apply) and the release span covered (`<from-tag>..<to-tag>`); **applied** (machinery commits, canonical PR link); **skipped** (every owner-content path with its reason); **conflicts/proposals** (diverged files, opt-in modules, "worth upstreaming?" candidates); **backfill** (regen + validate proof, owner checklist); **needs owner review** (everything gated on a human).
 
 ## Upstream release duty

@@ -39,15 +39,15 @@ def note(body: str = "", tags=("type/note",), updated="2026-08-01", title="x") -
 #   inbox aging: 1d (filename), 71d (filename, triage debt), 6d (updated:),
 #                one unknown; README excluded.
 #   tag drift: type/bogus unknown-value, madeup/x unknown-namespace, plain
-#              not-namespaced; topic/sw single-use + near-duplicate of
-#              topic/software (used twice).
+#              not-namespaced; topic/software-tools single-use + near-duplicate
+#              of topic/software (used twice).
 #   unresolved: one Markdown link to missing-note.md.
 REPORT_FILES = {
     "04_Projects/active-stale.md": note(tags=("type/note", "status/active"), updated="2026-06-01"),
     "04_Projects/active-fresh.md": note(tags=("type/note", "status/active"), updated="2026-08-01"),
     "06_Resources/hub.md": note(body="[linked](linked.md) and [missing](missing-note.md)", tags=("type/note", "topic/software")),
     "06_Resources/linked.md": note(tags=("type/note", "topic/software")),
-    "06_Resources/loner.md": note(tags=("type/note", "topic/sw")),
+    "06_Resources/loner.md": note(tags=("type/note", "topic/software-tools")),
     "06_Resources/README.md": note(),
     "07_Archives/dead.md": note(),
     "09_Templates/template-thing.md": note(),
@@ -179,23 +179,30 @@ class SectionTests(ReportTestCase):
                     {"count": 1, "reason": "unknown-value", "tag": "type/bogus"},
                 ],
             )
-            self.assertEqual(drift["singleUse"], ["topic/sw"])
+            self.assertEqual(drift["singleUse"], ["topic/software-tools"])
             self.assertEqual(
                 drift["nearDuplicates"],
-                [{"namespace": "topic", "values": ["sw", "software"]}],
+                [{"namespace": "topic", "values": ["software", "software-tools"]}],
             )
 
-    def test_is_abbreviation_heuristic(self):
+    def test_near_duplicate_heuristic(self):
         for short, long, expected in [
-            ("sw", "software", True),  # abbreviation (the issue's example)
-            ("tool", "tools", True),  # prefix
-            ("ml", "machine-learning", True),  # in-order subsequence
-            ("os", "software", False),  # first chars differ
+            ("tool", "tools", True),  # strict prefix
+            ("brand", "branding", True),  # strict prefix, mid-segment
+            ("ai", "ai-art", True),  # prefix and leading segment
+            ("art", "ai-art", True),  # trailing hyphen segment
+            ("core", "ml-core-utils", True),  # segment run
+            ("ml", "machine-learning", True),  # segment-initial acronym
+            ("sw", "software", False),  # single-word abbreviation: retired clause
+            ("ai", "abstraction", False),  # subsequence junk: retired clause
+            ("ux", "auxiliary", False),  # subsequence junk: retired clause
+            ("art", "architecture", False),  # not prefix, segment, or acronym
+            ("os", "software", False),  # unrelated
             ("a", "anything", False),  # too short to signal
             ("software", "software", False),  # not strictly shorter
             ("ws", "software", False),  # out of order
         ]:
-            self.assertEqual(brain.is_abbreviation(short, long), expected, (short, long))
+            self.assertEqual(brain.is_near_duplicate(short, long), expected, (short, long))
 
     def test_unresolved_links(self):
         with tempfile.TemporaryDirectory() as td:

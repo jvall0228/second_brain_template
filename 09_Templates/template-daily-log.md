@@ -18,18 +18,11 @@ updated: {{date}}
 
 ### Goals
 
-> [!ABSTRACT]
-> What are your expectations for the day?
+**Today's intended outcomes** — as checkboxes, highest priority first, so `brain tasks` and next-day carry-over can read them; add 📅 due / ⏫🔼🔽 priority metadata where it applies, and link established Projects, Areas, and people at first mention:
 
-> [!NOTE] Goals to Focus On
->> [!EXAMPLE] High Priority
->> - Goals that will or must take priority before the rest
->
->> [!EXAMPLE] Medium Priority
->> - Goals to finish after all high priority goals have been met
->
->> [!EXAMPLE] Low Priority
->> - Goals that are optional
+- [ ] **{{CONTEXT}}:** {{GOAL}}
+
+**A good day:** One sentence describing what done-enough looks like.
 
 ### Schedule
 
