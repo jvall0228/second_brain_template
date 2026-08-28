@@ -5,10 +5,18 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-24
+updated: 2026-08-28
 ---
 
 # Changelog
+
+## [2026-08-28] port-self-improve-fixes | Backport self-improve cycle 1 fixes from the shared_brain fork
+
+- `brain`: exempt frozen lanes (`03_Journal/periodic/`, `07_Archives/`) from the curate stale signal, mirroring the oversized-note exemption (spec §14); tighten the tag near-duplicate heuristic to strict prefix / whole hyphen-segment run / segment-initial acronym, retiring the in-order-subsequence clause that mostly produced false positives (spec §16.1); on `no-fingerprint-match`/`ambiguous-fingerprint` print a one-line explicit-selection remedy hint and name the reason code in `aymt`/`home` stderr, JSON contracts unchanged (spec §20.3).
+- Skills: `sync-upstream` reports are born `type/log`; `triage-inbox` self-archives the applied report and runs the Area-first (no-completion-date) classification test before the Project branches.
+- Templates: the Area template gains a Scope Boundary section; the decision-record template gains a Follow-ups checkbox section with Status optional; the daily-log (and its work variant) Goals become task-readable checkboxes instead of a callout stack invisible to `brain tasks`; the selection guide's Named Resource row defaults to a flat `06_Resources/<kebab-topic>.md`.
+- Solutions: captured the `no-fingerprint-match` recovery for ephemeral hosts. Hardened the artifacts privacy test to assert the full home path so it no longer false-positives on the CSS `:root` selector under a root home (containers, CI).
+- Ported from the shared_brain adopter fork's first self-improve cycle; the fork's authority-carve-out and bootstrap-distillation changes were excluded as fork-specific, and fork-specific provenance (dated measurements, real-vault example tags) was generalized.
 
 ## [2026-08-24] execution-class-write-authority-privacy | Execution-class write authority and publication-classification privacy
 
