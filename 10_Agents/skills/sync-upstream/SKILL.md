@@ -115,6 +115,8 @@ Lanes:
 | `10_Agents/docs/rejected-proposals.md` | owner-content | Append-only agent log (self-improve's memory) — fork-local history; sync never overwrites it |
 | `10_Agents/docs/accepted-proposals.md` | owner-content | Append-only agent logs — fork-local history; sync never overwrites them |
 | `10_Agents/docs/vault-answer-gaps.md` | owner-content | Append-only agent logs — fork-local history; sync never overwrites them |
+| `10_Agents/docs/skill-runs.log` | owner-content | Append-only skill-run log written only by the harness hook (merges by union) — fork-local history; sync never overwrites it |
+| `10_Agents/tools/brain/validate-baseline.json` | owner-content | The fork's own warning baseline (spec §10.6), written only by `brain validate --write-baseline` — never replaced by upstream's; regenerate it in the backfill step instead |
 | `10_Agents/components/` | machinery | First-party recommended-component registry, README, and vault-config presets — template machinery, synced directly. The human-facing catalog `06_Resources/recommended-skills.md` stays owner-content by its path-map lane, and `.gitmodules`/`.extern/` above are owner-content: re-tracking or advancing a third-party component is a curated owner decision, so sync proposes and never auto-advances it |
 
 ### Cross-cutting rules (apply after path lanes)
@@ -136,7 +138,7 @@ Only after the dry-run report is approved:
 
 Where a new upstream convention applies to existing fork content (a new frontmatter field, tag namespace, validate rule):
 
-1. Run the mechanical regeneration steps: `brain index` and `python3 10_Agents/tools/vscode/gen_snippets.py` (the pre-commit hook does both, but run them explicitly so the diff is reviewable).
+1. Run the mechanical regeneration steps the pre-commit hook performs — `brain bootstrap --write`, `brain index`, `python3 10_Agents/tools/vscode/gen_snippets.py`, and `python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py` — explicitly, so the diff is reviewable; then `brain validate --write-baseline` if the release changed a validate rule, so the fork's baseline stays its own.
 2. Generate the mechanical fixes for fork content the new convention now covers — **owner-content files still are not edited**; convention gaps in owner content become a checklist in the report instead.
 3. **Prove with `brain validate` — 0 errors** before committing; run the test suite (`python3 10_Agents/tools/run_tests.py`).
 4. Document the backfill pass (what was regenerated, what was fixed, what remains for the owner) as a section of the sync report.

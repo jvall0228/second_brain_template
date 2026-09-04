@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/draft
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2026-11-11
 ---
 
@@ -20,7 +20,7 @@ Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.
 
 ## Skills
 
-Muse scans `.agents/skills/` (plus compat paths). A clean clone includes generated text adapters there, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
+Muse scans `.agents/skills/` (plus compat paths). A clean clone includes generated text adapters there, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
 
 ## Hook installation
 

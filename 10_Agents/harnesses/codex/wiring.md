@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2026-11-11
 ---
 
@@ -25,7 +25,7 @@ User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then p
 
 ## Skills
 
-Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/`. A clean clone includes generated text adapters in `.agents/skills/`; each mirrors the canonical `name`/`description` and points to `10_Agents/skills/<name>/SKILL.md`. No project symlinks or onboarding writes are needed. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects. Optional user-global mode retains the manifest-owned `~/.agents/skills/<name>` link/copy route after exact preview and approval.
+Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/`. A clean clone includes generated text adapters in `.agents/skills/`; each mirrors the canonical `name`/`description` and points, via its `canonical-source` field, to the real `SKILL.md` — `10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills. No project symlinks or onboarding writes are needed. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects. Optional user-global mode retains the manifest-owned `~/.agents/skills/<name>` link/copy route after exact preview and approval.
 
 ## Hook installation
 

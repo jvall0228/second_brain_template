@@ -658,12 +658,12 @@
       "end": {
        "column": 138,
        "line": 18,
-       "offset": 3690
+       "offset": 4026
       },
       "start": {
        "column": 86,
        "line": 18,
-       "offset": 3638
+       "offset": 3974
       }
      },
      "raw": "[restricted/private Contract](restricted-private.md)",
@@ -690,12 +690,12 @@
       "end": {
        "column": 181,
        "line": 22,
-       "offset": 4220
+       "offset": 4607
       },
       "start": {
        "column": 117,
        "line": 22,
-       "offset": 4156
+       "offset": 4543
       }
      },
      "raw": "[Write Authority Contract](../10_Agents/docs/write-authority.md)",
@@ -722,12 +722,12 @@
       "end": {
        "column": 88,
        "line": 38,
-       "offset": 7728
+       "offset": 8115
       },
       "start": {
        "column": 47,
        "line": 38,
-       "offset": 7687
+       "offset": 8074
       }
      },
      "raw": "[AGENTS](../AGENTS.md#where-agents-write)",
@@ -757,12 +757,12 @@
       "end": {
        "column": 141,
        "line": 39,
-       "offset": 8153
+       "offset": 8540
       },
       "start": {
        "column": 94,
        "line": 39,
-       "offset": 8106
+       "offset": 8493
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md#restrictedprivate)",
@@ -792,12 +792,12 @@
       "end": {
        "column": 105,
        "line": 64,
-       "offset": 12146
+       "offset": 12533
       },
       "start": {
        "column": 59,
        "line": 64,
-       "offset": 12099
+       "offset": 12486
       }
      },
      "raw": "[DEFAULTS § Locale](../01_Profile/DEFAULTS.md)",
@@ -824,12 +824,12 @@
       "end": {
        "column": 81,
        "line": 71,
-       "offset": 13200
+       "offset": 13587
       },
       "start": {
        "column": 10,
        "line": 71,
-       "offset": 13128
+       "offset": 13515
       }
      },
      "raw": "[CONVENTIONS § Filename Convention](CONVENTIONS.md#filename-convention)",
@@ -859,12 +859,12 @@
       "end": {
        "column": 147,
        "line": 76,
-       "offset": 13819
+       "offset": 14206
       },
       "start": {
        "column": 78,
        "line": 76,
-       "offset": 13750
+       "offset": 14137
       }
      },
      "raw": "[generate-artifacts](../10_Agents/skills/generate-artifacts/SKILL.md)",
@@ -891,12 +891,12 @@
       "end": {
        "column": 233,
        "line": 76,
-       "offset": 13905
+       "offset": 14292
       },
       "start": {
        "column": 179,
        "line": 76,
-       "offset": 13851
+       "offset": 14238
       }
      },
      "raw": "[artifact inventory](../08_Assets/artifacts/README.md)",
@@ -923,12 +923,12 @@
       "end": {
        "column": 107,
        "line": 85,
-       "offset": 15568
+       "offset": 15955
       },
       "start": {
        "column": 22,
        "line": 85,
-       "offset": 15483
+       "offset": 15870
       }
      },
      "raw": "[configure-notifications skill](../10_Agents/skills/configure-notifications/SKILL.md)",
@@ -955,12 +955,12 @@
       "end": {
        "column": 33,
        "line": 89,
-       "offset": 15965
+       "offset": 16352
       },
       "start": {
        "column": 18,
        "line": 89,
-       "offset": 15950
+       "offset": 16337
       }
      },
      "raw": "[Home](HOME.md)",
@@ -987,12 +987,12 @@
       "end": {
        "column": 85,
        "line": 90,
-       "offset": 16350
+       "offset": 16737
       },
       "start": {
        "column": 22,
        "line": 90,
-       "offset": 16287
+       "offset": 16674
       }
      },
      "raw": "[refresh-home skill](../10_Agents/skills/refresh-home/SKILL.md)",
@@ -1019,12 +1019,12 @@
       "end": {
        "column": 33,
        "line": 96,
-       "offset": 17135
+       "offset": 17522
       },
       "start": {
        "column": 18,
        "line": 96,
-       "offset": 17120
+       "offset": 17507
       }
      },
      "raw": "[AYMT](AYMT.md)",
@@ -1051,12 +1051,12 @@
       "end": {
        "column": 86,
        "line": 96,
-       "offset": 17188
+       "offset": 17575
       },
       "start": {
        "column": 39,
        "line": 96,
-       "offset": 17141
+       "offset": 17528
       }
      },
      "raw": "[aymt skill](../10_Agents/skills/aymt/SKILL.md)",
@@ -1083,12 +1083,12 @@
       "end": {
        "column": 196,
        "line": 99,
-       "offset": 17764
+       "offset": 18151
       },
       "start": {
        "column": 149,
        "line": 99,
-       "offset": 17716
+       "offset": 18103
       }
      },
      "raw": "[conventions § Recency](CONVENTIONS.md#recency)",
@@ -1118,12 +1118,12 @@
       "end": {
        "column": 23,
        "line": 123,
-       "offset": 19733
+       "offset": 20120
       },
       "start": {
        "column": 10,
        "line": 123,
-       "offset": 19720
+       "offset": 20107
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -1150,12 +1150,12 @@
       "end": {
        "column": 29,
        "line": 125,
-       "offset": 20248
+       "offset": 20635
       },
       "start": {
        "column": 10,
        "line": 125,
-       "offset": 20229
+       "offset": 20616
       }
      },
      "raw": "[STATUS](STATUS.md)",
@@ -1182,12 +1182,12 @@
       "end": {
        "column": 239,
        "line": 125,
-       "offset": 20458
+       "offset": 20845
       },
       "start": {
        "column": 184,
        "line": 125,
-       "offset": 20403
+       "offset": 20790
       }
      },
      "raw": "[OPERATING-RULES](../10_Agents/docs/OPERATING-RULES.md)",
@@ -1214,12 +1214,12 @@
       "end": {
        "column": 71,
        "line": 137,
-       "offset": 22156
+       "offset": 22543
       },
       "start": {
        "column": 2,
        "line": 137,
-       "offset": 22087
+       "offset": 22474
       }
      },
      "raw": "[onboard-harness](../10_Agents/skills/setup/onboard-harness/SKILL.md)",
@@ -1246,12 +1246,12 @@
       "end": {
        "column": 588,
        "line": 141,
-       "offset": 23079
+       "offset": 23466
       },
       "start": {
        "column": 545,
        "line": 141,
-       "offset": 23036
+       "offset": 23423
       }
      },
      "raw": "[README](../10_Agents/components/README.md)",
@@ -1278,12 +1278,12 @@
       "end": {
        "column": 96,
        "line": 142,
-       "offset": 23177
+       "offset": 23564
       },
       "start": {
        "column": 31,
        "line": 142,
-       "offset": 23112
+       "offset": 23499
       }
      },
      "raw": "[onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md)",
@@ -1310,12 +1310,12 @@
       "end": {
        "column": 233,
        "line": 142,
-       "offset": 23314
+       "offset": 23701
       },
       "start": {
        "column": 164,
        "line": 142,
-       "offset": 23245
+       "offset": 23632
       }
      },
      "raw": "[onboard-harness](../10_Agents/skills/setup/onboard-harness/SKILL.md)",
@@ -1342,12 +1342,12 @@
       "end": {
        "column": 78,
        "line": 144,
-       "offset": 24083
+       "offset": 24470
       },
       "start": {
        "column": 19,
        "line": 144,
-       "offset": 24024
+       "offset": 24411
       }
      },
      "raw": "[sync-upstream](../10_Agents/skills/sync-upstream/SKILL.md)",
@@ -1374,12 +1374,12 @@
       "end": {
        "column": 376,
        "line": 144,
-       "offset": 24383
+       "offset": 24770
       },
       "start": {
        "column": 317,
        "line": 144,
-       "offset": 24324
+       "offset": 24711
       }
      },
      "raw": "[recommended-skills](../06_Resources/recommended-skills.md)",
@@ -1406,12 +1406,12 @@
       "end": {
        "column": 103,
        "line": 149,
-       "offset": 24963
+       "offset": 25350
       },
       "start": {
        "column": 10,
        "line": 149,
-       "offset": 24870
+       "offset": 25257
       }
      },
      "raw": "[Cursor dry-run feedback](../07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md)",
@@ -1438,12 +1438,12 @@
       "end": {
        "column": 211,
        "line": 149,
-       "offset": 25073
+       "offset": 25460
       },
       "start": {
        "column": 109,
        "line": 149,
-       "offset": 24969
+       "offset": 25356
       }
      },
      "raw": "[requirements R1–R5](../07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-requirements.md)",
@@ -1470,12 +1470,12 @@
       "end": {
        "column": 329,
        "line": 149,
-       "offset": 25191
+       "offset": 25578
       },
       "start": {
        "column": 219,
        "line": 149,
-       "offset": 25081
+       "offset": 25468
       }
      },
      "raw": "[implementation plan](../07_Archives/inbox/2026-08-11-onboard-owner-adaptive-interview-implementation-plan.md)",
@@ -1502,12 +1502,12 @@
       "end": {
        "column": 418,
        "line": 149,
-       "offset": 25280
+       "offset": 25667
       },
       "start": {
        "column": 353,
        "line": 149,
-       "offset": 25215
+       "offset": 25602
       }
      },
      "raw": "[onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md)",
@@ -1534,12 +1534,12 @@
       "end": {
        "column": 401,
        "line": 158,
-       "offset": 27247
+       "offset": 27634
       },
       "start": {
        "column": 340,
        "line": 158,
-       "offset": 27186
+       "offset": 27573
       }
      },
      "raw": "[rejected-proposals](../10_Agents/docs/rejected-proposals.md)",
@@ -1566,12 +1566,12 @@
       "end": {
        "column": 150,
        "line": 164,
-       "offset": 28388
+       "offset": 28775
       },
       "start": {
        "column": 121,
        "line": 164,
-       "offset": 28359
+       "offset": 28746
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -1598,12 +1598,12 @@
       "end": {
        "column": 141,
        "line": 172,
-       "offset": 31043
+       "offset": 31430
       },
       "start": {
        "column": 82,
        "line": 172,
-       "offset": 30984
+       "offset": 31371
       }
      },
      "raw": "[recommended-skills](../06_Resources/recommended-skills.md)",
@@ -1630,12 +1630,12 @@
       "end": {
        "column": 140,
        "line": 179,
-       "offset": 32591
+       "offset": 32978
       },
       "start": {
        "column": 111,
        "line": 179,
-       "offset": 32562
+       "offset": 32949
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -1662,12 +1662,12 @@
       "end": {
        "column": 293,
        "line": 187,
-       "offset": 34323
+       "offset": 34710
       },
       "start": {
        "column": 255,
        "line": 187,
-       "offset": 34285
+       "offset": 34672
       }
      },
      "raw": "[README](../10_Agents/tools/README.md)",
@@ -1694,12 +1694,12 @@
       "end": {
        "column": 78,
        "line": 197,
-       "offset": 36222
+       "offset": 36609
       },
       "start": {
        "column": 65,
        "line": 197,
-       "offset": 36209
+       "offset": 36596
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -1726,12 +1726,12 @@
       "end": {
        "column": 455,
        "line": 197,
-       "offset": 36602
+       "offset": 36989
       },
       "start": {
        "column": 400,
        "line": 197,
-       "offset": 36547
+       "offset": 36934
       }
      },
      "raw": "[OPERATING-RULES](../10_Agents/docs/OPERATING-RULES.md)",
@@ -1758,12 +1758,12 @@
       "end": {
        "column": 588,
        "line": 201,
-       "offset": 37402
+       "offset": 37789
       },
       "start": {
        "column": 575,
        "line": 201,
-       "offset": 37389
+       "offset": 37776
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -1790,12 +1790,12 @@
       "end": {
        "column": 124,
        "line": 205,
-       "offset": 37719
+       "offset": 38106
       },
       "start": {
        "column": 59,
        "line": 205,
-       "offset": 37654
+       "offset": 38041
       }
      },
      "raw": "[vscode-editor-support](../06_Resources/vscode-editor-support.md)",
@@ -1822,12 +1822,12 @@
       "end": {
        "column": 419,
        "line": 205,
-       "offset": 38016
+       "offset": 38403
       },
       "start": {
        "column": 406,
        "line": 205,
-       "offset": 38003
+       "offset": 38390
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -1854,12 +1854,12 @@
       "end": {
        "column": 367,
        "line": 209,
-       "offset": 38601
+       "offset": 38988
       },
       "start": {
        "column": 354,
        "line": 209,
-       "offset": 38588
+       "offset": 38975
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -1886,12 +1886,12 @@
       "end": {
        "column": 325,
        "line": 210,
-       "offset": 39319
+       "offset": 39706
       },
       "start": {
        "column": 312,
        "line": 210,
-       "offset": 39306
+       "offset": 39693
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -1918,12 +1918,12 @@
       "end": {
        "column": 555,
        "line": 210,
-       "offset": 39552
+       "offset": 39939
       },
       "start": {
        "column": 490,
        "line": 210,
-       "offset": 39487
+       "offset": 39874
       }
      },
      "raw": "[vscode-editor-support](../06_Resources/vscode-editor-support.md)",
@@ -1950,12 +1950,12 @@
       "end": {
        "column": 334,
        "line": 211,
-       "offset": 39890
+       "offset": 40277
       },
       "start": {
        "column": 283,
        "line": 211,
-       "offset": 39839
+       "offset": 40226
       }
      },
      "raw": "[vscode tools](../10_Agents/tools/vscode/README.md)",
@@ -1982,12 +1982,12 @@
       "end": {
        "column": 581,
        "line": 211,
-       "offset": 40137
+       "offset": 40524
       },
       "start": {
        "column": 526,
        "line": 211,
-       "offset": 40082
+       "offset": 40469
       }
      },
      "raw": "[OPERATING-RULES](../10_Agents/docs/OPERATING-RULES.md)",
@@ -2014,12 +2014,12 @@
       "end": {
        "column": 43,
        "line": 218,
-       "offset": 41081
+       "offset": 41468
       },
       "start": {
        "column": 30,
        "line": 218,
-       "offset": 41068
+       "offset": 41455
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -2046,12 +2046,12 @@
       "end": {
        "column": 322,
        "line": 218,
-       "offset": 41362
+       "offset": 41749
       },
       "start": {
        "column": 293,
        "line": 218,
-       "offset": 41333
+       "offset": 41720
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -2078,12 +2078,12 @@
       "end": {
        "column": 147,
        "line": 223,
-       "offset": 42073
+       "offset": 42460
       },
       "start": {
        "column": 59,
        "line": 223,
-       "offset": 41985
+       "offset": 42372
       }
      },
      "raw": "[`expires:` backfill review](../07_Archives/inbox/2026-08-11-expires-backfill-report.md)",
@@ -2110,12 +2110,12 @@
       "end": {
        "column": 118,
        "line": 225,
-       "offset": 42194
+       "offset": 42581
       },
       "start": {
        "column": 41,
        "line": 225,
-       "offset": 42117
+       "offset": 42504
       }
      },
      "raw": "[harness-primitives-research](../06_Resources/harness-primitives-research.md)",
@@ -2142,12 +2142,12 @@
       "end": {
        "column": 212,
        "line": 225,
-       "offset": 42290
+       "offset": 42677
       },
       "start": {
        "column": 151,
        "line": 225,
-       "offset": 42229
+       "offset": 42616
       }
      },
      "raw": "[standards & protocols](../06_Resources/harness-standards.md)",
@@ -2174,12 +2174,12 @@
       "end": {
        "column": 288,
        "line": 225,
-       "offset": 42366
+       "offset": 42753
       },
       "start": {
        "column": 235,
        "line": 225,
-       "offset": 42313
+       "offset": 42700
       }
      },
      "raw": "[Claude Code](../06_Resources/harness-claude-code.md)",
@@ -2206,12 +2206,12 @@
       "end": {
        "column": 331,
        "line": 225,
-       "offset": 42409
+       "offset": 42796
       },
       "start": {
        "column": 290,
        "line": 225,
-       "offset": 42368
+       "offset": 42755
       }
      },
      "raw": "[Codex](../06_Resources/harness-codex.md)",
@@ -2238,12 +2238,12 @@
       "end": {
        "column": 380,
        "line": 225,
-       "offset": 42458
+       "offset": 42845
       },
       "start": {
        "column": 333,
        "line": 225,
-       "offset": 42411
+       "offset": 42798
       }
      },
      "raw": "[opencode](../06_Resources/harness-opencode.md)",
@@ -2270,12 +2270,12 @@
       "end": {
        "column": 417,
        "line": 225,
-       "offset": 42495
+       "offset": 42882
       },
       "start": {
        "column": 382,
        "line": 225,
-       "offset": 42460
+       "offset": 42847
       }
      },
      "raw": "[Pi](../06_Resources/harness-pi.md)",
@@ -2302,12 +2302,12 @@
       "end": {
        "column": 462,
        "line": 225,
-       "offset": 42540
+       "offset": 42927
       },
       "start": {
        "column": 419,
        "line": 225,
-       "offset": 42497
+       "offset": 42884
       }
      },
      "raw": "[Cursor](../06_Resources/harness-cursor.md)",
@@ -2334,12 +2334,12 @@
       "end": {
        "column": 516,
        "line": 225,
-       "offset": 42594
+       "offset": 42981
       },
       "start": {
        "column": 464,
        "line": 225,
-       "offset": 42542
+       "offset": 42929
       }
      },
      "raw": "[GitHub Copilot](../06_Resources/harness-copilot.md)",
@@ -2366,12 +2366,12 @@
       "end": {
        "column": 567,
        "line": 225,
-       "offset": 42645
+       "offset": 43032
       },
       "start": {
        "column": 518,
        "line": 225,
-       "offset": 42596
+       "offset": 42983
       }
      },
      "raw": "[Muse Code](../06_Resources/harness-muse-code.md)",
@@ -2398,12 +2398,12 @@
       "end": {
        "column": 139,
        "line": 226,
-       "offset": 43115
+       "offset": 43502
       },
       "start": {
        "column": 110,
        "line": 226,
-       "offset": 43086
+       "offset": 43473
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -2430,12 +2430,12 @@
       "end": {
        "column": 50,
        "line": 227,
-       "offset": 43390
+       "offset": 43777
       },
       "start": {
        "column": 33,
        "line": 227,
-       "offset": 43373
+       "offset": 43760
       }
      },
      "raw": "[INDEX](INDEX.md)",
@@ -2462,12 +2462,12 @@
       "end": {
        "column": 120,
        "line": 228,
-       "offset": 43621
+       "offset": 44008
       },
       "start": {
        "column": 107,
        "line": 228,
-       "offset": 43608
+       "offset": 43995
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -2494,12 +2494,12 @@
       "end": {
        "column": 208,
        "line": 228,
-       "offset": 43709
+       "offset": 44096
       },
       "start": {
        "column": 155,
        "line": 228,
-       "offset": 43656
+       "offset": 44043
       }
      },
      "raw": "[harness-copilot](../06_Resources/harness-copilot.md)",
@@ -2526,12 +2526,12 @@
       "end": {
        "column": 41,
        "line": 232,
-       "offset": 43960
+       "offset": 44347
       },
       "start": {
        "column": 2,
        "line": 232,
-       "offset": 43921
+       "offset": 44308
       }
      },
      "raw": "[README](../10_Agents/skills/README.md)",
@@ -2558,12 +2558,12 @@
       "end": {
        "column": 319,
        "line": 232,
-       "offset": 44244
+       "offset": 44631
       },
       "start": {
        "column": 297,
        "line": 232,
-       "offset": 44222
+       "offset": 44609
       }
      },
      "raw": "[AGENTS](../AGENTS.md)",
@@ -2590,12 +2590,12 @@
       "end": {
        "column": 122,
        "line": 234,
-       "offset": 44703
+       "offset": 45090
       },
       "start": {
        "column": 93,
        "line": 234,
-       "offset": 44674
+       "offset": 45061
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -2622,12 +2622,12 @@
       "end": {
        "column": 86,
        "line": 238,
-       "offset": 44922
+       "offset": 45309
       },
       "start": {
        "column": 47,
        "line": 238,
-       "offset": 44883
+       "offset": 45270
       }
      },
      "raw": "[README](../10_Agents/skills/README.md)",
@@ -2654,12 +2654,12 @@
       "end": {
        "column": 258,
        "line": 238,
-       "offset": 45101
+       "offset": 45488
       },
       "start": {
        "column": 229,
        "line": 238,
-       "offset": 45072
+       "offset": 45459
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -2686,12 +2686,12 @@
       "end": {
        "column": 81,
        "line": 239,
-       "offset": 45243
+       "offset": 45630
       },
       "start": {
        "column": 2,
        "line": 239,
-       "offset": 45164
+       "offset": 45551
       }
      },
      "raw": "[recommended-automations](../10_Agents/skills/recommended-automations/SKILL.md)",
@@ -2718,12 +2718,12 @@
       "end": {
        "column": 65,
        "line": 240,
-       "offset": 45691
+       "offset": 46078
       },
       "start": {
        "column": 2,
        "line": 240,
-       "offset": 45628
+       "offset": 46015
       }
      },
      "raw": "[periodic-review](../10_Agents/skills/periodic-review/SKILL.md)",
@@ -2750,12 +2750,12 @@
       "end": {
        "column": 153,
        "line": 240,
-       "offset": 45779
+       "offset": 46166
       },
       "start": {
        "column": 126,
        "line": 240,
-       "offset": 45752
+       "offset": 46139
       }
      },
      "raw": "[NOW](../01_Profile/NOW.md)",
@@ -2782,12 +2782,12 @@
       "end": {
        "column": 67,
        "line": 241,
-       "offset": 46162
+       "offset": 46549
       },
       "start": {
        "column": 2,
        "line": 241,
-       "offset": 46097
+       "offset": 46484
       }
      },
      "raw": "[onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md)",
@@ -2814,12 +2814,12 @@
       "end": {
        "column": 83,
        "line": 246,
-       "offset": 46708
+       "offset": 47095
       },
       "start": {
        "column": 22,
        "line": 246,
-       "offset": 46647
+       "offset": 47034
       }
      },
      "raw": "[express-packet](../10_Agents/skills/express-packet/SKILL.md)",
@@ -2846,12 +2846,12 @@
       "end": {
        "column": 78,
        "line": 247,
-       "offset": 47143
+       "offset": 47530
       },
       "start": {
        "column": 56,
        "line": 247,
-       "offset": 47121
+       "offset": 47508
       }
      },
      "raw": "[AGENTS](../AGENTS.md)",
@@ -2878,12 +2878,12 @@
       "end": {
        "column": 130,
        "line": 247,
-       "offset": 47196
+       "offset": 47583
       },
       "start": {
        "column": 101,
        "line": 247,
-       "offset": 47167
+       "offset": 47554
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -2910,12 +2910,12 @@
       "end": {
        "column": 220,
        "line": 247,
-       "offset": 47287
+       "offset": 47674
       },
       "start": {
        "column": 203,
        "line": 247,
-       "offset": 47270
+       "offset": 47657
       }
      },
      "raw": "[INDEX](INDEX.md)",
@@ -2942,12 +2942,12 @@
       "end": {
        "column": 62,
        "line": 253,
-       "offset": 48115
+       "offset": 48502
       },
       "start": {
        "column": 33,
        "line": 253,
-       "offset": 48086
+       "offset": 48473
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -2974,12 +2974,12 @@
       "end": {
        "column": 67,
        "line": 255,
-       "offset": 48869
+       "offset": 49256
       },
       "start": {
        "column": 22,
        "line": 255,
-       "offset": 48824
+       "offset": 49211
       }
      },
      "raw": "[curate](../10_Agents/skills/curate/SKILL.md)",
@@ -3006,12 +3006,12 @@
       "end": {
        "column": 77,
        "line": 259,
-       "offset": 49289
+       "offset": 49676
       },
       "start": {
        "column": 22,
        "line": 259,
-       "offset": 49234
+       "offset": 49621
       }
      },
      "raw": "[merge-notes](../10_Agents/skills/merge-notes/SKILL.md)",
@@ -3038,12 +3038,12 @@
       "end": {
        "column": 69,
        "line": 260,
-       "offset": 49665
+       "offset": 50052
       },
       "start": {
        "column": 2,
        "line": 260,
-       "offset": 49598
+       "offset": 49985
       }
      },
      "raw": "[vault-maintenance](../10_Agents/skills/vault-maintenance/SKILL.md)",
@@ -3070,12 +3070,12 @@
       "end": {
        "column": 79,
        "line": 264,
-       "offset": 49920
+       "offset": 50307
       },
       "start": {
        "column": 22,
        "line": 264,
-       "offset": 49863
+       "offset": 50250
       }
      },
      "raw": "[distill-note](../10_Agents/skills/distill-note/SKILL.md)",
@@ -3102,12 +3102,12 @@
       "end": {
        "column": 59,
        "line": 265,
-       "offset": 50225
+       "offset": 50612
       },
       "start": {
        "column": 2,
        "line": 265,
-       "offset": 50168
+       "offset": 50555
       }
      },
      "raw": "[triage-inbox](../10_Agents/skills/triage-inbox/SKILL.md)",
@@ -3134,12 +3134,12 @@
       "end": {
        "column": 75,
        "line": 266,
-       "offset": 50740
+       "offset": 51127
       },
       "start": {
        "column": 2,
        "line": 266,
-       "offset": 50667
+       "offset": 51054
       }
      },
      "raw": "[research-to-resource](../10_Agents/skills/research-to-resource/SKILL.md)",
@@ -3166,12 +3166,12 @@
       "end": {
        "column": 85,
        "line": 270,
-       "offset": 50992
+       "offset": 51379
       },
       "start": {
        "column": 28,
        "line": 270,
-       "offset": 50935
+       "offset": 51322
       }
      },
      "raw": "[vault-answer](../10_Agents/skills/vault-answer/SKILL.md)",
@@ -3198,12 +3198,12 @@
       "end": {
        "column": 176,
        "line": 276,
-       "offset": 52104
+       "offset": 52491
       },
       "start": {
        "column": 103,
        "line": 276,
-       "offset": 52031
+       "offset": 52418
       }
      },
      "raw": "[research-to-resource](../10_Agents/skills/research-to-resource/SKILL.md)",
@@ -3230,12 +3230,12 @@
       "end": {
        "column": 387,
        "line": 276,
-       "offset": 52315
+       "offset": 52702
       },
       "start": {
        "column": 320,
        "line": 276,
-       "offset": 52248
+       "offset": 52635
       }
      },
      "raw": "[vault-maintenance](../10_Agents/skills/vault-maintenance/SKILL.md)",
@@ -3262,12 +3262,12 @@
       "end": {
        "column": 134,
        "line": 277,
-       "offset": 52835
+       "offset": 53222
       },
       "start": {
        "column": 58,
        "line": 277,
-       "offset": 52759
+       "offset": 53146
       }
      },
      "raw": "[the harness research's Copilot section](../06_Resources/harness-copilot.md)",
@@ -3294,12 +3294,12 @@
       "end": {
        "column": 93,
        "line": 281,
-       "offset": 53431
+       "offset": 53818
       },
       "start": {
        "column": 28,
        "line": 281,
-       "offset": 53366
+       "offset": 53753
       }
      },
      "raw": "[onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md)",
@@ -3326,12 +3326,12 @@
       "end": {
        "column": 401,
        "line": 281,
-       "offset": 53741
+       "offset": 54128
       },
       "start": {
        "column": 332,
        "line": 281,
-       "offset": 53672
+       "offset": 54059
       }
      },
      "raw": "[onboard-harness](../10_Agents/skills/setup/onboard-harness/SKILL.md)",
@@ -3358,12 +3358,12 @@
       "end": {
        "column": 477,
        "line": 281,
-       "offset": 53817
+       "offset": 54204
       },
       "start": {
        "column": 404,
        "line": 281,
-       "offset": 53744
+       "offset": 54131
       }
      },
      "raw": "[agent-orientation](../10_Agents/skills/setup/agent-orientation/SKILL.md)",
@@ -3390,12 +3390,12 @@
       "end": {
        "column": 559,
        "line": 281,
-       "offset": 53899
+       "offset": 54286
       },
       "start": {
        "column": 480,
        "line": 281,
-       "offset": 53820
+       "offset": 54207
       }
      },
      "raw": "[recommended-automations](../10_Agents/skills/recommended-automations/SKILL.md)",
@@ -3422,12 +3422,12 @@
       "end": {
        "column": 72,
        "line": 282,
-       "offset": 54069
+       "offset": 54456
       },
       "start": {
        "column": 50,
        "line": 282,
-       "offset": 54047
+       "offset": 54434
       }
      },
      "raw": "[AGENTS](../AGENTS.md)",
@@ -3454,12 +3454,12 @@
       "end": {
        "column": 106,
        "line": 282,
-       "offset": 54103
+       "offset": 54490
       },
       "start": {
        "column": 77,
        "line": 282,
-       "offset": 54074
+       "offset": 54461
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -3486,12 +3486,12 @@
       "end": {
        "column": 230,
        "line": 287,
-       "offset": 54775
+       "offset": 55162
       },
       "start": {
        "column": 180,
        "line": 287,
-       "offset": 54725
+       "offset": 55112
       }
      },
      "raw": "[that section](../06_Resources/harness-copilot.md)",
@@ -3518,12 +3518,12 @@
       "end": {
        "column": 478,
        "line": 288,
-       "offset": 55647
+       "offset": 56034
       },
       "start": {
        "column": 465,
        "line": 288,
-       "offset": 55634
+       "offset": 56021
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3550,12 +3550,12 @@
       "end": {
        "column": 68,
        "line": 289,
-       "offset": 55756
+       "offset": 56143
       },
       "start": {
        "column": 10,
        "line": 289,
-       "offset": 55698
+       "offset": 56085
       }
      },
      "raw": "[the wiring doc](../10_Agents/harnesses/copilot/wiring.md)",
@@ -3582,12 +3582,12 @@
       "end": {
        "column": 338,
        "line": 289,
-       "offset": 56028
+       "offset": 56415
       },
       "start": {
        "column": 269,
        "line": 289,
-       "offset": 55959
+       "offset": 56346
       }
      },
      "raw": "[onboard-harness](../10_Agents/skills/setup/onboard-harness/SKILL.md)",
@@ -3614,12 +3614,12 @@
       "end": {
        "column": 480,
        "line": 289,
-       "offset": 56170
+       "offset": 56557
       },
       "start": {
        "column": 401,
        "line": 289,
-       "offset": 56091
+       "offset": 56478
       }
      },
      "raw": "[recommended-automations](../10_Agents/skills/recommended-automations/SKILL.md)",
@@ -3646,12 +3646,12 @@
       "end": {
        "column": 15,
        "line": 290,
-       "offset": 56248
+       "offset": 56635
       },
       "start": {
        "column": 2,
        "line": 290,
-       "offset": 56235
+       "offset": 56622
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3678,12 +3678,12 @@
       "end": {
        "column": 40,
        "line": 297,
-       "offset": 57571
+       "offset": 57958
       },
       "start": {
        "column": 27,
        "line": 297,
-       "offset": 57558
+       "offset": 57945
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3710,12 +3710,12 @@
       "end": {
        "column": 569,
        "line": 301,
-       "offset": 58327
+       "offset": 58714
       },
       "start": {
        "column": 540,
        "line": 301,
-       "offset": 58298
+       "offset": 58685
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -3742,12 +3742,12 @@
       "end": {
        "column": 39,
        "line": 308,
-       "offset": 59575
+       "offset": 59962
       },
       "start": {
        "column": 26,
        "line": 308,
-       "offset": 59562
+       "offset": 59949
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3774,12 +3774,12 @@
       "end": {
        "column": 85,
        "line": 309,
-       "offset": 60025
+       "offset": 60412
       },
       "start": {
        "column": 41,
        "line": 309,
-       "offset": 59981
+       "offset": 60368
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md#tag-namespaces)",
@@ -3809,12 +3809,12 @@
       "end": {
        "column": 97,
        "line": 313,
-       "offset": 60364
+       "offset": 60751
       },
       "start": {
        "column": 84,
        "line": 313,
-       "offset": 60351
+       "offset": 60738
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3841,12 +3841,12 @@
       "end": {
        "column": 59,
        "line": 323,
-       "offset": 62657
+       "offset": 63044
       },
       "start": {
        "column": 46,
        "line": 323,
-       "offset": 62644
+       "offset": 63031
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3873,12 +3873,12 @@
       "end": {
        "column": 338,
        "line": 329,
-       "offset": 63759
+       "offset": 64146
       },
       "start": {
        "column": 309,
        "line": 329,
-       "offset": 63730
+       "offset": 64117
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -3905,12 +3905,12 @@
       "end": {
        "column": 23,
        "line": 336,
-       "offset": 64257
+       "offset": 64644
       },
       "start": {
        "column": 10,
        "line": 336,
-       "offset": 64244
+       "offset": 64631
       }
      },
      "raw": "[PRD](PRD.md)",
@@ -3937,12 +3937,12 @@
       "end": {
        "column": 57,
        "line": 337,
-       "offset": 64691
+       "offset": 65078
       },
       "start": {
        "column": 28,
        "line": 337,
-       "offset": 64662
+       "offset": 65049
       }
      },
      "raw": "[CONVENTIONS](CONVENTIONS.md)",
@@ -3969,12 +3969,12 @@
       "end": {
        "column": 166,
        "line": 337,
-       "offset": 64800
+       "offset": 65187
       },
       "start": {
        "column": 144,
        "line": 337,
-       "offset": 64778
+       "offset": 65165
       }
      },
      "raw": "[AGENTS](../AGENTS.md)",
@@ -4001,12 +4001,12 @@
       "end": {
        "column": 225,
        "line": 341,
-       "offset": 65821
+       "offset": 66208
       },
       "start": {
        "column": 206,
        "line": 341,
-       "offset": 65802
+       "offset": 66189
       }
      },
      "raw": "[STATUS](STATUS.md)",
@@ -4021,7 +4021,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 66549,
+   "sizeBytes": 66936,
    "tasks": [],
    "title": "Changelog",
    "updated": "2026-09-04"
@@ -30105,12 +30105,12 @@
       "end": {
        "column": 341,
        "line": 27,
-       "offset": 2021
+       "offset": 2184
       },
       "start": {
        "column": 298,
        "line": 27,
-       "offset": 1978
+       "offset": 2141
       }
      },
      "raw": "[skill-runs log](../../docs/skill-runs.log)",
@@ -30137,12 +30137,12 @@
       "end": {
        "column": 799,
        "line": 27,
-       "offset": 2479
+       "offset": 2642
       },
       "start": {
        "column": 749,
        "line": 27,
-       "offset": 2429
+       "offset": 2592
       }
      },
      "raw": "[self-improve](../../skills/self-improve/SKILL.md)",
@@ -30169,12 +30169,12 @@
       "end": {
        "column": 118,
        "line": 35,
-       "offset": 3569
+       "offset": 3732
       },
       "start": {
        "column": 85,
        "line": 35,
-       "offset": 3536
+       "offset": 3699
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -30201,12 +30201,12 @@
       "end": {
        "column": 54,
        "line": 50,
-       "offset": 4902
+       "offset": 5065
       },
       "start": {
        "column": 21,
        "line": 50,
-       "offset": 4869
+       "offset": 5032
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -30221,7 +30221,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6448,
+   "sizeBytes": 6611,
    "tasks": [],
    "title": "Claude Code Wiring",
    "updated": "2026-09-04"
@@ -30241,7 +30241,7 @@
      "workflow/canonical"
     ],
     "title": "Codex Wiring",
-    "updated": "2026-08-11"
+    "updated": "2026-09-04"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -30334,12 +30334,12 @@
       "end": {
        "column": 54,
        "line": 42,
-       "offset": 2665
+       "offset": 2828
       },
       "start": {
        "column": 21,
        "line": 42,
-       "offset": 2632
+       "offset": 2795
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -30354,10 +30354,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3897,
+   "sizeBytes": 4060,
    "tasks": [],
    "title": "Codex Wiring",
-   "updated": "2026-08-11"
+   "updated": "2026-09-04"
   },
   "10_Agents/harnesses/copilot/wiring.md": {
    "backlinks": [
@@ -30713,12 +30713,12 @@
       "end": {
        "column": 54,
        "line": 35,
-       "offset": 1933
+       "offset": 2050
       },
       "start": {
        "column": 21,
        "line": 35,
-       "offset": 1900
+       "offset": 2017
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -30745,12 +30745,12 @@
       "end": {
        "column": 136,
        "line": 39,
-       "offset": 2579
+       "offset": 2696
       },
       "start": {
        "column": 106,
        "line": 39,
-       "offset": 2549
+       "offset": 2666
       }
      },
      "raw": "[PRD](../../../00_Meta/PRD.md)",
@@ -30777,12 +30777,12 @@
       "end": {
        "column": 432,
        "line": 40,
-       "offset": 3204
+       "offset": 3321
       },
       "start": {
        "column": 368,
        "line": 40,
-       "offset": 3140
+       "offset": 3257
       }
      },
      "raw": "[CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)",
@@ -30812,12 +30812,12 @@
       "end": {
        "column": 184,
        "line": 47,
-       "offset": 3964
+       "offset": 4081
       },
       "start": {
        "column": 120,
        "line": 47,
-       "offset": 3900
+       "offset": 4017
       }
      },
      "raw": "[CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)",
@@ -30847,12 +30847,12 @@
       "end": {
        "column": 206,
        "line": 65,
-       "offset": 5682
+       "offset": 5799
       },
       "start": {
        "column": 184,
        "line": 65,
-       "offset": 5660
+       "offset": 5777
       }
      },
      "raw": "[README](../README.md)",
@@ -30879,12 +30879,12 @@
       "end": {
        "column": 270,
        "line": 65,
-       "offset": 5746
+       "offset": 5863
       },
       "start": {
        "column": 208,
        "line": 65,
-       "offset": 5684
+       "offset": 5801
       }
      },
      "raw": "[onboard-harness](../../skills/setup/onboard-harness/SKILL.md)",
@@ -30899,7 +30899,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 6037,
+   "sizeBytes": 6154,
    "tasks": [],
    "title": "Cursor Wiring",
    "updated": "2026-09-04"
@@ -30919,7 +30919,7 @@
      "workflow/draft"
     ],
     "title": "Muse Code Wiring",
-    "updated": "2026-08-11"
+    "updated": "2026-09-04"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -31012,12 +31012,12 @@
       "end": {
        "column": 54,
        "line": 35,
-       "offset": 2102
+       "offset": 2219
       },
       "start": {
        "column": 21,
        "line": 35,
-       "offset": 2069
+       "offset": 2186
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -31032,10 +31032,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3306,
+   "sizeBytes": 3423,
    "tasks": [],
    "title": "Muse Code Wiring",
-   "updated": "2026-08-11"
+   "updated": "2026-09-04"
   },
   "10_Agents/harnesses/opencode/wiring.md": {
    "backlinks": [
@@ -31052,7 +31052,7 @@
      "workflow/canonical"
     ],
     "title": "opencode Wiring",
-    "updated": "2026-08-11"
+    "updated": "2026-09-04"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -31145,12 +31145,12 @@
       "end": {
        "column": 54,
        "line": 37,
-       "offset": 2050
+       "offset": 2167
       },
       "start": {
        "column": 21,
        "line": 37,
-       "offset": 2017
+       "offset": 2134
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -31165,10 +31165,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3245,
+   "sizeBytes": 3362,
    "tasks": [],
    "title": "opencode Wiring",
-   "updated": "2026-08-11"
+   "updated": "2026-09-04"
   },
   "10_Agents/harnesses/pi/wiring.md": {
    "backlinks": [
@@ -31185,7 +31185,7 @@
      "workflow/canonical"
     ],
     "title": "Pi Wiring",
-    "updated": "2026-08-11"
+    "updated": "2026-09-04"
    },
    "frontmatterErrors": [],
    "headings": [
@@ -31278,12 +31278,12 @@
       "end": {
        "column": 54,
        "line": 37,
-       "offset": 2168
+       "offset": 2285
       },
       "start": {
        "column": 21,
        "line": 37,
-       "offset": 2135
+       "offset": 2252
       }
      },
      "raw": "[spec](../../tools/brain/SPEC.md)",
@@ -31298,10 +31298,10 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 3381,
+   "sizeBytes": 3498,
    "tasks": [],
    "title": "Pi Wiring",
-   "updated": "2026-08-11"
+   "updated": "2026-09-04"
   },
   "10_Agents/skills/README.md": {
    "backlinks": [
@@ -37040,12 +37040,12 @@
       "end": {
        "column": 677,
        "line": 73,
-       "offset": 4691
+       "offset": 4886
       },
       "start": {
        "column": 631,
        "line": 73,
-       "offset": 4645
+       "offset": 4840
       }
      },
      "raw": "[wiring](../../../harnesses/copilot/wiring.md)",
@@ -37072,12 +37072,12 @@
       "end": {
        "column": 165,
        "line": 111,
-       "offset": 12000
+       "offset": 12195
       },
       "start": {
        "column": 126,
        "line": 111,
-       "offset": 11961
+       "offset": 12156
       }
      },
      "raw": "[README](../../../components/README.md)",
@@ -37104,12 +37104,12 @@
       "end": {
        "column": 300,
        "line": 111,
-       "offset": 12135
+       "offset": 12330
       },
       "start": {
        "column": 232,
        "line": 111,
-       "offset": 12067
+       "offset": 12262
       }
      },
      "raw": "[recommended-skills](../../../../06_Resources/recommended-skills.md)",
@@ -37136,12 +37136,12 @@
       "end": {
        "column": 954,
        "line": 115,
-       "offset": 15165
+       "offset": 15360
       },
       "start": {
        "column": 886,
        "line": 115,
-       "offset": 15097
+       "offset": 15292
       }
      },
      "raw": "[recommended-skills](../../../../06_Resources/recommended-skills.md)",
@@ -37168,12 +37168,12 @@
       "end": {
        "column": 281,
        "line": 117,
-       "offset": 16073
+       "offset": 16268
       },
       "start": {
        "column": 239,
        "line": 117,
-       "offset": 16031
+       "offset": 16226
       }
      },
      "raw": "[onboard-owner](../onboard-owner/SKILL.md)",
@@ -37200,12 +37200,12 @@
       "end": {
        "column": 295,
        "line": 119,
-       "offset": 16911
+       "offset": 17106
       },
       "start": {
        "column": 227,
        "line": 119,
-       "offset": 16843
+       "offset": 17038
       }
      },
      "raw": "[recommended-skills](../../../../06_Resources/recommended-skills.md)",
@@ -37220,7 +37220,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 20937,
+   "sizeBytes": 21132,
    "tasks": [],
    "title": "Skill: Onboard Harness",
    "updated": "2026-09-04"
@@ -38317,43 +38317,43 @@
     },
     {
      "level": 3,
-     "line": 120,
+     "line": 122,
      "slug": "cross-cutting-rules-apply-after-path-lanes",
      "text": "Cross-cutting rules (apply after path lanes)"
     },
     {
      "level": 2,
-     "line": 126,
+     "line": 128,
      "slug": "apply",
      "text": "Apply"
     },
     {
      "level": 2,
-     "line": 135,
+     "line": 137,
      "slug": "backfill",
      "text": "Backfill"
     },
     {
      "level": 2,
-     "line": 144,
+     "line": 146,
      "slug": "report",
      "text": "Report"
     },
     {
      "level": 2,
-     "line": 152,
+     "line": 154,
      "slug": "upstream-release-duty",
      "text": "Upstream release duty"
     },
     {
      "level": 2,
-     "line": 156,
+     "line": 158,
      "slug": "steps",
      "text": "Steps"
     },
     {
      "level": 2,
-     "line": 165,
+     "line": 167,
      "slug": "references",
      "text": "References"
     }
@@ -38383,7 +38383,7 @@
      "raw": "[Report](#report)",
      "resolution": {
       "fragment": {
-       "line": 144,
+       "line": 146,
        "slug": "report"
       },
       "path": "10_Agents/skills/sync-upstream/SKILL.md",
@@ -38433,18 +38433,18 @@
      "format": "markdown",
      "fragment": null,
      "label": "PRD",
-     "line": 167,
+     "line": 169,
      "placeholder": false,
      "range": {
       "end": {
        "column": 32,
-       "line": 167,
-       "offset": 14316
+       "line": 169,
+       "offset": 14939
       },
       "start": {
        "column": 2,
-       "line": 167,
-       "offset": 14286
+       "line": 169,
+       "offset": 14909
       }
      },
      "raw": "[PRD](../../../00_Meta/PRD.md)",
@@ -38459,7 +38459,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 14723,
+   "sizeBytes": 15346,
    "tasks": [],
    "title": "Skill: Sync Upstream",
    "updated": "2026-09-04"
@@ -45930,14 +45930,14 @@
      "placeholder": false,
      "range": {
       "end": {
-       "column": 1032,
+       "column": 1092,
        "line": 47,
-       "offset": 4148
+       "offset": 4208
       },
       "start": {
-       "column": 949,
+       "column": 1009,
        "line": 47,
-       "offset": 4065
+       "offset": 4125
       }
      },
      "raw": "[index-merge-conflicts](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)",
@@ -45964,12 +45964,12 @@
       "end": {
        "column": 101,
        "line": 61,
-       "offset": 4823
+       "offset": 4883
       },
       "start": {
        "column": 49,
        "line": 61,
-       "offset": 4771
+       "offset": 4831
       }
      },
      "raw": "[CONVENTIONS](00_Meta/CONVENTIONS.md#tag-namespaces)",
@@ -45999,12 +45999,12 @@
       "end": {
        "column": 104,
        "line": 86,
-       "offset": 5951
+       "offset": 6011
       },
       "start": {
        "column": 72,
        "line": 86,
-       "offset": 5919
+       "offset": 5979
       }
      },
      "raw": "[README](09_Templates/README.md)",
@@ -46031,12 +46031,12 @@
       "end": {
        "column": 74,
        "line": 90,
-       "offset": 6126
+       "offset": 6186
       },
       "start": {
        "column": 53,
        "line": 90,
-       "offset": 6105
+       "offset": 6165
       }
      },
      "raw": "[PRD](00_Meta/PRD.md)",
@@ -46063,12 +46063,12 @@
       "end": {
        "column": 293,
        "line": 90,
-       "offset": 6346
+       "offset": 6406
       },
       "start": {
        "column": 241,
        "line": 90,
-       "offset": 6294
+       "offset": 6354
       }
      },
      "raw": "[OPERATING-RULES](10_Agents/docs/OPERATING-RULES.md)",
@@ -46095,12 +46095,12 @@
       "end": {
        "column": 89,
        "line": 94,
-       "offset": 6516
+       "offset": 6576
       },
       "start": {
        "column": 56,
        "line": 94,
-       "offset": 6483
+       "offset": 6543
       }
      },
      "raw": "[CHANGELOG](00_Meta/CHANGELOG.md)",
@@ -46127,12 +46127,12 @@
       "end": {
        "column": 39,
        "line": 98,
-       "offset": 6590
+       "offset": 6650
       },
       "start": {
        "column": 14,
        "line": 98,
-       "offset": 6565
+       "offset": 6625
       }
      },
      "raw": "[INDEX](00_Meta/INDEX.md)",
@@ -46159,12 +46159,12 @@
       "end": {
        "column": 35,
        "line": 99,
-       "offset": 6645
+       "offset": 6705
       },
       "start": {
        "column": 11,
        "line": 99,
-       "offset": 6621
+       "offset": 6681
       }
      },
      "raw": "[NOW](01_Profile/NOW.md)",
@@ -46191,12 +46191,12 @@
       "end": {
        "column": 78,
        "line": 99,
-       "offset": 6688
+       "offset": 6748
       },
       "start": {
        "column": 38,
        "line": 99,
-       "offset": 6648
+       "offset": 6708
       }
      },
      "raw": "[PREFERENCES](01_Profile/PREFERENCES.md)",
@@ -46223,12 +46223,12 @@
       "end": {
        "column": 115,
        "line": 99,
-       "offset": 6725
+       "offset": 6785
       },
       "start": {
        "column": 81,
        "line": 99,
-       "offset": 6691
+       "offset": 6751
       }
      },
      "raw": "[DEFAULTS](01_Profile/DEFAULTS.md)",
@@ -46255,12 +46255,12 @@
       "end": {
        "column": 52,
        "line": 100,
-       "offset": 6778
+       "offset": 6838
       },
       "start": {
        "column": 15,
        "line": 100,
-       "offset": 6741
+       "offset": 6801
       }
      },
      "raw": "[CONVENTIONS](00_Meta/CONVENTIONS.md)",
@@ -46287,12 +46287,12 @@
       "end": {
        "column": 37,
        "line": 101,
-       "offset": 6816
+       "offset": 6876
       },
       "start": {
        "column": 9,
        "line": 101,
-       "offset": 6788
+       "offset": 6848
       }
      },
      "raw": "[README](02_Inbox/README.md)",
@@ -46319,12 +46319,12 @@
       "end": {
        "column": 47,
        "line": 102,
-       "offset": 6864
+       "offset": 6924
       },
       "start": {
        "column": 14,
        "line": 102,
-       "offset": 6831
+       "offset": 6891
       }
      },
      "raw": "[Projects](04_Projects/README.md)",
@@ -46351,12 +46351,12 @@
       "end": {
        "column": 77,
        "line": 102,
-       "offset": 6894
+       "offset": 6954
       },
       "start": {
        "column": 50,
        "line": 102,
-       "offset": 6867
+       "offset": 6927
       }
      },
      "raw": "[Areas](05_Areas/README.md)",
@@ -46383,12 +46383,12 @@
       "end": {
        "column": 115,
        "line": 102,
-       "offset": 6932
+       "offset": 6992
       },
       "start": {
        "column": 80,
        "line": 102,
-       "offset": 6897
+       "offset": 6957
       }
      },
      "raw": "[Resources](06_Resources/README.md)",
@@ -46415,12 +46415,12 @@
       "end": {
        "column": 151,
        "line": 102,
-       "offset": 6968
+       "offset": 7028
       },
       "start": {
        "column": 118,
        "line": 102,
-       "offset": 6935
+       "offset": 6995
       }
      },
      "raw": "[Archives](07_Archives/README.md)",
@@ -46447,12 +46447,12 @@
       "end": {
        "column": 43,
        "line": 103,
-       "offset": 7012
+       "offset": 7072
       },
       "start": {
        "column": 14,
        "line": 103,
-       "offset": 6983
+       "offset": 7043
       }
      },
      "raw": "[README](10_Agents/README.md)",
@@ -46479,12 +46479,12 @@
       "end": {
        "column": 53,
        "line": 104,
-       "offset": 7066
+       "offset": 7126
       },
       "start": {
        "column": 17,
        "line": 104,
-       "offset": 7030
+       "offset": 7090
       }
      },
      "raw": "[README](10_Agents/skills/README.md)",
@@ -46511,12 +46511,12 @@
       "end": {
        "column": 45,
        "line": 105,
-       "offset": 7173
+       "offset": 7233
       },
       "start": {
        "column": 13,
        "line": 105,
-       "offset": 7141
+       "offset": 7201
       }
      },
      "raw": "[README](09_Templates/README.md)",
@@ -46531,7 +46531,7 @@
      "warnings": []
     }
    ],
-   "sizeBytes": 7174,
+   "sizeBytes": 7234,
    "tasks": [],
    "title": "Agents",
    "updated": "2026-09-04"

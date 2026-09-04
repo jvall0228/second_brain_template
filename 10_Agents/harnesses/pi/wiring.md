@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2026-11-11
 ---
 
@@ -20,7 +20,7 @@ Pi reads **`AGENTS.md` natively** (with `CLAUDE.md` fallback), walking parent di
 
 ## Skills
 
-Pi supports Agent Skills and scans `.pi/skills/`, `.agents/skills/`, and user-scope equivalents. A clean clone includes generated text adapters in `.agents/skills/`, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. **Trust gate:** project-scope `.pi/` and `.agents/skills/` resources load only after the adopter runs `/trust` on the vault once (or sets `defaultProjectTrust` globally); headless runs silently ignore them otherwise — the single most common Pi setup miss. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
+Pi supports Agent Skills and scans `.pi/skills/`, `.agents/skills/`, and user-scope equivalents. A clean clone includes generated text adapters in `.agents/skills/`, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. **Trust gate:** project-scope `.pi/` and `.agents/skills/` resources load only after the adopter runs `/trust` on the vault once (or sets `defaultProjectTrust` globally); headless runs silently ignore them otherwise — the single most common Pi setup miss. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
 
 ## Hook installation
 

@@ -6,7 +6,7 @@ tags:
   - workflow/canonical
 updated: 2026-09-04
 generated: brain-bootstrap-v1
-content-digest: "1e20d13682d39b54c3064c4ca72bb1e01f062f06247d9e8a015688abd93dbea8"
+content-digest: "3426ab775209010533ee852ab39329c7d7c865b8a07c6bfbbf725dfe01045235"
 ---
 
 # Bootstrap
@@ -51,7 +51,7 @@ Write authority follows **execution class**: every run is **interactive** (a for
 
 Template-shipped skills/tools, `00_Meta/config.yaml`, and named tagless entrypoint, editor, and harness adapters are [canonical-by-policy](../10_Agents/docs/write-authority.md#canonical-by-policy). See [README](../02_Inbox/README.md) for triage instructions.
 
-**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `./brain index` (`brain index` after managed installation) before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the three committed generated files (the vault index, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md`) by keeping ours; the post-merge hook then regenerates all three, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [index-merge-conflicts](../10_Agents/solutions/vault-tooling/index-merge-conflicts.md).
+**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `./brain bootstrap --write` and `./brain index` (`brain bootstrap --write` / `brain index` after managed installation) before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the three committed generated files (the vault index, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md`) by keeping ours; the post-merge hook then regenerates all three, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [index-merge-conflicts](../10_Agents/solutions/vault-tooling/index-merge-conflicts.md).
 
 ### Tagging Rules (Summary)
 

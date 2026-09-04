@@ -11,3 +11,8 @@ python3 10_Agents/tools/brain/brain.py validate
 After adding, renaming, or deleting notes, regenerate the committed vault
 index and include it in your commit:
 python3 10_Agents/tools/brain/brain.py index
+
+After editing AGENTS.md, 00_Meta/CONVENTIONS.md, 00_Meta/INDEX.md, or a
+01_Profile/ doc, also regenerate the compiled bootstrap file and include
+00_Meta/BOOTSTRAP.md in your commit:
+python3 10_Agents/tools/brain/brain.py bootstrap --write

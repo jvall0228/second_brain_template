@@ -20,7 +20,7 @@ Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and
 
 ## Skills
 
-Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. A clean clone includes generated text adapters in `.claude/skills/`; each mirrors the canonical `name`/`description` and points to `10_Agents/skills/<name>/SKILL.md`. No project symlinks or onboarding writes are needed. Optional user-global mode retains the manifest-owned `~/.claude/skills/<name>` link/copy route after exact preview and approval.
+Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. A clean clone includes generated text adapters in `.claude/skills/`; each mirrors the canonical `name`/`description` and points, via its `canonical-source` field, to the real `SKILL.md` — `10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills. No project symlinks or onboarding writes are needed. Optional user-global mode retains the manifest-owned `~/.claude/skills/<name>` link/copy route after exact preview and approval.
 
 ## Skill-run log
 

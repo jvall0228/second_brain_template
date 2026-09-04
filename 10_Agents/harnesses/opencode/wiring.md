@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2026-11-11
 ---
 
@@ -20,7 +20,7 @@ opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over 
 
 ## Skills
 
-opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/`. A clean clone includes generated text adapters in the latter two paths, each pointing to the canonical `10_Agents/skills/<name>/SKILL.md`; project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
+opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/`. A clean clone includes generated text adapters in the latter two paths, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
 
 ## Hook installation
 
