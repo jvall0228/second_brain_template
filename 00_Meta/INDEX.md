@@ -22,6 +22,7 @@ expires: 2027-08-11
 - [TOOLING-STACK](../01_Profile/TOOLING-STACK.md) — Tools and devices
 - [LONG-RUNNING-THEMES](../01_Profile/LONG-RUNNING-THEMES.md) — Persistent interests and themes
 - [CONVENTIONS](CONVENTIONS.md) — Writing rules
+- `00_Meta/BOOTSTRAP.md` — All six bootstrap docs compiled in must-read order (generated; `brain bootstrap --write`)
 
 ## Active Work
 - [Home](HOME.md) — Generated local startup and navigation surface; refresh with `brain home --write`

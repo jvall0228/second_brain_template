@@ -29,6 +29,26 @@ if test -n "$(git -C "$root" ls-files --others --exclude-standard -- "$canonical
     exit 1
 fi
 
+# The compiled bootstrap file (spec §28) is a pure function of the six
+# bootstrap docs, compiled from the working tree and staged below. Refuse a
+# partially staged source set for the same reason as the skill catalog: an
+# unstaged edit to any of these docs must never enter the staged generated
+# output. The list mirrors BOOTSTRAP_ORDER in brain.py.
+bootstrap_sources="AGENTS.md 01_Profile/NOW.md 01_Profile/PREFERENCES.md 00_Meta/CONVENTIONS.md 00_Meta/INDEX.md 01_Profile/DEFAULTS.md"
+# shellcheck disable=SC2086
+if ! git -C "$root" diff --quiet -- $bootstrap_sources; then
+    echo "pre-commit: unstaged bootstrap-source changes would corrupt the staged 00_Meta/BOOTSTRAP.md — stage or stash them; commit aborted" >&2
+    exit 1
+fi
+# `git diff` ignores a source that is not in the index at all (`git rm
+# --cached AGENTS.md` leaves the file untracked yet present), so the
+# untracked check is a distinct case, not a repeat of the one above.
+# shellcheck disable=SC2086
+if test -n "$(git -C "$root" ls-files --others --exclude-standard -- $bootstrap_sources)"; then
+    echo "pre-commit: untracked bootstrap-source files would corrupt the staged 00_Meta/BOOTSTRAP.md — stage them; commit aborted" >&2
+    exit 1
+fi
+
 # From this point on every operation may change both generated working files
 # and the Git index. Snapshot both layers before the first mutation and restore
 # them together on any later failure or caught interruption. This preserves a
@@ -63,6 +83,21 @@ trap 'exit 143' TERM
 hook_transaction="$(
     python3 "$root/10_Agents/tools/skill_adapters/hook_transaction.py" begin "$root"
 )" || exit 1
+
+# Regenerate the compiled bootstrap file so it can never ship stale. --write
+# already refuses an over-budget or unsafe render; the --check that follows
+# is a belt-and-braces re-render of the bytes just written, kept so the hook
+# fails closed if the two ever disagree (the transaction rolls back on either
+# failure).
+python3 "$brain" bootstrap --write >/dev/null || {
+    echo "pre-commit: brain bootstrap --write failed (over budget or unreadable source) — commit aborted" >&2
+    exit 1
+}
+python3 "$brain" bootstrap --check >/dev/null || {
+    echo "pre-commit: brain bootstrap --check failed — commit aborted" >&2
+    exit 1
+}
+git add "$root/00_Meta/BOOTSTRAP.md" || exit 1
 
 python3 "$brain" index >/dev/null || {
     echo "pre-commit: brain index failed — commit aborted" >&2

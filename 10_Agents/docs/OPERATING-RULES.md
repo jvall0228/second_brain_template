@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -25,6 +25,7 @@ Before creating or modifying a note, read:
 1. The target directory's README (e.g., `04_Projects/README.md`)
 2. Any existing note you're about to update
 3. Relevant templates from `09_Templates/`
+4. Existing homes for people, pets, Projects, Areas, and other recurring entities you will mention; follow [Established Entity Links](../../00_Meta/CONVENTIONS.md#established-entity-links)
 
 ## Update by Replacement, Not Accumulation
 
@@ -69,6 +70,7 @@ Before writing any note, verify:
 - [ ] Generated Home changes came only from explicit `brain home --write`; generic agents and `agent_write_allowed()` cannot hand-edit `00_Meta/HOME.md`, and no config exception was added
 - [ ] Generated local artifact changes came only from explicit `brain artifacts --write`; the exact two HTML files and manifest passed `--check`, and no generic `08_Assets/` write exception, hosting, or notification claim was added
 - [ ] A generated orientation bundle is still draft: its inventory, skill, and tool documentation say `workflow/draft`, and no non-note file is treated as canonical-by-policy before owner promotion
+- [ ] **Entity continuity:** established people, pets, Projects, Areas, and recurring life entities link on their first meaningful mention to the existing note, entrypoint, or anchor; no duplicate entity note was created
 - [ ] **Privacy propagation** ([restricted/private](../../00_Meta/CONVENTIONS.md#restrictedprivate)): a note that carries private substance from a `restricted/private` source also carries `restricted/private`, even when the transformation obscures the provenance; a bare link does not propagate (the `restricted-link` warning is an informational provenance check). Linking instead of copying stays the lower-blast-radius practice, and any tag flip your edit causes must be surfaced.
 - [ ] Run `brain validate` after writing — fix any errors it reports before committing (clean-checkout and long-form fallbacks are in [brain](../tools/brain/README.md))
 - [ ] **Editor-surface parity** ([PRD](../../00_Meta/PRD.md) §6.5): if the change alters vault structure, navigation, or templates, update both editor surfaces — `.obsidian/` and `.vscode/` (settings/tasks by hand; snippets regenerate automatically via the pre-commit hook) — and the §6.5 feature mapping

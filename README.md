@@ -55,12 +55,12 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/PRD.md` §6.5), or just edit the Markdown.
 3. Work through `01_Profile/` — fill in `now`, `preferences`, `defaults`, `identity`, and `work`. These are what agents read first.
 4. Skim [`00_Meta/CONVENTIONS.md`](00_Meta/CONVENTIONS.md) to learn the naming and tagging rules.
-5. **Install the pre-commit hook** so every commit keeps the vault index, VS Code snippets, and repository skill adapters fresh, verifies the explicit-write local artifacts, and enforces conventions; install **the merge driver** so hook-generated files never need hand-merging:
+5. **Install the pre-commit hook** so every commit keeps the compiled bootstrap (`00_Meta/BOOTSTRAP.md`), vault index, VS Code snippets, and repository skill adapters fresh, verifies the explicit-write local artifacts, and enforces conventions; install **the merge driver** so hook-generated files never need hand-merging:
    ```
    git config core.hooksPath .githooks
    git config merge.regenerate.driver true
    ```
-   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild the index, snippets, and adapters, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
+   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild the compiled bootstrap, index, snippets, and adapters, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
 6. **Remove the seeded examples as one bundle** once you've seen the pattern.
    `10_Agents/tools/adopt_examples.json` is the sole bundle authority; never
    delete an example selectively. Preview every deletion and marked reference

@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -33,7 +33,7 @@ Write a new note to `02_Inbox/` that passes validation on the first try.
    ---
    ```
    Pick the `type/*` that fits (see the authoritative table in `00_Meta/CONVENTIONS.md` § Tag Namespaces); add free-form `topic/*` tags as useful. Agent-created notes always carry `audience/agent` and start `workflow/draft`. Add the provenance fields (`00_Meta/CONVENTIONS.md` § Provenance): `author:` is your harness identifier (`claude-code`, `copilot`, `cursor`, …); `session:` is the session URL, PR, or task reference — omit it when none exists. `brain validate` warns (`missing-author`) on an agent-tagged Inbox draft without `author:`.
-3. **Write the body.** A bare link to a `restricted/private` note does not make this capture restricted; copying, summarizing, or transforming its private substance does — then the capture carries `restricted/private` too, and you say so ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Link related notes with source-relative Markdown and explicit `.md` extensions: `[Display](../06_Resources/example-resource.md)` from Inbox, or `[Display](neighbor.md)` within one directory. Percent-encode spaces and Unicode bytes in destinations.
+3. **Write the body.** Before drafting, search for established people, pets, Projects, Areas, and other recurring entities. Link the first meaningful mention to the existing note, entrypoint, or anchor; never create a duplicate entity note. A bare link to a `restricted/private` entity does not make this capture restricted; copying, summarizing, or transforming its private substance does — then the capture carries `restricted/private` too, and you say so ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Use source-relative Markdown with explicit `.md` extensions: `[Display](../06_Resources/example-resource.md)` from Inbox, or `[Display](neighbor.md)` within one directory. Percent-encode spaces and Unicode bytes in destinations.
 4. **Validate:** `brain validate` — fix any error it reports before committing.
 5. **Commit** with a short descriptive message (the pre-commit hook re-validates and refreshes the index).
 
@@ -44,6 +44,6 @@ Write a new note to `02_Inbox/` that passes validation on the first try.
 
 ## References
 
-- `00_Meta/CONVENTIONS.md` — frontmatter, tags, filenames
+- `00_Meta/CONVENTIONS.md` — frontmatter, tags, filenames, and established entity links
 - `02_Inbox/README.md` — Inbox rules and triage flow
 - `10_Agents/docs/TASK-PATTERNS.md` — worked examples

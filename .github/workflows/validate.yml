@@ -1,10 +1,10 @@
 # CI backstop for clones without the pre-commit hook installed (PRD §18).
-# Self-healing: regenerate the committed generated files (vault index, VS Code
-# snippets), run the full validation suite, then auto-commit the regenerated
-# files back to the branch on push events — so a hook-less environment (web
-# UI edits, agents without the hook) converges to a fresh index instead of
-# failing forever. Validation warnings (exit 2) pass; only errors (exit 1)
-# fail the run — same contract as the hook.
+# Self-healing: regenerate the committed generated files (compiled bootstrap,
+# vault index, VS Code snippets), run the full validation suite, then
+# auto-commit the regenerated files back to the branch on push events — so a
+# hook-less environment (web UI edits, agents without the hook) converges to
+# a fresh index instead of failing forever. Validation warnings (exit 2)
+# pass; only errors (exit 1) fail the run — same contract as the hook.
 #
 # Loop safety: the auto-commit push triggers one follow-up run, which finds
 # nothing to regenerate and commits nothing. If a concurrent push wins the
@@ -33,11 +33,14 @@ jobs:
         run: python3 10_Agents/tools/adopt_check.py
       - name: verify project-local skill adapters (issue #82)
         run: python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py --check
-      - name: regenerate index + snippets + skill adapters (PRD §18, §6.5)
+      - name: regenerate bootstrap + index + snippets + skill adapters (PRD §18, §6.5, spec §28)
         run: |
+          python3 10_Agents/tools/brain/brain.py bootstrap --write
+          python3 10_Agents/tools/brain/brain.py bootstrap --check
           python3 10_Agents/tools/brain/brain.py index
           python3 10_Agents/tools/vscode/gen_snippets.py
           python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py
+          python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py --check
       - name: verify explicit-write local artifacts (issue #23)
         run: python3 10_Agents/tools/brain/brain.py artifacts --check
       - name: brain validate
@@ -54,14 +57,14 @@ jobs:
         # token, and a PR's head branch gets healed by its own push events.
         if: github.event_name == 'push'
         run: |
-          git add 10_Agents/tools/brain/vault-index.json .vscode/second-brain.code-snippets .agents/skills .claude/skills
+          git add 00_Meta/BOOTSTRAP.md 10_Agents/tools/brain/vault-index.json .vscode/second-brain.code-snippets .agents/skills .claude/skills
           if git diff --cached --quiet; then
             echo "generated files already fresh — nothing to commit"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "ci: regenerate vault index and snippets (auto-heal, PRD §18)"
+          git commit -m "ci: regenerate bootstrap, vault index and snippets (auto-heal, PRD §18)"
           # A concurrent push makes this push fail; that push's own run heals
           # the new tip, so skipping here is safe and avoids a red run.
           git push || echo "tip moved during run — newer push's workflow will heal it"

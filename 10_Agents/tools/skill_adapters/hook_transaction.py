@@ -17,6 +17,7 @@ from typing import Any
 
 TRANSACTION_PREFIX = ".precommit-generated-transaction-"
 GENERATED_PATHS = (
+    "00_Meta/BOOTSTRAP.md",
     "10_Agents/tools/brain/vault-index.json",
     ".vscode/second-brain.code-snippets",
     ".agents/skills",

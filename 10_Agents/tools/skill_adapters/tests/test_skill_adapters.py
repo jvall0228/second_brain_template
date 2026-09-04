@@ -64,6 +64,7 @@ def generated_snapshot(repo: Path) -> dict[Path, bytes]:
 
 def all_generated_working_state(repo: Path) -> dict[str, tuple[str, int, bytes | None]]:
     roots = (
+        Path("00_Meta/BOOTSTRAP.md"),
         Path("10_Agents/tools/brain/vault-index.json"),
         Path(".vscode/second-brain.code-snippets"),
         *GEN.OUTPUT_ROOTS,
@@ -561,6 +562,148 @@ class SkillAdapterTests(unittest.TestCase):
             text=True,
         ).stdout.splitlines()
         self.assertEqual(cached, ["README.md"])
+
+    def test_precommit_refuses_unstaged_bootstrap_source_before_staging_bootstrap(self):
+        # F2: stage one version of AGENTS.md, leave a different (private)
+        # version unstaged. The hook must abort before compiling, leaving the
+        # Git index, the worktree, and every generated file exactly as found.
+        clone = self.repo / "bootstrap-source-clone"
+        copy_repo(clone)
+        init_clean_git_repo(clone)
+        agents = clone / "AGENTS.md"
+        original = agents.read_text(encoding="utf-8")
+        agents.write_text(original + "\nStaged bootstrap addition.\n", encoding="utf-8")
+        subprocess.run(["git", "add", "AGENTS.md"], cwd=clone, check=True)
+        marker = "PRIVATE-UNSTAGED-MARKER-9f3c"
+        agents.write_text(original + f"\nStaged bootstrap addition.\n\n{marker}\n", encoding="utf-8")
+        worktree_agents = agents.read_bytes()
+        working_before = all_generated_working_state(clone)
+        git_index_before = raw_git_index(clone)
+        bootstrap_before = (clone / "00_Meta/BOOTSTRAP.md").read_bytes()
+        self.assertNotIn(marker.encode(), bootstrap_before)
+
+        proc = subprocess.run(
+            ["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("unstaged bootstrap-source changes", proc.stderr)
+        self.assertEqual(raw_git_index(clone), git_index_before)
+        self.assertEqual(all_generated_working_state(clone), working_before)
+        self.assertEqual((clone / "00_Meta/BOOTSTRAP.md").read_bytes(), bootstrap_before)
+        self.assertEqual(agents.read_bytes(), worktree_agents)
+        staged_bootstrap = subprocess.run(
+            ["git", "show", ":00_Meta/BOOTSTRAP.md"], cwd=clone, check=True, capture_output=True
+        ).stdout
+        self.assertNotIn(marker.encode(), staged_bootstrap)
+        self.assertEqual(list(clone.glob(".precommit-generated-transaction-*")), [])
+
+        # An untracked bootstrap source is refused the same way.
+        subprocess.run(["git", "add", "AGENTS.md"], cwd=clone, check=True)
+        defaults = clone / "01_Profile/DEFAULTS.md"
+        subprocess.run(["git", "rm", "-q", "--cached", "01_Profile/DEFAULTS.md"], cwd=clone, check=True)
+        self.assertTrue(defaults.exists())
+        proc = subprocess.run(
+            ["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("untracked bootstrap-source files", proc.stderr)
+        self.assertEqual((clone / "00_Meta/BOOTSTRAP.md").read_bytes(), bootstrap_before)
+
+    @unittest.skipUnless(hasattr(os, "symlink"), "symlinks unavailable")
+    def test_precommit_refuses_symlinked_bootstrap_target_without_touching_external_file(self):
+        # R4: the hook regenerates BOOTSTRAP.md automatically; a symlink at
+        # that path must abort the commit with the external target, the Git
+        # index, and every generated file exactly as found.
+        clone = self.repo / "bootstrap-symlink-clone"
+        copy_repo(clone)
+        init_clean_git_repo(clone)
+        readme = clone / "README.md"
+        readme.write_text(readme.read_text(encoding="utf-8") + "\nstaged note\n", encoding="utf-8")
+        subprocess.run(["git", "add", "README.md"], cwd=clone, check=True)
+        outside = self.repo / "outside-bootstrap.md"
+        outside.write_bytes(b"external target\n")
+        target = clone / "00_Meta/BOOTSTRAP.md"
+        target.unlink()
+        os.symlink(outside, target)
+        working_before = all_generated_working_state(clone)
+        git_index_before = raw_git_index(clone)
+        proc = subprocess.run(["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertEqual(outside.read_bytes(), b"external target\n")
+        self.assertTrue(target.is_symlink())
+        self.assertEqual(all_generated_working_state(clone), working_before)
+        self.assertEqual(raw_git_index(clone), git_index_before)
+        self.assertEqual(list(clone.glob(".precommit-generated-transaction-*")), [])
+        # And brain itself, invoked directly, refuses as well.
+        direct = subprocess.run(
+            [sys.executable, "10_Agents/tools/brain/brain.py", "bootstrap", "--write"], cwd=clone, capture_output=True, text=True
+        )
+        self.assertEqual(direct.returncode, 1)
+        self.assertIn("UNSAFE PATH", direct.stderr)
+        self.assertEqual(outside.read_bytes(), b"external target\n")
+
+    def test_precommit_fails_when_rendered_bootstrap_exceeds_budget(self):
+        # F8: every source stays inside its own budget and the sources' total
+        # stays inside the 32 KiB cap, yet the rendered file exceeds it (link
+        # rewriting grows 01_Profile/ links). The hook path must fail and
+        # leave nothing staged or mutated.
+        sys.path.insert(0, str(ROOT / "10_Agents/tools/brain"))
+        import brain  # noqa: E402
+
+        clone = self.repo / "bootstrap-budget-clone"
+        copy_repo(clone)
+        init_clean_git_repo(clone)
+
+        def doc(title, body):
+            return (
+                f'---\ntitle: "{title}"\ntags:\n  - type/meta\n  - audience/agent\n'
+                f"updated: 2026-08-11\nexpires: 2027-08-11\n---\n\n{body}\n"
+            )
+
+        # All six sources are fixture docs so the case is independent of the
+        # live docs' sizes: the two 01_Profile/ docs are dense with links that
+        # grow on compilation, the other four are padded prose.
+        link = "[a](x.md) "
+        now_links = (brain.BOOTSTRAP_BUDGETS["01_Profile/NOW.md"] - 200) // len(link)
+        pref_links = (brain.BOOTSTRAP_BUDGETS["01_Profile/PREFERENCES.md"] - 200) // len(link)
+        (clone / "01_Profile/NOW.md").write_text(doc("Now", "# Now\n\n" + link * now_links), encoding="utf-8")
+        (clone / "01_Profile/PREFERENCES.md").write_text(
+            doc("Preferences", "# Preferences\n\n" + link * pref_links), encoding="utf-8"
+        )
+        (clone / "01_Profile/x.md").write_text(doc("X", "# X"), encoding="utf-8")
+        for rel, title in (
+            ("AGENTS.md", "Agents"),
+            ("00_Meta/CONVENTIONS.md", "Conventions"),
+            ("00_Meta/INDEX.md", "Index"),
+            ("01_Profile/DEFAULTS.md", "Defaults"),
+        ):
+            (clone / rel).write_text(doc(title, f"# {title}\n\nShort."), encoding="utf-8")
+        report = brain.context_report(clone)
+        remaining = brain.BOOTSTRAP_TOTAL_BUDGET - report["totalBytes"] - 100
+        self.assertGreater(remaining, 0, report)
+        for rel, title in (("AGENTS.md", "Agents"), ("00_Meta/CONVENTIONS.md", "Conventions"), ("00_Meta/INDEX.md", "Index")):
+            current = next(row for row in report["docs"] if row["path"] == rel)
+            room = min(remaining, current["budget"] - current["sizeBytes"] - 50)
+            body = f"# {title}\n\n" + "y" * max(current["sizeBytes"] + room - 120, 1)
+            (clone / rel).write_text(doc(title, body), encoding="utf-8")
+            remaining -= room
+        report = brain.context_report(clone)
+        self.assertLessEqual(report["totalBytes"], report["totalBudget"], report)
+        self.assertTrue(all(row["sizeBytes"] <= row["budget"] for row in report["docs"]), report["docs"])
+        payload = brain.build_bootstrap(clone)
+        self.assertGreater(payload["sizeBytes"], payload["budget"])
+        subprocess.run(["git", "add", "-A"], cwd=clone, check=True)
+
+        working_before = all_generated_working_state(clone)
+        git_index_before = raw_git_index(clone)
+        proc = subprocess.run(
+            ["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("brain bootstrap --write failed", proc.stderr)
+        self.assertEqual(raw_git_index(clone), git_index_before)
+        self.assertEqual(all_generated_working_state(clone), working_before)
+        self.assertEqual(list(clone.glob(".precommit-generated-transaction-*")), [])
 
     def test_precommit_foreign_adapter_fails_before_index_or_staging_mutation(self):
         clone = self.repo / "foreign-hook-clone"

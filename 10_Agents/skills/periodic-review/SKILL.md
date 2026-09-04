@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -36,7 +36,7 @@ Produce the review note for a period in `03_Journal/periodic/<cadence>/`, ground
    - The period's daily logs (weekly) or the child-cadence reviews (monthly reads weeklies, quarterly reads monthlies, yearly reads quarterlies)
    - `01_Profile/NOW.md` — current focus to review against
 3. **Instantiate the template**: replace all `{{...}}` placeholders, set real frontmatter (`updated:` today, keep `workflow/draft`), and replace each link token with a complete source-relative destination including `.md` (sibling reviews use their filename; cross-directory links use `../` segments).
-4. **Fill every section from evidence**, not memory: wins and misses against the stated focus, what changed in projects/areas, what to carry forward. Link `restricted/private` sources rather than copying their substance — a bare link propagates nothing, but one quoted or summarized private claim makes the entire review `restricted/private` (the tag is note-granular; apply it and surface the flip if substance does cross — [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Leave explicitly-marked open questions for the human rather than inventing answers.
+4. **Fill every section from evidence**, not memory: wins and misses against the stated focus, what changed in projects/areas, what to carry forward. Search for established people, pets, Projects, Areas, and other recurring entities; link the first meaningful mention to the existing note, entrypoint, or anchor and do not create duplicates. Link `restricted/private` sources rather than copying their substance — a bare link propagates nothing, but one quoted or summarized private claim makes the entire review `restricted/private` (the tag is note-granular; apply it and surface the flip if substance does cross — [CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). Leave explicitly-marked open questions for the human rather than inventing answers.
 5. **Project and Area review:** treat `brain projects` plus the lifecycle-filtered `brain list` results as authoritative and [NOW](../../../01_Profile/NOW.md) as a curated priority view. Review every active Project's Areas, completion criteria, next action, and target; explicitly confirm or recalibrate estimated and overdue dates. Open each inactive entrypoint and review deprioritized Projects for reactivation, continued pause, or closeout; distinguish someday ideas from established-but-deprioritized work, and process done Projects as archive-pending. Surface NOW mismatches rather than treating its prose as a second registry.
 6. **Closeout and archive are separate:** when a Project is completed, cancelled, or superseded, propose the immediate closeout: leave exactly `status/done`, remove active target fields, set `closed: YYYY-MM-DD`, write `## Final Outcome`, and run `brain projects --write-rollups`. A done Project under `04_Projects/` is valid archive-pending. Moving it requires separate owner approval: preview `brain archive-project <slug>`, then use `--write --approve-archive` only after that approval. Never use a generic note move. Areas no longer maintained get their own explicit archive proposal.
 7. **Quarterly only — refresh the Now page:** with the owner, rewrite [NOW](../../../01_Profile/NOW.md) to match current reality (their in-review answers are the approval). A quarterly review that leaves a stale Now page isn't finished.
@@ -47,3 +47,4 @@ Produce the review note for a period in `03_Journal/periodic/<cadence>/`, ground
 - `09_Templates/README.md` — template selection guide
 - `03_Journal/README.md` — periodic naming conventions
 - [Project and Area Contract](../../docs/project-area-contract.md) — lifecycle, target, rollup, and closeout rules
+- [Established Entity Links](../../../00_Meta/CONVENTIONS.md#established-entity-links) — entity continuity and privacy boundary

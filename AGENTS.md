@@ -21,12 +21,16 @@ A personal knowledge vault for humans and AI agents. It is the source of truth f
 3. **[PREFERENCES](01_Profile/PREFERENCES.md)** — Communication style, output format, and constraints.
 4. **[CONVENTIONS](00_Meta/CONVENTIONS.md)** — Naming, tagging, directory layout, and change-control rules.
 
-After reading all four, the agent has enough context to begin work.
+**Fast path:** `00_Meta/BOOTSTRAP.md` is all six docs compiled in this order, regenerated on every commit (`brain bootstrap --write`); read it as one file when your harness loads files one at a time. It is generated and pruned from the index — never edit or link it.
 
 **Complete bootstrap** (required when creating structured notes or navigating beyond Inbox):
 
 5. **[INDEX](00_Meta/INDEX.md)** — Global map of content.
 6. **[DEFAULTS](01_Profile/DEFAULTS.md)** — Timezone, locale, units, default tags.
+
+## Entity Continuity
+
+Before writing, search for established people, pets, Projects, Areas, and recurring entities. Link the first meaningful mention to its existing home; do not create duplicates. Prefer linking `restricted/private` entities; a note that carries their private substance inherits the tag. See [CONVENTIONS](00_Meta/CONVENTIONS.md#established-entity-links).
 
 ## Where Agents Write
 
@@ -40,7 +44,7 @@ Write authority follows **execution class**: every run is **interactive** (a for
 
 Template-shipped skills/tools, `00_Meta/config.yaml`, and named tagless entrypoint, editor, and harness adapters are [canonical-by-policy](10_Agents/docs/write-authority.md#canonical-by-policy). See [README](02_Inbox/README.md) for triage instructions.
 
-**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `./brain index` (`brain index` after managed installation) before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the two committed generated files (the vault index and `.vscode/second-brain.code-snippets`) by keeping ours; the post-merge hook then regenerates both, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [index-merge-conflicts](10_Agents/solutions/vault-tooling/index-merge-conflicts.md).
+**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `./brain index` (`brain index` after managed installation) before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the three committed generated files (the vault index, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md`) by keeping ours; the post-merge hook then regenerates all three, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [index-merge-conflicts](10_Agents/solutions/vault-tooling/index-merge-conflicts.md).
 
 ## Tagging Rules (Summary)
 
