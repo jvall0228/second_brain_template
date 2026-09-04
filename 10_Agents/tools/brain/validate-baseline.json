@@ -1,0 +1,35 @@
+{
+ "schemaVersion": 1,
+ "warnings": [
+  {
+   "count": 1,
+   "message": "# bytes / # lines exceeds # bytes / # lines — split candidate",
+   "path": "00_Meta/PRD.md",
+   "rule": "oversized"
+  },
+  {
+   "count": 1,
+   "message": "# bytes / # lines exceeds # bytes / # lines — split candidate",
+   "path": "02_Inbox/2026-08-11-implementation-plan-m8-m12.md",
+   "rule": "oversized"
+  },
+  {
+   "count": 1,
+   "message": "# bytes / # lines exceeds # bytes / # lines — split candidate",
+   "path": "06_Resources/harness-copilot.md",
+   "rule": "oversized"
+  },
+  {
+   "count": 1,
+   "message": "# bytes / # lines exceeds # bytes / # lines — split candidate",
+   "path": "10_Agents/skills/setup/onboard-harness/SKILL.md",
+   "rule": "oversized"
+  },
+  {
+   "count": 1,
+   "message": "# bytes / # lines exceeds # bytes / # lines — split candidate",
+   "path": "10_Agents/skills/setup/onboard-owner/SKILL.md",
+   "rule": "oversized"
+  }
+ ]
+}

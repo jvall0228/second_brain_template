@@ -5,10 +5,25 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-28
+updated: 2026-09-04
 ---
 
 # Changelog
+
+## [2026-09-04] port-fork-improvements | Backport template-general improvements from the shared_brain fork
+
+- `brain`: `bootstrap --write`/`--check` (spec §28) compiles the six bootstrap docs into the generated `00_Meta/BOOTSTRAP.md`, symlink-safe and refusing an over-32-KiB render; `validate` is now a warning ratchet (spec §10.6) via a committed `validate-baseline.json` written only by `--write-baseline` on a zero-error run, hiding previously-seen warnings by default (`--all` reveals them); `triage-archive` (spec §29.1) and `trace` (spec §29.2) roll an applied Inbox report into the month's archive log and trace filed captures into their dated daily/weekly periodic notes, both serialized through a new vault write lock (`.second-brain/write.lock`); `gap` and `accepted` add two append-only logs (`10_Agents/docs/vault-answer-gaps.md`, `10_Agents/docs/accepted-proposals.md`) for unanswered questions and shipped self-improve proposals; `curate` now flags distill candidates for `distill-note`; restored two Home/AYMT freshness fixes (index-staleness no longer flaps on generated records or a restricted→public flip; no blank "Areas:" suffix on an Area-less active Project).
+- The brain spec (`10_Agents/tools/brain/SPEC.md`) is split into one file per section under `10_Agents/tools/brain/spec/NN-slug.md` (headings lifted one level, links re-relativized, section numbers and cross-references unchanged), retiring its standing oversized-file warning; added `tests/test_golden.py`, pinning exact bytes for a fixture index, an empty-state Home, and an empty-state AYMT brief under `tests/golden/`.
+- Skills: `sync-upstream`'s scope now leads with adopting `second_brain_template` releases, exits before any stage on a request that doesn't name the template, and treats plain git sync as out of scope; grouped the three one-time setup skills under `10_Agents/skills/setup/`, and the adapter generator now discovers skills at any depth (still emitting flat per-skill adapters) and authenticates each by its signed canonical-source pointer rather than reconstructing a path, with Copilot's install pointed at the generated flat `.agents/skills/` directory; entity continuity (search-before-write, link the first mention of an established person/pet/Project/Area) joined the required bootstrap and was applied to OPERATING-RULES, the skills README, and inbox-capture/daily-log/periodic-review; `vault-answer` tries semantic search first and logs unanswered questions to the gap queue; `triage-inbox` propagates every capture to both its PARA destination and its dated periodic trace, and classifies gap/accepted-proposal captures first; the weekly review template (and its work variant) gained a "what the vault did for you this week" prompt.
+- Docs: `restricted/private` enforcement detail moved out of CONVENTIONS into its own [restricted/private Contract](restricted-private.md), leaving a load-bearing summary paragraph behind; AGENTS and CONVENTIONS were distilled (redundant prose collapsed, Templates/Editor Surfaces sections condensed) to make room under the bootstrap budget, dropping AGENTS.md from 10054 to 7174 bytes and CONVENTIONS.md from 14482 to 13724 bytes, with no budget constant raised.
+
+For owner attention:
+
+- **Write Authority Contract relocation.** The full "Where Agents Write" statement moved out of AGENTS.md into a new [Write Authority Contract](../10_Agents/docs/write-authority.md); AGENTS keeps the heading, the three-row execution-class summary table, and the canonical-by-policy sentence. The move also adds an **append-only agent logs** rule (rejected/accepted proposals, vault-answer gaps, the skill-run log below) documented in that contract and referenced from CONVENTIONS' Agent Write Rules.
+- **Bootstrap distillation revisited.** The 2026-08-28 port excluded the fork's bootstrap-distillation changes as fork-specific; this wave reintroduces them because the new `brain bootstrap --write` compiler refuses to render a bootstrap file over the 32 KiB cross-harness cap, and the distillation is what keeps the compiled file under it. The fork's authority-carve-out sentence stays excluded, as before.
+- **Skill-run log writes during sessions.** A new Claude Code `PostToolUse` hook appends one line per skill invocation (timestamp, harness, skill, outcome) to an append-only, path-authenticated log for the self-improve loop's usage evidence. This means the working tree goes dirty after any skill invocation in a live session, not just after an explicit edit; `.gitattributes` gives the log file a `merge=union` driver so concurrent appends don't conflict.
+
+Excluded (fork-specific, not ported): the authority carve-out and the Slack Task Updates rule; the fork's CI trigger change (`workflow_dispatch`-only) and its environment selector step; community-skill vendoring (component manifests, pinned refs, `.extern`/`.gitmodules` removal); the fork's owner content and solution notes; the fork's recalibrated bootstrap budget constants.
 
 ## [2026-08-28] port-self-improve-fixes | Backport self-improve cycle 1 fixes from the shared_brain fork
 
