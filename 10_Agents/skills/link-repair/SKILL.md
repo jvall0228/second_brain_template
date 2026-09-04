@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -18,7 +18,7 @@ Drive unresolved internal links to zero without guessing.
 
 ## Steps
 
-1. **Find breakage:** `brain validate --json` — collect `unresolved-link` errors (each carries the note, line, raw link, and any `title matches:` hint) plus `ambiguous-link` / `case-mismatch` warnings.
+1. **Find breakage:** `brain validate --json --all` — collect `unresolved-link` errors (each carries the note, line, raw link, and any `title matches:` hint) plus `ambiguous-link` / `case-mismatch` warnings (`--all` surfaces baselined ones too).
 2. **Diagnose each link** with `brain links <note>` and `brain search`:
    - **Title-match hint present** → the link text is a note's *title*, not its filename; retarget to the hinted path.
    - **File was moved/renamed** → `git log --follow` or `brain search` for the content; retarget.

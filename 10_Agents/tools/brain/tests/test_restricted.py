@@ -109,6 +109,45 @@ class RestrictedTaxonomyTests(unittest.TestCase):
         self.assertEqual(tax["restricted"], ["private"])
 
 
+class ArchiveSubstanceAuditTests(unittest.TestCase):
+    """R5: in the live corpus, an archived note that is not itself restricted
+    may cite a restricted note in prose (a bare evidence link) but never in a
+    triage-table row — a table row that links a restricted note summarizes
+    it (path, summary, tag changes, decisions) and inherits the tag."""
+
+    ROOT = Path(__file__).resolve().parents[4]
+
+    def test_archived_table_rows_linking_restricted_notes_are_classified(self):
+        root = self.ROOT
+        notes, assets = brain.walk_corpus(root, selected_environment=None)
+        index = brain.build_index(root, notes, assets)
+        records = index["notes"]
+        restricted = {rel for rel, rec in records.items() if brain.is_restricted(rec)}
+        offenders = []
+        bare_links = []
+        for rel in sorted(records):
+            if not rel.startswith("07_Archives/") or rel in restricted:
+                continue
+            text, _ = brain.load_text(root, rel)
+            lines = text.split("\n")
+            for link in records[rel].get("links", []):
+                target = link.get("resolved")
+                if target not in restricted:
+                    continue
+                line = lines[link["line"] - 1]
+                if line.lstrip().startswith("|"):
+                    offenders.append(f"{rel}:{link['line']} -> {target}")
+                else:
+                    bare_links.append(f"{rel}:{link['line']} -> {target}")
+        self.assertEqual(offenders, [], "archived table rows that summarize restricted notes must carry restricted/private")
+        # Every remaining archive-lane link is an audited bare citation and is
+        # recorded, by warning, in the committed baseline (not silently exempt).
+        baseline = brain.load_baseline(root) or {}
+        baselined = {path for (path, rule, _message) in baseline if rule == "restricted-link" and path.startswith("07_Archives/")}
+        for entry in bare_links:
+            self.assertIn(entry.split(":")[0], baselined, entry)
+
+
 class RestrictedLinkWarningTests(unittest.TestCase):
     """§10.2: non-restricted → restricted links warn; restricted → restricted don't."""
 
@@ -126,6 +165,56 @@ class RestrictedLinkWarningTests(unittest.TestCase):
         self.assertTrue(all(isinstance(f["line"], int) for f in hits))
         # Warning severity, never an error.
         self.assertFalse(any(f["rule"] == "restricted-link" for f in errors))
+
+    def test_archive_lane_is_not_exempt(self):
+        # §10.3: no lane is exempt. An archived (non-restricted) summary of a
+        # restricted note warns exactly like the same link outside the lane.
+        files = base_files()
+        files["07_Archives/inbox/report.md"] = NORMAL_LINKER.replace("(secret.md)", "(../../secret.md)").replace(
+            "(plain.md)", "(../../plain.md)"
+        )
+        errors, warnings = self.run_validate(files)
+        hits = [f for f in warnings if f["rule"] == "restricted-link"]
+        self.assertEqual(
+            sorted(f["path"] for f in hits),
+            ["07_Archives/inbox/report.md", "07_Archives/inbox/report.md", "normal.md", "normal.md"],
+        )
+        self.assertFalse(any(f["rule"] == "restricted-link" for f in errors))
+
+    def test_classified_archived_record_is_clean(self):
+        # An archived record that inherited restricted/private passes: the
+        # warning asks for classification, and it has it.
+        files = base_files()
+        files["07_Archives/inbox/report.md"] = (
+            NORMAL_LINKER.replace("  - type/note\n", "  - type/note\n  - restricted/private\n")
+            .replace("(secret.md)", "(../../secret.md)")
+            .replace("(plain.md)", "(../../plain.md)")
+        )
+        _, warnings = self.run_validate(files)
+        self.assertFalse(
+            [f for f in warnings if f["rule"] == "restricted-link" and f["path"].startswith("07_Archives/")],
+            warnings,
+        )
+
+    def test_all_flag_exposes_archive_warnings_after_generation(self):
+        # The archive warnings survive a baseline write: `--all` still lists
+        # them (the baseline is a reporting filter, never a suppression).
+        files = base_files()
+        files["07_Archives/inbox/report.md"] = NORMAL_LINKER.replace("(secret.md)", "(../../secret.md)").replace(
+            "(plain.md)", "(../../plain.md)"
+        )
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files)
+            with redirect_stdout(io.StringIO()):
+                self.assertEqual(brain.main(["validate", "--write-baseline", "--vault", str(root)]), 0)
+            out = io.StringIO()
+            with redirect_stdout(out):
+                self.assertEqual(brain.main(["validate", "--vault", str(root)]), 0)
+            self.assertNotIn("07_Archives/inbox/report.md", out.getvalue())
+            out = io.StringIO()
+            with redirect_stdout(out):
+                self.assertEqual(brain.main(["validate", "--all", "--vault", str(root)]), 2)
+            self.assertIn("WARN 07_Archives/inbox/report.md", out.getvalue())
 
     def test_restricted_to_restricted_is_clean(self):
         _, warnings = self.run_validate(base_files())
