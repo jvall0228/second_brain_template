@@ -111,7 +111,7 @@ class StandingExceptionTests(unittest.TestCase):
 
     def test_write_authority_exception_mentions_people_dir(self):
         # The standing exceptions live in the Write Authority Contract
-        # (moved out of AGENTS on 2026-09-01); AGENTS keeps the summary table.
+        # (moved out of AGENTS); AGENTS keeps the summary table.
         self.assertIn(PEOPLE_DIR, read(WRITE_AUTHORITY))
         self.assertIn("10_Agents/docs/write-authority.md", read(AGENTS))
 

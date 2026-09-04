@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-01
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -65,7 +65,7 @@ The committed index must be a **pure function of tracked file contents** — a f
 - **No timestamps, no mtimes, no absolute paths, no environment data, no tool-version stamp.** In particular, **file mtime is excluded** even though the plan's extraction-scope bullet listed it: git does not preserve mtimes, so a fresh clone would always produce a different index and the CI freshness check could never pass. The `recent` command's mtime tiebreak stats the working tree at query time instead (§9). *(Deviation from the plan — flagged for owner review, §12.)*
 - `sizeBytes` is the UTF-8 byte length of the **normalized** text (§3; byte-level normalization for `not-utf8` files), not the on-disk size, for the same reason.
 - M5.4 must ship a `.gitattributes` entry marking `10_Agents/tools/brain/vault-index.json` as `-text`, so `core.autocrlf=true` checkouts (the Git-for-Windows default) don't smudge the committed copy to CRLF and fail every `--check-index` byte-compare.
-- **Merge driver (M8.6, issue #25):** `.gitattributes` additionally marks the three committed generated files — `10_Agents/tools/brain/vault-index.json`, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md` (§28) — with `merge=regenerate`. The driver is defined per clone as `git config merge.regenerate.driver true` (the `true` command exits 0 leaving `%A` = ours): merges of generated content resolve keep-ours, and **correctness comes from regeneration, not resolution** — the `.githooks/post-merge` hook re-runs bootstrap, `index`, and snippet generation best-effort immediately after a merge, the pre-commit hook regenerates on the next commit, and the manually dispatched validation workflow's freshness checks catch any skip. Clones without the driver configured degrade to a normal conflict plus the documented fallback recipe (`10_Agents/solutions/vault-tooling/index-merge-conflicts.md`). Any future committed generated file adopts the same attribute.
+- **Merge driver (M8.6, issue #25):** `.gitattributes` additionally marks the three committed generated files — `10_Agents/tools/brain/vault-index.json`, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md` (§28) — with `merge=regenerate`. The driver is defined per clone as `git config merge.regenerate.driver true` (the `true` command exits 0 leaving `%A` = ours): merges of generated content resolve keep-ours, and **correctness comes from regeneration, not resolution** — the `.githooks/post-merge` hook re-runs bootstrap, `index`, and snippet generation best-effort immediately after a merge, the pre-commit hook regenerates on the next commit, and CI freshness checks catch any skip. Clones without the driver configured degrade to a normal conflict plus the documented fallback recipe (`10_Agents/solutions/vault-tooling/index-merge-conflicts.md`). Any future committed generated file adopts the same attribute.
 
 ## 8.3 Restricted-note reduction (issue #17)
 

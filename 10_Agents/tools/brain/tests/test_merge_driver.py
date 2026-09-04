@@ -1,6 +1,6 @@
 """Integration tests for the merge=regenerate driver (issue #25, spec §8.2).
 
-The vault maps its two committed generated files to a custom merge driver in
+The vault maps its three committed generated files to a custom merge driver in
 `.gitattributes`; clones define the driver with
 
     git config merge.regenerate.driver true
@@ -143,8 +143,10 @@ class RepoContractTests(unittest.TestCase):
         attrs = {parts[0]: parts[1:] for parts in lines}
         self.assertIn("merge=regenerate", attrs.get("10_Agents/tools/brain/vault-index.json", []))
         self.assertIn("merge=regenerate", attrs.get(".vscode/second-brain.code-snippets", []))
-        # The newline shield on the byte-compared index must survive.
+        self.assertIn("merge=regenerate", attrs.get("00_Meta/BOOTSTRAP.md", []))
+        # The newline shield on the byte-compared index and bootstrap must survive.
         self.assertIn("-text", attrs["10_Agents/tools/brain/vault-index.json"])
+        self.assertIn("-text", attrs["00_Meta/BOOTSTRAP.md"])
 
     def test_gitattributes_documents_the_one_liner_install(self):
         text = (ROOT / ".gitattributes").read_text(encoding="utf-8")

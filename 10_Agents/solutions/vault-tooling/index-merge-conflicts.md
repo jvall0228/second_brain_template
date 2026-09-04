@@ -4,20 +4,20 @@ tags:
   - type/solution
   - audience/agent
   - topic/software
-updated: 2026-08-11
+updated: 2026-09-04
 ---
 
 # Index Merge Conflicts
 
 ## Status
 
-**Background + fallback.** Since issue #25 the primary mechanism is the `merge=regenerate` git merge driver: `.gitattributes` marks both committed generated files (`10_Agents/tools/brain/vault-index.json` and `.vscode/second-brain.code-snippets`), and clones configured with
+**Background + fallback.** Since issue #25 the primary mechanism is the `merge=regenerate` git merge driver: `.gitattributes` marks the three committed generated files (`10_Agents/tools/brain/vault-index.json`, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md`), and clones configured with
 
 ```sh
 git config merge.regenerate.driver true
 ```
 
-merge them cleanly by keeping ours — correctness comes from regeneration (`.githooks/post-merge` rebuilds both immediately; the pre-commit hook and CI freshness checks are the backstop). The manual recipe below applies only to clones **without** the driver configured, which degrade to a normal conflict.
+merge them cleanly by keeping ours — correctness comes from regeneration (`.githooks/post-merge` rebuilds all three immediately; the pre-commit hook and CI freshness checks are the backstop). The manual recipe below applies only to clones **without** the driver configured, which degrade to a normal conflict.
 
 ## Problem
 
@@ -41,7 +41,7 @@ git add 10_Agents/tools/brain/vault-index.json
 python3 10_Agents/tools/brain/brain.py validate
 ```
 
-The index is a pure function of tracked content (spec §8.2), so the regenerated file is correct by construction for whatever the merged tree contains. A conflicted snippets file works the same way: take either side, run `python3 10_Agents/tools/vscode/gen_snippets.py`, and stage the result.
+The index is a pure function of tracked content (spec §8.2), so the regenerated file is correct by construction for whatever the merged tree contains. A conflicted snippets file works the same way: take either side, run `python3 10_Agents/tools/vscode/gen_snippets.py`, and stage the result. A conflicted `00_Meta/BOOTSTRAP.md` likewise: take either side, run `python3 10_Agents/tools/brain/brain.py bootstrap --write`, and stage the result.
 
 ## Prevention
 

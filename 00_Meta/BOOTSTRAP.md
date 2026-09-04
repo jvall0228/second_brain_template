@@ -6,7 +6,7 @@ tags:
   - workflow/canonical
 updated: 2026-09-04
 generated: brain-bootstrap-v1
-content-digest: "bab24b1d7858ca92aef9bcc69d50876c7bc74d14c2c444611c914cc19a53e573"
+content-digest: "1e20d13682d39b54c3064c4ca72bb1e01f062f06247d9e8a015688abd93dbea8"
 ---
 
 # Bootstrap
@@ -313,7 +313,7 @@ Checkbox tasks (`- [ ]` open, `- [x]` done) live **where their context lives** �
 
 ### Agent Write Rules
 
-Write authority is owned by the execution-class contract in [AGENTS](../AGENTS.md#where-agents-write): interactive user-directed sessions edit the appropriate durable home directly; autonomous sessions are Inbox-first with named standing exceptions (among them, a live [onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md) session writing owner-confirmed notes to `01_Profile/` and `03_Journal/people/`); deliverables for the outside world go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Conventions-specific requirements: every agent-created note needs `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
+Write authority is owned by the execution-class contract in the [Write Authority Contract](../10_Agents/docs/write-authority.md) (summary in [AGENTS](../AGENTS.md#where-agents-write)): interactive user-directed sessions edit the appropriate durable home directly; autonomous sessions are Inbox-first with named standing exceptions (among them, a live [onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md) session writing owner-confirmed notes to `01_Profile/` and `03_Journal/people/`); deliverables for the outside world go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Conventions-specific requirements: every agent-created note needs `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
 
 **Append-only agent logs** follow the per-class table in the [Write Authority Contract](../10_Agents/docs/write-authority.md#append-only-agent-logs); `brain gap` alone writes the gap queue, and the skill-run log is hook-generated.
 

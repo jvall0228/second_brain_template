@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -164,7 +164,7 @@ Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` ins
 
 `brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/SPEC.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, canonical Project/Area inventory, rollups, rollback-capable whole-directory archival, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
 
-The committed index and VS Code snippets are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
+The committed index, VS Code snippets, and compiled `00_Meta/BOOTSTRAP.md` (spec §28) are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
 
 ## 10. Frontmatter, tags, and restriction data
 

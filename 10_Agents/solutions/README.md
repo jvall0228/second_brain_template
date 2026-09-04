@@ -3,7 +3,7 @@ title: "Solutions"
 tags:
   - type/meta
   - audience/agent
-updated: 2026-08-11
+updated: 2026-09-04
 ---
 
 # Solutions
@@ -22,6 +22,7 @@ Solution notes must carry required frontmatter with `type/solution` and `audienc
 - [Performance Issues](performance-issues/README.md) — Performance solutions
 - [Platform Issues](platform-issues/README.md) — Platform-specific solutions
 - [Vault Maintenance](vault-maintenance/README.md) — Vault upkeep solutions
+- [Vault Tooling](vault-tooling/README.md) — `brain`, hook, and generated-file solutions
 
 ## Related
 
