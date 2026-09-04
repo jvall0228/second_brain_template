@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-01
 expires: 2026-11-11
 ---
 
@@ -13,7 +13,7 @@ expires: 2026-11-11
 
 Per-harness adapters for the support tiers in [PRD](../../00_Meta/PRD.md) §8.3. **Standards-first:** the entrypoint (`AGENTS.md`), canonical skills in `10_Agents/skills/`, generated repository discovery adapters, and the `brain` CLI carry portable behavior. Each directory here carries **only what a cross-harness standard cannot**: exact config paths, import syntax, caps, and trust gates.
 
-Every adapter ships a `wiring.md` (entrypoint loading, skill discovery paths, hook installation, how the harness invokes `brain`, harness-specific caveats) and reference config files to copy or merge. The [onboard-harness](../skills/onboard-harness/SKILL.md) skill verifies repository scope by default and gates optional user-global changes behind an exact preview and explicit apply approval.
+Every adapter ships a `wiring.md` (entrypoint loading, skill discovery paths, hook installation, how the harness invokes `brain`, harness-specific caveats) and reference config files to copy or merge. The [onboard-harness](../skills/setup/onboard-harness/SKILL.md) skill verifies repository scope by default and gates optional user-global changes behind an exact preview and explicit apply approval.
 
 ## Project skill compatibility
 
@@ -58,7 +58,7 @@ Every overlay contains a `manifest.json` describing what it installs, where, and
 - **Install methods:** `copy` (place the payload at the target; foreign files are never overwritten), `marker-block` (merge a marker-delimited block into a user-owned config file), `generate` (produce the target by running the recorded `generator` command, seeded from the payload template), `shipped-in-repo` (the artifact is tracked repo config present in every clone — nothing to install).
 - **Reverse methods:** `delete`, `remove-marker-block`, `none` (only valid for `shipped-in-repo` — removing tracked config is a repo change, not an uninstall action).
 
-Install and uninstall are performed by [onboard-harness](../skills/onboard-harness/SKILL.md) under the **same M6 contract as everything else it touches** — idempotent, reversible, marker-managed where it merges into user-owned files, every action recorded in the machine-local manifest (`~/.agents/second-brain-manifest.json`); there is no second install model. The template portability invariant applies in full: overlay files and manifests are tracked template content, so targets use only portable placeholders (`<vault>`, `~`) and never an adopter-specific path. Manifest shape is enforced mechanically by `10_Agents/tools/brain/tests/test_harness_overlays.py`.
+Install and uninstall are performed by [onboard-harness](../skills/setup/onboard-harness/SKILL.md) under the **same M6 contract as everything else it touches** — idempotent, reversible, marker-managed where it merges into user-owned files, every action recorded in the machine-local manifest (`~/.agents/second-brain-manifest.json`); there is no second install model. The template portability invariant applies in full: overlay files and manifests are tracked template content, so targets use only portable placeholders (`<vault>`, `~`) and never an adopter-specific path. Manifest shape is enforced mechanically by `10_Agents/tools/brain/tests/test_harness_overlays.py`.
 
 Shipped overlays: [Cursor](cursor/wiring.md) (glob-scoped Inbox rule installed by default, plus the owner-opt-in `.cursorignore` read-restriction template) and [Copilot](copilot/wiring.md) (`shipped-in-repo` catalogue of the `.github/` instructions shim + cloud-agent validate hook).
 

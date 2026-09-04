@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 CATALOG = ROOT / "06_Resources/recommended-skills.md"
 SKILLS_README = ROOT / "10_Agents/skills/README.md"
-ONBOARD = ROOT / "10_Agents/skills/onboard-harness/SKILL.md"
+ONBOARD = ROOT / "10_Agents/skills/setup/onboard-harness/SKILL.md"
 
 # A Tracks ref names the upstream branch the item follows (e.g. "@ `main`") or
 # marks it "(latest)" — the install pulls that branch's tip, not a frozen SHA.

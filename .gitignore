@@ -26,3 +26,6 @@ __pycache__/
 # transaction or an explicit `brain archive-project <slug> --recover`.
 /.brain-project-archive.json
 /.brain-project-archive-transaction-*/
+
+# Vault write lock (brain spec §29): per-clone serialization of plan-and-write commands.
+.second-brain/write.lock

@@ -1,12 +1,12 @@
 ---
 name: sync-upstream
-description: Pull upstream second_brain_template releases into this fork - detect pending releases via the template_version config key and upstream release tags, classify every changed file (machinery / owner content / canonical docs), apply per lane, backfill mechanical fixes, and report to the Inbox. Use when the owner asks to check for or adopt template updates. Pull-only, dry-run first.
+description: Adopt second_brain_template releases into this vault fork - detect pending releases via the template_version config key and upstream release tags, classify every changed file (machinery / owner content / canonical docs), apply per lane, backfill mechanical fixes, and report to the Inbox. Use only when the owner names the template, a template release, or template updates. NOT for ordinary git work - fetching, pulling, merging, rebasing, or fast-forwarding a branch against origin, main, or any remote is plain git, even when the owner calls it "syncing upstream"; run the git commands directly instead. Pull-only, dry-run first.
 title: "Skill: Sync Upstream"
 tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-27
+updated: 2026-09-02
 expires: 2027-08-11
 ---
 
@@ -15,6 +15,18 @@ expires: 2027-08-11
 **CODE stage:** System (outside the loop) — keeps the fork's machinery and spec current with the upstream template.
 
 Keep an adopter's fork current with the upstream `second_brain_template`: detect what upstream has released since this fork last synced, classify every changed file into a handling lane, apply each lane by its own rules, backfill mechanical consequences, and report. Personalization and upstream tracking coexist (issue #22): the fork evolves toward its owner while still receiving template improvements.
+
+## Scope check (do this first)
+
+This skill is about **template releases**, not about git branches. Its "upstream" is the `second_brain_template` repository, reached through a git remote *named* `upstream`; it is never `origin`, `main`, or the branch the owner is working on.
+
+Stop and do plain git instead — no lanes, no dry run, no Inbox report — when the request is any of:
+
+- sync, pull, fetch, merge, rebase, or fast-forward a clone or branch against `origin`, `main`, or another remote branch;
+- bring a feature branch up to date with the default branch, or resolve the conflicts from doing so;
+- any use of the word "upstream" that means "the branch I forked from" rather than the template repo.
+
+Proceed only when the request names the template, a template release/version, or template updates — or when a prior turn already established that this is a template sync. If the owner said "sync upstream" and nothing distinguishes the two readings, ask which one they mean before running any of the stages below.
 
 ## Ground rules
 
@@ -61,6 +73,7 @@ Lanes:
 
 | Path | Lane |
 |------|------|
+| `.agents/` | machinery |
 | `.claude/` | machinery |
 | `.extern/` | owner-content |
 | `.gitattributes` | machinery |
@@ -85,6 +98,8 @@ Lanes:
 | `AGENTS.md` | canonical-docs |
 | `CLAUDE.md` | canonical-docs |
 | `README.md` | canonical-docs |
+| `brain` | machinery |
+| `brain.cmd` | machinery |
 
 ### Overrides
 

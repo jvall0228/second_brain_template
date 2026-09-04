@@ -148,6 +148,23 @@ class HomeCollectorTests(unittest.TestCase):
 
         self.assertIn("target missing (unknown)", rendered)
 
+    def test_malformed_active_project_without_area_has_no_blank_area_suffix(self):
+        self.vault.write(
+            "04_Projects/incomplete/PROJECT.md",
+            note(
+                "Incomplete",
+                "## Outcome\n\nShip it.\n\n## Completion Criteria\n\n- Verified.",
+                ("type/project", "status/active", "project/incomplete"),
+            ),
+            tracked=True,
+        )
+
+        rendered = brain.render_home(self.vault.build()).decode()
+
+        self.assertIn("target missing (unknown)", rendered)
+        self.assertNotIn("; Areas: ", rendered)
+        self.assertEqual(rendered.splitlines(), [line.rstrip() for line in rendered.splitlines()])
+
     def test_only_explicitly_inactive_project_tasks_are_suppressed(self):
         self.vault.write(
             "05_Areas/work/AREA.md",
@@ -404,6 +421,59 @@ class HomeCollectorTests(unittest.TestCase):
         ):
             self.assertNotIn(sensitive, combined)
 
+    def test_restricted_to_public_transition_also_marks_index_stale(self):
+        # AE6's other direction: REMOVING restricted/private changes what the
+        # committed index may publish (body-derived fields come back), so the
+        # freshness check must fail until the owning generator reruns — even
+        # when title and body bytes are otherwise identical.
+        rel = "06_Resources/privacy-transition.md"
+        self.vault.write(
+            rel,
+            note("Stable Title", "Stable body.", ("type/reference", "restricted/private")),
+            tracked=True,
+        )
+        self.vault.write_index()
+        self.assertTrue(self.vault.build()["health"]["index"]["fresh"])
+
+        # Only the privacy tag is removed.
+        self.vault.write(
+            rel,
+            note("Stable Title", "Stable body.", ("type/reference",)),
+            tracked=True,
+        )
+        payload = self.vault.build()
+        self.assertEqual(
+            payload["health"]["index"],
+            {"fresh": False, "scope": "tracked-safe"},
+        )
+
+    def test_generated_surfaces_do_not_make_index_freshness_self_referential(self):
+        self.vault.write(
+            brain.HOME_RELPATH,
+            note("Home", "[Now](../01_Profile/NOW.md)"),
+            tracked=True,
+        )
+        self.vault.write(
+            brain.AYMT_RELPATH,
+            note("AYMT", "[Now](../01_Profile/NOW.md)"),
+            tracked=True,
+        )
+        self.vault.write_index()
+        first = self.vault.build()
+        rendered = brain.render_home(first)
+        self.assertTrue(first["health"]["index"]["fresh"])
+
+        self.vault.write(brain.HOME_RELPATH, rendered)
+        self.vault.write(
+            brain.AYMT_RELPATH,
+            note("AYMT", "[Projects](../04_Projects/README.md)"),
+            tracked=True,
+        )
+        second = self.vault.build()
+
+        self.assertTrue(second["health"]["index"]["fresh"])
+        self.assertEqual(brain.render_home(second), rendered)
+
     def test_untracked_config_cannot_change_health_or_digest(self):
         self.vault.write(
             "04_Projects/stale.md",
@@ -650,7 +720,7 @@ class HomeRepositoryContractTests(unittest.TestCase):
         self.assertFalse(brain.agent_write_allowed(brain.HOME_RELPATH, {}))
 
     def test_skill_inventory_and_adapters_include_refresh_home(self):
-        skills = sorted((self.root / "10_Agents/skills").glob("*/SKILL.md"))
+        skills = sorted((self.root / "10_Agents/skills").glob("**/SKILL.md"))
         self.assertEqual(len(skills), 24)
         self.assertTrue((self.root / ".agents/skills/refresh-home/SKILL.md").is_file())
         self.assertTrue((self.root / ".claude/skills/refresh-home/SKILL.md").is_file())

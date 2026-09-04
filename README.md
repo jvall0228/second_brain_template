@@ -3,7 +3,7 @@ title: "Second Brain Template"
 tags:
   - type/meta
   - audience/human
-updated: 2026-08-18
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -49,7 +49,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
 
 ## Adopt this template
 
-> **Prefer a guided setup?** Point an AI assistant (Claude Code, Codex, etc.) at your fork and ask it to *onboard me* — the [onboard-owner](10_Agents/skills/onboard-owner/SKILL.md) skill walks you through everything below conversationally, does the mechanical steps for you, and assumes no technical background.
+> **Prefer a guided setup?** Point an AI assistant (Claude Code, Codex, etc.) at your fork and ask it to *onboard me* — the [onboard-owner](10_Agents/skills/setup/onboard-owner/SKILL.md) skill walks you through everything below conversationally, does the mechanical steps for you, and assumes no technical background.
 
 1. **Fork or clone** this repo (see *Personal vs work* below — you'll likely want one fork per context).
 2. Open the folder as an **Obsidian vault**, in **VS Code** (shipped `.vscode/` config recommends a small first-party extension set and adds brain/daily-note tasks and template snippets — see `00_Meta/PRD.md` §6.5), or just edit the Markdown.

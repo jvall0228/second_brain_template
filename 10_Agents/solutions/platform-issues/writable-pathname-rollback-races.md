@@ -4,7 +4,7 @@ tags:
   - type/solution
   - audience/agent
   - topic/filesystems
-updated: 2026-08-12
+updated: 2026-09-04
 author: codex
 session: https://github.com/jvall0228/second_brain_template/pull/86
 ---
@@ -53,5 +53,5 @@ Use the same bounded authenticator for final verification and recovery classific
 ## Related
 
 - [Notification implementation](../../tools/brain/notifications.py)
-- [Notification transaction contract](../../tools/brain/SPEC.md#263-preview-and-local-file-delivery)
+- [Notification transaction contract](../../tools/brain/spec/26-push-only-owner-notifications.md#263-preview-and-local-file-delivery)
 - [Configure Notifications](../../skills/configure-notifications/SKILL.md)

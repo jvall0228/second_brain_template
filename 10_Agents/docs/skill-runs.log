@@ -1,0 +1,4 @@
+# Skill-run log — append-only. One line per skill invocation, written by the
+# harness hook (Claude Code: 10_Agents/harnesses/claude-code/skill-run-log.sh).
+# Columns: UTC timestamp, harness, skill name, outcome (ok | error).
+# Merges with the union driver (.gitattributes); never edit lines by hand.

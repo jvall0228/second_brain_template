@@ -34,6 +34,28 @@ CANONICAL_ROOT = Path("10_Agents/skills")
 MAX_SKILL_NAME_LENGTH = 64
 MAX_SKILL_DESCRIPTION_LENGTH = 1024
 SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+# Portable path-segment grammar for skill and group directories: bounded
+# kebab-case (so no dots, spaces, traversal, or trailing-dot/space forms) and
+# none of the Windows device names, which are reserved in any case and with
+# any extension.
+WINDOWS_RESERVED_NAMES = frozenset(
+    {"con", "prn", "aux", "nul"}
+    | {f"com{n}" for n in range(1, 10)}
+    | {f"lpt{n}" for n in range(1, 10)}
+)
+
+
+def portable_segment_error(segment: str, *, label: str) -> str | None:
+    """None when `segment` is a portable directory name, else the reason."""
+    if not SKILL_NAME_RE.fullmatch(segment):
+        return f"unsafe {label} {segment!r}: must be kebab-case [a-z0-9-]"
+    if len(segment) > MAX_SKILL_NAME_LENGTH:
+        return f"{label} exceeds {MAX_SKILL_NAME_LENGTH} characters: {segment!r}"
+    if segment.split(".", 1)[0] in WINDOWS_RESERVED_NAMES:
+        return f"{label} {segment!r} is a reserved device name"
+    return None
+
+
 TOP_LEVEL_SCALAR_RE = re.compile(r"^([A-Za-z0-9_-]+):(?:[ \t]+(.*))?$")
 YAML_NON_STRING_RE = re.compile(
     r"^(?:"
@@ -62,6 +84,7 @@ class Skill:
     name: str
     description: str
     source: Path
+    canonical: str
 
 
 def require_case_unique(names: list[str], *, label: str) -> None:
@@ -178,56 +201,81 @@ def _require_nonsymlink_ancestors(repo: Path, rel: Path) -> Path:
 
 
 def catalog(repo: Path) -> list[Skill]:
+    """Every canonical skill under ``10_Agents/skills`` at any depth.
+
+    A directory holding a ``SKILL.md`` is a skill; a directory holding only
+    skill directories (plus an optional README) is a group, such as
+    ``setup/``.  Adapters stay flat — one per skill *name* — so names must be
+    unique across the whole tree, and each adapter points at its own source.
+    """
     root = _require_nonsymlink_ancestors(repo, CANONICAL_ROOT)
     skills: list[Skill] = []
     names_seen: dict[str, str] = {}
-    children = [
-        child
-        for child in sorted(root.iterdir(), key=lambda p: (p.name.casefold(), p.name))
-        if child.is_dir() and not child.name.startswith(".")
-    ]
-    require_case_unique([child.name for child in children], label="skill directories")
-    for child in children:
-        if child.is_symlink():
-            raise AdapterError(f"symlinked canonical skill directory: {child.relative_to(repo)}")
-    for child in children:
-        source = child / "SKILL.md"
-        if not source.is_file() or source.is_symlink():
-            raise AdapterError(f"{source.relative_to(repo)}: missing or symlinked SKILL.md")
-        name, description = read_metadata(source)
-        if not SKILL_NAME_RE.fullmatch(name):
-            raise AdapterError(f"{source.relative_to(repo)}: unsafe skill name {name!r}")
-        if len(name) > MAX_SKILL_NAME_LENGTH:
-            raise AdapterError(
-                f"{source.relative_to(repo)}: skill name exceeds {MAX_SKILL_NAME_LENGTH} characters"
-            )
-        if not description.strip():
-            raise AdapterError(f"{source.relative_to(repo)}: skill description must not be blank")
-        if len(description) > MAX_SKILL_DESCRIPTION_LENGTH:
-            raise AdapterError(
-                f"{source.relative_to(repo)}: skill description exceeds "
-                f"{MAX_SKILL_DESCRIPTION_LENGTH} characters"
-            )
-        if name != child.name:
-            raise AdapterError(
-                f"{source.relative_to(repo)}: metadata name {name!r} must equal directory {child.name!r}"
-            )
-        folded_name = name.casefold()
-        if folded_name in names_seen:
-            raise AdapterError(
-                f"metadata name collision: {names_seen[folded_name]} and {name}"
-            )
-        names_seen[folded_name] = name
-        skills.append(Skill(name=name, description=description, source=source))
+
+    def visit(directory: Path) -> None:
+        children = [
+            child
+            for child in sorted(directory.iterdir(), key=lambda p: (p.name.casefold(), p.name))
+            if child.is_dir() and not child.name.startswith(".")
+        ]
+        require_case_unique([child.name for child in children], label="skill directories")
+        for child in children:
+            if child.is_symlink():
+                raise AdapterError(f"symlinked canonical skill directory: {child.relative_to(repo)}")
+        for child in children:
+            source = child / "SKILL.md"
+            if source.is_symlink():
+                raise AdapterError(f"{source.relative_to(repo)}: missing or symlinked SKILL.md")
+            if not source.is_file():
+                nested = [
+                    grandchild
+                    for grandchild in child.iterdir()
+                    if grandchild.is_dir() and not grandchild.name.startswith(".")
+                ]
+                if not nested:
+                    raise AdapterError(f"{source.relative_to(repo)}: missing or symlinked SKILL.md")
+                # A group directory becomes a segment of every nested
+                # adapter's canonical-source pointer, so it must satisfy the
+                # same portable grammar as a skill name before anything is
+                # generated from it.
+                problem = portable_segment_error(child.name, label="skill group directory")
+                if problem:
+                    raise AdapterError(f"{child.relative_to(repo)}: {problem}")
+                visit(child)
+                continue
+            name, description = read_metadata(source)
+            problem = portable_segment_error(name, label="skill name")
+            if problem:
+                raise AdapterError(f"{source.relative_to(repo)}: {problem}")
+            if not description.strip():
+                raise AdapterError(f"{source.relative_to(repo)}: skill description must not be blank")
+            if len(description) > MAX_SKILL_DESCRIPTION_LENGTH:
+                raise AdapterError(
+                    f"{source.relative_to(repo)}: skill description exceeds "
+                    f"{MAX_SKILL_DESCRIPTION_LENGTH} characters"
+                )
+            if name != child.name:
+                raise AdapterError(
+                    f"{source.relative_to(repo)}: metadata name {name!r} must equal directory {child.name!r}"
+                )
+            folded_name = name.casefold()
+            if folded_name in names_seen:
+                raise AdapterError(
+                    f"metadata name collision: {names_seen[folded_name]} and {name}"
+                )
+            names_seen[folded_name] = name
+            canonical = f"../../../{source.relative_to(repo).as_posix()}"
+            skills.append(Skill(name=name, description=description, source=source, canonical=canonical))
+
+    visit(root)
     if not skills:
         raise AdapterError(f"no canonical skills found under {CANONICAL_ROOT}")
     return skills
 
 
-def _render_v2(name_value: str, description_value: str, checksum: str) -> bytes:
+def _render_v2(name_value: str, description_value: str, checksum: str, canonical: str) -> bytes:
     name = json.dumps(name_value, ensure_ascii=False)
     description = json.dumps(description_value, ensure_ascii=False)
-    canonical = f"../../../{CANONICAL_ROOT.as_posix()}/{name_value}/SKILL.md"
     text = f"""---
 name: {name}
 description: {description}
@@ -250,9 +298,9 @@ workflow and do not continue if the canonical file is missing.
 
 
 def render(skill: Skill) -> bytes:
-    unsigned = _render_v2(skill.name, skill.description, CHECKSUM_SENTINEL)
+    unsigned = _render_v2(skill.name, skill.description, CHECKSUM_SENTINEL, skill.canonical)
     checksum = hashlib.sha256(unsigned).hexdigest()
-    return _render_v2(skill.name, skill.description, checksum)
+    return _render_v2(skill.name, skill.description, checksum, skill.canonical)
 
 
 def _render_v1(name_value: str, description_value: str, *, quoted_version: bool) -> bytes:
@@ -395,8 +443,29 @@ def _owned_adapter(path: Path, rel: Path) -> bool:
     if name != directory_name or not isinstance(description, str):
         return False
     if lines[4] == f'  adapter-version: "{ADAPTER_VERSION}"':
-        unsigned = _render_v2(name, description, CHECKSUM_SENTINEL)
-        expected = _render_v2(name, description, hashlib.sha256(unsigned).hexdigest())
+        # The canonical pointer is part of the signed bytes; read it back so a
+        # nested skill (a group such as setup/) authenticates like a flat one.
+        try:
+            canonical = json.loads(lines[5].removeprefix("  canonical-source: "))
+        except (json.JSONDecodeError, TypeError):
+            return False
+        prefix = f"../../../{CANONICAL_ROOT.as_posix()}/"
+        if not isinstance(canonical, str) or not canonical.startswith(prefix):
+            return False
+        # Authenticate the pointer by normalized segments, never by substring:
+        # every directory segment must be a portable name (which excludes
+        # `.`, `..`, empty, and dotted forms), and the file must be the named
+        # skill's SKILL.md.
+        segments = canonical[len(prefix):].split("/")
+        if (
+            len(segments) < 2
+            or segments[-1] != "SKILL.md"
+            or segments[-2] != directory_name
+            or any(portable_segment_error(segment, label="segment") for segment in segments[:-1])
+        ):
+            return False
+        unsigned = _render_v2(name, description, CHECKSUM_SENTINEL, canonical)
+        expected = _render_v2(name, description, hashlib.sha256(unsigned).hexdigest(), canonical)
         return body == expected
     if lines[4] in {'  adapter-version: "1"', "  adapter-version: 1"}:
         return body in {

@@ -161,7 +161,7 @@ class OverlayManifestShapeTests(unittest.TestCase):
 
     def test_onboard_harness_and_harness_readme_reference_overlays(self):
         # Structural path references only — no prose sentences pinned.
-        skill = (ROOT / "10_Agents/skills/onboard-harness/SKILL.md").read_text(encoding="utf-8")
+        skill = (ROOT / "10_Agents/skills/setup/onboard-harness/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("overlay/manifest.json", skill)
         readme = (HARNESS_DIR / "README.md").read_text(encoding="utf-8")
         self.assertIn("overlay/", readme)
@@ -222,7 +222,7 @@ class OwnerOptInTests(unittest.TestCase):
 
     def test_opt_in_semantics_are_documented_where_installs_run(self):
         # Structural token references only — no prose sentences pinned.
-        skill = (ROOT / "10_Agents/skills/onboard-harness/SKILL.md").read_text(encoding="utf-8")
+        skill = (ROOT / "10_Agents/skills/setup/onboard-harness/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("owner_opt_in", skill)
         readme = (HARNESS_DIR / "README.md").read_text(encoding="utf-8")
         self.assertIn("owner_opt_in", readme)

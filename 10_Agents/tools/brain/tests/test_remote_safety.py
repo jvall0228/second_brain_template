@@ -601,14 +601,14 @@ class DocumentationContractTests(unittest.TestCase):
         return (ROOT / rel).read_text(encoding="utf-8")
 
     def test_orientation_separates_capability_inventory_and_guarded_reads(self):
-        text = self.read("10_Agents/skills/agent-orientation/SKILL.md")
+        text = self.read("10_Agents/skills/setup/agent-orientation/SKILL.md")
         self.assertIn("## Remote-safety boundary", text)
         self.assertIn("capability inventory", text.lower())
         self.assertIn("require_remote_safety", text)
         self.assertIn("zero calls", text)
 
     def test_onboarding_requests_persistence_before_connector(self):
-        text = self.read("10_Agents/skills/onboard-owner/SKILL.md")
+        text = self.read("10_Agents/skills/setup/onboard-owner/SKILL.md")
         self.assertIn("## Remote-safety boundary", text)
         self.assertIn("`persist=True`", text)
         self.assertIn("never\noverrideable", text)

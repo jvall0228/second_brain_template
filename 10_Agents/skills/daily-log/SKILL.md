@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -15,6 +15,8 @@ expires: 2027-08-11
 **CODE stage:** Capture.
 
 Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone — check `01_Profile/DEFAULTS.md`).
+
+**Historical dates (backfill).** This skill writes today's note. An entry for an earlier event date — a triaged capture, a dated record filed late — goes through `brain trace --date YYYY-MM-DD --destination <note> --summary "..." --id <capture identity> --write` (spec §29.2), which instantiates that date's daily note from the same template when it is missing (the previous-day link only when that note exists), appends one line under `### Activity Log`, mirrors it into the ISO-week weekly note, and dedupes on the capture identity so a rerun adds nothing. Never hand-create a past daily note.
 
 ## Steps
 
@@ -26,6 +28,7 @@ Maintain `03_Journal/periodic/daily/YYYY-MM-DD.md` for today (owner's timezone �
 ## Rules
 
 - Being asked for a daily log **is** the explicit direction required to write outside the Inbox; anything that isn't daily-log content still goes through `inbox-capture`.
+- Today only by hand; any other date only through `brain trace` (above).
 - Same-directory links use sibling destinations such as `[2026-08-10](2026-08-10.md)`; cross-directory links remain source-relative, such as `[weekly review](../weekly/2026-W33-review.md)`.
 
 ## References

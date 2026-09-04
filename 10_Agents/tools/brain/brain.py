@@ -14,6 +14,7 @@ Commands: index, list, search, links, migrate-links, projects, archive-project, 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import calendar
 import ctypes
 import hashlib
@@ -31,11 +32,12 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 import unicodedata
 import uuid
 import zoneinfo
 from datetime import date, datetime, timedelta
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from urllib.parse import quote, unquote_to_bytes, urlsplit
 
 SCHEMA_VERSION = 2
@@ -86,6 +88,13 @@ ADOPT_EXAMPLES_RELPATH = "10_Agents/tools/adopt_examples.json"
 # §18.1 embeddings sidecar: gitignored, machine-local, pruned from the corpus
 # exactly like the index file (constants for the rest of §17 sit with its code).
 EMBED_RELPATH = "10_Agents/tools/brain/vault-embeddings.json"
+# §10.6 warning ratchet: the committed baseline of standing validate warnings.
+BASELINE_RELPATH = "10_Agents/tools/brain/validate-baseline.json"
+# §28 bootstrap compilation: the bootstrap docs compiled into one file by
+# `brain bootstrap --write`; pruned from the corpus exactly like the index so
+# the copy never duplicates search hits, tasks, backlinks, or findings.
+BOOTSTRAP_RELPATH = "00_Meta/BOOTSTRAP.md"
+BOOTSTRAP_MARKER = "brain-bootstrap-v1"
 # Any tool's test tree (fixture mini-vaults, secret-shaped test data) stays
 # out of the corpus — mirrors run_tests.py's */tests/ discovery rule.
 TOOL_TESTS_RE = re.compile(r"^10_Agents/tools/[^/]+/tests$")
@@ -120,6 +129,14 @@ CURATE_STALE_DAYS = 180
 # periodic records and archived content never refresh their updated: date.
 CURATE_STALE_EXEMPT_PREFIXES = ("03_Journal/periodic/", "07_Archives/")
 EXPIRES_CAP_DAYS = 366
+# Distill candidates (§14): Journal and solution notes other agents keep
+# linking to, that have not been reshaped into an evergreen zettel yet.
+# Entity, dated-record, and plan lanes are excluded — a person note, a daily
+# log, or a logistics plan with many backlinks is a hub or a commitment, not
+# a claim waiting to be distilled.
+CURATE_DISTILL_PREFIXES = ("03_Journal/", "10_Agents/solutions/")
+CURATE_DISTILL_EXEMPT_PREFIXES = ("03_Journal/periodic/", "03_Journal/people/", "03_Journal/plans/")
+CURATE_DISTILL_MIN_BACKLINKS = 2
 
 # Events, not claims — never asked for an expires: date. 02_Inbox/ is exempt
 # because capture is zero-friction (expires assigned at triage); 02_Outbox/
@@ -172,6 +189,16 @@ BOOTSTRAP_BUDGETS = {
     "AGENTS.md": 10240,
 }
 BOOTSTRAP_TOTAL_BUDGET = 32768
+# §28 must-read order (AGENTS § Bootstrap Sequence): the compiled file
+# concatenates these sources in this order.
+BOOTSTRAP_ORDER = (
+    "AGENTS.md",
+    CORE_FRAMEWORK_PATHS["now"],
+    CORE_FRAMEWORK_PATHS["preferences"],
+    CORE_FRAMEWORK_PATHS["conventions"],
+    CORE_FRAMEWORK_PATHS["index"],
+    CORE_FRAMEWORK_PATHS["defaults"],
+)
 
 # §19 Remote safety. These values are part of the stable JSON/reason-code
 # contract. Provider and git subprocess text never crosses the output boundary.
@@ -1510,7 +1537,7 @@ def walk_corpus(
             if name.startswith("."):
                 continue
             rel = nfc(f"{rel_dir}/{name}" if rel_dir != "." else name)
-            if rel in (INDEX_RELPATH, EMBED_RELPATH):
+            if rel in (INDEX_RELPATH, EMBED_RELPATH, BASELINE_RELPATH, BOOTSTRAP_RELPATH):
                 continue
             if not _environment_path_allowed(rel, selected):
                 continue
@@ -6006,6 +6033,10 @@ def run_validate(
                 err(rel, "unresolved-link", message, link["line"])
             else:
                 if link["resolved"] in restricted_paths and rel not in restricted_paths:
+                    # A blanket `07_Archives/**` carve-out was considered and
+                    # rejected: archived reports are still appended to, and a
+                    # row that summarizes a private note carries its
+                    # substance.
                     # §10.2 restricted-link (issue #17, reframed per the
                     # 2026-08-24 privacy policy): an informational provenance
                     # check, not a containment ban — a bare link never
@@ -6025,15 +6056,39 @@ def run_validate(
                     if w in {"case-mismatch", "fragment-case-mismatch"}:
                         warn(rel, "case-mismatch", f"{link['raw']} differs in case from {link['resolved']}", link["line"])
 
-    skill_dirs: dict[str, list[str]] = {}
-    for rel in notes:
-        if rel.startswith(SKILLS_PREFIX) and "/" in rel[len(SKILLS_PREFIX) :]:
-            skill_dirs.setdefault(rel[len(SKILLS_PREFIX) :].split("/", 1)[0], []).append(rel)
-    for dirname in sorted(skill_dirs):
-        skill_md = f"{SKILLS_PREFIX}{dirname}/SKILL.md"
-        if skill_md not in index["notes"]:
-            err(f"{SKILLS_PREFIX}{dirname}/", "skill-missing", "skill directory has no SKILL.md")
+    # §10.2 Agent Skills contract: a skill is any directory under the skills
+    # root holding a SKILL.md, at any depth; a directory that holds only skill
+    # directories (and optionally a README.md) is a group, e.g. setup/.
+    skill_notes = [rel for rel in notes if rel.startswith(SKILLS_PREFIX) and "/" in rel[len(SKILLS_PREFIX) :]]
+    skill_md_dirs = {rel[: -len("/SKILL.md")] for rel in skill_notes if rel.endswith("/SKILL.md")}
+    missing_reported: set[str] = set()
+    for rel in skill_notes:
+        directory = posixpath.dirname(rel)
+        owner = None
+        probe = directory
+        while probe.startswith(SKILLS_PREFIX):
+            if probe in skill_md_dirs:
+                owner = probe
+                break
+            probe = posixpath.dirname(probe)
+        if owner is not None:
             continue
+        is_group_readme = rel.endswith("/README.md") and any(
+            d.startswith(directory + "/") for d in skill_md_dirs
+        )
+        if is_group_readme:
+            continue
+        top = SKILLS_PREFIX + rel[len(SKILLS_PREFIX) :].split("/", 1)[0]
+        if top not in missing_reported:
+            missing_reported.add(top)
+            err(
+                f"{top}/",
+                "skill-missing",
+                "skill directory has no SKILL.md (a group directory holds only skill directories and a README.md)",
+            )
+    for skill_dir in sorted(skill_md_dirs):
+        skill_md = f"{skill_dir}/SKILL.md"
+        dirname = skill_dir.rsplit("/", 1)[-1]
         fm = index["notes"][skill_md]["frontmatter"]
         if fm.get("name") != dirname:
             err(
@@ -6135,11 +6190,20 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
     oversized: list[dict] = []
     stale: list[dict] = []
     orphans: list[str] = []
+    distill: list[dict] = []
     for rel in sorted(notes):
         rec = notes[rel]
         fm = rec["frontmatter"]
         if rel == "CLAUDE.md":
             continue
+        if (
+            rel.startswith(CURATE_DISTILL_PREFIXES)
+            and not rel.startswith(CURATE_DISTILL_EXEMPT_PREFIXES)
+            and not rel.endswith("/README.md")
+            and len(rec["backlinks"]) >= CURATE_DISTILL_MIN_BACKLINKS
+            and "zettel" not in note_type_tags(fm)
+        ):
+            distill.append({"backlinks": len(rec["backlinks"]), "path": rel, "title": rec["title"]})
         exp_d = iso_date(fm.get("expires"))
         upd_d = iso_date(rec["updated"])
         if exp_d:
@@ -6182,6 +6246,7 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
         ):
             orphans.append(rel)
     stale.sort(key=lambda r: (-r["score"], r["path"]))
+    distill.sort(key=lambda r: (-r["backlinks"], r["path"]))
     referenced = {
         link["resolved"]
         for rec in notes.values()
@@ -6195,6 +6260,7 @@ def compute_curation(root: Path, index: dict, today_d: date) -> dict:
     ]
     return {
         "beyondCap": beyond_cap,
+        "distillCandidates": distill,
         "expired": expired,
         "missingExpires": missing,
         "orphans": orphans,
@@ -9171,10 +9237,39 @@ def _home_safe_index_fresh(
     committed: bytes | None,
     freshness_index: dict,
 ) -> bool:
-    """Compare the complete privacy-reduced tracked index by canonical bytes."""
-    return (
-        committed is not None
-        and committed == serialize(reduce_restricted(freshness_index))
+    """Compare the privacy-reduced index without generated-surface feedback."""
+    if committed is None:
+        return False
+    try:
+        committed_index = json.loads(committed)
+        for index in (committed_index, freshness_index):
+            notes = index["notes"]
+            counts = index["linkCounts"]
+            for rel in (AYMT_RELPATH, HOME_RELPATH):
+                rec = notes.pop(rel, None)
+                if rec is None:
+                    continue
+                for link in rec.get("links", []):
+                    link_format = link.get("format")
+                    if link_format in counts:
+                        counts[link_format] -= 1
+                    if link_format == "wikilink":
+                        counts["legacy"] -= 1
+                    if link.get("placeholder"):
+                        counts["placeholder"] -= 1
+                    fragment = link.get("fragment")
+                    if isinstance(fragment, str) and fragment.startswith("^"):
+                        counts["unsupportedBlockReference"] -= 1
+            for rec in notes.values():
+                rec["backlinks"] = [
+                    rel
+                    for rel in rec.get("backlinks", [])
+                    if rel not in {AYMT_RELPATH, HOME_RELPATH}
+                ]
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return False
+    return serialize(reduce_restricted(committed_index)) == serialize(
+        reduce_restricted(freshness_index)
     )
 
 
@@ -9609,10 +9704,9 @@ def render_home(payload: dict) -> bytes:
             detail = f"updated {row['updated']}"
             if heading == "Projects":
                 status = row["targetStatus"] + (", overdue" if row["overdue"] else "")
-                detail = (
-                    f"target {row['target']} ({status}); "
-                    f"Areas: {', '.join(row['areas'])}"
-                )
+                detail = f"target {row['target']} ({status})"
+                if row["areas"]:
+                    detail += f"; Areas: {', '.join(row['areas'])}"
             lines.append(f"- {_home_link(HOME_RELPATH, row['path'], row['title'])} — {detail}")
         lines.append("")
 
@@ -10479,6 +10573,7 @@ def cmd_curate(root: Path, args) -> int:
         ("oversized", "oversized (split candidates)", lambda r: f"{r['path']}  ({r['sizeBytes']} bytes, {r['lines']} lines)"),
         ("stale", "stale (days old x inbound links)", lambda r: f"{r['path']}  (updated {r['updated']}, {r['daysOld']}d, {r['backlinks']} backlinks, score {r['score']})"),
         ("orphans", "orphans (no inbound links)", lambda r: r),
+        ("distillCandidates", "distill candidates (backlinked Journal/solution notes, no zettel yet)", lambda r: f"{r['path']}  ({r['backlinks']} backlinks)"),
         ("unreferencedAssets", "unreferenced assets", lambda r: r),
         ("deadUrls", "dead source urls", lambda r: f"{r['url']}  ({r['error']}; first seen in {r['path']})"),
     ]
@@ -10496,7 +10591,363 @@ def cmd_curate(root: Path, args) -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------
+# §28 Bootstrap compilation
+
+
+class BootstrapError(RuntimeError):
+    pass
+
+
+def iter_fenced_lines(lines: list[str], body_start: int):
+    """Yield (raw line, inside-fenced-code) for every body line, using the
+    same §5.2 fence scanner as `body_lines_masked` (a fence delimiter line
+    counts as code). Unlike that generator, nothing is skipped, so callers can
+    rewrite prose lines while copying code lines through untouched."""
+    fence_char = ""
+    fence_len = 0
+    for i in range(body_start, len(lines)):
+        raw = lines[i]
+        if fence_char:
+            stripped = raw.strip()
+            if stripped and set(stripped) == {fence_char} and len(stripped) >= fence_len:
+                fence_char = ""
+            yield raw, True
+            continue
+        m = FENCE_OPEN_RE.match(raw)
+        if m:
+            fence_char = m.group(1)[0]
+            fence_len = len(m.group(1))
+            yield raw, True
+            continue
+        yield raw, False
+
+
+def _anchored_relpath(target: str, start_dir: str) -> str:
+    """`posixpath.relpath` anchored at the vault root instead of the process
+    working directory: both arguments are vault-relative, the result never
+    depends on where `brain` was launched from."""
+    return posixpath.relpath("/" + target, "/" + start_dir if start_dir else "/")
+
+
+def vault_link(target: str, from_dir: str) -> str:
+    """Percent-encoded source-relative destination for a vault-relative
+    `target` written from the directory `from_dir` ("" for the root),
+    anchored at the vault root so it never depends on the process cwd."""
+    return quote(_anchored_relpath(target, from_dir), safe="/-._~")
+
+
+def rebase_markdown_links(raw: str, source_dir: str, target_dir: str) -> str:
+    """Rewrite every relative inline link/image destination on one prose line
+    from `source_dir`-relative to `target_dir`-relative (both vault-relative
+    directories, "" for the root). Uses the §5 generic parser and exact-length
+    code-span masking, so code spans of any backtick length, titles, angle
+    destinations, and escaped brackets are honored. Left untouched: external
+    and protocol-relative URLs, fragment-only links, `{{placeholders}}`,
+    root-relative (`/x`) destinations, destinations that escape the vault,
+    and destinations the parser rejects."""
+    masked = mask_code_spans(raw)
+    records = parse_markdown_links(raw, masked, 1, 0)
+    if not records:
+        return raw
+    out: list[str] = []
+    pos = 0
+    for record in records:
+        column = record["range"]["start"]["column"]
+        link_raw = record["raw"]
+        out.append(raw[pos:column])
+        pos = column + len(link_raw)
+        destination = record["destination"]
+        if (
+            record["placeholder"]
+            or not destination
+            or destination.startswith("/")
+            or record.get("resolution", {}).get("status") == "unsupported-destination"
+        ):
+            out.append(link_raw)
+            continue
+        joined = posixpath.normpath(posixpath.join(source_dir, destination) if source_dir else destination)
+        if joined == ".." or joined.startswith("../"):
+            out.append(link_raw)
+            continue
+        try:
+            prefix, title_suffix, angle = _archive_destination_parts(link_raw)
+        except ProjectArchiveError:
+            out.append(link_raw)
+            continue
+        rebased = vault_link(joined, target_dir)
+        body = link_raw[len(prefix) : len(link_raw) - 1 - len(title_suffix)]
+        inner = body[1:-1] if angle else body
+        raw_fragment = inner.partition("#")[2] if "#" in inner else None
+        if raw_fragment is not None:
+            rebased += "#" + raw_fragment
+        if angle:
+            rebased = f"<{rebased}>"
+        out.append(prefix + rebased + title_suffix + ")")
+    out.append(raw[pos:])
+    return "".join(out)
+
+
+def demote_heading(line: str) -> str:
+    """Demote one ATX heading (§7 grammar, up to three leading spaces) by one
+    level; level 6 has nowhere to go and is returned unchanged."""
+    m = HEADING_RE.match(line)
+    if not m or len(m.group(2)) >= 6:
+        return line
+    return f"{m.group(1)}#{m.group(2)} {m.group(3)}"
+
+
+def _bootstrap_section(rel: str, text: str) -> tuple[list[str], dict]:
+    lines = text.split("\n")
+    fm, _errors, body_start, _has = parse_frontmatter(lines)
+    title = fm.get("title") if isinstance(fm.get("title"), str) and fm.get("title") else rel
+    updated = str(fm.get("updated")) if fm.get("updated") not in (None, "") else None
+    source_dir = posixpath.dirname(rel)
+    target_dir = posixpath.dirname(BOOTSTRAP_RELPATH)
+    body: list[str] = []
+    for line, in_code in iter_fenced_lines(lines, body_start):
+        if in_code:
+            body.append(line)
+            continue
+        body.append(rebase_markdown_links(demote_heading(line), source_dir, target_dir))
+    while body and not body[0].strip():
+        body.pop(0)
+    while body and not body[-1].strip():
+        body.pop()
+    source_line = f"*Source: [{rel}]({vault_link(rel, target_dir)})*"
+    if body and HEADING_RE.match(body[0]) and len(HEADING_RE.match(body[0]).group(2)) == 2:
+        body[1:1] = ["", source_line]
+    else:
+        body[0:0] = [f"## {title}", "", source_line, ""]
+    return body, {"path": rel, "title": title, "updated": updated}
+
+
+def build_bootstrap(root: Path) -> dict:
+    """§28: compile the bootstrap docs, in must-read order, into one document.
+    Deterministic from the source bytes alone — no clock, no environment."""
+    sections: list[str] = []
+    sources: list[dict] = []
+    for rel in BOOTSTRAP_ORDER:
+        try:
+            text, size = load_text(root, rel)
+        except OSError:
+            text, size = None, 0
+        if text is None:
+            raise BootstrapError(f"{rel}: missing or not decodable")
+        body, meta = _bootstrap_section(rel, text)
+        sections.append("\n".join(body))
+        sources.append({**meta, "sizeBytes": size})
+    dates = [m["updated"] for m in sources if m["updated"]]
+    updated = max(dates) if dates else "1970-01-01"
+    body = "\n\n".join(sections) + "\n"
+    digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    head = (
+        "---\n"
+        'title: "Bootstrap"\n'
+        "tags:\n"
+        "  - type/meta\n"
+        "  - audience/agent\n"
+        "  - workflow/canonical\n"
+        f"updated: {updated}\n"
+        f"generated: {BOOTSTRAP_MARKER}\n"
+        f'content-digest: "{digest}"\n'
+        "---\n\n"
+        "# Bootstrap\n\n"
+        "Generated by `brain bootstrap --write` from the bootstrap docs in must-read order "
+        "([AGENTS](../AGENTS.md#bootstrap-sequence-must-read-order)); the pre-commit hook regenerates it. "
+        "Do not edit — edit a source and regenerate. Each section is one source with its "
+        "headings demoted one level and its links rewritten relative to `00_Meta/`.\n\n"
+    )
+    rendered = (head + body).encode("utf-8")
+    return {
+        "budget": BOOTSTRAP_TOTAL_BUDGET,
+        "path": BOOTSTRAP_RELPATH,
+        "rendered": rendered,
+        "sizeBytes": len(rendered),
+        "sources": sources,
+    }
+
+
+def bootstrap_status(root: Path) -> dict:
+    """{fresh, sizeBytes, budget, state} for the committed compiled file
+    without writing; state is fresh | stale | missing | error."""
+    try:
+        payload = build_bootstrap(root)
+    except BootstrapError as exc:
+        return {"budget": BOOTSTRAP_TOTAL_BUDGET, "error": str(exc), "fresh": False, "sizeBytes": None, "state": "error"}
+    fresh, state, _unsafe = _bootstrap_state(root, payload["rendered"])
+    return {"budget": payload["budget"], "fresh": fresh, "sizeBytes": payload["sizeBytes"], "state": state}
+
+
+def _bootstrap_state(root: Path, rendered: bytes) -> tuple[bool, str, bool]:
+    """(fresh, state, unsafe) for the committed compiled file: `unsafe` when
+    the path or a parent is a symlink or the file is not a readable regular
+    file, else fresh | stale | missing by byte comparison."""
+    unsafe = _generated_path_unsafe(root, BOOTSTRAP_RELPATH)
+    current = None if unsafe else _read_regular_file_nofollow(root, BOOTSTRAP_RELPATH, max_bytes=16 * 1024 * 1024)
+    if current is None and not unsafe and os.path.lexists(root / BOOTSTRAP_RELPATH):
+        unsafe = True
+    fresh = current == rendered and not unsafe
+    state = "unsafe" if unsafe else ("fresh" if fresh else ("missing" if current is None else "stale"))
+    return fresh, state, unsafe
+
+
+def cmd_bootstrap(root: Path, args) -> int:
+    try:
+        payload = build_bootstrap(root)
+    except BootstrapError as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, indent=1, sort_keys=True))
+        else:
+            print(f"error: {exc}", file=sys.stderr)
+        return 1
+    rendered = payload.pop("rendered")
+    fresh, state, unsafe = _bootstrap_state(root, rendered)
+    over = payload["sizeBytes"] > payload["budget"]
+    payload.update({"fresh": fresh, "overBudget": over, "state": state})
+    if args.write and (over or unsafe):
+        # §28.2: the generator never produces an over-budget file, and never
+        # writes through a symlinked target or parent. Whatever is at the
+        # path (the committed bytes, or the symlink) is left exactly as is.
+        payload.update({"write": "refused"})
+    elif args.write:
+        if not fresh:
+            _write_note_atomic(root, BOOTSTRAP_RELPATH, rendered)
+        payload.update({"fresh": True, "state": "fresh", "write": "unchanged" if fresh else "written"})
+    size_note = f"({payload['sizeBytes']} / {payload['budget']} bytes)" + ("  OVER BUDGET" if over else "") + (
+        "  UNSAFE PATH (symlink)" if unsafe else ""
+    )
+    if args.json:
+        print(json.dumps(payload, ensure_ascii=False, indent=1, sort_keys=True))
+    elif args.write:
+        stream = sys.stderr if (over or unsafe) else sys.stdout
+        print(f"{BOOTSTRAP_RELPATH}: {payload['write']} {size_note}", file=stream)
+    elif args.check:
+        print(f"{BOOTSTRAP_RELPATH}: {state} {size_note}")
+    else:
+        sys.stdout.buffer.write(rendered)
+    if args.check:
+        return 1 if (not fresh or over) else 0
+    if args.write:
+        return 1 if (over or unsafe) else 0
+    return 0
+
+
+def _generated_path_unsafe(root: Path, rel: str) -> bool:
+    """True when any component of a vault-relative path is a symlink or a
+    non-directory ancestor — the state every generated-file writer refuses."""
+    parts = PurePosixPath(rel).parts
+    current = root
+    for part in parts[:-1]:
+        current = current / part
+        try:
+            mode = current.lstat().st_mode
+        except FileNotFoundError:
+            return False
+        except OSError:
+            return True
+        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+            return True
+    target = current / parts[-1]
+    try:
+        mode = target.lstat().st_mode
+    except FileNotFoundError:
+        return False
+    except OSError:
+        return True
+    return stat.S_ISLNK(mode) or not stat.S_ISREG(mode)
+
+
+# A backtick-quoted vault-relative note path in a References bullet. Only a
+# single-backtick span counts: the lookarounds reject ``double`` spans (used
+# for examples that quote code), and fenced blocks never reach this regex.
+_SKILL_REF_PATH_RE = re.compile(r"(?<!`)`([^`\s]+\.md(?:#[^`\s]*)?)`(?!`)")
+
+
+def skill_context(root: Path, skill: str) -> dict:
+    """§28.3: the notes one skill run loads — the bootstrap set, the SKILL.md,
+    and every note its `## References` section links or names in backticks."""
+    notes, assets = walk_corpus(root, selected_environment=None)
+    note_set = set(notes)
+    candidates = [f"{SKILLS_PREFIX}{skill}/SKILL.md"] + sorted(
+        rel for rel in notes
+        if rel.startswith(SKILLS_PREFIX) and rel.endswith(f"/{skill}/SKILL.md")
+    )
+    skill_rel = next((rel for rel in candidates if rel in note_set), None)
+    if skill_rel is None:
+        raise BootstrapError(f"no skill named {skill!r} under {SKILLS_PREFIX}")
+    index = build_index(root, notes, assets)
+    records = index["notes"]
+    text, _size = load_text(root, skill_rel)
+    lines = (text or "").split("\n")
+    _fm, _errors, body_start, _has = parse_frontmatter(lines)
+    in_refs = False
+    targets: list[str] = []
+    skill_dir = posixpath.dirname(skill_rel)
+    # §7 heading grammar over the §5.2 exclusion zones: a "## References"
+    # inside fenced code never opens the section, and links or paths quoted
+    # in code spans or fences inside it are examples, not references.
+    for _lineno, raw, masked in body_lines_masked(lines, body_start):
+        heading = HEADING_RE.match(raw)
+        if heading and len(heading.group(2)) <= 2:
+            in_refs = len(heading.group(2)) == 2 and heading.group(3).strip().casefold() == "references"
+            continue
+        if not in_refs:
+            continue
+        for record in parse_markdown_links(raw, masked, 1, 0):
+            destination = record["destination"]
+            if record["placeholder"] or not destination or destination.startswith("/"):
+                continue
+            if record.get("resolution", {}).get("status") == "unsupported-destination":
+                continue
+            joined = posixpath.normpath(posixpath.join(skill_dir, destination))
+            if joined == ".." or joined.startswith("../"):
+                continue
+            targets.append(joined)
+        for m in _SKILL_REF_PATH_RE.finditer(raw):
+            targets.append(m.group(1).partition("#")[0])
+    seen: set[str] = set()
+    references: list[dict] = []
+    for rel in targets:
+        rel = nfc(rel)
+        if rel in seen or rel not in records or rel == skill_rel:
+            continue
+        seen.add(rel)
+        references.append({"path": rel, "sizeBytes": records[rel]["sizeBytes"], "title": records[rel]["title"]})
+
+    def row(rel: str) -> dict:
+        rec = records.get(rel)
+        return {"path": rel, "sizeBytes": rec["sizeBytes"] if rec else None, "title": rec["title"] if rec else None}
+
+    bootstrap = [row(rel) for rel in BOOTSTRAP_ORDER]
+    skill_row = row(skill_rel)
+    total = (
+        sum(r["sizeBytes"] or 0 for r in bootstrap)
+        + (skill_row["sizeBytes"] or 0)
+        + sum(r["sizeBytes"] for r in references)
+    )
+    return {"bootstrap": bootstrap, "references": references, "skill": skill_row, "totalBytes": total}
+
+
 def cmd_context(root: Path, args) -> int:
+    if getattr(args, "for_skill", None):
+        try:
+            ctx = skill_context(root, args.for_skill)
+        except BootstrapError as exc:
+            if args.json:
+                print(json.dumps({"error": str(exc)}, indent=1, sort_keys=True))
+            else:
+                print(f"error: {exc}", file=sys.stderr)
+            return 1
+        lines = [f"skill  {ctx['skill']['path']}  {ctx['skill']['sizeBytes']} bytes"]
+        bsum = sum(r["sizeBytes"] or 0 for r in ctx["bootstrap"])
+        lines.append(f"bootstrap  {bsum} bytes ({len(ctx['bootstrap'])} docs)")
+        lines.append("references:" if ctx["references"] else "references: none")
+        for r in ctx["references"]:
+            lines.append(f"  {r['path']}  {r['sizeBytes']} bytes  {r['title'] or ''}".rstrip())
+        lines.append(f"total  {ctx['totalBytes']} bytes")
+        emit(ctx, args.json, lines)
+        return 0
     ctx = context_report(root)
     lines = []
     for row in ctx["docs"]:
@@ -10511,8 +10962,1175 @@ def cmd_context(root: Path, args) -> int:
     tpct = 100 * ctx["totalBytes"] // ctx["totalBudget"]
     over = "  OVER BUDGET" if ctx["totalBytes"] > ctx["totalBudget"] else ""
     lines.append(f"total  {ctx['totalBytes']} / {ctx['totalBudget']} bytes ({tpct}%){over}")
+    status = bootstrap_status(root)
+    ctx = {**ctx, "bootstrap": status}
+    if status["sizeBytes"] is None:
+        lines.append(f"{BOOTSTRAP_RELPATH}  {status['state']}")
+    else:
+        bpct = 100 * status["sizeBytes"] // status["budget"]
+        bover = "  OVER BUDGET" if status["sizeBytes"] > status["budget"] else ""
+        lines.append(
+            f"{BOOTSTRAP_RELPATH}  {status['sizeBytes']} / {status['budget']} bytes ({bpct}%)  {status['state']}{bover}"
+        )
     emit(ctx, args.json, lines)
     return 0
+
+
+# ---------------------------------------------------------------------------
+# §29 Triage archival (`brain triage-archive`) and periodic traces (`brain trace`)
+
+INBOX_PREFIX = "02_Inbox/"
+TRIAGE_LOG_DIR = "07_Archives/inbox"
+TRIAGE_ARCHIVE_MARKER = "triage-archive"
+TRIAGE_LOG_TAGS = ("type/log", "status/done", "audience/agent", "audience/human")
+TRACE_MARKER = "trace"
+DAILY_DIR = "03_Journal/periodic/daily"
+WEEKLY_DIR = "03_Journal/periodic/weekly"
+MONTHLY_DIR = "03_Journal/periodic/monthly"
+DAILY_TEMPLATE_RELPATH = "09_Templates/template-daily-log.md"
+WEEKLY_TEMPLATE_RELPATH = "09_Templates/template-weekly-review.md"
+DAILY_TRACE_SECTION = "### Activity Log"
+WEEKLY_TRACE_SECTION = "## Get Clear"
+WEEKLY_KIND_SECTIONS = {"project": "## Get Current — Projects", "area": "## Get Current — Areas"}
+_DATED_NAME_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})-.+\.md$")
+_MARKER_RE_TEMPLATE = r"<!--\s*{name}:\s*(?P<value>[^\n]*?)\s*-->"
+_HTML_COMMENT_CLOSE = "-->"
+
+
+class NoteWriteError(RuntimeError):
+    pass
+
+
+class WriteConflictError(NoteWriteError):
+    """The file a plan was computed from changed before the plan was applied."""
+
+
+WRITE_LOCK_RELPATH = ".second-brain/write.lock"
+_UNCHECKED = object()
+# Re-entrancy bookkeeping for vault_write_lock: {realpath of root: depth}.
+# flock is per open file description, so a second os.open + flock from the
+# same process would deadlock against itself; the outermost holder owns the
+# descriptor and inner holders only count.
+_WRITE_LOCK_DEPTH: dict[str, int] = {}
+
+
+@contextlib.contextmanager
+def vault_write_lock(root: Path):
+    """§29: one exclusive lock per vault around plan-and-write, so two
+    concurrent `triage-archive`, `trace`, `gap`, or `accepted` invocations
+    serialize — the second computes its plan from the first's result
+    instead of from the state both started with. Re-entrant within one
+    process, so the compare-and-swap writers can take it themselves. The
+    lock file lives in the ignored `.second-brain/` directory and is opened
+    without following symlinks."""
+    key = os.path.realpath(root)
+    if _WRITE_LOCK_DEPTH.get(key, 0) > 0:
+        _WRITE_LOCK_DEPTH[key] += 1
+        try:
+            yield
+        finally:
+            _WRITE_LOCK_DEPTH[key] -= 1
+        return
+    if _has_symlink_component(root, ".second-brain"):
+        raise NoteWriteError("refusing to lock through a symlinked .second-brain directory")
+    lock_dir = root / ".second-brain"
+    try:
+        lock_dir.mkdir(exist_ok=True)
+        flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0)
+        descriptor = os.open(root / WRITE_LOCK_RELPATH, flags, 0o600)
+    except OSError as exc:
+        raise NoteWriteError(f"cannot open the vault write lock {WRITE_LOCK_RELPATH}: {exc}") from exc
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise NoteWriteError("write lock is not a regular file")
+        try:
+            _acquire_write_lock(descriptor)
+        except OSError as exc:
+            raise NoteWriteError(f"cannot acquire the vault write lock: {exc}") from exc
+        _WRITE_LOCK_DEPTH[key] = 1
+        try:
+            yield
+        finally:
+            _WRITE_LOCK_DEPTH.pop(key, None)
+            try:
+                _release_write_lock(descriptor)
+            except OSError:
+                pass
+    finally:
+        os.close(descriptor)
+
+
+_WRITE_LOCK_WAIT_SECONDS = 600.0
+
+
+def _acquire_write_lock(descriptor: int) -> None:
+    """Block until the exclusive lock is held. POSIX flock blocks natively;
+    msvcrt's LK_LOCK gives up after ~10 s, so Windows polls LK_NBLCK with a
+    bounded wait instead and raises OSError only after that bound."""
+    if os.name != "nt":
+        import fcntl
+
+        fcntl.flock(descriptor, fcntl.LOCK_EX)
+        return
+    import msvcrt
+
+    deadline = time.monotonic() + _WRITE_LOCK_WAIT_SECONDS
+    while True:
+        try:
+            msvcrt.locking(descriptor, msvcrt.LK_NBLCK, 1)
+            return
+        except OSError:
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(0.05)
+
+
+def _release_write_lock(descriptor: int) -> None:
+    if os.name != "nt":
+        import fcntl
+
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        return
+    import msvcrt
+
+    msvcrt.locking(descriptor, msvcrt.LK_UNLCK, 1)
+
+
+def _current_note_bytes(root: Path, rel: str) -> bytes | None:
+    """Bytes at a vault-relative path for compare-and-swap, None when absent."""
+    target = root / rel
+    if not os.path.lexists(target):
+        return None
+    if target.is_symlink() or not target.is_file():
+        raise NoteWriteError(f"refusing to replace {rel}: not a regular file")
+    return target.read_bytes()
+
+
+def _write_note_atomic(root: Path, rel: str, data: bytes, *, expected: object = _UNCHECKED) -> None:
+    """Atomic same-directory replace through an authenticated parent: every
+    component below the vault root must be a real directory (missing
+    directories are created), and the target is never followed. With
+    `expected` (the bytes the caller's plan was computed from, None for
+    "must not exist yet") the write is a compare-and-swap: a target that
+    changed in between raises WriteConflictError and nothing is written."""
+    parts = PurePosixPath(rel).parts
+    current = root
+    for part in parts[:-1]:
+        current = current / part
+        try:
+            mode = current.lstat().st_mode
+        except FileNotFoundError:
+            os.mkdir(current)
+            mode = current.lstat().st_mode
+        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+            raise NoteWriteError(f"refusing to write through {current.relative_to(root).as_posix()}: not a real directory")
+    target = current / parts[-1]
+    if os.path.lexists(target) and (target.is_symlink() or not target.is_file()):
+        raise NoteWriteError(f"refusing to replace {rel}: not a regular file")
+    if expected is not _UNCHECKED:
+        # The check and the rename happen under the vault write lock
+        # (re-entrant: a caller already holding it just nests), so no
+        # sibling process can slip a write in between them.
+        with vault_write_lock(root):
+            found = _current_note_bytes(root, rel)
+            if found != expected:
+                raise WriteConflictError(
+                    f"{rel} changed since this plan was computed — recompute the plan and retry"
+                )
+            _replace_regular_file(current, parts[-1], target, data)
+        return
+    _replace_regular_file(current, parts[-1], target, data)
+
+
+def _replace_regular_file(directory: Path, name: str, target: Path, data: bytes) -> None:
+    """The one atomic replace used by every note/baseline writer: same-directory
+    temporary file, fsync, mode 0644, rename, parent directory fsync."""
+    try:
+        _atomic_write_bytes(target, data, 0o644, stage_prefix=f".{name}.")
+    except ProjectArchiveError as exc:
+        raise NoteWriteError(f"cannot replace {target.name}: {exc}") from exc
+
+
+def _unlink_note(root: Path, rel: str, *, expected_digest: str | None = None) -> None:
+    target = root / rel
+    if target.is_symlink() or not target.is_file():
+        raise NoteWriteError(f"refusing to delete {rel}: not a regular file")
+    if expected_digest is None:
+        target.unlink()
+        return
+    with vault_write_lock(root):
+        if hashlib.sha256(target.read_bytes()).hexdigest() != expected_digest:
+            raise WriteConflictError(f"{rel} changed since this plan was computed — recompute the plan and retry")
+        target.unlink()
+
+
+def _vault_relative_argument(value: str) -> str:
+    """Normalize a user-supplied vault-relative note path; `..`, absolute,
+    and empty segments are refused rather than resolved."""
+    value = nfc(value.replace("\\", "/"))
+    value = value.removeprefix("./")
+    segments = value.split("/")
+    if not value or value.startswith("/") or any(seg in ("", ".", "..") for seg in segments) or ":" in segments[0]:
+        raise NoteWriteError(f"{value!r}: not a vault-relative note path")
+    return value
+
+
+def _marker_values(text: str, name: str) -> list[str]:
+    return [m.group("value") for m in re.finditer(_MARKER_RE_TEMPLATE.format(name=re.escape(name)), text)]
+
+
+def _marker_safe(value: str, what: str) -> str:
+    value = " ".join(value.split())
+    if not value or _HTML_COMMENT_CLOSE in value:
+        raise NoteWriteError(f"{what} must be a single non-empty line without '{_HTML_COMMENT_CLOSE}'")
+    return value
+
+
+def _bump_updated(text: str, today_d: date) -> str:
+    lines = text.split("\n")
+    _fm, _errors, body_start, has = parse_frontmatter(lines)
+    if not has:
+        return text
+    for i in range(1, body_start):
+        if lines[i].startswith("updated:"):
+            lines[i] = f"updated: {today_d.isoformat()}"
+            break
+    return "\n".join(lines)
+
+
+def _prose_only_line(raw: str) -> str:
+    """One-line Markdown-safe text: whitespace collapsed, link/HTML/code
+    syntax escaped so it can never open a link, comment, or code span."""
+    text = " ".join(raw.split())
+    return re.sub(r"([\\`\[\]<>])", r"\\\1", text)
+
+
+def transform_triage_report(text: str, source_rel: str, log_rel: str) -> tuple[list[str], dict]:
+    """§29.1: the report body as it nests under a monthly run heading —
+    frontmatter stripped, the first H1 dropped, every other heading demoted
+    one level, relative links rebased from the report's directory to the
+    log's directory (the §5 parser over the §5.2 exclusion zones), leading
+    and trailing blank lines trimmed. Returns (lines, frontmatter)."""
+    lines = text.split("\n")
+    fm, _errors, body_start, _has = parse_frontmatter(lines)
+    source_dir = posixpath.dirname(source_rel)
+    target_dir = posixpath.dirname(log_rel)
+    body: list[str] = []
+    dropped_h1 = False
+    for line, in_code in iter_fenced_lines(lines, body_start):
+        if in_code:
+            body.append(line)
+            continue
+        heading = HEADING_RE.match(line)
+        if heading and len(heading.group(2)) == 1 and not dropped_h1:
+            dropped_h1 = True
+            continue
+        body.append(rebase_markdown_links(demote_heading(line), source_dir, target_dir))
+    while body and not body[0].strip():
+        body.pop(0)
+    while body and not body[-1].strip():
+        body.pop()
+    return body, fm
+
+
+def _report_date(rel: str) -> date:
+    m = _DATED_NAME_RE.match(posixpath.basename(rel))
+    if not m:
+        raise NoteWriteError(f"{rel}: an Inbox report is named YYYY-MM-DD-<slug>.md")
+    try:
+        return date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    except ValueError as exc:
+        raise NoteWriteError(f"{rel}: invalid date in filename") from exc
+
+
+def _fm_tags(fm: dict) -> list[str]:
+    tags = fm.get("tags")
+    return [t for t in tags if isinstance(t, str)] if isinstance(tags, list) else ([tags] if isinstance(tags, str) else [])
+
+
+def _triage_log_header(month: str, today_d: date) -> str:
+    return (
+        "---\n"
+        f'title: "Triage Log — {month}"\n'
+        "tags:\n" + "".join(f"  - {t}\n" for t in TRIAGE_LOG_TAGS) + f"updated: {today_d.isoformat()}\n"
+        "---\n\n"
+        f"# Triage Log — {month}\n\n"
+        "One run per section, appended by `brain triage-archive` when an applied "
+        "[triage-inbox](../../10_Agents/skills/triage-inbox/SKILL.md) report leaves the Inbox; "
+        "each run carries its report's provenance and an identity marker so a retried "
+        "archival never duplicates a run.\n"
+    )
+
+
+def _archive_marker_parts(value: str) -> tuple[str, str]:
+    path, _sep, digest = value.partition(" sha256:")
+    return path, digest
+
+
+def triage_archive_plan(root: Path, report_rel: str, today_d: date, *, revise: bool = False) -> dict:
+    """Zero-write plan: where the report goes, what the appended section is,
+    and whether the identity is already present (retry after an interrupted
+    run). Identity is the complete marker value — source path *and* digest of
+    the source bytes: an exact match means a finished or interrupted earlier
+    run (retry-safe), while the same path with different bytes is a
+    `conflict` that mutates nothing unless `revise` asks for a distinct
+    revision section. Raises NoteWriteError for a report the command cannot
+    handle."""
+    report_rel = _vault_relative_argument(report_rel)
+    if not report_rel.startswith(INBOX_PREFIX) or "/" in report_rel[len(INBOX_PREFIX):]:
+        raise NoteWriteError(f"{report_rel}: only a note directly under {INBOX_PREFIX} can be archived")
+    report_date = _report_date(report_rel)
+    month = report_date.strftime("%Y-%m")
+    log_rel = f"{TRIAGE_LOG_DIR}/{month}-triage-log.md"
+    source_path = root / report_rel
+    source_exists = source_path.is_file() and not source_path.is_symlink()
+    raw = _read_vault_bytes(root, report_rel) if source_exists else b""
+    text, _size = _decode_note_bytes(raw) if source_exists else (None, 0)
+    if source_exists and text is None:
+        raise NoteWriteError(f"{report_rel}: not UTF-8")
+    body: list[str] = []
+    fm: dict = {}
+    if source_exists:
+        body, fm = transform_triage_report(text, report_rel, log_rel)
+    tags = _fm_tags(fm)
+    restricted = RESTRICTED_TAG in tags
+    digest = hashlib.sha256(raw).hexdigest()
+    identity = f"{report_rel} sha256:{digest}"
+    title = fm.get("title") if isinstance(fm.get("title"), str) and fm.get("title") else posixpath.basename(report_rel)
+    author = fm.get("author") if isinstance(fm.get("author"), str) and fm.get("author") else "—"
+    session = fm.get("session") if isinstance(fm.get("session"), str) and fm.get("session") else "—"
+    plan: dict = {
+        "date": report_date.isoformat(),
+        "identity": identity,
+        "log": log_rel,
+        "report": report_rel,
+        "restricted": restricted,
+        "sourcePresent": source_exists,
+    }
+    if restricted:
+        # A restricted report keeps the older path: its own archived note, so
+        # the month's log stays non-restricted. The moved note carries the
+        # same identity marker, so a retry recognizes its own earlier move
+        # and a same-path report with different bytes is a conflict.
+        archived_rel = f"{TRIAGE_LOG_DIR}/{posixpath.basename(report_rel)}"
+        archived_exists = os.path.lexists(root / archived_rel)
+        archived_digest = None
+        if archived_exists:
+            archived_text, _ = load_text(root, archived_rel)
+            for value in _marker_values(archived_text or "", TRIAGE_ARCHIVE_MARKER):
+                marker_path, marker_digest = _archive_marker_parts(value)
+                if marker_path == report_rel:
+                    archived_digest = marker_digest
+        plan.update({"archived": archived_rel, "archivedPresent": archived_exists, "base": {}})
+        if source_exists:
+            lines = text.split("\n")
+            _fm2, _e, body_start, _h = parse_frontmatter(lines)
+            head = lines[:body_start]
+            new_head = []
+            for line in head:
+                stripped = line.strip()
+                if stripped in ("- workflow/draft", "- workflow/review"):
+                    continue
+                new_head.append(line)
+            if "status/done" not in tags:
+                idx = next((i for i, l in enumerate(new_head) if l.startswith("tags:")), None)
+                if idx is None:
+                    raise NoteWriteError(f"{report_rel}: no tags: list to update")
+                new_head.insert(idx + 1, "  - status/done")
+            rest = []
+            for line, in_code in iter_fenced_lines(lines, body_start):
+                rest.append(line if in_code else rebase_markdown_links(line, posixpath.dirname(report_rel), TRIAGE_LOG_DIR))
+            marker_line = f"<!-- {TRIAGE_ARCHIVE_MARKER}: {identity} -->"
+            first_heading = next(
+                (i for i, (line, in_code) in enumerate(iter_fenced_lines(rest, 0)) if not in_code and HEADING_RE.match(line)),
+                None,
+            )
+            if first_heading is None:
+                rest[0:0] = ["", marker_line]
+            else:
+                rest[first_heading + 1 : first_heading + 1] = ["", marker_line]
+            rendered = _bump_updated("\n".join(new_head + rest), today_d)
+            plan["rendered"] = rendered
+            if not archived_exists:
+                plan["action"] = "move"
+            elif archived_digest == digest:
+                plan["action"] = "delete-only"
+            else:
+                plan["action"] = "conflict"
+                plan["conflict"] = (
+                    f"{archived_rel} already holds a different archived version of {report_rel} "
+                    "(no identity marker or a different digest) — resolve by hand before deleting the source"
+                )
+        else:
+            plan["action"] = "done" if archived_exists else "missing"
+        return plan
+    log_path = root / log_rel
+    log_text = None
+    log_raw = None
+    if os.path.lexists(log_path):
+        if log_path.is_symlink() or not log_path.is_file():
+            raise NoteWriteError(f"{log_rel}: not a regular file")
+        log_raw = log_path.read_bytes()
+        log_text, _ = _decode_note_bytes(log_raw)
+        if log_text is None:
+            raise NoteWriteError(f"{log_rel}: not UTF-8")
+    same_path = [
+        marker_digest
+        for marker_path, marker_digest in (_archive_marker_parts(v) for v in _marker_values(log_text or "", TRIAGE_ARCHIVE_MARKER))
+        if marker_path == report_rel
+    ]
+    present = digest in same_path
+    revision = len(same_path) + 1
+    heading_suffix = f" (revision {revision})" if (revise and same_path and not present) else ""
+    section = [
+        f"## {report_date.isoformat()} — {_prose_only_line(title)}{heading_suffix}",
+        "",
+        f"<!-- {TRIAGE_ARCHIVE_MARKER}: {identity} -->",
+        f"*Run: {_prose_only_line(author)}, {_prose_only_line(session)}*",
+        "",
+        *body,
+    ]
+    plan.update(
+        {
+            "identityPresent": present,
+            "logPresent": log_text is not None,
+            "priorVersions": len(same_path),
+            "section": "\n".join(section),
+            "base": {log_rel: log_raw},
+        }
+    )
+    if not source_exists:
+        # A restricted report leaves no identity in the log; its finished
+        # move is recognized by the archived note it became.
+        moved = (root / f"{TRIAGE_LOG_DIR}/{posixpath.basename(report_rel)}").is_file()
+        plan["action"] = "done" if (same_path or moved) else "missing"
+    elif present:
+        plan["action"] = "delete-only"
+    elif same_path and not revise:
+        plan["action"] = "conflict"
+        plan["conflict"] = (
+            f"{log_rel} already holds {len(same_path)} archived version(s) of {report_rel} with different bytes — "
+            "the source changed after it was archived; review it, then rerun with --revise to append a "
+            "distinct revision, or delete the source by hand"
+        )
+    else:
+        plan["action"] = "append" if log_text is not None else "create"
+    if plan["action"] in ("append", "create"):
+        base = log_text if log_text is not None else _triage_log_header(month, today_d)
+        base = _bump_updated(base, today_d)
+        if not base.endswith("\n"):
+            base += "\n"
+        plan["rendered"] = base + "\n" + plan["section"] + "\n"
+    return plan
+
+
+def apply_triage_archive(root: Path, plan: dict) -> list[str]:
+    """Apply a plan: write the log (or the moved note) first, then delete the
+    source. Every step is retry-safe: a rerun after an interruption finds the
+    identity (or the moved note) present and only finishes the deletion."""
+    steps: list[str] = []
+    action = plan["action"]
+    if action == "missing":
+        raise NoteWriteError(f"{plan['report']}: nothing to archive (source absent, not archived)")
+    if action == "conflict":
+        raise WriteConflictError(plan["conflict"])
+    if action == "done":
+        return ["already archived"]
+    digest = _archive_marker_parts(plan["identity"])[1]
+    if plan["restricted"]:
+        if action == "move":
+            _write_note_atomic(root, plan["archived"], plan["rendered"].encode("utf-8"), expected=None)
+            steps.append(f"wrote {plan['archived']}")
+        _unlink_note(root, plan["report"], expected_digest=digest)
+        steps.append(f"deleted {plan['report']}")
+        return steps
+    if action in ("append", "create"):
+        _write_note_atomic(root, plan["log"], plan["rendered"].encode("utf-8"), expected=plan["base"][plan["log"]])
+        steps.append(f"{'created' if action == 'create' else 'appended'} {plan['log']}")
+    _unlink_note(root, plan["report"], expected_digest=digest)
+    steps.append(f"deleted {plan['report']}")
+    return steps
+
+
+def cmd_triage_archive(root: Path, args) -> int:
+    config, _findings = load_config(root)
+    today_d = vault_today(config)
+    try:
+        steps: list[str] = []
+        validation = None
+        with vault_write_lock(root):
+            plan = triage_archive_plan(root, args.report, today_d, revise=bool(getattr(args, "revise", False)))
+            if args.write and plan["action"] != "conflict":
+                steps = apply_triage_archive(root, plan)
+        if args.write and plan["action"] != "conflict":
+            errors, warnings = run_validate(root, check_index=False)
+            validation = {"errors": errors, "warnings": len(warnings)}
+    except NoteWriteError as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=1, sort_keys=True))
+        else:
+            print(f"error: {exc}", file=sys.stderr)
+        return 1
+    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base")}
+    payload["steps"] = steps
+    if validation is not None:
+        payload["validation"] = validation
+    lines = [f"report  {plan['report']}", f"action  {plan['action']}"]
+    lines.append(f"target  {plan.get('archived') or plan['log']}")
+    lines.append(f"identity  {plan['identity']}")
+    if not args.write and plan.get("section") and plan["action"] in ("append", "create"):
+        lines.append("")
+        lines.append(plan["section"])
+    if plan["action"] == "conflict":
+        lines.append(f"conflict  {plan['conflict']}")
+    for step in steps:
+        lines.append(f"applied  {step}")
+    if validation is not None:
+        for f in validation["errors"]:
+            location = f["path"] + (f":{f['line']}" if f["line"] is not None else "")
+            lines.append(f"ERROR {location} {f['rule']}: {f['message']}")
+        lines.append(f"validate  {len(validation['errors'])} errors, {validation['warnings']} warnings")
+    emit(payload, args.json, lines)
+    if plan["action"] == "conflict":
+        return 1
+    if validation is not None and validation["errors"]:
+        return 1
+    return 0
+
+
+def periodic_targets(day: date) -> dict:
+    """§29.2: the daily and weekly notes for an event date. The week is the
+    ISO week and ISO week-year (`date.isocalendar()`), so 2027-01-01 (a
+    Friday) belongs to 2026-W53 and 2024-12-30 (a Monday) to 2025-W01."""
+    iso_year, iso_week, _ = day.isocalendar()
+    week_id = f"{iso_year}-W{iso_week:02d}"
+    return {
+        "daily": f"{DAILY_DIR}/{day.isoformat()}.md",
+        "monthly": f"{MONTHLY_DIR}/{day.strftime('%Y-%m')}-review.md",
+        "weekId": week_id,
+        "weekly": f"{WEEKLY_DIR}/{week_id}-review.md",
+    }
+
+
+def _instantiate_periodic(
+    root: Path, template_rel: str, target_rel: str, replacements: dict[str, str | None], today_d: date
+) -> str:
+    """Fill a periodic template for `target_rel`: relative links written from
+    the template's directory are rebased to the target's directory first
+    (placeholder links are left for substitution), then every `{{TOKEN}}` in
+    `replacements` with a string value is substituted; a token mapped to None
+    drops its whole line (a related-note link whose target does not exist
+    yet, a goal placeholder for a backfilled day). Any placeholder left over
+    is an error — a note with `{{` in it would fail validation."""
+    text, _ = load_text(root, template_rel)
+    if text is None:
+        raise NoteWriteError(f"{template_rel}: missing or not UTF-8")
+    lines = text.split("\n")
+    _fm, _errors, body_start, _has = parse_frontmatter(lines)
+    rebased = lines[:body_start]
+    for line, in_code in iter_fenced_lines(lines, body_start):
+        rebased.append(
+            line if in_code else rebase_markdown_links(line, posixpath.dirname(template_rel), posixpath.dirname(target_rel))
+        )
+    out: list[str] = []
+    for line in rebased:
+        drop = False
+        for token, value in replacements.items():
+            if f"{{{{{token}}}}}" in line and value is None:
+                drop = True
+                break
+        if drop:
+            continue
+        for token, value in replacements.items():
+            if value is not None:
+                line = line.replace(f"{{{{{token}}}}}", value)
+        out.append(line)
+    rendered = "\n".join(out)
+    leftover = re.search(r"\{\{[^}]*\}\}", rendered)
+    if leftover:
+        raise NoteWriteError(f"{template_rel}: unfilled placeholder {leftover.group(0)}")
+    return _bump_updated(rendered, today_d)
+
+
+def _section_bounds(lines: list[str], heading: str) -> tuple[int, int] | None:
+    """(start, end) line indexes of the body section opened by `heading` —
+    frontmatter is skipped, fenced code never opens or closes a section, and
+    the section ends at the next heading of the same or a higher level."""
+    level = len(HEADING_RE.match(heading).group(2))
+    _fm, _errors, body_start, _has = parse_frontmatter(lines)
+    start = None
+    for offset, (raw, in_code) in enumerate(iter_fenced_lines(lines, body_start)):
+        i = body_start + offset
+        if in_code:
+            continue
+        if start is None:
+            if raw.rstrip() == heading:
+                start = i
+            continue
+        m = HEADING_RE.match(raw)
+        if m and len(m.group(2)) <= level:
+            return start, i
+    return (start, len(lines)) if start is not None else None
+
+
+def _insert_in_section(text: str, heading: str, line: str) -> str:
+    lines = text.split("\n")
+    bounds = _section_bounds(lines, heading)
+    if bounds is None:
+        raise NoteWriteError(f"section {heading!r} not found")
+    start, end = bounds
+    body = list(range(start + 1, end))
+    content = [i for i in body if lines[i].strip()]
+    if content and all(lines[i].strip() == "-" for i in content):
+        # The template's empty bullet: replace it rather than append after it.
+        lines[content[-1]] = line
+        return "\n".join(lines)
+    at = (content[-1] + 1) if content else (start + 1)
+    if not content:
+        lines[at:at] = ["", line]
+        if at + 2 < len(lines) and lines[at + 2].strip():
+            lines.insert(at + 2, "")
+    else:
+        lines.insert(at, line)
+    return "\n".join(lines)
+
+
+def _note_title_and_restricted(root: Path, rel: str) -> tuple[str | None, bool]:
+    text, _ = load_text(root, rel)
+    if text is None:
+        return None, False
+    fm, _errors, _body_start, _has = parse_frontmatter(text.split("\n"))
+    title = fm.get("title") if isinstance(fm.get("title"), str) else None
+    return title, RESTRICTED_TAG in _fm_tags(fm)
+
+
+def trace_plan(
+    root: Path,
+    *,
+    day: date,
+    destination: str,
+    summary: str,
+    identity: str,
+    kind: str | None,
+    today_d: date,
+) -> dict:
+    """§29.2: the exact bytes each periodic note would hold after tracing one
+    capture. Identity is the marker `<!-- trace: <identity> -->`; a note that
+    already carries it is skipped, so reruns are byte-idempotent while two
+    distinct captures on one day to one destination both land."""
+    destination = _vault_relative_argument(destination)
+    if not (root / destination).is_file():
+        raise NoteWriteError(f"{destination}: destination note does not exist")
+    identity = _marker_safe(identity, "identity")
+    title, dest_restricted = _note_title_and_restricted(root, destination)
+    label = _prose_only_line(summary)
+    substance_dropped = False
+    if dest_restricted and title:
+        # A restricted destination is traced by bare link only (§10.2): the
+        # summary would carry its substance into a non-restricted note.
+        label = _prose_only_line(title)
+        substance_dropped = summary.strip() != title.strip()
+    if not label:
+        raise NoteWriteError("summary must not be empty")
+    if kind is not None and kind not in WEEKLY_KIND_SECTIONS:
+        raise NoteWriteError(f"kind must be one of {sorted(WEEKLY_KIND_SECTIONS)}")
+    targets = periodic_targets(day)
+    marker = f"<!-- {TRACE_MARKER}: {identity} -->"
+    notes: list[dict] = []
+    for note_rel, sections in (
+        (targets["daily"], [DAILY_TRACE_SECTION]),
+        (targets["weekly"], [WEEKLY_TRACE_SECTION] + ([WEEKLY_KIND_SECTIONS[kind]] if kind else [])),
+    ):
+        line = f"- [{label}]({vault_link(destination, posixpath.dirname(note_rel))}) {marker}"
+        exists = os.path.lexists(root / note_rel)
+        base_bytes = None
+        if exists:
+            if (root / note_rel).is_symlink() or not (root / note_rel).is_file():
+                raise NoteWriteError(f"{note_rel}: not a regular file")
+            base_bytes = (root / note_rel).read_bytes()
+            text, _ = _decode_note_bytes(base_bytes)
+            if text is None:
+                raise NoteWriteError(f"{note_rel}: not UTF-8")
+        elif note_rel == targets["daily"]:
+            previous = f"{DAILY_DIR}/{(day - timedelta(days=1)).isoformat()}.md"
+            text = _instantiate_periodic(
+                root,
+                DAILY_TEMPLATE_RELPATH,
+                note_rel,
+                {
+                    "date": day.isoformat(),
+                    "RELATED_WEEKLY_REVIEW": f"../weekly/{targets['weekId']}-review.md",
+                    "PREVIOUS_DAILY_NOTE": posixpath.basename(previous) if (root / previous).is_file() else None,
+                    "CONTEXT": None,
+                    "GOAL": None,
+                    "HIGH_PRIORITY_GOAL": None,
+                    "MEDIUM_PRIORITY_GOAL": None,
+                    "LOW_PRIORITY_GOAL": None,
+                },
+                today_d,
+            )
+        else:
+            text = _instantiate_periodic(
+                root,
+                WEEKLY_TEMPLATE_RELPATH,
+                note_rel,
+                {
+                    "WEEK_ID": targets["weekId"],
+                    "date": today_d.isoformat(),
+                    "RELATED_MONTHLY_REVIEW": (
+                        f"../monthly/{posixpath.basename(targets['monthly'])}"
+                        if (root / targets["monthly"]).is_file()
+                        else None
+                    ),
+                    "RELATED_DAILY_NOTE": f"../daily/{day.isoformat()}.md",
+                },
+                today_d,
+            )
+        if identity in _marker_values(text, TRACE_MARKER):
+            notes.append({"action": "skip", "path": note_rel, "sections": sections})
+            continue
+        rendered = text
+        for section in sections:
+            rendered = _insert_in_section(rendered, section, line)
+        if exists:
+            rendered = _bump_updated(rendered, today_d)
+        notes.append(
+            {"action": "append" if exists else "create", "base": base_bytes, "path": note_rel, "rendered": rendered, "sections": sections}
+        )
+    return {
+        "date": day.isoformat(),
+        "destination": destination,
+        "identity": identity,
+        "label": label,
+        "notes": notes,
+        "substanceDropped": substance_dropped,
+        "weekId": targets["weekId"],
+    }
+
+
+def apply_trace(root: Path, plan: dict) -> list[str]:
+    steps: list[str] = []
+    for note in plan["notes"]:
+        if note["action"] == "skip":
+            steps.append(f"skipped {note['path']} (identity present)")
+            continue
+        _write_note_atomic(root, note["path"], note["rendered"].encode("utf-8"), expected=note["base"])
+        steps.append(f"{'created' if note['action'] == 'create' else 'appended'} {note['path']}")
+    return steps
+
+
+def cmd_trace(root: Path, args) -> int:
+    config, _findings = load_config(root)
+    today_d = vault_today(config)
+    try:
+        try:
+            day = date.fromisoformat(args.date)
+        except ValueError as exc:
+            raise NoteWriteError(f"--date must be YYYY-MM-DD, got {args.date!r}") from exc
+        with vault_write_lock(root):
+            plan = trace_plan(
+                root,
+                day=day,
+                destination=args.destination,
+                summary=args.summary,
+                identity=args.identity,
+                kind=args.kind,
+                today_d=today_d,
+            )
+            steps = apply_trace(root, plan) if args.write else []
+        validation = None
+        if args.write:
+            errors, warnings = run_validate(root, check_index=False)
+            validation = {"errors": errors, "warnings": len(warnings)}
+    except NoteWriteError as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=1, sort_keys=True))
+        else:
+            print(f"error: {exc}", file=sys.stderr)
+        return 1
+    payload = {**plan, "notes": [{k: v for k, v in n.items() if k not in ("rendered", "base")} for n in plan["notes"]], "steps": steps}
+    if validation is not None:
+        payload["validation"] = validation
+    lines = [f"date  {plan['date']}  week {plan['weekId']}", f"destination  {plan['destination']}", f"identity  {plan['identity']}"]
+    if plan["substanceDropped"]:
+        lines.append("note  destination is restricted/private — traced by title only, summary dropped")
+    for note in plan["notes"]:
+        lines.append(f"{note['action']}  {note['path']}  ({', '.join(note['sections'])})")
+    for step in steps:
+        lines.append(f"applied  {step}")
+    if validation is not None:
+        for f in validation["errors"]:
+            location = f["path"] + (f":{f['line']}" if f["line"] is not None else "")
+            lines.append(f"ERROR {location} {f['rule']}: {f['message']}")
+        lines.append(f"validate  {len(validation['errors'])} errors, {validation['warnings']} warnings")
+    emit(payload, args.json, lines)
+    if validation is not None and validation["errors"]:
+        return 1
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# §29.3 Gap queue (`brain gap`)
+
+GAP_QUEUE_RELPATH = "10_Agents/docs/vault-answer-gaps.md"
+GAP_QUEUE_SECTION = "## Open and filled gaps"
+GAP_CAPTURE_SLUG = "vault-answer-gap"
+GAP_CAPTURE_TITLE_PREFIX = "Vault answer gap"
+GAP_QUESTION_MAX = 300
+GAP_MARKER = "gap"
+ACCEPTED_LOG_RELPATH = "10_Agents/docs/accepted-proposals.md"
+ACCEPTED_SECTION = "## Accepted proposals"
+ACCEPTED_HEADER = "| Date | Proposal | What changed | Verification owed |"
+_GAP_ROW_RE = re.compile(r"^- \[[ x]\] ")
+
+
+def _gap_term(term: str) -> str:
+    term = " ".join(term.replace("`", "'").split())
+    return f"`{term}`" if term else ""
+
+
+def gap_row(
+    root: Path,
+    *,
+    day: date,
+    question: str,
+    terms: list[str],
+    nearest: list[str],
+    sensitive: bool,
+) -> dict:
+    """§29.3: one queue row. The question and terms are forced onto one
+    line with link, HTML, comment, and code syntax escaped, so no question
+    can open a heading, list, fence, link, or comment in the queue. A gap is
+    `sensitive` when the caller says so or when any nearest note carries
+    restricted/private — such a gap never reaches the public queue, and a
+    restricted note is only ever named by path (never its title)."""
+    question = _prose_only_line(question)
+    if len(question) > GAP_QUESTION_MAX:
+        question = question[: GAP_QUESTION_MAX - 1].rstrip() + "…"
+    if not question:
+        raise NoteWriteError("question must not be empty")
+    # Row identity: the day and the question as logged. It is what makes an
+    # ingestion (or a repeated direct append) idempotent.
+    identity = hashlib.sha256(f"{day.isoformat()}|{question}".encode("utf-8")).hexdigest()[:16]
+    rendered_terms = [t for t in (_gap_term(t) for t in terms) if t]
+    near: list[dict] = []
+    for raw in nearest:
+        rel = _vault_relative_argument(raw)
+        if not (root / rel).is_file():
+            raise NoteWriteError(f"{rel}: nearest note does not exist")
+        title, restricted = _note_title_and_restricted(root, rel)
+        sensitive = sensitive or restricted
+        label = posixpath.basename(rel) if restricted else (title or posixpath.basename(rel))
+        near.append({"label": _prose_only_line(label), "path": rel, "restricted": restricted})
+
+    def render(source_rel: str) -> str:
+        source_dir = posixpath.dirname(source_rel)
+        links = [f"[{n['label']}]({vault_link(n['path'], source_dir)})" for n in near]
+        return (
+            f"- [ ] {day.isoformat()} — {question} — searched: "
+            + (", ".join(rendered_terms) or "—")
+            + " — nearest: "
+            + (", ".join(links) or "none")
+            + f" <!-- {GAP_MARKER}: {identity} -->"
+        )
+
+    return {"identity": identity, "nearest": near, "question": question, "render": render, "sensitive": sensitive, "terms": rendered_terms}
+
+
+def _next_inbox_capture(root: Path, day: date, slug: str) -> str:
+    base = f"{INBOX_PREFIX}{day.isoformat()}-{slug}"
+    candidate = f"{base}.md"
+    n = 2
+    while os.path.lexists(root / candidate):
+        candidate = f"{base}-{n}.md"
+        n += 1
+    return candidate
+
+
+def gap_plan(root: Path, *, day: date, question: str, terms: list[str], nearest: list[str], sensitive: bool, inbox: bool) -> dict:
+    row = gap_row(root, day=day, question=question, terms=terms, nearest=nearest, sensitive=sensitive)
+    if row["sensitive"] or inbox:
+        target = _next_inbox_capture(root, day, GAP_CAPTURE_SLUG)
+        tags = ["type/note", "audience/agent", "workflow/draft"]
+        if row["sensitive"]:
+            tags.append(RESTRICTED_TAG)
+        why = (
+            "A gap whose question or nearest notes are private: it stays out of the public queue "
+            f"([vault-answer-gaps](../{GAP_QUEUE_RELPATH})); triage decides where the row lives."
+            if row["sensitive"]
+            else f"An autonomous run's gap row (Inbox-first rule); triage moves it to [vault-answer-gaps](../{GAP_QUEUE_RELPATH})."
+        )
+        rendered = (
+            "---\n"
+            f'title: "Vault answer gap — {day.isoformat()}"\n'
+            "tags:\n" + "".join(f"  - {t}\n" for t in tags) + f"updated: {day.isoformat()}\n"
+            "author: brain\n"
+            "---\n\n"
+            f"# Vault answer gap — {day.isoformat()}\n\n{why}\n\n{row['render'](target)}\n"
+        )
+        return {"action": "capture", "base": None, "path": target, "rendered": rendered, "restricted": row["sensitive"], "row": row["render"](target), "sensitive": row["sensitive"]}
+    base = _current_note_bytes(root, GAP_QUEUE_RELPATH)
+    text, _ = _decode_note_bytes(base) if base is not None else (None, 0)
+    if text is None:
+        raise NoteWriteError(f"{GAP_QUEUE_RELPATH}: missing or not UTF-8")
+    line = row["render"](GAP_QUEUE_RELPATH)
+    if row["identity"] in _marker_values(text, GAP_MARKER):
+        return {"action": "skip", "base": base, "path": GAP_QUEUE_RELPATH, "rendered": text, "restricted": False, "row": line, "sensitive": False}
+    rendered = _bump_updated(_insert_in_section(text, GAP_QUEUE_SECTION, line), day)
+    return {"action": "append", "base": base, "path": GAP_QUEUE_RELPATH, "rendered": rendered, "restricted": False, "row": line, "sensitive": False}
+
+
+def _inbox_capture_text(root: Path, rel: str) -> tuple[str, dict, bytes]:
+    rel = _vault_relative_argument(rel)
+    if not rel.startswith(INBOX_PREFIX) or "/" in rel[len(INBOX_PREFIX):]:
+        raise NoteWriteError(f"{rel}: only a note directly under {INBOX_PREFIX} can be ingested")
+    raw = _current_note_bytes(root, rel)
+    if raw is None:
+        raise NoteWriteError(f"{rel}: capture does not exist")
+    text, _ = _decode_note_bytes(raw)
+    if text is None:
+        raise NoteWriteError(f"{rel}: not UTF-8")
+    fm, _errors, _body_start, _has = parse_frontmatter(text.split("\n"))
+    return text, fm, raw
+
+
+def gap_ingest_plan(root: Path, capture_rel: str, *, declassify: bool, today_d: date) -> dict:
+    """§29.3: move the gap rows of an autonomous run's Inbox capture into the
+    public queue — once each, by identity marker — and delete the capture.
+    A `restricted/private` capture is refused unless the owner declassifies
+    it explicitly; links are rebased from the Inbox to the queue's directory."""
+    text, fm, raw = _inbox_capture_text(root, capture_rel)
+    capture_rel = _vault_relative_argument(capture_rel)
+    title = fm.get("title") if isinstance(fm.get("title"), str) else ""
+    if fm.get("author") != "brain" or not title.startswith(GAP_CAPTURE_TITLE_PREFIX):
+        raise NoteWriteError(f"{capture_rel}: not a brain gap capture (author: brain, title '{GAP_CAPTURE_TITLE_PREFIX} — …')")
+    restricted = RESTRICTED_TAG in _fm_tags(fm)
+    if restricted and not declassify:
+        raise NoteWriteError(
+            f"{capture_rel} is restricted/private: its row stays out of the public queue unless the owner "
+            "declassifies it (--declassify), or it is filed elsewhere at triage"
+        )
+    lines = text.split("\n")
+    _fm2, _e, body_start, _h = parse_frontmatter(lines)
+    rows: list[tuple[str, str]] = []
+    for line, in_code in iter_fenced_lines(lines, body_start):
+        if in_code or not _GAP_ROW_RE.match(line):
+            continue
+        ids = _marker_values(line, GAP_MARKER)
+        if len(ids) != 1:
+            raise NoteWriteError(f"{capture_rel}: a gap row without exactly one identity marker cannot be ingested")
+        rows.append((ids[0], rebase_markdown_links(line, posixpath.dirname(capture_rel), posixpath.dirname(GAP_QUEUE_RELPATH))))
+    if not rows:
+        raise NoteWriteError(f"{capture_rel}: no gap rows found")
+    base = _current_note_bytes(root, GAP_QUEUE_RELPATH)
+    queue, _ = _decode_note_bytes(base) if base is not None else (None, 0)
+    if queue is None:
+        raise NoteWriteError(f"{GAP_QUEUE_RELPATH}: missing or not UTF-8")
+    present = set(_marker_values(queue, GAP_MARKER))
+    rendered = queue
+    ingested: list[str] = []
+    skipped: list[str] = []
+    for identity, line in rows:
+        if identity in present:
+            skipped.append(identity)
+            continue
+        rendered = _insert_in_section(rendered, GAP_QUEUE_SECTION, line)
+        present.add(identity)
+        ingested.append(identity)
+    if ingested:
+        rendered = _bump_updated(rendered, today_d)
+    return {
+        "action": "ingest",
+        "base": base,
+        "capture": capture_rel,
+        "captureDigest": hashlib.sha256(raw).hexdigest(),
+        "declassified": restricted,
+        "ingested": ingested,
+        "path": GAP_QUEUE_RELPATH,
+        "rendered": rendered,
+        "restricted": restricted,
+        "rows": [line for _i, line in rows],
+        "skipped": skipped,
+    }
+
+
+def apply_gap_ingest(root: Path, plan: dict) -> list[str]:
+    steps: list[str] = []
+    if plan["ingested"]:
+        _write_note_atomic(root, plan["path"], plan["rendered"].encode("utf-8"), expected=plan["base"])
+        steps.append(f"appended {len(plan['ingested'])} row(s) to {plan['path']}")
+    _unlink_note(root, plan["capture"], expected_digest=plan["captureDigest"])
+    steps.append(f"deleted {plan['capture']}")
+    return steps
+
+
+def _table_rows(lines: list[str]) -> list[str]:
+    rows = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.strip("|").split("|")]
+        if all(set(c) <= set("-: ") for c in cells):
+            continue  # separator row
+        rows.append(stripped)
+    return rows
+
+
+def accepted_ingest_plan(root: Path, report_rel: str, *, today_d: date) -> dict:
+    """§29.4: copy the `## Accepted proposals` table rows of a retrospective
+    report into the acceptance log — exact-row identity after link rebasing,
+    so a re-triaged report adds nothing. The report itself is left in place."""
+    text, fm, raw = _inbox_capture_text(root, report_rel)
+    report_rel = _vault_relative_argument(report_rel)
+    if RESTRICTED_TAG in _fm_tags(fm):
+        raise NoteWriteError(f"{report_rel} is restricted/private: its rows cannot enter the public acceptance log")
+    lines = text.split("\n")
+    bounds = _section_bounds(lines, ACCEPTED_SECTION)
+    if bounds is None:
+        raise NoteWriteError(f"{report_rel}: no {ACCEPTED_SECTION!r} section")
+    start, end = bounds
+    section_rows = _table_rows(lines[start + 1 : end])
+    if not section_rows or section_rows[0] != ACCEPTED_HEADER:
+        raise NoteWriteError(f"{report_rel}: the section must start with the log's header row {ACCEPTED_HEADER!r}")
+    rows = [
+        rebase_markdown_links(row, posixpath.dirname(report_rel), posixpath.dirname(ACCEPTED_LOG_RELPATH))
+        for row in section_rows[1:]
+    ]
+    if not rows:
+        raise NoteWriteError(f"{report_rel}: no accepted-proposal rows to ingest")
+    for row in rows:
+        if len(row.strip("|").split("|")) != 4:
+            raise NoteWriteError(f"{report_rel}: a row does not have the log's four columns: {row[:60]!r}")
+    base = _current_note_bytes(root, ACCEPTED_LOG_RELPATH)
+    log, _ = _decode_note_bytes(base) if base is not None else (None, 0)
+    if log is None:
+        raise NoteWriteError(f"{ACCEPTED_LOG_RELPATH}: missing or not UTF-8")
+    log_lines = log.split("\n")
+    header_index = next((i for i, l in enumerate(log_lines) if l.strip() == ACCEPTED_HEADER), None)
+    if header_index is None:
+        raise NoteWriteError(f"{ACCEPTED_LOG_RELPATH}: header row not found")
+    last = header_index
+    while last + 1 < len(log_lines) and log_lines[last + 1].strip().startswith("|"):
+        last += 1
+    existing = {" ".join(l.split()) for l in _table_rows(log_lines[header_index : last + 1])}
+    ingested: list[str] = []
+    skipped: list[str] = []
+    for row in rows:
+        if " ".join(row.split()) in existing:
+            skipped.append(row)
+            continue
+        last += 1
+        log_lines.insert(last, row)
+        existing.add(" ".join(row.split()))
+        ingested.append(row)
+    rendered = "\n".join(log_lines)
+    if ingested:
+        rendered = _bump_updated(rendered, today_d)
+    return {
+        "action": "ingest",
+        "base": base,
+        "ingested": ingested,
+        "path": ACCEPTED_LOG_RELPATH,
+        "rendered": rendered,
+        "report": report_rel,
+        "skipped": skipped,
+    }
+
+
+def cmd_accepted(root: Path, args) -> int:
+    config, _findings = load_config(root)
+    today_d = vault_today(config)
+    try:
+        steps: list[str] = []
+        validation = None
+        with vault_write_lock(root):
+            plan = accepted_ingest_plan(root, args.ingest, today_d=today_d)
+            if args.write and plan["ingested"]:
+                _write_note_atomic(root, plan["path"], plan["rendered"].encode("utf-8"), expected=plan["base"])
+                steps.append(f"appended {len(plan['ingested'])} row(s) to {plan['path']}")
+        if args.write:
+            errors, warnings = run_validate(root, check_index=False)
+            validation = {"errors": errors, "warnings": len(warnings)}
+    except NoteWriteError as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=1, sort_keys=True))
+        else:
+            print(f"error: {exc}", file=sys.stderr)
+        return 1
+    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base")}
+    payload["steps"] = steps
+    if validation is not None:
+        payload["validation"] = validation
+    lines = [f"report  {plan['report']}", f"ingest  {len(plan['ingested'])} new, {len(plan['skipped'])} already present"]
+    lines.extend(f"row  {row}" for row in plan["ingested"])
+    lines.extend(f"applied  {step}" for step in steps)
+    if validation is not None:
+        for f in validation["errors"]:
+            location = f["path"] + (f":{f['line']}" if f["line"] is not None else "")
+            lines.append(f"ERROR {location} {f['rule']}: {f['message']}")
+        lines.append(f"validate  {len(validation['errors'])} errors, {validation['warnings']} warnings")
+    emit(payload, args.json, lines)
+    return 1 if (validation is not None and validation["errors"]) else 0
+
+
+def cmd_gap(root: Path, args) -> int:
+    config, _findings = load_config(root)
+    today_d = vault_today(config)
+    try:
+        steps: list[str] = []
+        validation = None
+        if bool(args.ingest) == bool(args.question):
+            raise NoteWriteError("pass exactly one of --question or --ingest")
+        with vault_write_lock(root):
+            if args.ingest:
+                plan = gap_ingest_plan(root, args.ingest, declassify=bool(args.declassify), today_d=today_d)
+                if args.write:
+                    steps = apply_gap_ingest(root, plan)
+            else:
+                plan = gap_plan(
+                    root,
+                    day=today_d,
+                    question=args.question,
+                    terms=list(args.terms or []),
+                    nearest=list(args.nearest or []),
+                    sensitive=bool(args.sensitive),
+                    inbox=bool(args.inbox),
+                )
+                if args.write and plan["action"] != "skip":
+                    _write_note_atomic(root, plan["path"], plan["rendered"].encode("utf-8"), expected=plan["base"])
+                    steps.append(f"{'wrote' if plan['action'] == 'capture' else 'appended'} {plan['path']}")
+                elif args.write:
+                    steps.append(f"skipped {plan['path']} (identity present)")
+        if args.write:
+            errors, warnings = run_validate(root, check_index=False)
+            validation = {"errors": errors, "warnings": len(warnings)}
+    except NoteWriteError as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, ensure_ascii=False, indent=1, sort_keys=True))
+        else:
+            print(f"error: {exc}", file=sys.stderr)
+        return 1
+    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base")}
+    payload["steps"] = steps
+    if validation is not None:
+        payload["validation"] = validation
+    if plan["action"] == "ingest":
+        lines = [
+            f"action  ingest  {plan['capture']} -> {plan['path']}" + ("  (declassified)" if plan["declassified"] else ""),
+            f"ingest  {len(plan['ingested'])} new, {len(plan['skipped'])} already present",
+        ]
+        lines.extend(f"row  {row}" for row in plan["rows"])
+    else:
+        lines = [f"action  {plan['action']}  {plan['path']}" + ("  (restricted/private)" if plan["restricted"] else ""), plan["row"]]
+    lines.extend(f"applied  {step}" for step in steps)
+    if validation is not None:
+        for f in validation["errors"]:
+            location = f["path"] + (f":{f['line']}" if f["line"] is not None else "")
+            lines.append(f"ERROR {location} {f['rule']}: {f['message']}")
+        lines.append(f"validate  {len(validation['errors'])} errors, {validation['warnings']} warnings")
+    emit(payload, args.json, lines)
+    return 1 if (validation is not None and validation["errors"]) else 0
 
 
 def cmd_config(root: Path, args) -> int:
@@ -12296,30 +13914,223 @@ def cmd_notify(root: Path, args) -> int:
     return _load_notifications_module().command(sys.modules[__name__], root, args)
 
 
-def cmd_validate(root: Path, args) -> int:
-    errors, warnings = run_validate(
-        root,
-        args.check_index,
-        requested_environment=getattr(args, "requested_env", None),
+BASELINE_SCHEMA_VERSION = 1
+_BASELINE_DIGITS_RE = re.compile(r"(?<!\S)\d+(?!\S)")
+
+
+def baseline_key(finding: dict) -> tuple[str, str, str]:
+    """§10.6 identity of a warning for ratchet purposes: path, rule, and the
+    message with every digit run folded to `#`. Line numbers are excluded and
+    digits folded so that a note growing or a link moving down the file never
+    turns a standing warning into a new one; a different link target or a
+    different rule always does."""
+    return (
+        finding["path"],
+        finding["rule"],
+        _BASELINE_DIGITS_RE.sub("#", finding["message"]),
     )
+
+
+class BaselineError(RuntimeError):
+    pass
+
+
+def serialize_baseline(warnings: list[dict]) -> bytes:
+    """§10.6 baseline bytes for these warnings. Backstop: a warning whose
+    message matches any §10.5 secret rule is refused outright — the baseline
+    is pruned from the corpus, so nothing downstream would ever rescan it."""
+    counts: dict[tuple[str, str, str], int] = {}
+    for f in warnings:
+        k = baseline_key(f)
+        counts[k] = counts.get(k, 0) + 1
+    rows = [
+        {"count": n, "message": k[2], "path": k[0], "rule": k[1]}
+        for k, n in sorted(counts.items())
+    ]
+    for row in rows:
+        for name, pattern in SECRET_RULES:
+            if pattern.search(row["message"]) or pattern.search(row["path"]):
+                raise BaselineError(
+                    f"refusing to baseline {row['path']} {row['rule']}: the warning "
+                    f"text matches secret rule {name!r} — remove the credential first"
+                )
+    payload = {"schemaVersion": BASELINE_SCHEMA_VERSION, "warnings": rows}
+    return (json.dumps(payload, ensure_ascii=False, indent=1, sort_keys=True) + "\n").encode("utf-8")
+
+
+def parse_baseline(data: object) -> dict[tuple[str, str, str], int] | None:
+    """Strict §10.6 shape check: None (no baseline — every warning is new)
+    unless `warnings` is a list of objects with string `path`/`rule`/
+    `message` and a positive, non-boolean integer `count`."""
+    if not isinstance(data, dict) or data.get("schemaVersion") != BASELINE_SCHEMA_VERSION:
+        return None
+    rows = data.get("warnings")
+    if not isinstance(rows, list):
+        return None
+    counts: dict[tuple[str, str, str], int] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            return None
+        path, rule, message = row.get("path"), row.get("rule"), row.get("message")
+        count = row.get("count", 1)
+        if not (isinstance(path, str) and path and isinstance(rule, str) and rule):
+            return None
+        if not isinstance(message, str):
+            return None
+        if type(count) is not int or count < 1:
+            return None
+        k = (path, rule, message)
+        counts[k] = counts.get(k, 0) + count
+    return counts
+
+
+def _read_regular_file_nofollow(root: Path, rel: str, *, max_bytes: int) -> bytes | None:
+    """Bytes of a vault-relative regular file reached without following any
+    symlink (the §20 reader: openat + O_NOFOLLOW on POSIX, identity-checked
+    fallback elsewhere), or None when absent, unsafe, or over `max_bytes`."""
+    try:
+        return _read_nofollow_bytes(root, rel, max_bytes=max_bytes)
+    except OSError:
+        return None
+
+
+def load_baseline(root: Path) -> dict[tuple[str, str, str], int] | None:
+    """The committed baseline as key -> count, or None when absent, unsafe
+    (a symlink anywhere on its path), unreadable, or malformed — every
+    warning is then new: a broken or substituted baseline fails open, it
+    never hides warnings."""
+    raw = _read_regular_file_nofollow(root, BASELINE_RELPATH, max_bytes=16 * 1024 * 1024)
+    if raw is None:
+        return None
+    try:
+        data = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError):
+        return None
+    return parse_baseline(data)
+
+
+def write_baseline(root: Path, payload: bytes) -> None:
+    """Atomically replace the baseline through an authenticated parent: every
+    path component below the vault root must be a real directory (never a
+    symlink), the target itself is never followed, and the bytes land via a
+    same-directory temporary file and rename."""
+    parts = PurePosixPath(BASELINE_RELPATH).parts
+    current = root
+    for part in parts[:-1]:
+        current = current / part
+        try:
+            mode = current.lstat().st_mode
+        except FileNotFoundError:
+            os.mkdir(current)
+            mode = current.lstat().st_mode
+        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+            raise BaselineError(f"refusing to write through {current.relative_to(root).as_posix()}: not a real directory")
+    target = current / parts[-1]
+    if os.path.lexists(target) and (target.is_symlink() or not target.is_file()):
+        raise BaselineError(f"refusing to replace {BASELINE_RELPATH}: not a regular file")
+    try:
+        _replace_regular_file(current, parts[-1], target, payload)
+    except NoteWriteError as exc:
+        raise BaselineError(str(exc)) from exc
+
+
+def ratchet_warnings(
+    warnings: list[dict], baseline: dict[tuple[str, str, str], int] | None
+) -> tuple[list[dict], list[dict], int]:
+    """Split warnings into (new, baselined) against the baseline; the third
+    value is the number of baseline entries no longer observed (stale). With
+    no baseline everything is new. Within one key the first `count`
+    occurrences in §10.4 order are baselined and the rest are new."""
+    if baseline is None:
+        return list(warnings), [], 0
+    remaining = dict(baseline)
+    new: list[dict] = []
+    old: list[dict] = []
+    for f in warnings:
+        k = baseline_key(f)
+        if remaining.get(k, 0) > 0:
+            remaining[k] -= 1
+            old.append(f)
+        else:
+            new.append(f)
+    stale = sum(n for n in remaining.values() if n > 0)
+    return new, old, stale
+
+
+def _write_baseline_command(root: Path, args, errors: list[dict], warnings: list[dict]) -> int:
+    """§10.6 `--write-baseline`: the baseline is written only from a run with
+    zero errors; on any error, or a refused serialization, the existing file
+    is left byte-for-byte untouched and the findings are printed instead."""
+    payload: bytes | None = None
+    refusal: str | None = None
+    if errors:
+        refusal = f"{len(errors)} errors — baseline not written (fix the errors first)"
+    else:
+        try:
+            payload = serialize_baseline(warnings)
+            write_baseline(root, payload)
+        except BaselineError as exc:
+            refusal = f"{exc} — baseline not written"
     if args.json:
         print(
             json.dumps(
-                {"errors": errors, "warnings": warnings},
+                {
+                    "baselined": len(warnings) if refusal is None else 0,
+                    "errors": errors,
+                    "path": BASELINE_RELPATH,
+                    "refusal": refusal,
+                    "written": refusal is None,
+                },
                 ensure_ascii=False,
                 indent=1,
                 sort_keys=True,
             )
         )
     else:
-        for f in errors + warnings:
+        for f in errors:
+            location = f["path"] + (f":{f['line']}" if f["line"] is not None else "")
+            print(f"ERROR {location} {f['rule']}: {f['message']}")
+        if refusal is None:
+            print(f"{BASELINE_RELPATH}: {len(warnings)} warnings baselined")
+        else:
+            print(f"{BASELINE_RELPATH}: {refusal}", file=sys.stderr)
+    return 0 if refusal is None else 1
+
+
+def cmd_validate(root: Path, args) -> int:
+    errors, warnings = run_validate(
+        root,
+        args.check_index,
+        requested_environment=getattr(args, "requested_env", None),
+    )
+    if getattr(args, "write_baseline", False):
+        return _write_baseline_command(root, args, errors, warnings)
+    show_all = getattr(args, "all", False)
+    baseline = None if show_all else load_baseline(root)
+    new, baselined, stale = ratchet_warnings(warnings, baseline)
+    if args.json:
+        print(
+            json.dumps(
+                {"baselined": baselined, "errors": errors, "warnings": new},
+                ensure_ascii=False,
+                indent=1,
+                sort_keys=True,
+            )
+        )
+    else:
+        for f in errors + new:
             severity = "ERROR" if f in errors else "WARN"
             location = f["path"] + (f":{f['line']}" if f["line"] is not None else "")
             print(f"{severity} {location} {f['rule']}: {f['message']}")
-        print(f"{len(errors)} errors, {len(warnings)} warnings")
+        summary = f"{len(errors)} errors, {len(new)} warnings"
+        if baseline is not None:
+            summary += f" ({len(baselined)} baselined, hidden; --all shows them)"
+            if stale:
+                summary += f"; {stale} baseline entries cleared — run `brain validate --write-baseline`"
+        print(summary)
     if errors:
         return 1
-    if warnings:
+    if new:
         return 2
     return 0
 
@@ -12537,9 +14348,49 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("n", nargs="?", type=int, default=10)
     p = add("validate", help="check vault conventions; exit 0 clean / 1 errors / 2 warnings")
     p.add_argument("--check-index", action="store_true", help="also verify the committed index is fresh")
+    p.add_argument("--all", action="store_true", help="also show warnings covered by the committed baseline (§10.6)")
+    p.add_argument("--write-baseline", action="store_true", help="rewrite the committed warning baseline from this run and exit")
     p = add("curate", help="re-review signals: expired, missing/over-cap expires, oversized, stale, orphans, unreferenced assets")
     p.add_argument("--check-urls", action="store_true", help="also probe source URLs over the network (never pre-commit)")
-    add("context", help="bootstrap docs' sizes against their context budgets")
+    p = add("context", help="bootstrap docs' sizes against their context budgets")
+    p.add_argument(
+        "--for",
+        dest="for_skill",
+        metavar="SKILL",
+        default=None,
+        help="instead: the notes one run of SKILL loads (bootstrap set, SKILL.md, its References)",
+    )
+    p = add("bootstrap", help="preview/check/write the compiled bootstrap file 00_Meta/BOOTSTRAP.md (spec §28)")
+    bootstrap_mode = p.add_mutually_exclusive_group()
+    bootstrap_mode.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 1 when the compiled file is absent, stale, or over budget; never write",
+    )
+    bootstrap_mode.add_argument("--write", action="store_true", help="write the compiled file (the only writer)")
+    p = add("triage-archive", help="roll an applied Inbox triage report into the month's archive log (spec §29.1)")
+    p.add_argument("report", help="vault-relative path of the report under 02_Inbox/")
+    p.add_argument("--revise", action="store_true", help="a report already archived with different bytes: append a distinct revision instead of refusing")
+    p.add_argument("--write", action="store_true", help="append (or move) and delete the report; preview otherwise")
+    p = add("trace", help="trace one capture into the daily and weekly notes for its event date (spec §29.2)")
+    p.add_argument("--date", required=True, metavar="YYYY-MM-DD", help="the capture's event date, never the triage date")
+    p.add_argument("--destination", required=True, metavar="PATH", help="vault-relative path of the filed note")
+    p.add_argument("--summary", required=True, help="one-line link label (the capture's summary)")
+    p.add_argument("--id", dest="identity", required=True, metavar="IDENTITY", help="stable capture identity (e.g. the original Inbox path); reruns with the same identity are no-ops")
+    p.add_argument("--kind", choices=sorted(WEEKLY_KIND_SECTIONS), default=None, help="also add a line under the weekly Get Current section for this kind")
+    p.add_argument("--write", action="store_true", help="write the notes; preview otherwise")
+    p = add("accepted", help="ingest a retrospective report's accepted-proposal rows into the acceptance log (spec §29.4)")
+    p.add_argument("--ingest", required=True, metavar="REPORT", help="vault-relative path of the Inbox report holding a '## Accepted proposals' table")
+    p.add_argument("--write", action="store_true", help="write; preview otherwise")
+    p = add("gap", help="log a question the vault could not answer to the gap queue (spec §29.3)")
+    p.add_argument("--question", default=None, help="the question as asked (forced onto one line, markup escaped)")
+    p.add_argument("--ingest", default=None, metavar="CAPTURE", help="instead: move the rows of an Inbox gap capture into the queue and delete the capture")
+    p.add_argument("--declassify", action="store_true", help="with --ingest: the owner's explicit decision to move a restricted/private capture's row into the public queue")
+    p.add_argument("--term", dest="terms", action="append", default=[], metavar="TERM", help="a term you searched (repeatable)")
+    p.add_argument("--nearest", action="append", default=[], metavar="PATH", help="a nearest note, vault-relative (repeatable)")
+    p.add_argument("--sensitive", action="store_true", help="route to a restricted Inbox capture instead of the public queue")
+    p.add_argument("--inbox", action="store_true", help="autonomous class: write an Inbox capture instead of appending to the queue")
+    p.add_argument("--write", action="store_true", help="write; preview otherwise")
     add("config", help="effective vault config (00_Meta/config.yaml merged over defaults)")
     p = add("tasks", help="checkbox tasks across the vault (spec §17)")
     p.add_argument("--open", action="store_true", help="open (unchecked) tasks only")
@@ -12670,6 +14521,11 @@ def main(argv: list[str] | None = None) -> int:
         "validate": cmd_validate,
         "curate": cmd_curate,
         "context": cmd_context,
+        "bootstrap": cmd_bootstrap,
+        "triage-archive": cmd_triage_archive,
+        "trace": cmd_trace,
+        "gap": cmd_gap,
+        "accepted": cmd_accepted,
         "config": cmd_config,
         "report": cmd_report,
         "tasks": cmd_tasks,
@@ -12685,6 +14541,11 @@ def main(argv: list[str] | None = None) -> int:
             "validate",
             "index",
             "context",
+            "bootstrap",
+            "triage-archive",
+            "trace",
+            "gap",
+            "accepted",
             "config",
             "remote-safety",
             "install",

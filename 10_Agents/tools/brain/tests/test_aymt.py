@@ -924,7 +924,7 @@ class AymtCliPrivacyTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[4]
         names = sorted(
             path.parent.name
-            for path in (root / "10_Agents/skills").glob("*/SKILL.md")
+            for path in (root / "10_Agents/skills").glob("**/SKILL.md")
         )
         self.assertEqual(len(names), 24)
         self.assertIn("aymt", names)

@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[4]
-ONBOARD_OWNER = ROOT / "10_Agents/skills/onboard-owner/SKILL.md"
+ONBOARD_OWNER = ROOT / "10_Agents/skills/setup/onboard-owner/SKILL.md"
 AGENTS = ROOT / "AGENTS.md"
 CONVENTIONS = ROOT / "00_Meta/CONVENTIONS.md"
 
@@ -100,7 +100,8 @@ class OnboardOwnerStagesTests(unittest.TestCase):
 
     def test_people_guidance_never_depends_on_deleted_example(self):
         text = read(ONBOARD_OWNER)
-        self.assertIn("[people-note guidance](../../../03_Journal/people/README.md)", text)
+        # The skill lives one level deeper since it moved under setup/.
+        self.assertIn("[people-note guidance](../../../../03_Journal/people/README.md)", text)
         self.assertNotIn("example-person", text)
 
 

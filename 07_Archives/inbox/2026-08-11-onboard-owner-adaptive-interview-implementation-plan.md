@@ -6,7 +6,7 @@ tags:
   - audience/agent
   - topic/onboarding
   - status/done
-updated: 2026-08-11
+updated: 2026-09-04
 ---
 
 # Implementation Plan: onboard-owner adaptive interview
@@ -47,5 +47,5 @@ Executes [the R1–R5 requirements](2026-08-11-onboard-owner-adaptive-interview-
 ## Related
 
 - [Requirements (R1–R5)](2026-08-11-onboard-owner-adaptive-interview-requirements.md) — what this plan executes
-- [SKILL](../../10_Agents/skills/onboard-owner/SKILL.md) — the file edited
-- [SKILL](../../10_Agents/skills/agent-orientation/SKILL.md) — referenced in step 3
+- [SKILL](../../10_Agents/skills/setup/onboard-owner/SKILL.md) — the file edited
+- [SKILL](../../10_Agents/skills/setup/agent-orientation/SKILL.md) — referenced in step 3

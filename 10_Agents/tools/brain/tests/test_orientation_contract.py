@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(ROOT / "10_Agents" / "tools" / "brain"))
 import brain  # noqa: E402
-ORIENTATION = ROOT / "10_Agents/skills/agent-orientation/SKILL.md"
+ORIENTATION = ROOT / "10_Agents/skills/setup/agent-orientation/SKILL.md"
 ENVIRONMENTS_README = ROOT / "10_Agents/environments/README.md"
 RECOMMENDED_AUTOMATIONS = ROOT / "10_Agents/skills/recommended-automations/SKILL.md"
 SELF_MAINTENANCE = ROOT / "10_Agents/skills/self-maintenance/SKILL.md"

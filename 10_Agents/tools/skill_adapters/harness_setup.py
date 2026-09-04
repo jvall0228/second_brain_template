@@ -14,7 +14,7 @@ import os
 import sys
 from pathlib import Path
 
-from gen_skill_adapters import AdapterError, catalog, check
+from gen_skill_adapters import AdapterError, OUTPUT_ROOTS, catalog, check
 
 
 HARNESSES = (
@@ -99,6 +99,13 @@ def global_preview(repo: Path, home: Path, harness: str) -> dict[str, object]:
     warnings: list[str] = []
 
     if harness == "copilot":
+        # Copilot discovers skills as the immediate child folders of a
+        # registered location and ignores symlinks, so the registration
+        # target is the generated flat adapter directory — real directories
+        # and files, one per catalogued skill at any canonical depth (a
+        # grouped skill such as setup/onboard-owner is a top-level entry
+        # there), each pointing at its canonical SKILL.md.
+        adapter_root = repo / OUTPUT_ROOTS[0]
         actions.append(
             {
                 "operation": "register-skill-directory",
@@ -106,8 +113,9 @@ def global_preview(repo: Path, home: Path, harness: str) -> dict[str, object]:
                     "copilot",
                     "skill",
                     "add",
-                    (repo / "10_Agents/skills").as_posix(),
+                    adapter_root.as_posix(),
                 ],
+                "skills": [skill.name for skill in skills],
                 "state": "requires-provider-preflight",
             }
         )

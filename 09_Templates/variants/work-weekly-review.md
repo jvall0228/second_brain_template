@@ -59,6 +59,8 @@ Review ongoing responsibilities and whether their derived active-Project rollups
 
 List events and activities informally from memory.
 
+- **What the vault did for you this week:** an answer it gave, a capture that paid off, a review that caught something — or nothing, which is also data.
+
 ### Wins
 
 What shipped, landed, or moved this week?

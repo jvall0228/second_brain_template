@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -95,7 +95,7 @@ Environment facts (not harness or vault facts):
 
 ## Where the inventory lands
 
-One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [README](../../environments/README.md) for the contract: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment.
+One inventory note **per environment**, under `10_Agents/environments/<env-slug>/` (e.g. `10_Agents/environments/work-macbook/orientation-inventory.md`). See [README](../../../environments/README.md) for the contract: environment-scoped, **never bootstrap-linked**, and each note opens with a self-guarding applicability preamble naming its environment.
 
 Before reading or writing an inventory, resolve the current environment with
 `brain env detect --json`. If a legacy unregistered directory exists, run
@@ -188,6 +188,6 @@ session: <session-or-pr-ref>
 
 ## References
 
-- [README](../../environments/README.md) — the environment-scoped landing convention (minimal slice of #15)
+- [README](../../../environments/README.md) — the environment-scoped landing convention (minimal slice of #15)
 - `10_Agents/harnesses/<name>/wiring.md` — what this harness can reach and how (static; verify live)
 - `00_Meta/PRD.md` §8.4, §16.2, §8.3 — the ladder, the credentials rule, the harness tiers

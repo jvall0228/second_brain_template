@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-09-04
 ---
 
 # Archives
@@ -28,7 +28,7 @@ Mirror the source structure:
 - `07_Archives/projects/` — completed or cancelled projects
 - `07_Archives/areas/` — areas you've stepped away from
 - `07_Archives/resources/` — outdated reference material
-- `07_Archives/inbox/` — Inbox items that served their purpose without migrating to PARA
+- `07_Archives/inbox/` — Inbox items that served their purpose without migrating to PARA, and the monthly triage logs (`YYYY-MM-triage-log.md`, one per month of [triage-inbox](../10_Agents/skills/triage-inbox/SKILL.md) runs, written only by `brain triage-archive`; restricted reports stay separate notes)
 - `07_Archives/outbox/` — shipped (or abandoned) Outbox packets, moved here with `status/done` — see [README](../02_Outbox/README.md)
 - `07_Archives/assets/` — large or obsolete assets moved from `08_Assets/`
 

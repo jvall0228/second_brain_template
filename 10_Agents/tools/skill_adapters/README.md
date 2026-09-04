@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-01
 expires: 2027-08-11
 ---
 
@@ -33,4 +33,4 @@ regenerates adapters, while CI checks freshness before its generated-file backfi
 read-only. `harness_setup.py` is also read-only: it verifies repository
 surfaces or emits exact external paths/commands for approval, and deliberately
 has no apply mode. Optional user-global installation remains separately consented by
-[onboard-harness](../../skills/onboard-harness/SKILL.md).
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md).

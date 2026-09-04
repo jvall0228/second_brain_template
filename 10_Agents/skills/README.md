@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -13,7 +13,7 @@ expires: 2027-08-11
 
 Harness-agnostic skills in the [Agent Skills format](https://agentskills.io): one folder per skill containing a `SKILL.md` whose frontmatter carries the standard `name` + `description` **plus** the vault contract (`title`, `tags`, `updated`) — a superset; harnesses ignore the extra keys, and `brain validate` enforces both contracts.
 
-Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for Claude Code) consume these unchanged — the [onboard-harness](onboard-harness/SKILL.md) skill symlinks them into a harness's user config.
+Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for Claude Code) consume these unchanged — the [onboard-harness](setup/onboard-harness/SKILL.md) skill symlinks them into a harness's user config.
 
 ## The CODE Loop in This Vault
 
@@ -71,24 +71,26 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 | [merge-notes](merge-notes/SKILL.md) | Execute approved merges, splits, and renames: rewrite, retarget backlinks, archive, validate |
 | [recommended-automations](recommended-automations/SKILL.md) | Wire inbound capture flows and rhythm jobs via the harness's scheduler |
 | [self-maintenance](self-maintenance/SKILL.md) | Audit generated tooling: validate, prune, update, propose promotions |
-| [sync-upstream](sync-upstream/SKILL.md) | Pull upstream template releases into the fork: detect via `template_version` + release tags, classify (machinery / owner content / canonical docs), apply per lane, backfill, report — pull-only, dry-run first |
+| [sync-upstream](sync-upstream/SKILL.md) | Adopt `second_brain_template` releases into the fork: detect via `template_version` + release tags, classify (machinery / owner content / canonical docs), apply per lane, backfill, report — pull-only, dry-run first; **not** for ordinary git syncing of a branch against `origin`/`main` |
 | [self-improve](self-improve/SKILL.md) | The self-improving loop: observe friction (`brain report` trends, git history, triage outcomes, solution notes), propose single-topic spec changes (canonical docs by PR, else Inbox notes), record rejections, recur monthly — propose-only, never push upstream |
 
-### Onboarding & environment
+### Setup (one-time)
+
+Grouped under [setup/](setup/README.md) so the everyday catalog above stays flat; adapters still expose each by name.
 
 | Skill | Does |
 |-------|------|
-| [onboard-owner](onboard-owner/SKILL.md) | Guided first-run for a new (possibly non-technical) vault owner: teach by doing, fill the profile, orchestrate the other onboarding skills |
-| [onboard-harness](onboard-harness/SKILL.md) | Symlink-first user-scope install into a harness + memory-file wiring + hook |
-| [agent-orientation](agent-orientation/SKILL.md) | Discover reachable context sources and generate access tooling + capture skills |
+| [onboard-owner](setup/onboard-owner/SKILL.md) | Guided first-run for a new (possibly non-technical) vault owner: teach by doing, fill the profile, orchestrate the other onboarding skills |
+| [onboard-harness](setup/onboard-harness/SKILL.md) | Symlink-first user-scope install into a harness + memory-file wiring + hook |
+| [agent-orientation](setup/agent-orientation/SKILL.md) | Discover reachable context sources and generate access tooling + capture skills |
 
 ## Recommended community skills
 
-Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — branch-tracked upstreams (installs the latest), license and trust notes, per-item owner sign-off against the fetched content — lives at [recommended-skills](../../06_Resources/recommended-skills.md), backed by the machine-readable registry [10_Agents/components/manifest.json](../components/README.md) (which also carries first-party overlays and vault-config presets). Community content installs to the harness's user scope via [onboard-harness](onboard-harness/SKILL.md) and is never vendored into this directory.
+Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — branch-tracked upstreams (installs the latest), license and trust notes, per-item owner sign-off against the fetched content — lives at [recommended-skills](../../06_Resources/recommended-skills.md), backed by the machine-readable registry [10_Agents/components/manifest.json](../components/README.md) (which also carries first-party overlays and vault-config presets). Community content installs to the harness's user scope via [onboard-harness](setup/onboard-harness/SKILL.md) and is never vendored into this directory.
 
 ## The Rhythm (cadence table)
 
-**This table is the single source of truth for the vault's operating cadence.** [recommended-automations](recommended-automations/SKILL.md) wires it into the harness's scheduler; [onboard-owner](onboard-owner/SKILL.md) teaches it as "the rhythm"; [CONVENTIONS](../../00_Meta/CONVENTIONS.md) points here.
+**This table is the single source of truth for the vault's operating cadence.** [recommended-automations](recommended-automations/SKILL.md) wires it into the harness's scheduler; [onboard-owner](setup/onboard-owner/SKILL.md) teaches it as "the rhythm"; [CONVENTIONS](../../00_Meta/CONVENTIONS.md) points here.
 
 | Cadence | Skills | Trigger |
 |---------|--------|---------|

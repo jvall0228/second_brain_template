@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - topic/software
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2026-11-11
 author: claude-code
 session: https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73
@@ -19,7 +19,7 @@ The **machine-readable source of truth** for the whole recommended-component lib
 
 - **Links-only, tracking latest, never vendored copies.** Each item records its upstream URL, the branch it **tracks**, a one-paragraph local summary, its license, and a trust note. The vault never carries third-party content in its own history — only these curated pointers, plus (owner decision, 2026-08-11) **branch-tracking git submodules under `.extern/`** where materialization helps: a submodule stores only the `.gitmodules` tracking config (`branch = main`), content materializes opt-in via `git submodule update --init --remote` at the tracked branch's current tip, and the dot-prefixed path keeps it outside the note corpus, index, secret scan, and adopter flow. Licensing stays upstream's; the install fetches whatever the tracked branch currently holds.
 - **Per-item owner sign-off**, matching the community-extension precedent ([PRD](../00_Meta/PRD.md) §6.5): first-party items may install by default; community items require an explicit yes during onboarding, recorded in the install manifest. Because installs track latest, that yes is given **against the content fetched at install time** — the review is the supply-chain safeguard.
-- **Install path:** [onboard-harness](../10_Agents/skills/onboard-harness/SKILL.md) fetches the latest from the tracked branch into the harness's **user scope** at install time (see its "Optional: recommended components" section). Installs are manifest-driven and reversible.
+- **Install path:** [onboard-harness](../10_Agents/skills/setup/onboard-harness/SKILL.md) fetches the latest from the tracked branch into the harness's **user scope** at install time (see its "Optional: recommended components" section). Installs are manifest-driven and reversible.
 
 ## Item format
 

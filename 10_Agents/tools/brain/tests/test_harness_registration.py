@@ -14,10 +14,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
 SHARED = "~/.agents/second-brain/AGENTS.md"
-ONBOARD = ROOT / "10_Agents/skills/onboard-harness/SKILL.md"
+ONBOARD = ROOT / "10_Agents/skills/setup/onboard-harness/SKILL.md"
 HARNESS_DIR = ROOT / "10_Agents/harnesses"
 HARNESS_README = HARNESS_DIR / "README.md"
-ONBOARD_OWNER = ROOT / "10_Agents/skills/onboard-owner/SKILL.md"
+ONBOARD_OWNER = ROOT / "10_Agents/skills/setup/onboard-owner/SKILL.md"
 HARNESS_WIRING = {
     "claude-code": HARNESS_DIR / "claude-code/wiring.md",
     "codex": HARNESS_DIR / "codex/wiring.md",

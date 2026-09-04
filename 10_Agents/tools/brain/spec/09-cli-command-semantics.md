@@ -1,0 +1,42 @@
+---
+title: "brain Spec §9 — CLI command semantics"
+tags:
+  - type/reference
+  - audience/agent
+  - audience/human
+  - topic/software
+  - workflow/canonical
+updated: 2026-09-01
+expires: 2027-08-11
+---
+
+# 9. CLI command semantics
+
+*Section 9 of the [`brain` spec](../SPEC.md); section numbers are stable and `§N.x` references across the spec point at these files.*
+
+Invocation: `brain <command> [args]`. A clean checkout can use the root resolver (`./brain` on POSIX, `brain.cmd` on Windows); the universal long-form fallback is `python3 10_Agents/tools/brain/brain.py <command> [args]`. Every command accepts `--json`; human output is plain text. Query commands **rebuild the index in memory from the working corpus on every run** (the vault is small; stale reads are worse than the milliseconds) — the committed `vault-index.json` exists for consumers who read JSON without running Python and is written only by `index`. Exit codes: `0` success, `1` operational error (bad argument, note not found); `validate` alone uses the three-code contract in §10.4. Resolver-specific failures use §21.1.
+
+Where a command takes a `<note>` argument, it accepts a vault-relative path or a bare name; the argument gets §5.1 target normalization (one trailing `.md` stripped — so `brain show 00_Meta/PRD.md` works) and then the §6 ladder. Transactional commands may use exit `2` for an explicit recovery-required state as defined by their command contract.
+
+- **`index`** — rebuild from the index corpus and write `vault-index.json` per §8; print the path written.
+- **`list`** — note paths, sorted. Filters (ANDed): `--dir PREFIX` (path prefix), `--tag TAG` repeatable (effective-tag exact match; a trailing `/*` matches the whole namespace), `--type X` (sugar for `--tag type/X`). JSON: array of `{path, restricted, title, updated}` (`restricted` per the §8.3 classifier — additive privacy metadata, R11/KTD3, since list rows carry titles and are content-bearing). Human rows stay **plain machine-consumable path lines with no marker**: the documented `.cursorignore` generator (harnesses/cursor/wiring.md) consumes each printed line verbatim as a path, so `list` alone carries privacy provenance only in its JSON rows' `restricted` field.
+- **`search <query>`** — case-insensitive substring over title, heading texts, and body (body searched in full, code blocks included); combinable with `--tag`. Human: `path:line: snippet` for body/heading hits, `path: title: <title>` for title hits; a hit from a restricted note (§8.3 classifier — frontmatter tags only) gets a trailing `  [restricted]` marker. JSON: array of `{path, field, line, restricted, snippet}` (`field` ∈ `title` | `heading` | `body`; `line` is `null` for title hits; `restricted` is the note's boolean privacy classification — R11/KTD3: content-bearing rows must let consumers preserve provenance; the field is additive, every pre-existing key is unchanged). With `--semantic`, the command instead ranks whole notes by the §18.4 hybrid rule (degrading to exactly this keyword behavior when semantic ranking is impossible — §18.4 defines both modes).
+- **`links <note>`** — the note's outgoing generic records, backlinks, unresolved targets, and explicit `legacyCount`/`placeholderCount`. JSON: `{path, outgoing, backlinks, unresolved, legacyCount, placeholderCount}`.
+- **`projects`** — §27: canonical active Project inventory and Area rollup drift. `--json` returns the versioned registry view; explicit `--write-rollups` source-hashes and rewrites only each Area's `## Active Projects` section.
+- **`archive-project <slug>`** — §27.4: zero-write whole-directory archive preview; explicit `--write --approve-archive` applies and stages it; `--recover` rolls back authenticated interrupted evidence.
+- **`migrate-links`** — §22: source-hashed preview by default; `--check` exits 1 while any legacy link (including a placeholder) or blocker remains; explicit `--write` performs recovery and the crash-recoverable transaction. `--check` and `--write` are mutually exclusive; all modes support `--json`.
+- **`tags`** — effective-tag usage counts grouped by namespace (text before the first `/`; tags without `/` group under `(none)`), sorted by namespace then value. JSON: `{namespace: {value: count}}`.
+- **`show <note>`** — the full §8.1 record for one note (human output: a readable summary of the same fields).
+- **`recent [n]`** — `n` (default 10) notes by `updated` descending; ties broken by working-tree mtime descending, then path ascending; notes with `updated: null` sort last (per PRD §15, `updated` is the primary recency signal and day-granular). JSON: array of `{path, restricted, title, updated}` (`restricted` per the §8.3 classifier — additive privacy metadata, R11/KTD3). Human rows for restricted notes get a trailing `  [restricted]` marker. Every row shape that exposes note titles or content (`list`, `recent`, `search`, `tasks`, semantic rows) carries the same additive `restricted` field.
+- **`validate`** — §10.
+- **`curate`** — the §14 re-review signals as one report: expired, missing `expires:`, expires beyond the one-year cap, oversized, stale (days-old weighted by backlink count, sorted worst-first), orphans, unreferenced `08_Assets/` files; `--check-urls` additionally probes source URLs over the network (opt-in only; never runs pre-commit). JSON: one sorted array per signal.
+- **`context`** — each bootstrap doc's byte size against its §14 budget, plus the total and the §28 compiled file's size and freshness; missing docs report `null`. JSON: `{bootstrap, docs, totalBudget, totalBytes}`. `--for <skill>` — §28.3 skill-scoped context instead.
+- **`bootstrap`** — §28: compiled bootstrap file. Preview to stdout by default; `--check` exits 1 when absent, stale, or over budget; `--write` is the only writer.
+- **`triage-archive <report>`** — §29.1: roll an applied Inbox triage report into `07_Archives/inbox/YYYY-MM-triage-log.md` (links rebased, headings demoted, identity marker, retry-safe append-then-delete); preview by default, `--write` applies and validates.
+- **`gap`** — §29.3: log an unanswered question to the gap queue as one escaped, identity-marked line (restricted nearest notes named by path only); a sensitive gap or an autonomous run (`--inbox`) becomes an Inbox capture instead, and `--ingest <capture>` moves such a capture's rows into the queue once (a restricted capture only with `--declassify`); preview by default, `--write` applies and validates.
+- **`accepted`** — §29.4: `--ingest <report>` appends a retrospective report's `## Accepted proposals` rows to the acceptance log, skipping rows already present; preview by default, `--write` applies and validates.
+- **`trace`** — §29.2: trace one capture into the daily and ISO-week weekly notes for its event date, instantiating them from the templates when missing and deduping on the capture identity; preview by default, `--write` applies and validates.
+- **`report`** — §16: the five-section vault-health synthesis (stale-active, orphans, Inbox aging, tag drift, unresolved links); `--since YYYY-MM-DD` scopes the two change-attributable sections per §16.3. Thresholds come from the `report` config key (§15.3) with built-in defaults.
+- **`tasks`** — §17.3: checkbox tasks across the vault, filterable by `--open`, `--due <date|today>`, `--overdue`, `--project PREFIX`.
+- **`embed`** — §18.3: maintain the semantic-search embeddings sidecar. `--stdin-json` ingests precomputed vectors, `--local` embeds with the optional local model, `--status` reports coverage.
+- **`notify`** — §26: configure/check an ignored selected-environment notification boundary or validate/format a strict push-only envelope. Preview is the default zero-write mode; actual delivery is limited to `--deliver-file --approve-private-send`.

@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2026-11-11
 ---
 
@@ -62,4 +62,4 @@ Know what this does and does not give you — it is **path-based, Cursor-specifi
 
 ## Reference configs
 
-The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); [onboard-harness](../../skills/onboard-harness/SKILL.md) performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`, default install) and `overlay/cursorignore-template.txt` (seed for `.cursorignore` — owner-opt-in only; the generation step above runs solely when the owner selects harness-level read restriction).
+The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); [onboard-harness](../../skills/setup/onboard-harness/SKILL.md) performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`, default install) and `overlay/cursorignore-template.txt` (seed for `.cursorignore` — owner-opt-in only; the generation step above runs solely when the owner selects harness-level read restriction).

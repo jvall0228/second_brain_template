@@ -7,14 +7,14 @@ tags:
   - topic/onboarding
   - topic/template
   - workflow/draft
-updated: 2026-08-11
+updated: 2026-09-04
 author: claude-code
 session: onboarding-2026-08-11
 ---
 
 # Onboard-owner template feedback — 2026-08-11 dry run 2
 
-Owner feedback from a second live [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md) dry run (Claude Code, vault `second_brain_test`, cloned from the public `second_brain_template` repo). Capture for template / skill updates — not owner profile content. A prior dry run's feedback already landed as [adaptive-interview requirements](../07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md); this run surfaced gaps beyond that fix.
+Owner feedback from a second live [onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md) dry run (Claude Code, vault `second_brain_test`, cloned from the public `second_brain_template` repo). Capture for template / skill updates — not owner profile content. A prior dry run's feedback already landed as [adaptive-interview requirements](../07_Archives/inbox/2026-08-11-onboard-owner-template-feedback.md); this run surfaced gaps beyond that fix.
 
 ## Feedback
 
@@ -37,7 +37,7 @@ Owner feedback from a second live [onboard-owner](../10_Agents/skills/onboard-ow
 - Seed content: one real project captured (car theft → repair/reimbursement follow-up), no area surfaced
 - First capture → triage: worked well end to end (car interest → filed into `01_Profile/IDENTITY.md` § Interests, Inbox copy cleared)
 - Stages 7, 8, 9 all deferred per owner instruction (see items 2–3 above)
-- Related skill: [SKILL](../10_Agents/skills/onboard-owner/SKILL.md); also touches [SKILL](../10_Agents/skills/onboard-harness/SKILL.md) and [SKILL](../10_Agents/skills/agent-orientation/SKILL.md)
+- Related skill: [SKILL](../10_Agents/skills/setup/onboard-owner/SKILL.md); also touches [SKILL](../10_Agents/skills/setup/onboard-harness/SKILL.md) and [SKILL](../10_Agents/skills/setup/agent-orientation/SKILL.md)
 
 ## Suggested triage
 

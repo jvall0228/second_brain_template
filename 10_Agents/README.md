@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -23,7 +23,7 @@ Twelve harness-agnostic skills in the Agent Skills format (folder-per-skill `SKI
 
 ## Components
 
-The recommended-component registry — the agent library's home for installable **components** an onboarder can add: third-party skills, user-scope memory blocks, harness overlays, and vault-config presets. `10_Agents/components/manifest.json` is the machine-readable source of truth; third-party content is never vendored here (community items track their upstream branch and materialize only into the harness user scope at install time). [onboard-harness](skills/onboard-harness/SKILL.md) is the installer. See [Components](components/README.md), with the human-facing community catalog at [recommended-skills](../06_Resources/recommended-skills.md).
+The recommended-component registry — the agent library's home for installable **components** an onboarder can add: third-party skills, user-scope memory blocks, harness overlays, and vault-config presets. `10_Agents/components/manifest.json` is the machine-readable source of truth; third-party content is never vendored here (community items track their upstream branch and materialize only into the harness user scope at install time). [onboard-harness](skills/setup/onboard-harness/SKILL.md) is the installer. See [Components](components/README.md), with the human-facing community catalog at [recommended-skills](../06_Resources/recommended-skills.md).
 
 ## Tools
 
@@ -31,7 +31,7 @@ The recommended-component registry — the agent library's home for installable 
 
 ## Environments
 
-Environment-scoped notes (one directory per machine/execution environment), starting with the orientation inventory that [agent-orientation](skills/agent-orientation/SKILL.md) produces. Never bootstrap-linked; each note self-guards with an applicability preamble. See [Environments](environments/README.md) for the convention (full scoping machinery deferred to #15).
+Environment-scoped notes (one directory per machine/execution environment), starting with the orientation inventory that [agent-orientation](skills/setup/agent-orientation/SKILL.md) produces. Never bootstrap-linked; each note self-guards with an applicability preamble. See [Environments](environments/README.md) for the convention (full scoping machinery deferred to #15).
 
 ## Solutions
 

@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-27
+updated: 2026-09-04
 ---
 
 # Templates
@@ -34,7 +34,7 @@ An active Project also replaces `target`, `target_status`, Outcome, and Completi
 
 ## Variants (`variants/`)
 
-`variants/` holds context-specific **source material** — currently work-context versions of the daily log and weekly review — used by [onboard-owner](../10_Agents/skills/onboard-owner/SKILL.md)'s context-specialization step to rewrite the shipped periodic templates in place for a work fork. Variant files are **not** templates: nothing resolves them by name, and snippet generation ignores them. See [README](variants/README.md).
+`variants/` holds context-specific **source material** — currently work-context versions of the daily log and weekly review — used by [onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md)'s context-specialization step to rewrite the shipped periodic templates in place for a work fork. Variant files are **not** templates: nothing resolves them by name, and snippet generation ignores them. See [README](variants/README.md).
 
 ## Placeholder Syntax
 

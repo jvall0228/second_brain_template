@@ -1,0 +1,685 @@
+{
+ "assets": [
+  "08_Assets/pic.png"
+ ],
+ "linkCounts": {
+  "legacy": 4,
+  "markdown": 7,
+  "placeholder": 1,
+  "unsupportedBlockReference": 0,
+  "wikilink": 4
+ },
+ "notes": {
+  "00_Meta/CONVENTIONS.md": {
+   "backlinks": [
+    "AGENTS.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/meta"
+    ],
+    "title": "Fixture Conventions",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "fixture-conventions",
+     "text": "Fixture Conventions"
+    },
+    {
+     "level": 2,
+     "line": 11,
+     "slug": "tag-namespaces",
+     "text": "Tag Namespaces"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 474,
+   "tasks": [],
+   "title": "Fixture Conventions",
+   "updated": "2026-08-11"
+  },
+  "01_Notes/alpha.md": {
+   "backlinks": [
+    "01_Notes/beta.md",
+    "AGENTS.md"
+   ],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/note",
+     "topic/anything-goes"
+    ],
+    "title": "Alpha",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "slug": "alpha",
+     "text": "Alpha"
+    }
+   ],
+   "links": [
+    {
+     "destination": "beta.md",
+     "display": "beta",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "beta",
+     "line": 12,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 25,
+       "line": 12,
+       "offset": 142
+      },
+      "start": {
+       "column": 10,
+       "line": 12,
+       "offset": 127
+      }
+     },
+     "raw": "[beta](beta.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "01_Notes/beta.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "01_Notes/beta.md",
+     "target": "beta.md",
+     "warnings": []
+    },
+    {
+     "destination": "beta.md",
+     "display": "B",
+     "embed": false,
+     "format": "markdown",
+     "fragment": "alpha-section",
+     "label": "B",
+     "line": 12,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 66,
+       "line": 12,
+       "offset": 183
+      },
+      "start": {
+       "column": 40,
+       "line": 12,
+       "offset": 157
+      }
+     },
+     "raw": "[B](beta.md#alpha-section)",
+     "resolution": {
+      "fragment": {
+       "line": 9,
+       "slug": "alpha-section"
+      },
+      "path": "01_Notes/beta.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "01_Notes/beta.md",
+     "target": "beta.md",
+     "warnings": []
+    },
+    {
+     "destination": "../08_Assets/pic.png",
+     "display": "pic",
+     "embed": true,
+     "format": "markdown",
+     "fragment": null,
+     "label": "pic",
+     "line": 13,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 35,
+       "line": 13,
+       "offset": 220
+      },
+      "start": {
+       "column": 7,
+       "line": 13,
+       "offset": 192
+      }
+     },
+     "raw": "![pic](../08_Assets/pic.png)",
+     "resolution": {
+      "fragment": null,
+      "path": "08_Assets/pic.png",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "08_Assets/pic.png",
+     "target": "../08_Assets/pic.png",
+     "warnings": []
+    },
+    {
+     "destination": "beta.md",
+     "display": "Beta",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Beta",
+     "line": 20,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 41,
+       "line": 20,
+       "offset": 352
+      },
+      "start": {
+       "column": 26,
+       "line": 20,
+       "offset": 337
+      }
+     },
+     "raw": "[Beta](beta.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "01_Notes/beta.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "01_Notes/beta.md",
+     "target": "beta.md",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 354,
+   "tasks": [],
+   "title": "Alpha",
+   "updated": "2026-08-11"
+  },
+  "01_Notes/beta.md": {
+   "backlinks": [
+    "01_Notes/alpha.md"
+   ],
+   "bodyTags": [
+    "focus-mode"
+   ],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/note"
+    ],
+    "title": "Beta",
+    "updated": "2026-08-10"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "alpha-section",
+     "text": "Alpha Section"
+    }
+   ],
+   "links": [
+    {
+     "destination": "dup",
+     "display": null,
+     "embed": false,
+     "format": "wikilink",
+     "fragment": null,
+     "label": null,
+     "line": 11,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 17,
+       "line": 11,
+       "offset": 117
+      },
+      "start": {
+       "column": 10,
+       "line": 11,
+       "offset": 110
+      }
+     },
+     "raw": "[[dup]]",
+     "resolution": {
+      "fragment": null,
+      "path": null,
+      "status": "ambiguous",
+      "warnings": [
+       "ambiguous",
+       "candidate:01_Notes/dup.md",
+       "candidate:02_Other/dup.md"
+      ]
+     },
+     "resolved": null,
+     "target": "dup",
+     "warnings": [
+      "ambiguous",
+      "candidate:01_Notes/dup.md",
+      "candidate:02_Other/dup.md"
+     ]
+    },
+    {
+     "destination": "ALPHA",
+     "display": null,
+     "embed": false,
+     "format": "wikilink",
+     "fragment": null,
+     "label": null,
+     "line": 13,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 19,
+       "line": 13,
+       "offset": 215
+      },
+      "start": {
+       "column": 10,
+       "line": 13,
+       "offset": 206
+      }
+     },
+     "raw": "[[ALPHA]]",
+     "resolution": {
+      "fragment": null,
+      "path": "01_Notes/alpha.md",
+      "status": "resolved",
+      "warnings": [
+       "case-mismatch"
+      ]
+     },
+     "resolved": "01_Notes/alpha.md",
+     "target": "ALPHA",
+     "warnings": [
+      "case-mismatch"
+     ]
+    }
+   ],
+   "sizeBytes": 217,
+   "tasks": [],
+   "title": "Beta",
+   "updated": "2026-08-10"
+  },
+  "01_Notes/dup.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/note"
+    ],
+    "title": "Dup One",
+    "updated": "2026-08-09"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "dup-one",
+     "text": "Dup One"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 96,
+   "tasks": [],
+   "title": "Dup One",
+   "updated": "2026-08-09"
+  },
+  "02_Other/dup.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/note"
+    ],
+    "title": "Dup Two",
+    "updated": "2026-08-08"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "dup-two",
+     "text": "Dup Two"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 96,
+   "tasks": [],
+   "title": "Dup Two",
+   "updated": "2026-08-08"
+  },
+  "02_Other/title-note.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/note"
+    ],
+    "title": "Special Title",
+    "updated": "2026-08-07"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "special-title",
+     "text": "Special Title"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 108,
+   "tasks": [],
+   "title": "Special Title",
+   "updated": "2026-08-07"
+  },
+  "03_Journal/2026-W01-review.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/note",
+     "workflow/draft"
+    ],
+    "title": "Week 1 Review",
+    "updated": "2026-08-06"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "week-1-review",
+     "text": "Week 1 Review"
+    }
+   ],
+   "links": [],
+   "sizeBytes": 168,
+   "tasks": [],
+   "title": "Week 1 Review",
+   "updated": "2026-08-06"
+  },
+  "09_Templates/template-x.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "tags": [
+     "type/{{type}}",
+     "workflow/draft"
+    ],
+    "title": "{{title}}",
+    "updated": "{{date}}"
+   },
+   "frontmatterErrors": [
+    "invalid-updated"
+   ],
+   "headings": [
+    {
+     "level": 1,
+     "line": 9,
+     "slug": "title",
+     "text": "{{title}}"
+    }
+   ],
+   "links": [
+    {
+     "destination": "{{target}}",
+     "display": "Target",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "Target",
+     "line": 11,
+     "placeholder": true,
+     "range": {
+      "end": {
+       "column": 38,
+       "line": 11,
+       "offset": 140
+      },
+      "start": {
+       "column": 18,
+       "line": 11,
+       "offset": 120
+      }
+     },
+     "raw": "[Target]({{target}})",
+     "resolution": {
+      "fragment": null,
+      "path": null,
+      "status": "placeholder",
+      "warnings": []
+     },
+     "resolved": null,
+     "target": "{{target}}",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 141,
+   "tasks": [],
+   "title": "{{title}}",
+   "updated": null
+  },
+  "AGENTS.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/meta",
+     "audience/agent"
+    ],
+    "title": "Fixture Entrypoint",
+    "updated": "2026-08-11"
+   },
+   "frontmatterErrors": [],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "slug": "fixture-entrypoint",
+     "text": "Fixture Entrypoint"
+    }
+   ],
+   "links": [
+    {
+     "destination": "01_Notes/alpha.md",
+     "display": "alpha",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "alpha",
+     "line": 12,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 33,
+       "line": 12,
+       "offset": 171
+      },
+      "start": {
+       "column": 7,
+       "line": 12,
+       "offset": 145
+      }
+     },
+     "raw": "[alpha](01_Notes/alpha.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "01_Notes/alpha.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "01_Notes/alpha.md",
+     "target": "01_Notes/alpha.md",
+     "warnings": []
+    },
+    {
+     "destination": "00_Meta/CONVENTIONS.md",
+     "display": "CONVENTIONS",
+     "embed": false,
+     "format": "markdown",
+     "fragment": null,
+     "label": "CONVENTIONS",
+     "line": 12,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 75,
+       "line": 12,
+       "offset": 213
+      },
+      "start": {
+       "column": 38,
+       "line": 12,
+       "offset": 176
+      }
+     },
+     "raw": "[CONVENTIONS](00_Meta/CONVENTIONS.md)",
+     "resolution": {
+      "fragment": null,
+      "path": "00_Meta/CONVENTIONS.md",
+      "status": "resolved",
+      "warnings": []
+     },
+     "resolved": "00_Meta/CONVENTIONS.md",
+     "target": "00_Meta/CONVENTIONS.md",
+     "warnings": []
+    }
+   ],
+   "sizeBytes": 215,
+   "tasks": [],
+   "title": "Fixture Entrypoint",
+   "updated": "2026-08-11"
+  },
+  "CLAUDE.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {},
+   "frontmatterErrors": [],
+   "headings": [],
+   "links": [],
+   "sizeBytes": 11,
+   "tasks": [],
+   "title": null,
+   "updated": null
+  },
+  "bad/Bad_Name.md": {
+   "backlinks": [],
+   "bodyTags": [],
+   "frontmatter": {
+    "expires": "2027-01-01",
+    "tags": [
+     "type/nope",
+     "loose"
+    ],
+    "title": "Bad",
+    "updated": "2026-99-99"
+   },
+   "frontmatterErrors": [
+    "invalid-updated"
+   ],
+   "headings": [
+    {
+     "level": 1,
+     "line": 10,
+     "slug": "bad",
+     "text": "Bad"
+    }
+   ],
+   "links": [
+    {
+     "destination": "missing",
+     "display": null,
+     "embed": false,
+     "format": "wikilink",
+     "fragment": null,
+     "label": null,
+     "line": 12,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 11,
+       "line": 12,
+       "offset": 110
+      },
+      "start": {
+       "column": 0,
+       "line": 12,
+       "offset": 99
+      }
+     },
+     "raw": "[[missing]]",
+     "resolution": {
+      "fragment": null,
+      "path": null,
+      "status": "unresolved",
+      "warnings": []
+     },
+     "resolved": null,
+     "target": "missing",
+     "warnings": []
+    },
+    {
+     "destination": "Special Title",
+     "display": null,
+     "embed": false,
+     "format": "wikilink",
+     "fragment": null,
+     "label": null,
+     "line": 12,
+     "placeholder": false,
+     "range": {
+      "end": {
+       "column": 33,
+       "line": 12,
+       "offset": 132
+      },
+      "start": {
+       "column": 16,
+       "line": 12,
+       "offset": 115
+      }
+     },
+     "raw": "[[Special Title]]",
+     "resolution": {
+      "fragment": null,
+      "path": null,
+      "status": "unresolved",
+      "warnings": [
+       "title-match:02_Other/title-note.md"
+      ]
+     },
+     "resolved": null,
+     "target": "Special Title",
+     "warnings": [
+      "title-match:02_Other/title-note.md"
+     ]
+    }
+   ],
+   "sizeBytes": 134,
+   "tasks": [],
+   "title": "Bad",
+   "updated": null
+  }
+ },
+ "schemaVersion": 2
+}

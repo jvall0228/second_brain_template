@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -130,6 +131,33 @@ class SkillAdapterTests(unittest.TestCase):
             self.assertIn('adapter-version: "2"', text)
             self.assertRegex(text, r'content-sha256: "[0-9a-f]{64}"')
             self.assertIn("../../../10_Agents/skills/alpha/SKILL.md", text)
+
+    def test_group_directory_skills_generate_flat_adapters(self):
+        add_skill(self.repo, "alpha")
+        add_skill(self.repo, "setup/beta", name="beta", description="Nested one-time skill.")
+        (self.repo / "10_Agents/skills/setup/README.md").write_text("# Setup\n", encoding="utf-8")
+        GEN.generate(self.repo)
+        for root in GEN.OUTPUT_ROOTS:
+            adapter = self.repo / root / "beta/SKILL.md"
+            self.assertEqual(GEN.read_metadata(adapter), ("beta", "Nested one-time skill."))
+            self.assertIn("../../../10_Agents/skills/setup/beta/SKILL.md", adapter.read_text(encoding="utf-8"))
+            self.assertFalse((self.repo / root / "setup").exists())
+            self.assertTrue(GEN._owned_adapter(adapter, root / "beta/SKILL.md"))
+        self.assertEqual(GEN.check(self.repo), [])
+        # A second generation is a byte-stable no-op; names stay unique tree-wide.
+        before = {p: p.read_bytes() for p in self.repo.rglob("SKILL.md") if ".agents" in p.parts or ".claude" in p.parts}
+        GEN.generate(self.repo)
+        after = {p: p.read_bytes() for p in self.repo.rglob("SKILL.md") if ".agents" in p.parts or ".claude" in p.parts}
+        self.assertEqual(before, after)
+        add_skill(self.repo, "setup/alpha", name="alpha")
+        with self.assertRaisesRegex(GEN.AdapterError, "collision"):
+            GEN.catalog(self.repo)
+
+    def test_empty_directory_under_skills_is_still_refused(self):
+        add_skill(self.repo, "alpha")
+        (self.repo / "10_Agents/skills/empty").mkdir()
+        with self.assertRaisesRegex(GEN.AdapterError, "missing or symlinked SKILL.md"):
+            GEN.catalog(self.repo)
 
     def test_check_reports_missing_extra_and_parity_drift(self):
         add_skill(self.repo, "alpha")
@@ -392,6 +420,80 @@ class SkillAdapterTests(unittest.TestCase):
         self.assertEqual(list(outside.iterdir()), [])
         self.assertEqual(list(self.repo.glob(".skill-adapter-transaction-*")), [])
 
+    def test_group_name_grammar_is_enforced_before_generation(self):
+        # F11: a group directory whose name is not a portable kebab-case
+        # segment (here one containing ".." as a substring, which the old
+        # ownership check would later have rejected as foreign) is refused
+        # up front, so generate -> check -> preflight -> regenerate never
+        # disagree about the adapters the generator itself produced.
+        add_skill(self.repo, "alpha")
+        add_skill(self.repo, "setup..legacy/beta", name="beta")
+        with self.assertRaisesRegex(GEN.AdapterError, "setup..legacy.*kebab-case"):
+            GEN.catalog(self.repo)
+        with self.assertRaises(GEN.AdapterError):
+            GEN.generate(self.repo)
+        self.assertFalse((self.repo / ".agents").exists())
+        shutil.rmtree(self.repo / "10_Agents/skills/setup..legacy")
+        for bad in ("Setup", "setup_legacy", "nul", "com1", "setup.", " setup"):
+            add_skill(self.repo, f"{bad}/gamma", name="gamma")
+            with self.assertRaises(GEN.AdapterError, msg=bad):
+                GEN.catalog(self.repo)
+            shutil.rmtree(self.repo / "10_Agents/skills" / bad)
+        # A portable group name round-trips through every stage.
+        add_skill(self.repo, "setup-legacy/beta", name="beta")
+        GEN.generate(self.repo)
+        self.assertEqual(GEN.check(self.repo), [])
+        GEN.preflight(self.repo)
+        GEN.generate(self.repo)
+        self.assertEqual(GEN.check(self.repo), [])
+        adapter = self.repo / ".agents/skills/beta/SKILL.md"
+        self.assertIn("../../../10_Agents/skills/setup-legacy/beta/SKILL.md", adapter.read_text(encoding="utf-8"))
+        self.assertTrue(GEN._owned_adapter(adapter, adapter.relative_to(self.repo)))
+
+    def test_owned_adapter_authenticates_pointer_by_segments(self):
+        add_skill(self.repo, "alpha")
+        GEN.generate(self.repo)
+        adapter = self.repo / ".agents/skills/alpha/SKILL.md"
+        rel = adapter.relative_to(self.repo)
+        body = adapter.read_text(encoding="utf-8")
+        self.assertTrue(GEN._owned_adapter(adapter, rel))
+        for pointer in (
+            "../../../10_Agents/skills/../alpha/SKILL.md",
+            "../../../10_Agents/skills/./alpha/SKILL.md",
+            "../../../10_Agents/skills//alpha/SKILL.md",
+            "../../../10_Agents/skills/x.y/alpha/SKILL.md",
+            "../../../10_Agents/skills/alpha/other/SKILL.md",
+        ):
+            forged = GEN._render_v2("alpha", "Do a thing.", GEN.CHECKSUM_SENTINEL, pointer)
+            digest = hashlib.sha256(forged).hexdigest()
+            adapter.write_bytes(GEN._render_v2("alpha", "Do a thing.", digest, pointer))
+            self.assertFalse(GEN._owned_adapter(adapter, rel), pointer)
+        adapter.write_text(body, encoding="utf-8")
+        self.assertTrue(GEN._owned_adapter(adapter, rel))
+
+    def test_copilot_global_preview_registers_flat_adapter_directory(self):
+        # F10: Copilot reads immediate child folders only, so the preview
+        # registers the generated flat adapter root and lists the grouped
+        # setup skills among what that registration discovers.
+        planner = ROOT / "10_Agents/tools/skill_adapters/harness_setup.py"
+        fake_home = Path(self.temp.name) / "copilot-home"
+        fake_home.mkdir()
+        proc = subprocess.run(
+            [sys.executable, str(planner), "global-preview", "--repo", str(ROOT), "--harness", "copilot", "--home", str(fake_home), "--json"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        plan = json.loads(proc.stdout)
+        action = next(a for a in plan["actions"] if a["operation"] == "register-skill-directory")
+        self.assertTrue(action["command"][-1].endswith("/.agents/skills"), action)
+        self.assertNotIn("10_Agents/skills", action["command"][-1])
+        for name in ("onboard-owner", "onboard-harness", "agent-orientation"):
+            self.assertIn(name, action["skills"])
+            self.assertTrue((ROOT / ".agents/skills" / name / "SKILL.md").is_file())
+            self.assertFalse((ROOT / ".agents/skills" / name).is_symlink())
+
     def test_executable_project_and_global_preview_make_zero_home_writes(self):
         fake_home = Path(self.temp.name) / "canary-home"
         fake_home.mkdir()
@@ -440,7 +542,7 @@ class SkillAdapterTests(unittest.TestCase):
         readme = clone / "README.md"
         readme.write_text(readme.read_text(encoding="utf-8") + "\nstaged note\n", encoding="utf-8")
         subprocess.run(["git", "add", "README.md"], cwd=clone, check=True)
-        skill = clone / "10_Agents/skills/onboard-owner/SKILL.md"
+        skill = clone / "10_Agents/skills/setup/onboard-owner/SKILL.md"
         skill.write_text(skill.read_text(encoding="utf-8") + "\nunstaged note\n", encoding="utf-8")
 
         proc = subprocess.run(

@@ -6,12 +6,12 @@ tags:
   - audience/agent
   - topic/software
   - status/done
-updated: 2026-08-11
+updated: 2026-09-04
 ---
 
 # Requirements: `onboard-owner` skill
 
-Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth library skill that onboards a **new vault owner** — the human counterpart to [onboard-harness](../../10_Agents/skills/onboard-harness/SKILL.md). Motivating case: the owner is forking the template for a family member who is not a software engineer.
+Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth library skill that onboards a **new vault owner** — the human counterpart to [onboard-harness](../../10_Agents/skills/setup/onboard-harness/SKILL.md). Motivating case: the owner is forking the template for a family member who is not a software engineer.
 
 ## The one design constraint that rules the rest
 
@@ -40,7 +40,7 @@ Owner-settled requirements (chat brainstorm, 2026-08-11) for a thirteenth librar
 
 ### 3. Orchestrate — run the other onboarding skills
 
-- Sequence (owner decision: orchestration **triggers** the sub-skills; they stay separate skills): profile interview → [onboard-harness](../../10_Agents/skills/onboard-harness/SKILL.md) for the harness in use → [agent-orientation](../../10_Agents/skills/agent-orientation/SKILL.md) → optionally [recommended-automations](../../10_Agents/skills/recommended-automations/SKILL.md).
+- Sequence (owner decision: orchestration **triggers** the sub-skills; they stay separate skills): profile interview → [onboard-harness](../../10_Agents/skills/setup/onboard-harness/SKILL.md) for the harness in use → [agent-orientation](../../10_Agents/skills/setup/agent-orientation/SKILL.md) → optionally [recommended-automations](../../10_Agents/skills/recommended-automations/SKILL.md).
 - Invoke each by **following its SKILL.md contract**, never reimplementing it; each sub-skill keeps its own approval gates.
 - Sub-skills assume a technical reader in places — this skill **wraps their owner-facing moments in plain language** (e.g. orientation's source interview becomes "should I be able to see your calendar?").
 - Every hand-off is offered, not forced; stopping early is a valid outcome.

@@ -685,12 +685,24 @@ class CurationTests(unittest.TestCase):
             "07_Archives/done.md": note(updated="2020-01-01"),
             "08_Assets/used.png": b"x",
             "08_Assets/unused.png": b"x",
+            # Distill candidates: a Journal idea linked twice, a solution note
+            # linked twice but already a zettel, a person hub, a single link.
+            "03_Journal/ideas/hot-idea.md": note(),
+            "03_Journal/ideas/once.md": note(),
+            "03_Journal/people/hub.md": note(),
+            "10_Agents/solutions/vault/done.md": note().replace("  - type/note", "  - type/zettel"),
+            "03_Journal/linker-a.md": note("[a](ideas/hot-idea.md) [b](ideas/once.md) [c](people/hub.md) [d](../10_Agents/solutions/vault/done.md)"),
+            "03_Journal/linker-b.md": note("[a](ideas/hot-idea.md) [c](people/hub.md) [d](../10_Agents/solutions/vault/done.md)"),
         }
         with tempfile.TemporaryDirectory() as td:
             root = self.vault(td, files)
             notes, assets = brain.walk_corpus(root)
             index = brain.build_index(root, notes, assets)
             cur = brain.compute_curation(root, index, date(2026, 8, 11))
+            self.assertEqual(
+                [(r["path"], r["backlinks"]) for r in cur["distillCandidates"]],
+                [("03_Journal/ideas/hot-idea.md", 2)],
+            )
             self.assertEqual([r["path"] for r in cur["expired"]], ["expired.md"])
             self.assertEqual([r["path"] for r in cur["stale"]], ["stale-hub.md"])
             self.assertEqual(cur["stale"][0]["backlinks"], 1)
@@ -724,6 +736,7 @@ class CurationTests(unittest.TestCase):
             sorted(data),
             [
                 "beyondCap",
+                "distillCandidates",
                 "expired",
                 "missingExpires",
                 "orphans",
@@ -737,7 +750,7 @@ class CurationTests(unittest.TestCase):
             code = brain.main(["context", "--json", "--vault", str(FIXTURE)])
         self.assertEqual(code, 0)
         ctx = json.loads(out.getvalue())
-        self.assertEqual(sorted(ctx), ["docs", "totalBudget", "totalBytes"])
+        self.assertEqual(sorted(ctx), ["bootstrap", "docs", "totalBudget", "totalBytes"])
 
     def test_collect_urls(self):
         files = {
@@ -815,7 +828,7 @@ class CliTests(unittest.TestCase):
         code, payload = self.run_cli("validate", "--json")
         data = json.loads(payload)
         self.assertEqual(code, 1)
-        self.assertEqual(sorted(data), ["errors", "warnings"])
+        self.assertEqual(sorted(data), ["baselined", "errors", "warnings"])
 
     def test_query_commands(self):
         code, out = self.run_cli("list", "--dir", "01_Notes", "--type", "note")

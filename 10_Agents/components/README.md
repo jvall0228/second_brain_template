@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/draft
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2027-08-11
 author: claude-code
 session: https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73
@@ -38,7 +38,7 @@ Four kinds, each with its own install method:
 The install vocabulary is the overlay method vocabulary
 ([README](../harnesses/README.md) § Overlays) plus one new method, `merge-config`,
 for presets. There is **one install engine** — the overlay + component installer
-in [onboard-harness](../skills/onboard-harness/SKILL.md) — never a second model.
+in [onboard-harness](../skills/setup/onboard-harness/SKILL.md) — never a second model.
 
 ## The agent library includes third-party components — without vendoring them
 
@@ -53,10 +53,10 @@ agent-generated skills.
 
 ## Installer, sign-off, reversibility
 
-[onboard-harness](../skills/onboard-harness/SKILL.md) reads `manifest.json`,
+[onboard-harness](../skills/setup/onboard-harness/SKILL.md) reads `manifest.json`,
 groups by kind, and installs each component by its declared method/scope/target,
 recording every action in the machine manifest `~/.agents/second-brain-manifest.json`.
-[onboard-owner](../skills/onboard-owner/SKILL.md) offers the install as a
+[onboard-owner](../skills/setup/onboard-owner/SKILL.md) offers the install as a
 first-class step and applies `vault-config-preset` components itself under its
 live-session write exception (a config change is a vault write, and an owner decision).
 
@@ -78,7 +78,7 @@ branch in `source.track` (`main`); `.gitmodules` carries the matching `branch = 
 so the install-time `git submodule update --init --remote` fetches the branch's current
 tip. There is no frozen commit and no three-place SHA agreement
 to maintain — the **supply-chain safeguard is the install-time per-item owner sign-off
-against the content actually fetched** ([onboard-harness](../skills/onboard-harness/SKILL.md)).
+against the content actually fetched** ([onboard-harness](../skills/setup/onboard-harness/SKILL.md)).
 `test_components.py` checks that each submodule component declares a `track` branch and
 that `.gitmodules` configures branch-tracking for it.
 

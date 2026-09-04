@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2026-11-11
 ---
 
@@ -21,6 +21,10 @@ Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and
 ## Skills
 
 Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. A clean clone includes generated text adapters in `.claude/skills/`; each mirrors the canonical `name`/`description` and points to `10_Agents/skills/<name>/SKILL.md`. No project symlinks or onboarding writes are needed. Optional user-global mode retains the manifest-owned `~/.claude/skills/<name>` link/copy route after exact preview and approval.
+
+## Skill-run log
+
+`.claude/settings.json` also ships a `PostToolUse` hook matched to the `Skill` tool that runs `skill-run-log.sh` (a thin wrapper around `skill-run-log.py`, which parses the payload). It appends one tab-separated line — UTC timestamp, `claude-code`, skill name, `ok` or `error` — to the append-only [skill-runs log](../../docs/skill-runs.log) and always exits 0, so it never blocks a session. Before writing it authenticates the log path below the vault root component by component with no-follow opens and verifies the opened object is a regular file, so a log or parent directory replaced by a symlink (or a missing log) is silently skipped rather than followed outside the vault. The log is tracked and merges by union (`.gitattributes`), and the [self-improve](../../skills/self-improve/SKILL.md) loop reads it as usage evidence: which skills run, how often, and which fail. Other harnesses that expose a post-tool hook can write the same line shape with their own harness name.
 
 ## Hook installation
 
