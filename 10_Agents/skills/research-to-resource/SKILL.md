@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -18,16 +18,17 @@ Convert research output into reference material that stays useful after the sess
 
 ## Steps
 
-1. **Check for an existing home:** `brain search <topic>` — extend an existing resource note (bump `updated:`) rather than fragmenting the topic across duplicates. This includes research that **corrects** an existing note: merge into the existing note's section, replacing what's now wrong (git keeps the history) and noting the re-verification date — do **not** publish a parallel "supersedes X" note and leave the stale original under a banner. A separate note is right only when the topic is genuinely distinct; a shared subject means a shared note.
-2. **Pick the shape:**
+1. **Take the topic — or the next gap.** Invoked without a topic, take the oldest open row of [vault-answer-gaps](../../docs/vault-answer-gaps.md) (the questions the vault could not answer); `brain tasks --open` lists them. Invoked with a topic, still scan the queue for a row it answers. When the note is written, tick every row it fills and append ` → [note](../../06_Resources/<slug>.md)` to the row — an interactive-session edit; an autonomous run does not tick the queue but records the fill in its Inbox capture, and triage ticks the row. A gap that reached you as a `restricted/private` Inbox capture stays private: the resource note you write from it carries the tag unless the owner declassifies the question at triage.
+2. **Check for an existing home:** `brain search <topic>` — extend an existing resource note (bump `updated:`) rather than fragmenting the topic across duplicates. This includes research that **corrects** an existing note: merge into the existing note's section, replacing what's now wrong (git keeps the history) and noting the re-verification date — do **not** publish a parallel "supersedes X" note and leave the stale original under a banner. A separate note is right only when the topic is genuinely distinct; a shared subject means a shared note.
+3. **Pick the shape:**
    - Broad reference on a topic → `06_Resources/<kebab-topic>.md` from `09_Templates/template-resource.md`, tagged `type/resource`
    - One atomic, evergreen claim → `06_Resources/<kebab-claim>.md` from `09_Templates/template-zettel.md`, tagged `type/zettel`
    - Option comparison → `09_Templates/template-comparison.md`
-3. **Write with provenance.** Every non-obvious claim carries its source; end the note with a `## Sources` section listing URLs/titles **with retrieval dates** — research decays, and the date tells future readers how stale it might be. Distinguish verified facts from your inference.
-4. **Frontmatter:** real `title`, `updated:` today, `topic/*` tags for the subject, and `workflow/draft` — research stays draft until the human reviews it. Include the provenance fields (`00_Meta/CONVENTIONS.md` § Provenance): `author:` with your harness identifier (`claude-code`, `copilot`, …) and `session:` with the session URL / PR / task reference when one exists.
-5. **Link it in:** add source-relative Markdown links with explicit `.md` extensions in both directions where the related note is non-canonical.
-6. **Propagate:** research that extends, corrects, or contradicts *other* existing notes gets merged into those notes now, per step 1's merge rules (canonical targets follow the execution-class contract in [AGENTS](../../../AGENTS.md#where-agents-write): interactive sessions edit them directly under canonical change control; autonomous runs propose via Inbox). A source is fully ingested only when every note it touches reflects it — one source at a time, supervised.
-7. **Validate and commit:** `brain validate`, then commit.
+4. **Write with provenance.** Every non-obvious claim carries its source; end the note with a `## Sources` section listing URLs/titles **with retrieval dates** — research decays, and the date tells future readers how stale it might be. Distinguish verified facts from your inference.
+5. **Frontmatter:** real `title`, `updated:` today, `topic/*` tags for the subject, and `workflow/draft` — research stays draft until the human reviews it. Include the provenance fields (`00_Meta/CONVENTIONS.md` § Provenance): `author:` with your harness identifier (`claude-code`, `copilot`, …) and `session:` with the session URL / PR / task reference when one exists.
+6. **Link it in:** add source-relative Markdown links with explicit `.md` extensions in both directions where the related note is non-canonical.
+7. **Propagate:** research that extends, corrects, or contradicts *other* existing notes gets merged into those notes now, per step 2's merge rules (canonical targets follow the execution-class contract in [AGENTS](../../../AGENTS.md#where-agents-write): interactive sessions edit them directly under canonical change control; autonomous runs propose via Inbox). A source is fully ingested only when every note it touches reflects it — one source at a time, supervised.
+8. **Validate and commit:** `brain validate`, then commit.
 
 ## Rules
 
@@ -42,3 +43,4 @@ Convert research output into reference material that stays useful after the sess
 
 - `09_Templates/README.md` — template selection
 - `06_Resources/README.md` — what belongs in Resources
+- [vault-answer-gaps](../../docs/vault-answer-gaps.md) — the default queue, step 1

@@ -48,7 +48,7 @@ class SelfImproveSkillFileTests(unittest.TestCase):
             "## Observe",
             "## Propose",
             "## Owner review",
-            "## Record rejections",
+            "## Record outcomes",
             "## Recur",
             "## Worked example (dry-run cycle)",
         ):

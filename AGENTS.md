@@ -30,28 +30,15 @@ After reading all four, the agent has enough context to begin work.
 
 ## Where Agents Write
 
-Write authority follows **execution class**. This section is the single full statement; other documents point here.
+Write authority follows **execution class**: every run is **interactive** (a foreground, user-directed conversation) or **autonomous** (scheduled, headless, recurring, or automation-driven; missing trusted execution metadata defaults here). Subagents inherit the parent's class within the delegated scope. The single full statement is the [Write Authority Contract](10_Agents/docs/write-authority.md); this table is the summary.
 
-**Execution class.** Every run is **interactive** or **autonomous**. The class comes from execution mode, not owner presence: an interactive session is a foreground, user-directed conversation; scheduled, headless, recurring, and automation-driven runs are autonomous. Missing trusted execution metadata defaults to **autonomous**. The owner temporarily stepping away does not change an established class. Subagents inherit the parent session's class but act only within the scope the parent delegated.
+| Class | May write | Review |
+|-------|-----------|--------|
+| Interactive | Any appropriate non-generated location, `workflow/canonical` notes included, when the user-directed task reasonably requires it | Scoped diff, validation, and a [CHANGELOG](00_Meta/CHANGELOG.md) entry when the canonical contract calls for one |
+| Autonomous | New content to `02_Inbox/` only (the **Inbox-first rule**); existing notes only through the contract's standing exceptions | Human triage |
+| Either | Deliverables for the world to `02_Outbox/` via [express-packet](10_Agents/skills/express-packet/SKILL.md); generated files only through their owning command | Owner reviews and ships — **agents never ship** |
 
-**Interactive sessions** may directly create or edit any appropriate non-generated vault location — including `workflow/canonical` notes — when the change is reasonably required by the current user-directed task. This removes file-by-file approval, not task scope. Canonical changes still receive a scoped diff, required validation, and a [CHANGELOG](00_Meta/CHANGELOG.md) entry when the canonical contract calls for one.
-
-**Autonomous sessions** are review-gated: new vault content goes to **`02_Inbox/`** (the **Inbox-first rule** — a human triages it into the appropriate PARA directory), and existing notes change only through the named standing exceptions below.
-
-**Either class:** deliverables **for the world** (briefs, outlines, draft posts/emails) go to **`02_Outbox/`** via [express-packet](10_Agents/skills/express-packet/SKILL.md) — the owner reviews and ships; **agents never ship** (see [README](02_Outbox/README.md)). Generated files remain owned by their generators regardless of class: edit the source of truth and run the owning regeneration command, never hand-edit generated output.
-
-Standing exceptions (the edits autonomous sessions may make to existing content):
-
-- Agents may append solution notes to `10_Agents/solutions/` — see [README](10_Agents/README.md) — and rejection rows to the append-only log `10_Agents/docs/rejected-proposals.md` (the self-improve loop's memory).
-- `brain {aymt,home} --write` owns its generated `00_Meta/` file; `brain projects --write-rollups` owns each Area's `## Active Projects`; generic/hand edits remain forbidden.
-- `brain artifacts --write` alone owns the three generated files in `08_Assets/artifacts/README.md`; generic writes and hand edits are forbidden.
-- Notify: [contract](10_Agents/skills/configure-notifications/SKILL.md).
-- A live, user-invoked [agent-orientation](10_Agents/skills/setup/agent-orientation/SKILL.md) session may write draft outputs to `10_Agents/environments/<env-slug>/`, `10_Agents/tools/<source>/`, and `10_Agents/skills/<source>-capture/`. Markdown uses `workflow/draft`; other bundle files inherit it until owner promotion.
-- During a live [onboard-owner](10_Agents/skills/setup/onboard-owner/SKILL.md) session, agents write interview results directly to `01_Profile/`, `03_Journal/people/` (owner-confirmed people notes), `04_Projects/`, and `05_Areas/` — and, in its context-specialization stage, rewrite the periodic templates in `09_Templates/` from `09_Templates/variants/` and record `context:` in `00_Meta/config.yaml`. The owner's in-the-moment approval is the review. Outside that session, the execution-class contract above applies as usual.
-
-Template-shipped skills/tools, `00_Meta/config.yaml`, and named tagless entrypoint/editor/harness adapters are **canonical-by-policy** and use canonical change control. Location alone does not confer that state; orientation bundles stay draft until owner promotion.
-
-See [README](02_Inbox/README.md) for triage instructions.
+Template-shipped skills/tools, `00_Meta/config.yaml`, and named tagless entrypoint, editor, and harness adapters are [canonical-by-policy](10_Agents/docs/write-authority.md#canonical-by-policy). See [README](02_Inbox/README.md) for triage instructions.
 
 **Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `./brain index` (`brain index` after managed installation) before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the two committed generated files (the vault index and `.vscode/second-brain.code-snippets`) by keeping ours; the post-merge hook then regenerates both, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [index-merge-conflicts](10_Agents/solutions/vault-tooling/index-merge-conflicts.md).
 
@@ -92,25 +79,11 @@ Directories use numbered prefixes for sort stability. Each directory has a READM
 
 ## Templates
 
-When creating structured notes, use templates from `09_Templates/`:
-- [template-project](09_Templates/template-project.md) — Projects with outcomes
-- [template-area](09_Templates/template-area.md) — Ongoing responsibilities
-- [template-resource](09_Templates/template-resource.md) — Reference material
-- [template-zettel](09_Templates/template-zettel.md) — Atomic evergreen notes
-- [template-daily-log](09_Templates/template-daily-log.md) — Daily journal entries
-- [template-weekly-review](09_Templates/template-weekly-review.md) — Weekly reviews
-- [template-monthly-review](09_Templates/template-monthly-review.md) — Monthly reviews
-- [template-quarterly-review](09_Templates/template-quarterly-review.md) — Quarterly reviews
-- [template-yearly-review](09_Templates/template-yearly-review.md) — Yearly reviews
-- [template-media](09_Templates/template-media.md) — Media tracking
-- [template-decision-record](09_Templates/template-decision-record.md) — Decision logs
-- [template-comparison](09_Templates/template-comparison.md) — Option comparisons
-
-See [README](09_Templates/README.md) for the full selection guide.
+When creating structured notes, use templates from `09_Templates/`. The [README](09_Templates/README.md) is the selection guide — every template, what it is for, and when to use it.
 
 ## Editor Surfaces
 
-The vault supports two editors, and both are part of its contract: **Obsidian** (primary; config in `.obsidian/`) and **VS Code** (config in `.vscode/`; see [PRD](00_Meta/PRD.md) §6.5). Maintained internal links are source-relative inline Markdown with explicit extensions; Obsidian is configured to author that same portable form. If your change touches vault structure, navigation, templates, or link semantics, it must account for **both** surfaces — see the editor-surface parity item in the [OPERATING-RULES](10_Agents/docs/OPERATING-RULES.md) checklist. VS Code snippets are generated from `09_Templates/` by the pre-commit hook; never edit `.vscode/second-brain.code-snippets` by hand.
+**Obsidian** and **VS Code** are both supported (see [PRD](00_Meta/PRD.md) §6.5). Maintained links use source-relative Markdown with explicit extensions. Changes to structure, navigation, templates, or links must preserve both surfaces; see [OPERATING-RULES](10_Agents/docs/OPERATING-RULES.md). VS Code snippets regenerate from templates; never hand-edit them.
 
 ## Recency
 

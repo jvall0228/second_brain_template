@@ -11,7 +11,7 @@ expires: 2027-08-11
 
 # Conventions
 
-Rules governing how notes are created, named, tagged, and organized in this vault.
+Rules for creating, naming, tagging, and organizing vault notes.
 
 ## Directory Structure
 
@@ -48,15 +48,15 @@ Allowed exceptions:
 
 ## Locale & Output Defaults
 
-For timezone, date format, units, and other machine-readable defaults, see [DEFAULTS](../01_Profile/DEFAULTS.md).
+For locale and machine defaults, see [DEFAULTS](../01_Profile/DEFAULTS.md).
 
 ## Internal Link Contract
 
-Maintained content uses **source-relative inline Markdown only**: `[label](relative/path.md)`, `[label](#heading-slug)`, or `![alt](relative/path.png)`. Destinations use POSIX `/`, exact case, explicit extensions, and UTF-8 percent encoding for spaces and Unicode; heading fragments are GitHub-compatible.
+Maintained content uses **source-relative inline Markdown only**: `[label](relative/path.md)`, `[label](#heading-slug)`, or `![alt](relative/path.png)`. Use POSIX `/`, exact case, explicit extensions, percent-encoded spaces/Unicode, and GitHub-compatible heading fragments.
 
-Obsidian is configured to author this portable form; GitHub, VS Code, and `brain` resolve it. Legacy parsing and `migrate-links` are import-only: never author new `[[…]]` links.
+Obsidian, GitHub, VS Code, and `brain` support this form. Legacy parsing and `migrate-links` are import-only; never author `[[…]]` links.
 
-Template links use `[human label]({{TOKEN}})`. Replace each token with the complete encoded relative destination including its extension; instantiated notes retain no placeholders.
+Template links use `[label]({{TOKEN}})`; replace tokens with encoded relative destinations including extensions.
 
 ## Frontmatter Requirements
 
@@ -116,30 +116,7 @@ Notes tagged `workflow/canonical` use canonical change control (see [Change Cont
 
 ### restricted/private
 
-`restricted/private` is **publication classification plus leak resistance, not access control**. It marks content that public publishing or export must exclude; it does not restrict what agents may read or use locally. This section is the single full statement of the contract (adopted 2026-08-24; see [CHANGELOG](CHANGELOG.md)); other documents point here.
-
-**Local access.** Agents may read, search, link, quote, summarize, create, and edit private content by default. Local keyword and semantic search include restricted notes; the machine-local semantic sidecar is working context, not a publication surface, and includes private notes. Per-agent access restriction belongs to harness hooks or permissions, not this tag — Cursor's `.cursorignore` exclusion is an owner-selected opt-in, and such path exclusion is harness-specific and incomplete.
-
-**Propagation.** A note that quotes, summarizes, or otherwise carries private substance from a restricted source also carries `restricted/private` — including when the transformation obscures the provenance. A bare link does not propagate the tag. A link from a non-restricted note to a restricted note is valid; the `restricted-link` validation warning is an informational provenance check asking whether nearby prose carries private substance and therefore requires propagation.
-
-**Blast radius.** The tag is note-granular: moving one private claim into a broad review or rollup makes the entire destination private. Linking instead of copying stays the recommended lower-blast-radius practice — a recommendation, not a prohibition.
-
-**Tag flips.** A change that adds or removes `restricted/private` on an existing note must be surfaced in the diff or validation output, because generated and publication-facing surfaces may change what they include.
-
-**Retained mechanical boundaries.** These outward filters remain enforced and non-optional:
-
-- committed index reduction (spec §8.3: body content and link prose emptied; path/title/frontmatter/link targets stay published);
-- notification filtering;
-- generated artifact filtering;
-- AYMT and Home exclusion;
-- link-migration plan redaction;
-- daily task carry-over skipping;
-- restricted Project → non-restricted Area rollup blocking; and
-- the `restricted-link` provenance warning above.
-
-Public publishing and export exclude private content automatically; inclusion requires an explicit owner override for that individual operation.
-
-**Accepted residual risk.** An agent may fail to recognize that text earlier in its context originated in a private note; export filters are the final mechanical boundary.
+`restricted/private` is **publication classification plus leak resistance, not access control** — it marks what public publishing or export must exclude, and never restricts what agents read, search, or use locally. A note that carries private substance from a restricted source also carries the tag, even when the transformation obscures the provenance; a bare link propagates nothing (the `restricted-link` warning is an informational provenance check). A tag flip on an existing note must be surfaced in the diff or validation output. The single full statement — local access, blast radius, retained mechanical boundaries, residual risk — is the [restricted/private Contract](restricted-private.md).
 
 ## Tasks
 
@@ -155,6 +132,8 @@ Checkbox tasks (`- [ ]` open, `- [x]` done) live **where their context lives** �
 ## Agent Write Rules
 
 Write authority is owned by the execution-class contract in [AGENTS](../AGENTS.md#where-agents-write): interactive user-directed sessions edit the appropriate durable home directly; autonomous sessions are Inbox-first with named standing exceptions (among them, a live [onboard-owner](../10_Agents/skills/setup/onboard-owner/SKILL.md) session writing owner-confirmed notes to `01_Profile/` and `03_Journal/people/`); deliverables for the outside world go to `02_Outbox/` (via express-packet; the owner ships — agents never do). Conventions-specific requirements: every agent-created note needs `title`, `tags` (including `audience/agent`), and `updated`, plus `author:`/`session:` per § Provenance above.
+
+**Append-only agent logs** follow the per-class table in the [Write Authority Contract](../10_Agents/docs/write-authority.md#append-only-agent-logs); `brain gap` alone writes the gap queue, and the skill-run log is hook-generated.
 
 **Filename collisions:** name Inbox notes `YYYY-MM-DD-descriptive-slug.md`; check first, on collision append a numeric suffix (`-2`), never overwrite another agent's note.
 

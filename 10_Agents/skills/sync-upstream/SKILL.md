@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-09-02
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -113,6 +113,8 @@ Lanes:
 | `10_Agents/environments/` | owner-content | Issue #15: per-environment inventories belong to the fork |
 | `10_Agents/docs/` | canonical-docs | Operating rules and agent docs are §6.3 change-controlled |
 | `10_Agents/docs/rejected-proposals.md` | owner-content | Append-only agent log (self-improve's memory) — fork-local history; sync never overwrites it |
+| `10_Agents/docs/accepted-proposals.md` | owner-content | Append-only agent logs — fork-local history; sync never overwrites them |
+| `10_Agents/docs/vault-answer-gaps.md` | owner-content | Append-only agent logs — fork-local history; sync never overwrites them |
 | `10_Agents/components/` | machinery | First-party recommended-component registry, README, and vault-config presets — template machinery, synced directly. The human-facing catalog `06_Resources/recommended-skills.md` stays owner-content by its path-map lane, and `.gitmodules`/`.extern/` above are owner-content: re-tracking or advancing a third-party component is a curated owner decision, so sync proposes and never auto-advances it |
 
 ### Cross-cutting rules (apply after path lanes)

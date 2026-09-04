@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 ONBOARD_OWNER = ROOT / "10_Agents/skills/setup/onboard-owner/SKILL.md"
 AGENTS = ROOT / "AGENTS.md"
+WRITE_AUTHORITY = ROOT / "10_Agents/docs/write-authority.md"
 CONVENTIONS = ROOT / "00_Meta/CONVENTIONS.md"
 
 PEOPLE_DIR = "03_Journal/people/"
@@ -108,8 +109,11 @@ class OnboardOwnerStagesTests(unittest.TestCase):
 class StandingExceptionTests(unittest.TestCase):
     """Both standing-exception bullets cover the people-map destination."""
 
-    def test_agents_md_exception_mentions_people_dir(self):
-        self.assertIn(PEOPLE_DIR, read(AGENTS))
+    def test_write_authority_exception_mentions_people_dir(self):
+        # The standing exceptions live in the Write Authority Contract
+        # (moved out of AGENTS on 2026-09-01); AGENTS keeps the summary table.
+        self.assertIn(PEOPLE_DIR, read(WRITE_AUTHORITY))
+        self.assertIn("10_Agents/docs/write-authority.md", read(AGENTS))
 
     def test_conventions_exception_mentions_people_dir(self):
         self.assertIn(PEOPLE_DIR, read(CONVENTIONS))

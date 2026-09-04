@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -61,5 +61,6 @@ expires: 2027-08-11
 - [README](../10_Agents/README.md) — Agent behavior and write rules
 - [Agent docs](../10_Agents/docs/README.md) — Operating rules, task patterns
   - [Project and Area Contract](../10_Agents/docs/project-area-contract.md) — Identity, mappings, lifecycle, targets, rollups, and closeout
+  - [Write Authority Contract](../10_Agents/docs/write-authority.md) — Execution classes and where agents write
 - [Harness adapters](../10_Agents/harnesses/README.md) — Per-harness wiring
 - [The CODE loop](../10_Agents/skills/README.md) — Skill catalog + cadence table

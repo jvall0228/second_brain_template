@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-24
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -32,7 +32,8 @@ Gather evidence of friction from real usage — the loop proposes only what the 
 1. **`brain report` trends:** run `brain report` (spec §16) and compare against the previous cycle's report if one is archived (prior spec-retrospective notes in `02_Inbox/` or `07_Archives/`; or re-run with `--since <last cycle>` to scope tag drift and unresolved links to the period). Rising Inbox aging, recurring tag drift (unknown/single-use/near-duplicate tags), or persistent stale-active notes are convention-change candidates.
 2. **Git history:** `git log --stat` since the last cycle. Look for churn — the same file fixed repeatedly (candidate structural fix), recurring fix patterns across commits (candidate validate rule or convention), repeated manual edits that a template or skill step should absorb.
 3. **Triage outcomes:** what the owner rejects, rewrites, or re-files during Inbox triage. A capture pattern the owner always renames, a frontmatter shape they always correct, a section they always delete — each is a candidate change to the capture skill or template that produced it.
-4. **Friction notes:** `10_Agents/solutions/` — solution notes record problems agents already hit; recurring ones point at the spec gap that caused them. Also: templates whose sections stay empty or always get renamed (issue #12 targets), tags invented ad hoc (taxonomy candidates), skills whose steps get overridden every run, preferences stated in conversation but recorded nowhere.
+4. **Skill usage:** [skill-runs](../../docs/skill-runs.log) — one line per skill invocation (timestamp, harness, skill, outcome) written by the harness hook. Skills that never run are candidates for merging or archiving; skills that fail repeatedly point at a broken step; a skill invoked far more than its cadence suggests is doing work a template or automation should absorb.
+5. **Friction notes:** `10_Agents/solutions/` — solution notes record problems agents already hit; recurring ones point at the spec gap that caused them. Also: templates whose sections stay empty or always get renamed (issue #12 targets), tags invented ad hoc (taxonomy candidates), skills whose steps get overridden every run, preferences stated in conversation but recorded nowhere.
 
 Evidence is collected read-only. Owner content may be cited in proposals. A vault proposal note that quotes, summarizes, or transforms private substance from a `restricted/*` source inherits `restricted/private` ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). PR titles and descriptions are an off-vault surface with a hard bar: private substance never enters them — when a proposal must carry it, put the substance in a restricted-tagged vault note and bare-link it from the PR body (bare links propagate nothing).
 
@@ -59,17 +60,17 @@ Proposals are **never self-merged** and never applied by the loop in any form. T
 - **PR closed unmerged / proposal rejected at triage** → record it (next section) and drop the idea.
 - **No action** → the proposal stays open and counts against the rate limit; a proposal lingering more than two cycles is mentioned (once) in the next retrospective report, then left alone — nagging is spam.
 
-## Record rejections
+## Record outcomes
 
-Rejections are memory, not failure. Append every rejected proposal to [rejected-proposals](../../docs/rejected-proposals.md) — one table row: date, proposal (with a link to the PR or note), the evidence it cited, and why it was rejected **if the owner stated a reason** (never invent one; leave the cell as `—` otherwise). The log is **append-only**: rows are never edited or removed, so the loop's memory of "we tried that" survives every session.
+Every decided proposal is memory. Append accepted ones to [accepted-proposals](../../docs/accepted-proposals.md) — one row: date, proposal (with a link to the merged PR or applied note), what changed, and the verification the next cycle owes it — so the Observe step can check whether the change had its expected effect and so a later cycle never re-proposes what already shipped. Write authority for that log follows the execution class ([Write Authority Contract](../../docs/write-authority.md) § Append-only agent logs): an interactive session appends directly; a scheduled or otherwise autonomous run puts the rows in its retrospective report (Inbox) and triage moves them — the acceptance log is **not** a standing autonomous exception. Append every rejected proposal to [rejected-proposals](../../docs/rejected-proposals.md) — one table row: date, proposal (with a link to the PR or note), the evidence it cited, and why it was rejected **if the owner stated a reason** (never invent one; leave the cell as `—` otherwise). The log is **append-only**: rows are never edited or removed, so the loop's memory of "we tried that" survives every session.
 
 The loop consults this log **first**, before proposing (ground rules above). A rejected item may be re-raised only with materially new evidence, and the new proposal must say so explicitly: "previously rejected on `<date>` (see rejected-proposals); re-raising because `<what is new>`."
 
 ## Recur
 
-The loop runs as a **monthly spec retrospective**, registered in the cadence table ([README](../README.md) § The Rhythm) alongside the monthly review and maintenance pass, and wireable as a scheduled rhythm job via [recommended-automations](../recommended-automations/SKILL.md). Under the unattended contract, a scheduled run carries the loop through Observe and drafts proposals — Inbox notes directly; PR-lane proposals as a prepared branch + Inbox summary — and its deliverable is the retrospective report; the owner review step always waits for a human.
+The loop runs as a **monthly spec retrospective**, registered in the cadence table ([README](../README.md) § The Rhythm) alongside the monthly review and maintenance pass, and wireable as a scheduled rhythm job via [recommended-automations](../recommended-automations/SKILL.md). Under the unattended contract, a scheduled run carries the loop through Observe and drafts proposals — Inbox notes directly; PR-lane proposals as a prepared branch + Inbox summary — and its deliverable is the retrospective report, which also carries any accepted-proposals rows it would otherwise have appended; the owner review step always waits for a human.
 
-Each cycle ends with a short retrospective report in `02_Inbox/` (`YYYY-MM-DD-spec-retrospective.md`, `inbox-capture` rules, provenance fields): evidence reviewed, proposals opened (with links), proposals held back by the rate limit, verification of the previous cycle's merged changes, and any "worth upstreaming?" flags for the owner.
+Each cycle ends with a short retrospective report in `02_Inbox/` (`YYYY-MM-DD-spec-retrospective.md`, `inbox-capture` rules, provenance fields): evidence reviewed, proposals opened (with links), proposals held back by the rate limit, verification of the previous cycle's merged changes, and any "worth upstreaming?" flags for the owner. An autonomous cycle that found newly accepted proposals lists them under a `## Accepted proposals` heading as a table with exactly the acceptance log's four columns (`Date | Proposal | What changed | Verification owed`, links written relative to `02_Inbox/`); at triage, `brain accepted --ingest <report> --write` moves those rows into the log (spec §29.4) — idempotently, so a re-triaged report adds nothing.
 
 ## Worked example (dry-run cycle)
 
@@ -117,12 +118,12 @@ The example proposal conforms: frontmatter carries `title`, `tags`, `updated`; e
 
 ## Steps
 
-1. Read [rejected-proposals](../../docs/rejected-proposals.md) — load the do-not-repropose list.
-2. Observe (above): `brain report` vs previous cycle, git history, triage outcomes, `10_Agents/solutions/`.
+1. Read [rejected-proposals](../../docs/rejected-proposals.md) and [accepted-proposals](../../docs/accepted-proposals.md) — load the do-not-repropose list and the verifications owed.
+2. Observe (above): `brain report` vs previous cycle, git history, triage outcomes, the skill-run log, `10_Agents/solutions/`.
 3. Count proposals already open from this loop (PRs + untriaged Inbox proposal notes); available slots = 3 minus that.
 4. For each friction, best-ranked first, up to the available slots: propose via the right lane (canonical → PR; else Inbox note), with evidence, expected effect, rollback, provenance.
 5. Verify the previous cycle's merged changes had their expected effect; note the outcome in the retrospective report.
-6. Append any newly-rejected proposals to [rejected-proposals](../../docs/rejected-proposals.md).
+6. Record newly-accepted proposals in [accepted-proposals](../../docs/accepted-proposals.md) (interactive: append; autonomous: rows in the retrospective report) and newly-rejected ones in [rejected-proposals](../../docs/rejected-proposals.md) (a standing exception — both classes append).
 7. Write the retrospective report to `02_Inbox/`; the owner takes it from there.
 
 ## References
@@ -130,6 +131,8 @@ The example proposal conforms: frontmatter carries `title`, `tags`, `updated`; e
 - Issue #22 — the loop's design: observe/propose/review/recur, rate limit, upstream boundary
 - [PRD](../../../00_Meta/PRD.md) §6.3 — change control the propose lanes implement
 - [rejected-proposals](../../docs/rejected-proposals.md) — the loop's rejection memory
+- [accepted-proposals](../../docs/accepted-proposals.md) — the loop's acceptance memory and verification queue
+- [skill-runs](../../docs/skill-runs.log) — usage evidence for the Observe step
 - [OPERATING-RULES](../../docs/OPERATING-RULES.md) — never-push-upstream rule, canonical note handling
 - [sync-upstream](../sync-upstream/SKILL.md) — the pull direction this loop coexists with (issue #6)
 - `10_Agents/tools/brain/SPEC.md` §16 — `brain report`, the Observe step's primary instrument (issue #16)

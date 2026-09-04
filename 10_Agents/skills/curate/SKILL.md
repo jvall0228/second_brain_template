@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-08-11
+updated: 2026-09-04
 expires: 2027-08-11
 ---
 
@@ -24,7 +24,7 @@ Epistemic integrity, where [vault-maintenance](../vault-maintenance/SKILL.md) is
    2. **Stale claims** → re-verify via [research-to-resource](../research-to-resource/SKILL.md) in corrective mode (merge fixes into the note, note the re-verification date). Agent-executable; canonical notes still follow canonical change control.
    3. **Dead** (superseded, no longer true, no longer relevant) → **propose** archiving to `07_Archives/` — never archive unprompted.
    4. **Too big** (oversized signal) → **propose** a split, naming the intended pieces; execution goes through [merge-notes](../merge-notes/SKILL.md) after approval.
-3. **Judge the structural signals:** orphans (link them in, or propose archiving), unreferenced `08_Assets/` files (propose deletion or link them), dead URLs (find replacement sources or mark claims unverifiable).
+3. **Judge the structural signals:** orphans (link them in, or propose archiving), unreferenced `08_Assets/` files (propose deletion or link them), dead URLs (find replacement sources or mark claims unverifiable), and **distill candidates** — Journal ideas and solution notes with two or more backlinks and no `type/zettel` tag: read each; if it carries one evergreen claim that other notes keep citing, propose reshaping it via [distill-note](../distill-note/SKILL.md) (a proposal — the owner decides; a note that is a hub or a log, not a claim, is simply noted as judged).
 4. **Semantic lint** — the checks only judgment can make. Scan the flagged notes and their link neighborhoods for:
    - **Contradictions:** two notes asserting incompatible claims.
    - **Superseded claims:** an older note stating what a newer note has since corrected.
@@ -46,3 +46,4 @@ Epistemic integrity, where [vault-maintenance](../vault-maintenance/SKILL.md) is
 - `10_Agents/tools/brain/SPEC.md` § 14 — signal definitions and tunables
 - [CONVENTIONS](../../../00_Meta/CONVENTIONS.md) § Expiration — TTL policy
 - [vault-maintenance](../vault-maintenance/SKILL.md) — the mechanical counterpart
+- [distill-note](../distill-note/SKILL.md) — reshaping accepted distill candidates
