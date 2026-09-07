@@ -4,7 +4,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -14,7 +14,7 @@ Behavior expectations for agents working in this vault. These supplement — not
 
 ## Bootstrap Before Working
 
-Always read the bootstrap sequence before producing output. See [AGENTS](../../AGENTS.md#bootstrap-sequence-must-read-order).
+Select the context route before reading personal notes: [AGENTS](../../AGENTS.md#bootstrap-sequence-must-read-order) requires normal bootstrap for internal work and a fresh policy-only context for public-only synthesis. If earlier personal context or automatic harness injection prevents isolation, report unsupported isolation without synthesizing. A retrieval flag does not remove previously loaded content.
 
 **Arm the pre-commit hook before your first commit:** run `git config core.hooksPath .githooks` once per clone. Fresh agent environments (cloud containers, CI checkouts, new clones) do not have it, and without it your commits ship a stale vault index that fails CI for everyone. Claude Code sessions get this automatically via the repo's `.claude/settings.json` SessionStart hook; every other harness runs it manually at bootstrap.
 

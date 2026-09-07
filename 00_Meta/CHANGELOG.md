@@ -5,10 +5,20 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-09-04
+updated: 2026-09-07
 ---
 
 # Changelog
+
+## [2026-09-07] port-remediation | Safer content handling, complete internal views, and read-only CI
+
+- Source snapshots bind classification and transformed text to the same bytes. Archive and gap ingestion authenticate file identity and parent paths before removal, preserve concurrent replacements, and retain recovery evidence on conflicts. Derived privacy propagates through substantive source dependencies; public-only reads reject private or unknown derivations before returning any source text.
+- Home and AYMT include eligible private work, retain bounded output, and account for hidden inputs in counts and privacy provenance. Project action candidates come from canonical `PROJECT.md` Next Actions; completion criteria, supporting-note tasks, and future scheduled/start dates cannot bypass that selection. The Project template and contract now separate execution actions from completion evidence.
+- Daily-note creation instantiates the shipped template without placeholder tasks, uses the vault timezone, and carries only admitted source snapshots with provenance. Regression coverage includes real-template use over successive days, source replacement races, reclassification, private archives, and platform-specific path handling.
+- Commit and merge hooks generate and validate from staged sources, preserving unstaged work. Pre-push and automatic CI check committed consistency without mutation. Behavioral tests and shared validation run on Linux and macOS; the template adoption smoke remains automatic. Explicit manual generated-file repair is separate.
+- Agent entrypoints select a policy-only context before public-only synthesis. Catalogs describe existing repository verification and global target preview; automatic global installation remains deferred. Missing skill telemetry is unknown outside known instrumentation coverage.
+- The template adoption helper authenticates and loads every validator support module from captured repository bytes, binds their hashes into cleanup plans and recovery, and ignores same-named imports from other checkouts.
+- Includes the snapshot, derived-classification, explicit shared-scope, and staged-generation prerequisites needed by these fixes. Preserves template examples, community-component policy, write-authority policy, and existing context budgets. Owner-specific notes, project reorganizations, local host files, and generated source-vault data are excluded.
 
 ## [2026-09-04] port-fork-improvements | Backport template-general improvements from the shared_brain fork
 

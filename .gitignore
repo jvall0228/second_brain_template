@@ -29,3 +29,9 @@ __pycache__/
 
 # Vault write lock (brain spec §29): per-clone serialization of plan-and-write commands.
 .second-brain/write.lock
+
+# Source-bound triage/ingestion deletion: local crash evidence, never staged.
+.brain-note-removal-*
+
+# Interrupted hook publication: preserve recovery evidence outside staging.
+/.precommit-generated-transaction-*/

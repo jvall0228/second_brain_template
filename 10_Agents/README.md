@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/agent
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -19,11 +19,11 @@ Agent-facing documentation for working within this vault. Start with the bootstr
 
 ## Skills
 
-Twelve harness-agnostic skills in the Agent Skills format (folder-per-skill `SKILL.md`), covering capture & triage, periodic reviews, vault maintenance, research → resource, harness onboarding, and environment integration (orientation, ingestion automations, self-maintenance). See [Skills](skills/README.md) for the full table and the format contract.
+Harness-agnostic skills in the Agent Skills format (folder-per-skill `SKILL.md`) cover capture, triage, reviews, maintenance, research, onboarding, and environment integration. See [Skills](skills/README.md) for the current catalog and format contract.
 
 ## Components
 
-The recommended-component registry — the agent library's home for installable **components** an onboarder can add: third-party skills, user-scope memory blocks, harness overlays, and vault-config presets. `10_Agents/components/manifest.json` is the machine-readable source of truth; third-party content is never vendored here (community items track their upstream branch and materialize only into the harness user scope at install time). [onboard-harness](skills/setup/onboard-harness/SKILL.md) is the installer. See [Components](components/README.md), with the human-facing community catalog at [recommended-skills](../06_Resources/recommended-skills.md).
+The recommended-component registry — the agent library's home for installable **components** an onboarder can add: third-party skills, user-scope memory blocks, harness overlays, and vault-config presets. `10_Agents/components/manifest.json` is the machine-readable source of truth; third-party content is never vendored here (community items track their upstream branch and materialize only into the harness user scope at install time). [onboard-harness](skills/setup/onboard-harness/SKILL.md) verifies project wiring and previews proposed global targets read-only; global installation, reconciliation, and uninstall are deferred. See [Components](components/README.md), with the human-facing community catalog at [recommended-skills](../06_Resources/recommended-skills.md).
 
 ## Tools
 

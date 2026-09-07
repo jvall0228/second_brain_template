@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/human
   - audience/agent
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -158,13 +158,13 @@ Agents may append `type/solution` notes; restructuring or deletion is owner-dire
 
 ### 9.3 Skills, components, and harness installation
 
-Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` installs primitives and overlays to user scope through a reversible user-scope machine-state manifest while preserving foreign content. Community components remain sign-off-gated external pointers, never vendored. Overlays cover only standards gaps; root adapters remain tracked.
+Canonical skills use folder-per-skill Agent Skills format. `onboard-harness` verifies repository-local wiring and previews proposed user-scope targets; automated global installation, reconciliation, and uninstall remain deferred. Community components remain sign-off-gated external pointers, never vendored. Overlays cover only standards gaps; root adapters remain tracked.
 
 ### 9.4 `brain` and generated data
 
 `brain` is Python 3.10+ and normed by [spec](../10_Agents/tools/brain/SPEC.md). It is stdlib-only except optional local embeddings, which degrade to keyword search. Commands cover indexing/query, canonical Project/Area inventory, rollups, rollback-capable whole-directory archival, validation, curation, context, config, reports, tasks, embeddings, and provider-neutral push-only notification planning/local file tests.
 
-The committed index, VS Code snippets, and compiled `00_Meta/BOOTSTRAP.md` (spec §28) are deterministic tracked outputs. Hooks regenerate them, `merge=regenerate` avoids hand-merges, and CI checks/self-heals freshness. Embeddings and user-scope machine-state install manifests are untracked.
+The committed index, VS Code snippets, skill adapters, and compiled `00_Meta/BOOTSTRAP.md` (spec §28) are deterministic tracked outputs. Commit and merge hooks generate from the staged snapshot while preserving unstaged source edits. The `merge=regenerate` driver avoids hand-merges; automatic merges needing regenerated output pause for a final commit. Post-merge checks, pre-push checks, and automatic CI verify committed freshness without rewriting history. Manual repair is a separate workflow. Embeddings and user-scope machine-state install manifests are untracked.
 
 ## 10. Frontmatter, tags, and restriction data
 
@@ -178,7 +178,7 @@ Notes require `title`, non-empty list `tags`, and ISO `updated`. Templates may u
 
 ### 10.3 Restriction semantics
 
-`restricted/private` is publication classification and leak resistance, not access control; [CONVENTIONS](CONVENTIONS.md#restrictedprivate) owns the full contract. Agents may read, search, and derive from private content locally; a note that carries private substance inherits the tag, while a bare link does not. Mechanical protections cover the committed index, notifications, generated artifacts, AYMT/Home, link-migration output, task carry-over, and Project-to-Area rollups; public export excludes private content by default with a per-operation owner override. Harness-level read restriction (e.g. Cursor ignore) is owner-selected opt-in, and the local semantic sidecar includes private notes. Paths, titles, frontmatter, and targets may remain visible; most harnesses lack repository ignore.
+`restricted/private` classifies sources for public-only synthesis; the [restricted/private Contract](restricted-private.md) owns the full rule. Agents may read, search, and derive from private content locally; a note that carries private substance inherits the tag, while a bare link does not. Home and AYMT include eligible internal work, with provenance for displayed content and aggregate inputs. Public-only reads exclude private and unknown derivations using the same snapshots they return. Public-only synthesis starts in an isolated context before personal bootstrap; unsupported isolation is reported without synthesis. Destination-specific filtering remains for the committed index, notifications, generated artifacts, link migration, daily carry-over, and Project-to-Area rollups. Harness-level read restriction (e.g. Cursor ignore) is owner-selected opt-in, and the local semantic sidecar includes private notes.
 
 ## 11. Canonical and config contracts
 

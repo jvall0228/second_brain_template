@@ -6,13 +6,15 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
 # Codex Wiring
 
 Facts verified 2026-08-11 against [learn.chatgpt.com/docs](https://learn.chatgpt.com/docs) (see [research](../../../06_Resources/harness-codex.md)); re-verify before relying on paths.
+
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md) currently supports project verification and read-only global preview. User-global installation, reconciliation, and uninstall are deferred; the user-global designs below are not executable setup instructions.
 
 ## Entrypoint loading
 
@@ -21,11 +23,11 @@ Codex reads **`AGENTS.md` natively** — global `~/.codex/AGENTS.md` first, then
 - **No import expansion:** Codex does not expand `@file` imports or `[[wikilinks]]` — the bootstrap works because `AGENTS.md` lists plain paths agents read themselves; do not rely on link-following.
 - **32 KiB cap:** combined project docs are capped by `project_doc_max_bytes` (default 32 KiB). The vault's `AGENTS.md` is well under it; if an adopter's grows past the cap, raise the value in config (see `config-example.toml`).
 
-User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then puts a marker-delimited plain-text instruction in `~/.codex/AGENTS.md` telling Codex that personal second-brain context is registered there and to read it when owner-specific context materially helps with the task. Codex has no import syntax to expand, so the adapter does not use `@`; it also does not embed the adopter's vault path. The shared registration owns that runtime-specific path and routes onward to the vault's `AGENTS.md`.
+Deferred user-scope design: a future `onboard-harness` backend would create `~/.agents/second-brain/AGENTS.md`, then put a marker-delimited plain-text instruction in `~/.codex/AGENTS.md` telling Codex that personal second-brain context is registered there and to read it when owner-specific context materially helps with the task. Codex has no import syntax to expand, so the adapter does not use `@`; it also does not embed the adopter's vault path. The shared registration owns that runtime-specific path and routes onward to the vault's `AGENTS.md`.
 
 ## Skills
 
-Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/`. A clean clone includes generated text adapters in `.agents/skills/`; each mirrors the canonical `name`/`description` and points, via its `canonical-source` field, to the real `SKILL.md` — `10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills. No project symlinks or onboarding writes are needed. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects. Optional user-global mode retains the manifest-owned `~/.agents/skills/<name>` link/copy route after exact preview and approval.
+Codex implements the Agent Skills standard and scans repo-scope `.agents/skills/` and user-scope `~/.agents/skills/`. A clean clone includes generated text adapters in `.agents/skills/`; each mirrors the canonical `name`/`description` and points, via its `canonical-source` field, to the real `SKILL.md` — `10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills. No project symlinks or onboarding writes are needed. Invocation: `$skill-name` or implicit description matching. Project-scope resources load only for **trusted** projects. User-global links/copies remain deferred; current onboarding only previews proposed targets.
 
 ## Hook installation
 

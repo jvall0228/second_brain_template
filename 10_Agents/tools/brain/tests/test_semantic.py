@@ -68,7 +68,17 @@ def run(argv: list[str], stdin_text: str | None = None) -> tuple[int, str, str]:
 
 
 def ingest(root: Path, vectors: dict[str, list[float]], model: str = "toy") -> tuple[int, str, str]:
-    payload = json.dumps({"model": model, "vectors": vectors})
+    entries = {}
+    for rel, vector in vectors.items():
+        try:
+            text, _ = brain.load_text(root, rel)
+        except OSError:
+            text = None
+        entries[rel] = {
+            "hash": brain.note_content_hash(text) if text is not None else "0" * 64,
+            "vector": vector,
+        }
+    payload = json.dumps({"schemaVersion": 1, "model": model, "notes": entries})
     return run(["embed", "--stdin-json", "--json", "--vault", str(root)], payload)
 
 
@@ -178,15 +188,25 @@ class EmbedStdinJsonTests(unittest.TestCase):
             self.assertEqual(store["dim"], 3)
 
     def test_malformed_inputs_are_operational_errors(self):
+        def payload(entries, *, model="toy", version=1):
+            return json.dumps({"schemaVersion": version, "model": model, "notes": entries})
+
+        def entry(vector):
+            return {"hash": brain.note_content_hash(NOTE_ALPHA), "vector": vector}
+
         cases = [
             "not json",
             json.dumps(["not", "an", "object"]),
-            json.dumps({"model": "toy"}),  # missing vectors
-            json.dumps({"model": "", "vectors": {"alpha.md": [1.0]}}),
-            json.dumps({"model": "toy", "vectors": {}}),
-            json.dumps({"model": "toy", "vectors": {"alpha.md": []}}),
-            json.dumps({"model": "toy", "vectors": {"alpha.md": [1.0, "x"]}}),
-            json.dumps({"model": "toy", "vectors": {"alpha.md": [1.0], "beta.md": [1.0, 2.0]}}),
+            json.dumps({"model": "toy", "vectors": {"alpha.md": [1.0]}}),  # legacy input
+            payload({"alpha.md": entry([1.0])}, version=2),
+            payload({"alpha.md": entry([1.0])}, version=True),
+            payload({"alpha.md": entry([1.0])}, model=""),
+            payload({}),
+            payload({"alpha.md": {"vector": [1.0]}}),
+            payload({"alpha.md": {"hash": "not-a-digest", "vector": [1.0]}}),
+            payload({"alpha.md": entry([])}),
+            payload({"alpha.md": entry([1.0, "x"])}),
+            payload({"alpha.md": entry([1.0]), "beta.md": entry([1.0, 2.0])}),
         ]
         for payload in cases:
             with tempfile.TemporaryDirectory() as td:
@@ -197,6 +217,43 @@ class EmbedStdinJsonTests(unittest.TestCase):
                 self.assertEqual(code, 1, payload)
                 self.assertIn("error:", err)
                 self.assertFalse((root / brain.EMBED_RELPATH).exists())
+
+    def test_obsolete_source_digest_rejects_entire_update_and_preserves_store(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            self.assertEqual(ingest(root, {"alpha.md": [1.0, 0.0]})[0], 0)
+            before = (root / brain.EMBED_RELPATH).read_bytes()
+            # The adapter embedded these source versions before another writer
+            # changed alpha. Beta's valid vector must not be partially ingested.
+            payload = {
+                "schemaVersion": 1,
+                "model": "toy",
+                "notes": {
+                    "alpha.md": {"hash": brain.note_content_hash(NOTE_ALPHA), "vector": [0.0, 1.0]},
+                    "beta.md": {"hash": brain.note_content_hash(NOTE_BETA), "vector": [0.0, 1.0]},
+                },
+            }
+            (root / "alpha.md").write_text(NOTE_ALPHA + "\nChanged during embedding.\n")
+            code, _out, err = run(
+                ["embed", "--stdin-json", "--vault", str(root)], json.dumps(payload)
+            )
+            self.assertEqual(code, 1)
+            self.assertIn("source hash mismatch", err)
+            self.assertIn("alpha.md", err)
+            self.assertEqual((root / brain.EMBED_RELPATH).read_bytes(), before)
+
+    def test_missing_source_digest_preserves_existing_store(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), base_files())
+            self.assertEqual(ingest(root, {"alpha.md": [1.0, 0.0]})[0], 0)
+            before = (root / brain.EMBED_RELPATH).read_bytes()
+            code, _out, err = run(
+                ["embed", "--stdin-json", "--vault", str(root)],
+                json.dumps({"schemaVersion": 1, "model": "toy", "notes": {"beta.md": {"vector": [0.0, 1.0]}}}),
+            )
+            self.assertEqual(code, 1)
+            self.assertIn("source hash", err)
+            self.assertEqual((root / brain.EMBED_RELPATH).read_bytes(), before)
 
     def test_unknown_path_fails_all_or_nothing(self):
         with tempfile.TemporaryDirectory() as td:

@@ -34,6 +34,21 @@ class ArchiveIdentityTests(unittest.TestCase):
     def archive(self, root, *extra):
         return run_cli(root, "triage-archive", REPORT_REL, "--write", "--json", *extra)
 
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "POSIX FIFO required")
+    def test_fifo_source_is_refused_without_waiting_for_a_writer(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            source = root / REPORT_REL
+            source.unlink()
+            os.mkfifo(source)
+            result = subprocess.run([
+                sys.executable, str(BRAIN), "triage-archive", REPORT_REL,
+                "--write", "--vault", str(root),
+            ], capture_output=True, text=True, timeout=2)
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertTrue(source.exists())
+            self.assertFalse((root / LOG).exists())
+
     def test_changed_report_after_completed_archive_is_a_conflict_until_revised(self):
         with tempfile.TemporaryDirectory() as td:
             root = make_vault(Path(td), files())
@@ -118,6 +133,277 @@ class ArchiveIdentityTests(unittest.TestCase):
             with self.assertRaises(brain.WriteConflictError):
                 brain.apply_triage_archive(root, plan)
             self.assertTrue((root / REPORT_REL).exists())
+
+
+class SourceRemovalSafetyTests(unittest.TestCase):
+    def test_archive_refuses_symlinked_inbox_without_touching_external_source(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td) / "vault", files())
+            external = Path(td) / "external"
+            (root / "02_Inbox").rename(external)
+            (root / "02_Inbox").symlink_to(external, target_is_directory=True)
+            before = (external / Path(REPORT_REL).name).read_bytes()
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+            self.assertEqual(code, 1, out + err)
+            self.assertEqual((external / Path(REPORT_REL).name).read_bytes(), before)
+            self.assertFalse((root / LOG).exists())
+
+    def test_archive_refuses_final_symlink_in_preview_and_write(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td) / "vault", files())
+            external = Path(td) / "report.md"
+            (root / REPORT_REL).rename(external)
+            (root / REPORT_REL).symlink_to(external)
+            for flags in ((), ("--write",)):
+                code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--json", *flags)
+                self.assertEqual(code, 1, out + err)
+            self.assertEqual(external.read_text(), REPORT)
+
+    def test_same_bytes_replacement_after_planning_is_preserved(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            source = root / REPORT_REL
+            replacement = source.with_suffix(".replacement")
+            replacement.write_bytes(source.read_bytes())
+            replacement.replace(source)
+            with self.assertRaises(brain.WriteConflictError):
+                brain.apply_triage_archive(root, plan)
+            self.assertEqual(source.read_text(), REPORT)
+
+
+    def gap_capture(self, root):
+        plan = brain.gap_plan(root, day=TODAY, question="Synthetic audit question?", terms=[], nearest=[], sensitive=False, inbox=True)
+        (root / plan["path"]).write_text(plan["rendered"], encoding="utf-8")
+        return plan["path"]
+
+    def test_gap_ingestion_refuses_symlinked_inbox(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td) / "vault", files())
+            capture = self.gap_capture(root)
+            external = Path(td) / "external"
+            (root / "02_Inbox").rename(external)
+            (root / "02_Inbox").symlink_to(external, target_is_directory=True)
+            code, out, err = run_cli(root, "gap", "--ingest", capture, "--write", "--json")
+            self.assertEqual(code, 1, out + err)
+            self.assertTrue((external / Path(capture).name).exists())
+            self.assertEqual((root / QUEUE).read_text(), QUEUE_TEXT)
+
+    def test_parent_replacement_after_planning_is_preserved(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            (root / "02_Inbox").rename(root / "saved-inbox")
+            (root / "02_Inbox").mkdir()
+            (root / REPORT_REL).write_text(REPORT)
+            with self.assertRaises(brain.WriteConflictError):
+                brain.apply_triage_archive(root, plan)
+            self.assertEqual((root / REPORT_REL).read_text(), REPORT)
+            self.assertTrue((root / "saved-inbox" / Path(REPORT_REL).name).exists())
+            self.assertFalse((root / LOG).exists())
+
+    def test_replacement_at_claim_is_restored_without_overwrite(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            real_rename = brain._rename_external_at
+            replacement = REPORT.replace("Done.", "Replacement.")
+            def replace_before_claim(parent, source, target, **kwargs):
+                if source == Path(REPORT_REL).name and target.endswith(".source"):
+                    temporary = root / "02_Inbox/new-file"
+                    temporary.write_text(replacement)
+                    temporary.replace(root / REPORT_REL)
+                return real_rename(parent, source, target, **kwargs)
+            with mock.patch.object(brain, "_rename_external_at", side_effect=replace_before_claim):
+                with self.assertRaises(brain.WriteConflictError):
+                    brain.apply_triage_archive(root, plan)
+            self.assertEqual((root / REPORT_REL).read_text(), replacement)
+            self.assertEqual(list(root.rglob(".brain-note-removal-*")), [])
+
+    def test_original_name_recreation_is_never_deleted(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            real_rename = brain._rename_external_at
+            replacement = REPORT.replace("Done.", "New owner report.")
+            def recreate_after_claim(parent, source, target, **kwargs):
+                result = real_rename(parent, source, target, **kwargs)
+                if source == Path(REPORT_REL).name and target.endswith(".source"):
+                    (root / REPORT_REL).write_text(replacement)
+                return result
+            with mock.patch.object(brain, "_rename_external_at", side_effect=recreate_after_claim):
+                brain.apply_triage_archive(root, plan)
+            self.assertEqual((root / REPORT_REL).read_text(), replacement)
+            self.assertEqual(len(brain._marker_values((root / LOG).read_text(), brain.TRIAGE_ARCHIVE_MARKER)), 1)
+            self.assertEqual(list(root.rglob(".brain-note-removal-*")), [])
+
+    def test_restore_collision_preserves_both_replacements_and_recovery_record(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            real_rename = brain._rename_external_at
+            first = REPORT.replace("Done.", "First replacement.")
+            second = REPORT.replace("Done.", "Second replacement.")
+            def collide(parent, source, target, **kwargs):
+                if source == Path(REPORT_REL).name and target.endswith(".source"):
+                    temporary = root / "02_Inbox/new-file"
+                    temporary.write_text(first)
+                    temporary.replace(root / REPORT_REL)
+                    result = real_rename(parent, source, target, **kwargs)
+                    (root / REPORT_REL).write_text(second)
+                    return result
+                return real_rename(parent, source, target, **kwargs)
+            with mock.patch.object(brain, "_rename_external_at", side_effect=collide):
+                with self.assertRaisesRegex(brain.WriteConflictError, "recovery required"):
+                    brain.apply_triage_archive(root, plan)
+            self.assertEqual((root / REPORT_REL).read_text(), second)
+            claims = list((root / "02_Inbox").glob(".brain-note-removal-*.source"))
+            self.assertEqual([p.read_text() for p in claims], [first])
+            self.assertEqual(len(list(root.glob(".brain-note-removal-*.json"))), 1)
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+            self.assertEqual(code, 1, out + err)
+            self.assertIn("recovery required", out)
+            self.assertEqual((root / REPORT_REL).read_text(), second)
+            self.assertEqual(claims[0].read_text(), first)
+
+    def test_parent_changed_after_claim_preserves_held_evidence_and_new_parent(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            real_rename = brain._rename_external_at
+            def move_parent(parent, source, target, **kwargs):
+                result = real_rename(parent, source, target, **kwargs)
+                if source == Path(REPORT_REL).name and target.endswith(".source"):
+                    (root / "02_Inbox").rename(root / "saved-inbox")
+                    (root / "02_Inbox").mkdir()
+                    (root / REPORT_REL).write_text(REPORT)
+                return result
+            with mock.patch.object(brain, "_rename_external_at", side_effect=move_parent):
+                with self.assertRaisesRegex(brain.WriteConflictError, "parent changed"):
+                    brain.apply_triage_archive(root, plan)
+            self.assertEqual((root / REPORT_REL).read_text(), REPORT)
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+            self.assertEqual(code, 1, out + err)
+            self.assertIn("recovery required", out)
+            self.assertEqual((root / REPORT_REL).read_text(), REPORT)
+            self.assertEqual([p.read_text() for p in (root / "saved-inbox").glob("*.source")], [REPORT])
+
+    def crash_claim(self, root, argv, *, before=False):
+        code = (
+            "import os,sys\nfrom pathlib import Path\n"
+            "sys.path.insert(0, sys.argv[1])\nimport brain\nfrom datetime import date\nbrain.vault_today = lambda config: date(2026, 9, 1)\n"
+            "original = brain._rename_external_at\n"
+            "def crash(parent, source, target, **kwargs):\n"
+            + ("    if target.endswith('.source'): os._exit(91)\n" if before else "")
+            + "    result = original(parent, source, target, **kwargs)\n"
+            + ("" if before else "    if target.endswith('.source'): os._exit(91)\n")
+            + "    return result\n"
+            "brain._rename_external_at = crash\n"
+            "raise SystemExit(brain.main(sys.argv[2:]))\n"
+        )
+        result = subprocess.run([sys.executable, "-c", code, str(BRAIN.parent), *argv, "--vault", str(root)], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 91, result.stdout + result.stderr)
+
+    def test_process_termination_after_claim_recovers_public_and_private_archive(self):
+        for restricted in (False, True):
+            with self.subTest(restricted=restricted), tempfile.TemporaryDirectory() as td:
+                data = files()
+                if restricted:
+                    data[REPORT_REL] = REPORT.replace("  - workflow/review", "  - restricted/private\n  - workflow/review")
+                root = make_vault(Path(td), data)
+                self.crash_claim(root, ["triage-archive", REPORT_REL, "--write", "--json"])
+                self.assertFalse((root / REPORT_REL).exists())
+                self.assertEqual(len(list((root / "02_Inbox").glob(".brain-note-removal-*.source"))), 1)
+                code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+                self.assertEqual(code, 0, out + err)
+                self.assertEqual(json.loads(out)["action"], "delete-only")
+                archived = root / ("07_Archives/inbox/" + Path(REPORT_REL).name) if restricted else root / LOG
+                self.assertEqual(len(brain._marker_values(archived.read_text(), brain.TRIAGE_ARCHIVE_MARKER)), 1)
+                self.assertFalse((root / REPORT_REL).exists())
+                self.assertEqual(list(root.rglob(".brain-note-removal-*")), [])
+
+    def test_process_termination_before_claim_recovers_prepared_record(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            self.crash_claim(root, ["triage-archive", REPORT_REL, "--write", "--json"], before=True)
+            self.assertTrue((root / REPORT_REL).exists())
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+            self.assertEqual(code, 0, out + err)
+            self.assertFalse((root / REPORT_REL).exists())
+            self.assertEqual(list(root.rglob(".brain-note-removal-*")), [])
+
+    def test_process_termination_after_gap_claim_recovers_once(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            capture = self.gap_capture(root)
+            self.crash_claim(root, ["gap", "--ingest", capture, "--write", "--json"])
+            self.assertFalse((root / capture).exists())
+            code, out, err = run_cli(root, "gap", "--ingest", capture, "--write", "--json")
+            self.assertEqual(code, 0, out + err)
+            result = json.loads(out)
+            self.assertEqual(result["ingested"], [])
+            self.assertEqual(len(result["skipped"]), 1)
+            self.assertEqual((root / QUEUE).read_text().count("Synthetic audit question?"), 1)
+            self.assertEqual(list(root.rglob(".brain-note-removal-*")), [])
+
+    def test_unsupported_removal_allows_preview_and_refuses_before_destination_write(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            with mock.patch.object(brain.note_removal, "require_supported", side_effect=brain.note_removal.RemovalError("unsupported safe removal")):
+                code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--json")
+                self.assertEqual(code, 0, out + err)
+                code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+                self.assertEqual(code, 1, out + err)
+            self.assertEqual((root / REPORT_REL).read_text(), REPORT)
+            self.assertFalse((root / LOG).exists())
+
+
+    def test_retry_preserves_recreated_original_and_hides_private_claim_from_corpus(self):
+        with tempfile.TemporaryDirectory() as td:
+            data = files()
+            data[REPORT_REL] = REPORT.replace("  - workflow/review", "  - restricted/private\n  - workflow/review")
+            root = make_vault(Path(td), data)
+            self.crash_claim(root, ["triage-archive", REPORT_REL, "--write", "--json"])
+            notes, assets = brain.walk_corpus(root)
+            self.assertFalse(any(".brain-note-removal-" in path for path in notes + assets))
+            replacement = REPORT.replace("Done.", "A newly captured report.")
+            (root / REPORT_REL).write_text(replacement)
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+            self.assertEqual(code, 0, out + err)
+            self.assertEqual(json.loads(out)["action"], "delete-only")
+            self.assertEqual((root / REPORT_REL).read_text(), replacement)
+            self.assertEqual(list(root.rglob(".brain-note-removal-*")), [])
+
+    def test_malformed_recovery_record_is_refused_without_deleting_claim(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            self.crash_claim(root, ["triage-archive", REPORT_REL, "--write", "--json"])
+            record = next(root.glob(".brain-note-removal-*.json"))
+            claim = next((root / "02_Inbox").glob(".brain-note-removal-*.source"))
+            data = json.loads(record.read_text())
+            data["quarantine"] = "../unrelated.md"
+            record.write_text(json.dumps(data))
+            before = record.read_bytes()
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--write", "--json")
+            self.assertEqual(code, 1, out + err)
+            self.assertIn("recovery required", out)
+            self.assertEqual(record.read_bytes(), before)
+            self.assertEqual(claim.read_text(), REPORT)
+
+    def test_absent_source_and_claim_with_remaining_record_requires_inspection(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = make_vault(Path(td), files())
+            plan = brain.triage_archive_plan(root, REPORT_REL, TODAY)
+            with mock.patch.object(brain.note_removal, "_discard_record", side_effect=KeyboardInterrupt):
+                with self.assertRaises(KeyboardInterrupt):
+                    brain.apply_triage_archive(root, plan)
+            self.assertFalse((root / REPORT_REL).exists())
+            self.assertEqual(list((root / "02_Inbox").glob(".brain-note-removal-*.source")), [])
+            code, out, err = run_cli(root, "triage-archive", REPORT_REL, "--json")
+            self.assertEqual(code, 1, out + err)
+            self.assertIn("recovery required", out)
+            self.assertEqual(len(list(root.glob(".brain-note-removal-*.json"))), 1)
+            self.assertEqual(len(brain._marker_values((root / LOG).read_text(), brain.TRIAGE_ARCHIVE_MARKER)), 1)
 
 
 class CompareAndSwapTests(unittest.TestCase):

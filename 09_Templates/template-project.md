@@ -30,9 +30,13 @@ What does "done" look like?
 
 Repeat the `area/*` tag and link for every ongoing responsibility this Project advances.
 
+## Next Actions
+
+<!-- Add only established, executable next steps. Leave this section empty when no current action is established. AYMT recommends Project work only from this section; future start/scheduled dates remain ineligible until reached. -->
+
 ## Tasks
 
-- [ ]
+<!-- Keep later steps, dependencies, and completed work here. Move a task into Next Actions when it becomes actionable instead of copying its checkbox. -->
 
 ## Related
 

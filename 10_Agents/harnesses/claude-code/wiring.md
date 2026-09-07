@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
@@ -14,17 +14,21 @@ expires: 2026-11-11
 
 Facts verified 2026-08-11 against [code.claude.com/docs](https://code.claude.com/docs) (see [research](../../../06_Resources/harness-claude-code.md)); re-verify before relying on paths.
 
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md) currently supports project verification and read-only global preview. User-global installation, reconciliation, and uninstall are deferred; the user-global designs below are not executable setup instructions.
+
 ## Entrypoint loading
 
-Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and the vault's root `CLAUDE.md` (`@AGENTS.md`) is exactly the documented memory-import pattern, so **project scope needs no setup**. User scope: `onboard-harness` first creates the stable shared registration at `~/.agents/second-brain/AGENTS.md`, then appends a marker-delimited `@~/.agents/second-brain/AGENTS.md` import to `~/.claude/CLAUDE.md`. Claude therefore loads only the thin registration globally; that registration points at the adopter's actual vault and tells Claude to read the vault's `AGENTS.md` when owner-specific context materially helps with the task. The adopter-specific vault path never appears in this template or in the Claude adapter block.
+Claude Code does **not** read `AGENTS.md` natively — it loads `CLAUDE.md`, and the vault's root `CLAUDE.md` (`@AGENTS.md`) is exactly the documented memory-import pattern, so **project scope needs no setup**. Deferred user-scope design: a future `onboard-harness` backend would create the stable shared registration at `~/.agents/second-brain/AGENTS.md`, then append a marker-delimited `@~/.agents/second-brain/AGENTS.md` import to `~/.claude/CLAUDE.md`. Claude therefore loads only the thin registration globally; that registration points at the adopter's actual vault and tells Claude to read the vault's `AGENTS.md` when owner-specific context materially helps with the task. The adopter-specific vault path never appears in this template or in the Claude adapter block.
 
 ## Skills
 
-Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. A clean clone includes generated text adapters in `.claude/skills/`; each mirrors the canonical `name`/`description` and points, via its `canonical-source` field, to the real `SKILL.md` — `10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills. No project symlinks or onboarding writes are needed. Optional user-global mode retains the manifest-owned `~/.claude/skills/<name>` link/copy route after exact preview and approval.
+Claude Code scans `.claude/skills/` (project) and `~/.claude/skills/` (user) — it does **not** scan the shared `.agents/skills/` path. A clean clone includes generated text adapters in `.claude/skills/`; each mirrors the canonical `name`/`description` and points, via its `canonical-source` field, to the real `SKILL.md` — `10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills. No project symlinks or onboarding writes are needed. User-global links/copies remain deferred; current onboarding only previews proposed targets.
 
 ## Skill-run log
 
 `.claude/settings.json` also ships a `PostToolUse` hook matched to the `Skill` tool that runs `skill-run-log.sh` (a thin wrapper around `skill-run-log.py`, which parses the payload). It appends one tab-separated line — UTC timestamp, `claude-code`, skill name, `ok` or `error` — to the append-only [skill-runs log](../../docs/skill-runs.log) and always exits 0, so it never blocks a session. Before writing it authenticates the log path below the vault root component by component with no-follow opens and verifies the opened object is a regular file, so a log or parent directory replaced by a symlink (or a missing log) is silently skipped rather than followed outside the vault. The log is tracked and merges by union (`.gitattributes`), and the [self-improve](../../skills/self-improve/SKILL.md) loop reads it as usage evidence: which skills run, how often, and which fail. Other harnesses that expose a post-tool hook can write the same line shape with their own harness name.
+
+**Coverage:** this repository wires only the Claude Code `Skill` hook. Direct skill-file reads (including Codex use), other harnesses, disabled hooks, and silently skipped writes are unobserved. For each retrospective, report the harness and first/last timestamp actually observed in its chosen window; an empty window has no observed coverage. Those timestamps do not establish continuous instrumentation. Missing rows mean unknown, never proof of non-use; a disuse-based pruning proposal needs independent evidence.
 
 ## Hook installation
 

@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/draft
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 author: claude-code
 session: https://claude.ai/code/session_0194H8b6W4qpn7DQVKEc7y73
@@ -37,8 +37,8 @@ Four kinds, each with its own install method:
 
 The install vocabulary is the overlay method vocabulary
 ([README](../harnesses/README.md) § Overlays) plus one new method, `merge-config`,
-for presets. There is **one install engine** — the overlay + component installer
-in [onboard-harness](../skills/setup/onboard-harness/SKILL.md) — never a second model.
+for presets. These are lifecycle requirements for the deferred backend in
+[onboard-harness](../skills/setup/onboard-harness/SKILL.md); no global install engine is shipped.
 
 ## The agent library includes third-party components — without vendoring them
 
@@ -53,12 +53,13 @@ agent-generated skills.
 
 ## Installer, sign-off, reversibility
 
-[onboard-harness](../skills/setup/onboard-harness/SKILL.md) reads `manifest.json`,
-groups by kind, and installs each component by its declared method/scope/target,
-recording every action in the machine manifest `~/.agents/second-brain-manifest.json`.
-[onboard-owner](../skills/setup/onboard-owner/SKILL.md) offers the install as a
-first-class step and applies `vault-config-preset` components itself under its
-live-session write exception (a config change is a vault write, and an owner decision).
+[onboard-harness](../skills/setup/onboard-harness/SKILL.md) currently verifies project
+wiring and previews proposed global targets read-only. It does not install, reconcile,
+or uninstall components. The rules below describe the future lifecycle backend;
+they do not authorize an agent to implement it ad hoc.
+[onboard-owner](../skills/setup/onboard-owner/SKILL.md) can apply
+`vault-config-preset` components under its existing live-session write exception;
+a config change remains a vault write and an owner decision.
 
 - **Sign-off.** First-party components may be `default-ok` (installed without asking
   per item). Community components require `owner-per-item` — an explicit yes before

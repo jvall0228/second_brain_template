@@ -9,7 +9,7 @@ tags:
   - audience/agent
 target: 2026-12-31
 target_status: estimated
-updated: 2026-08-18
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -31,7 +31,7 @@ What does "done" look like? — *The new website design is live on the domain, r
 - [ ] Existing content has migrated without broken routes.
 - [ ] The owner has verified the production cutover.
 
-## Tasks
+## Next Actions
 
 - [x] Audit the current site and list what to keep
 - [ ] Pick a static-site framework (see decision record)

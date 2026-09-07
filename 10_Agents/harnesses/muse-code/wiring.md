@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/draft
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
@@ -14,13 +14,15 @@ expires: 2026-11-11
 
 **Volatile adapter.** Muse Code (Meta) launched 2026-08-05 — six days before this doc. Facts verified 2026-08-11 (see [research](../../../06_Resources/harness-muse-code.md)); its SKILL.md frontmatter spec is unpublished and paths are undocumented in places. This doc stays `workflow/draft` (unlike the other adapters) until the surface stabilizes — **re-verify everything before relying on it.**
 
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md) currently supports project verification and read-only global preview. User-global installation, reconciliation, and uninstall are deferred; the user-global designs below are not executable setup instructions.
+
 ## Entrypoint loading
 
-Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.md` when `AGENTS.md` exists) — the vault bootstrap loads unmodified. Bootstrap links work as prose only; no import mechanism exists. User-scope onboarding still creates the shared registration at `~/.agents/second-brain/AGENTS.md`, but the current adapter does **not** invent an undocumented global instruction location or assume Muse discovers that file automatically. If a documented user-level instruction or memory-injection surface is available when onboarding runs, add a marker-managed plain-path reference to the shared registration there; otherwise report that persistent second-brain registration is not yet supported for Muse and leave the shared file ready for a future adapter update.
+Muse Code reads **`AGENTS.md` natively and preferentially** (it ignores `CLAUDE.md` when `AGENTS.md` exists) — the vault bootstrap loads unmodified. Bootstrap links work as prose only; no import mechanism exists. A future user-scope backend would create the shared registration at `~/.agents/second-brain/AGENTS.md`, but the current adapter does **not** invent an undocumented global instruction location or assume Muse discovers that file automatically. If a documented user-level instruction or memory-injection surface is available when onboarding runs, add a marker-managed plain-path reference to the shared registration there; otherwise report that persistent second-brain registration is not yet supported for Muse and leave the shared file ready for a future adapter update.
 
 ## Skills
 
-Muse scans `.agents/skills/` (plus compat paths). A clean clone includes generated text adapters there, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
+Muse scans `.agents/skills/` (plus compat paths). A clean clone includes generated text adapters there, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. User-global links/copies remain deferred; current onboarding only previews proposed targets. Skills surface as slash invocations; frontmatter details beyond `name`/`description` are unverified.
 
 ## Hook installation
 

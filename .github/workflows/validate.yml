@@ -1,20 +1,15 @@
-# CI backstop for clones without the pre-commit hook installed (PRD §18).
-# Self-healing: regenerate the committed generated files (compiled bootstrap,
-# vault index, VS Code snippets), run the full validation suite, then
-# auto-commit the regenerated files back to the branch on push events — so a
-# hook-less environment (web UI edits, agents without the hook) converges to
-# a fresh index instead of failing forever. Validation warnings (exit 2)
-# pass; only errors (exit 1) fail the run — same contract as the hook.
-#
-# Loop safety: the auto-commit push triggers one follow-up run, which finds
-# nothing to regenerate and commits nothing. If a concurrent push wins the
-# race, this run's push is skipped — the loser's own workflow run heals the
-# tip instead.
+# Manual validation workflow.
+# Automatic read-only checks live in generated-consistency.yml and tool-tests.yml.
+# Run this workflow on demand from the GitHub Actions UI when full vault
+# validation and generated-file refresh are desired.
 name: validate
 
+concurrency:
+  group: manual-vault-repair-${{ github.ref }}
+  cancel-in-progress: false
+
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -26,35 +21,28 @@ jobs:
       - uses: actions/checkout@v4
       - name: unit tests (all tools)
         run: python3 10_Agents/tools/run_tests.py
-      - name: adopter-flow smoke test (issue #20)
-        # Replays the README's "Adopt this template" steps in a scratch copy
-        # (delete seeded examples, fill 01_Profile/, first Inbox capture) and
-        # requires brain validate to stay at zero errors afterwards.
-        run: python3 10_Agents/tools/adopt_check.py
       - name: verify project-local skill adapters (issue #82)
         run: python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py --check
       - name: regenerate bootstrap + index + snippets + skill adapters (PRD §18, §6.5, spec §28)
         run: |
-          python3 10_Agents/tools/brain/brain.py bootstrap --write
-          python3 10_Agents/tools/brain/brain.py bootstrap --check
-          python3 10_Agents/tools/brain/brain.py index
+          python3 10_Agents/tools/brain/brain.py bootstrap --write --shared-only
+          python3 10_Agents/tools/brain/brain.py bootstrap --check --shared-only
+          python3 10_Agents/tools/brain/brain.py index --shared-only
           python3 10_Agents/tools/vscode/gen_snippets.py
           python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py
+          python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py --check
       - name: verify explicit-write local artifacts (issue #23)
-        run: python3 10_Agents/tools/brain/brain.py artifacts --check
+        run: python3 10_Agents/tools/brain/brain.py artifacts --check --shared-only
       - name: brain validate
         run: |
           set +e
-          python3 10_Agents/tools/brain/brain.py validate
+          python3 10_Agents/tools/brain/brain.py validate --shared-only
           ec=$?
           case "$ec" in
             0|2) exit 0 ;;
             *) exit "$ec" ;;
           esac
-      - name: auto-commit regenerated files
-        # Push events on this repo only — PR runs from forks have a read-only
-        # token, and a PR's head branch gets healed by its own push events.
-        if: github.event_name == 'push'
+      - name: commit regenerated files
         run: |
           git add 00_Meta/BOOTSTRAP.md 10_Agents/tools/brain/vault-index.json .vscode/second-brain.code-snippets .agents/skills .claude/skills
           if git diff --cached --quiet; then
@@ -63,7 +51,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "ci: regenerate bootstrap, vault index and snippets (auto-heal, PRD §18)"
-          # A concurrent push makes this push fail; that push's own run heals
-          # the new tip, so skipping here is safe and avoids a red run.
-          git push || echo "tip moved during run — newer push's workflow will heal it"
+          git commit -m "ci: regenerate vault index and snippets"
+          git push

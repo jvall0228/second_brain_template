@@ -4,12 +4,12 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-09-07
 ---
 
 # Second Brain — Status
 
-**Date:** 2026-08-18
+**Date:** 2026-09-07
 **State:** Framework complete; fresh template awaiting owner content
 
 > This note is deliberately **not** tagged `workflow/canonical`: it is a living snapshot that agents may update directly (e.g. milestone status, checklist progress) with a direct commit.
@@ -21,14 +21,16 @@ updated: 2026-08-18
 - Full PARA + Journal structure, bootstrap, canonical navigation, and 12 note templates are in place.
 - Both supported editors are wired: tracked Obsidian settings and VS Code settings, tasks, extensions, and generated snippets.
 - Internal navigation uses source-relative Markdown links with explicit extensions across Obsidian, VS Code, GitHub, and `brain`; the maintained corpus has no legacy links.
-- The deterministic `brain` index/validation CLI, hooks, CI, adoption smoke, health reporting, tasks, optional semantic-search path, local AYMT brief, generated Home, and privacy-filtered offline artifacts are shipped.
+- The deterministic `brain` index/validation CLI, staged-snapshot hooks, read-only automatic CI, adoption smoke, health reporting, tasks, optional semantic-search path, complete internal AYMT/Home views, and privacy-filtered offline artifacts are shipped.
 - Canonical Project/Area identity, lifecycle, multi-Area relationships, active targets, derived rollups, and rollback-capable whole-directory Project archival are shipped.
-- Twenty-four canonical Agent Skills, seven harness adapters, environment orientation, reversible onboarding, pull-only template sync, and the propose-only self-improvement loop are shipped.
+- Twenty-four canonical Agent Skills, seven harness adapters, environment orientation, repository wiring verification, global target preview, pull-only template sync, and the propose-only self-improvement loop are shipped. Automated global installation, reconciliation, and uninstall remain deferred.
 - Provider-neutral push-only notification validation, fake preview, ignored environment setup/state, and explicit local file delivery are shipped. A real-provider test send is still blocked on the owner's provider and verified private-destination choice.
 - Profile notes are blank templates — fill them in before pointing agents at the vault.
 - README and `adopt_examples.json` list the complete seed set; atomic onboarder cleanup is shipped.
 
 ## Milestone Status
+
+Local verification on 2026-09-07: 948 tool tests completed successfully (945 passed, three environment-dependent skips); shared validation reported zero errors and zero new warnings, with five existing reviewed oversized-note warnings. Generated-file consistency and the template adoption smoke check passed. Hosted Linux/macOS CI is checked separately on the proposed revision.
 
 Per the roadmap in [PRD](PRD.md) §19:
 

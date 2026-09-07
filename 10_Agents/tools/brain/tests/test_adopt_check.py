@@ -32,6 +32,7 @@ from adopt_cleanup import (  # noqa: E402
     build_plan,
     recover_cleanup,
     write_plan,
+    _load_brain,
 )
 
 
@@ -54,6 +55,53 @@ def copy_repo(dst: Path) -> None:
 
 
 class AdoptCheckTest(unittest.TestCase):
+    def test_validator_support_imports_are_bound_to_repository(self):
+        copy_repo(self.copy)
+        with mock.patch.dict(sys.modules, {"note_snapshots": None, "note_removal": None}):
+            loaded = _load_brain(self.copy.resolve())
+        self.assertEqual(loaded.NoteSnapshot.from_bytes(b"text").text, "text")
+
+    def test_validator_support_change_invalidates_cleanup_plan(self):
+        copy_repo(self.copy)
+        plan = build_plan(self.copy)
+        support = self.copy / "10_Agents/tools/brain/note_snapshots.py"
+        marker = Path(self._tmp.name) / "executed"
+        support.write_text(support.read_text() +
+                           f"\nfrom pathlib import Path\nPath({str(marker)!r}).touch()\n")
+        with self.assertRaises(AdoptionError):
+            apply_plan(self.copy, plan)
+        self.assertFalse(marker.exists())
+        self.assertTrue((self.copy / "04_Projects/example-project").is_dir())
+
+    def test_validator_support_is_checked_before_execution(self):
+        copy_repo(self.copy)
+        loaded = _load_brain(self.copy.resolve())
+        marker = Path(self._tmp.name) / "executed"
+        support = self.copy / "10_Agents/tools/brain/note_snapshots.py"
+        support.write_text(f"from pathlib import Path\nPath({str(marker)!r}).touch()\n")
+        with self.assertRaises(AdoptionError):
+            _load_brain(self.copy.resolve(), expected_dependencies=loaded._adoption_dependencies)
+        self.assertFalse(marker.exists())
+
+    def test_validator_change_after_lock_is_rejected_before_final_preflight_import(self):
+        from adopt_cleanup import _acquire_lock as acquire_lock
+        copy_repo(self.copy)
+        plan = build_plan(self.copy)
+        marker = Path(self._tmp.name) / "executed"
+        support = self.copy / "10_Agents/tools/brain/note_snapshots.py"
+
+        def change_after_lock(*args):
+            acquire_lock(*args)
+            support.write_text(support.read_text() +
+                               f"\nfrom pathlib import Path\nPath({str(marker)!r}).touch()\n")
+
+        with mock.patch("adopt_cleanup._acquire_lock", side_effect=change_after_lock):
+            with self.assertRaises(AdoptionError):
+                apply_plan(self.copy, plan)
+        self.assertFalse(marker.exists())
+        self.assertTrue((self.copy / "04_Projects/example-project").is_dir())
+        self.assertFalse((self.copy / ".adopt-cleanup.lock").exists())
+
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory(prefix="adopt-check-test-")
         self.addCleanup(self._tmp.cleanup)
@@ -115,7 +163,9 @@ class AdoptCheckTest(unittest.TestCase):
         )
         self.assertEqual(
             [row["path"] for row in first["dependencies"]],
-            ["10_Agents/tools/brain/brain.py"],
+            ["10_Agents/tools/brain/brain.py",
+             "10_Agents/tools/brain/note_removal.py",
+             "10_Agents/tools/brain/note_snapshots.py"],
         )
         project = next(row for row in first["delete"] if row["path"] == "04_Projects/example-project")
         self.assertTrue(project["contents"])

@@ -233,7 +233,7 @@ class AymtCollectorTests(unittest.TestCase):
                 )
         self.assertNotIn("GIT-FALLBACK-SECRET", str(raised.exception))
 
-    def test_restricted_restricted_target_and_environment_bodies_never_enter_candidates(self):
+    def test_private_and_linked_internal_work_is_included_environment_bodies_are_not(self):
         restricted = "04_Projects/restricted.md"
         public = "04_Projects/public.md"
         env_body = "10_Agents/environments/alpha/orientation-inventory.md"
@@ -257,8 +257,11 @@ class AymtCollectorTests(unittest.TestCase):
             selection={"slug": "alpha", "source": "cli", "state": "selected"}
         )
         combined = json.dumps(payload) + brain.render_aymt(payload).decode()
-        for secret in ("RESTRICTED-SECRET", "RESTRICTED-TASK", "TARGET-LEAK", "ENV-BODY-SECRET", "ENV-TASK"):
+        for secret in ("ENV-BODY-SECRET", "ENV-TASK"):
             self.assertNotIn(secret, combined)
+        for task in ("RESTRICTED-TASK", "TARGET-LEAK"):
+            self.assertIn(task, combined)
+        self.assertEqual(payload["privacy"], "private")
         self.assertEqual(payload["environment"]["slug"], "alpha")
 
     def test_unconfigured_environment_is_useful_empty_state(self):
@@ -390,7 +393,7 @@ class AymtCollectorTests(unittest.TestCase):
             "04_Projects/malformed/PROJECT.md",
             note(
                 "Malformed",
-                "- [ ] VISIBLE-MALFORMED-PROJECT-TASK 📅 2026-08-10",
+                "## Next Actions\n\n- [ ] VISIBLE-MALFORMED-PROJECT-TASK 📅 2026-08-10",
                 ("type/project", "project/malformed", "area/work"),
             ),
             tracked=True,
@@ -415,7 +418,7 @@ class AymtCollectorTests(unittest.TestCase):
         self.assertIn("VISIBLE-MALFORMED-PROJECT-TASK", serialized)
         self.assertNotIn("HIDDEN-INACTIVE-PROJECT-TASK", serialized)
 
-    def test_restricted_profile_is_filtered_before_readiness(self):
+    def test_restricted_profile_contributes_classified_readiness(self):
         rel = brain.CORE_FRAMEWORK_PATHS["identity"]
         self.vault.write(
             rel,
@@ -425,6 +428,8 @@ class AymtCollectorTests(unittest.TestCase):
         serialized = json.dumps(self.vault.build())
         self.assertNotIn("PRIVATE-PROFILE", serialized)
         self.assertNotIn("SECRET", serialized)
+        self.assertIn(rel, json.loads(serialized)["privacySources"])
+        self.assertEqual(json.loads(serialized)["privacy"], "private")
 
     def test_cadence_windows_suppress_existing_period_notes(self):
         paths = {
@@ -557,7 +562,7 @@ class AymtCollectorTests(unittest.TestCase):
         self.assertIn("report-stale-active", kinds)
         self.assertIn("report-orphans", kinds)
 
-    def test_restricted_backlink_cannot_change_safe_orphan_report(self):
+    def test_restricted_backlink_changes_internal_orphan_report_with_provenance(self):
         target = "06_Resources/orphan.md"
         self.vault.write(target, note("Orphan", "Disconnected."), tracked=True)
         before = self.vault.build()
@@ -571,7 +576,9 @@ class AymtCollectorTests(unittest.TestCase):
             tracked=True,
         )
         after = self.vault.build()
-        self.assertEqual(after, before)
+        self.assertNotEqual(after, before)
+        self.assertIn("04_Projects/restricted-linker.md", after["privacySources"])
+        self.assertEqual(after["privacy"], "private")
 
     def test_markdown_escaping_and_nfc_are_stable(self):
         row = brain._aymt_candidate(
@@ -586,6 +593,7 @@ class AymtCollectorTests(unittest.TestCase):
         )
         payload = {
             "candidates": [row], "date": "2026-08-11", "environment": {"freshness": None, **UNCONFIGURED},
+            "privacySources": ["01_Profile/NOW.md"],
             "inputDigest": "0" * 64, "schemaVersion": 1, "summary": {"collected": 1, "deduplicated": 1, "selected": 1, "truncated": 0},
         }
         rendered = brain.render_aymt(payload).decode()
@@ -608,6 +616,7 @@ class AymtCollectorTests(unittest.TestCase):
         self.assertEqual(rows[0]["sources"][0]["url"], "https://github.com/owner/repo/issues/79")
         markdown_payload = {
             "candidates": rows, "date": "2026-08-11", "environment": {"freshness": None, **UNCONFIGURED},
+            "privacySources": [],
             "inputDigest": "0" * 64, "schemaVersion": 1, "summary": {"collected": 1, "deduplicated": 1, "selected": 1, "truncated": 0},
         }
         self.assertIn("[owner/repo#79](https://github.com/owner/repo/issues/79)", brain.render_aymt(markdown_payload).decode())
@@ -637,6 +646,7 @@ class AymtWriterTests(unittest.TestCase):
         (self.root / "00_Meta").mkdir()
         self.payload = {
             "candidates": [],
+            "privacySources": [],
             "date": "2026-08-11",
             "environment": {"freshness": None, **UNCONFIGURED},
             "inputDigest": "a" * 64,

@@ -3,7 +3,7 @@ title: "Second Brain Template"
 tags:
   - type/meta
   - audience/human
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -60,7 +60,7 @@ Every AI conversation starts from scratch. This vault fixes that: a single sourc
    git config core.hooksPath .githooks
    git config merge.regenerate.driver true
    ```
-   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); correctness comes from regeneration — the post-merge and pre-commit hooks rebuild the compiled bootstrap, index, snippets, and adapters, and CI checks freshness. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
+   The driver keeps "ours" on conflict (`true` exits 0 leaving the file as-is); commit and merge hooks regenerate from staged sources while preserving unstaged edits. An automatic merge needing fresh generated files pauses for `git commit`; post-merge, pre-push, and automatic CI check committed freshness without rewriting it. Clones without the driver just get a normal conflict (see the [fallback recipe](10_Agents/solutions/vault-tooling/index-merge-conflicts.md)).
 6. **Remove the seeded examples as one bundle** once you've seen the pattern.
    `10_Agents/tools/adopt_examples.json` is the sole bundle authority; never
    delete an example selectively. Preview every deletion and marked reference

@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
@@ -14,13 +14,15 @@ expires: 2026-11-11
 
 Facts verified 2026-08-11 against the [pi-mono docs](https://github.com/badlogic/pi-mono) (see [research](../../../06_Resources/harness-pi.md)); re-verify before relying on paths.
 
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md) currently supports project verification and read-only global preview. User-global installation, reconciliation, and uninstall are deferred; the user-global designs below are not executable setup instructions.
+
 ## Entrypoint loading
 
-Pi reads **`AGENTS.md` natively** (with `CLAUDE.md` fallback), walking parent directories to the cwd — the vault bootstrap works unmodified. User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then writes a marker-delimited plain-text instruction into `~/.pi/agent/AGENTS.md` telling Pi to read that shared registration when owner-specific context materially helps. The adapter does not embed the adopter's vault path or assume the shared file is automatically discovered; the shared registration owns the runtime-specific path and routes onward to the vault's `AGENTS.md`.
+Pi reads **`AGENTS.md` natively** (with `CLAUDE.md` fallback), walking parent directories to the cwd — the vault bootstrap works unmodified. Deferred user-scope design: a future `onboard-harness` backend would create `~/.agents/second-brain/AGENTS.md`, then write a marker-delimited plain-text instruction into `~/.pi/agent/AGENTS.md` telling Pi to read that shared registration when owner-specific context materially helps. The adapter does not embed the adopter's vault path or assume the shared file is automatically discovered; the shared registration owns the runtime-specific path and routes onward to the vault's `AGENTS.md`.
 
 ## Skills
 
-Pi supports Agent Skills and scans `.pi/skills/`, `.agents/skills/`, and user-scope equivalents. A clean clone includes generated text adapters in `.agents/skills/`, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. **Trust gate:** project-scope `.pi/` and `.agents/skills/` resources load only after the adopter runs `/trust` on the vault once (or sets `defaultProjectTrust` globally); headless runs silently ignore them otherwise — the single most common Pi setup miss. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
+Pi supports Agent Skills and scans `.pi/skills/`, `.agents/skills/`, and user-scope equivalents. A clean clone includes generated text adapters in `.agents/skills/`, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. **Trust gate:** project-scope `.pi/` and `.agents/skills/` resources load only after the adopter runs `/trust` on the vault once (or sets `defaultProjectTrust` globally); headless runs silently ignore them otherwise — the single most common Pi setup miss. User-global links/copies remain deferred; current onboarding only previews proposed targets.
 
 ## Hook installation
 

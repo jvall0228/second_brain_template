@@ -51,6 +51,11 @@ def init_clean_git_repo(repo: Path) -> None:
     subprocess.run(["git", "config", "maintenance.auto", "false"], cwd=repo, check=True)
     subprocess.run(["git", "config", "gc.auto", "0"], cwd=repo, check=True)
     subprocess.run(["git", "add", "."], cwd=repo, check=True)
+    # Fixture notes may include newly edited contracts; refresh explicit-write
+    # artifacts in the disposable clone before exercising hook behavior.
+    subprocess.run([sys.executable, "10_Agents/tools/brain/brain.py", "artifacts", "--write", "--shared-only"],
+                   cwd=repo, check=True, stdout=subprocess.DEVNULL)
+    subprocess.run(["git", "add", "08_Assets/artifacts"], cwd=repo, check=True)
     subprocess.run(["git", "commit", "-q", "--no-verify", "-m", "fixture"], cwd=repo, check=True)
 
 
@@ -536,7 +541,7 @@ class SkillAdapterTests(unittest.TestCase):
                 self.assertEqual(plan["harness"], harness)
         self.assertEqual(list(fake_home.iterdir()), [])
 
-    def test_precommit_refuses_unstaged_canonical_skill_before_staging_adapter(self):
+    def test_precommit_uses_staged_skill_and_preserves_unstaged_description(self):
         clone = self.repo / "clone"
         copy_repo(clone)
         init_clean_git_repo(clone)
@@ -544,29 +549,21 @@ class SkillAdapterTests(unittest.TestCase):
         readme.write_text(readme.read_text(encoding="utf-8") + "\nstaged note\n", encoding="utf-8")
         subprocess.run(["git", "add", "README.md"], cwd=clone, check=True)
         skill = clone / "10_Agents/skills/setup/onboard-owner/SKILL.md"
-        skill.write_text(skill.read_text(encoding="utf-8") + "\nunstaged note\n", encoding="utf-8")
+        marker = "UNSTAGED-SKILL-DESCRIPTION"
+        skill.write_text(skill.read_text(encoding="utf-8").replace("description: ", "description: " + marker + " ", 1), encoding="utf-8")
+        working_skill = skill.read_bytes()
+        proc = subprocess.run(["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(skill.read_bytes(), working_skill)
+        staged_adapter = subprocess.run(
+            ["git", "show", ":.agents/skills/onboard-owner/SKILL.md"], cwd=clone, check=True, capture_output=True
+        ).stdout
+        self.assertNotIn(marker.encode(), staged_adapter)
+        self.assertNotIn(marker.encode(), subprocess.run(
+            ["git", "show", ":10_Agents/tools/brain/vault-index.json"], cwd=clone, check=True, capture_output=True
+        ).stdout)
 
-        proc = subprocess.run(
-            ["sh", ".githooks/pre-commit"],
-            cwd=clone,
-            capture_output=True,
-            text=True,
-        )
-        self.assertNotEqual(proc.returncode, 0)
-        self.assertIn("unstaged canonical skill changes", proc.stderr)
-        cached = subprocess.run(
-            ["git", "diff", "--cached", "--name-only"],
-            cwd=clone,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.splitlines()
-        self.assertEqual(cached, ["README.md"])
-
-    def test_precommit_refuses_unstaged_bootstrap_source_before_staging_bootstrap(self):
-        # F2: stage one version of AGENTS.md, leave a different (private)
-        # version unstaged. The hook must abort before compiling, leaving the
-        # Git index, the worktree, and every generated file exactly as found.
+    def test_precommit_compiles_staged_bootstrap_and_preserves_partial_staging(self):
         clone = self.repo / "bootstrap-source-clone"
         copy_repo(clone)
         init_clean_git_repo(clone)
@@ -577,37 +574,25 @@ class SkillAdapterTests(unittest.TestCase):
         marker = "PRIVATE-UNSTAGED-MARKER-9f3c"
         agents.write_text(original + f"\nStaged bootstrap addition.\n\n{marker}\n", encoding="utf-8")
         worktree_agents = agents.read_bytes()
-        working_before = all_generated_working_state(clone)
-        git_index_before = raw_git_index(clone)
-        bootstrap_before = (clone / "00_Meta/BOOTSTRAP.md").read_bytes()
-        self.assertNotIn(marker.encode(), bootstrap_before)
-
-        proc = subprocess.run(
-            ["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True
-        )
-        self.assertNotEqual(proc.returncode, 0)
-        self.assertIn("unstaged bootstrap-source changes", proc.stderr)
-        self.assertEqual(raw_git_index(clone), git_index_before)
-        self.assertEqual(all_generated_working_state(clone), working_before)
-        self.assertEqual((clone / "00_Meta/BOOTSTRAP.md").read_bytes(), bootstrap_before)
+        staged_agents = subprocess.run(["git", "show", ":AGENTS.md"], cwd=clone, check=True, capture_output=True).stdout
+        proc = subprocess.run(["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertEqual(agents.read_bytes(), worktree_agents)
-        staged_bootstrap = subprocess.run(
-            ["git", "show", ":00_Meta/BOOTSTRAP.md"], cwd=clone, check=True, capture_output=True
-        ).stdout
+        self.assertEqual(subprocess.run(["git", "show", ":AGENTS.md"], cwd=clone, check=True, capture_output=True).stdout, staged_agents)
+        staged_bootstrap = subprocess.run(["git", "show", ":00_Meta/BOOTSTRAP.md"], cwd=clone, check=True, capture_output=True).stdout
         self.assertNotIn(marker.encode(), staged_bootstrap)
+        self.assertIn(b"Staged bootstrap addition.", staged_bootstrap)
         self.assertEqual(list(clone.glob(".precommit-generated-transaction-*")), [])
 
-        # An untracked bootstrap source is refused the same way.
-        subprocess.run(["git", "add", "AGENTS.md"], cwd=clone, check=True)
-        defaults = clone / "01_Profile/DEFAULTS.md"
+        # An untracked bootstrap source cannot satisfy a missing staged source.
         subprocess.run(["git", "rm", "-q", "--cached", "01_Profile/DEFAULTS.md"], cwd=clone, check=True)
-        self.assertTrue(defaults.exists())
-        proc = subprocess.run(
-            ["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True
-        )
+        working_before = all_generated_working_state(clone)
+        index_before = raw_git_index(clone)
+        proc = subprocess.run(["sh", ".githooks/pre-commit"], cwd=clone, capture_output=True, text=True)
         self.assertNotEqual(proc.returncode, 0)
-        self.assertIn("untracked bootstrap-source files", proc.stderr)
-        self.assertEqual((clone / "00_Meta/BOOTSTRAP.md").read_bytes(), bootstrap_before)
+        self.assertIn("brain bootstrap --write failed", proc.stderr)
+        self.assertEqual(all_generated_working_state(clone), working_before)
+        self.assertEqual(raw_git_index(clone), index_before)
 
     @unittest.skipUnless(hasattr(os, "symlink"), "symlinks unavailable")
     def test_precommit_refuses_symlinked_bootstrap_target_without_touching_external_file(self):
@@ -776,6 +761,7 @@ class SkillAdapterTests(unittest.TestCase):
 
         invalid = clone / "06_Resources/hook-invalid.md"
         invalid.write_text("no frontmatter\n", encoding="utf-8")
+        subprocess.run(["git", "add", "06_Resources/hook-invalid.md"], cwd=clone, check=True)
         working_before = all_generated_working_state(clone)
         git_index_before = raw_git_index(clone)
         cached_before = subprocess.run(

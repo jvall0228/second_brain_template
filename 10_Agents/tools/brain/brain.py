@@ -6,7 +6,7 @@ Behavior is governed by SPEC.md in this directory (canonical); section
 references below (§n) point there. Stdlib-only, Python 3.10+.
 
 Usage: ./brain <command> [options]
-Commands: index, list, search, links, migrate-links, projects, archive-project, aymt, home, artifacts, notify, tags, show, recent,
+Commands: index, list, search, links, migrate-links, projects, archive-project, aymt, home, artifacts, notify, tags, show, read, recent,
           validate, curate, context, config, report, tasks, embed,
           remote-safety, env
 """
@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import contextvars
 import calendar
 import ctypes
 import hashlib
@@ -39,6 +40,9 @@ import zoneinfo
 from datetime import date, datetime, timedelta
 from pathlib import Path, PurePosixPath
 from urllib.parse import quote, unquote_to_bytes, urlsplit
+
+from note_snapshots import NoteSnapshot, content_hash
+import note_removal
 
 SCHEMA_VERSION = 2
 ENTITY_REGISTRY_SCHEMA_VERSION = 1
@@ -246,6 +250,7 @@ class EnvironmentSelectionError(RuntimeError):
 
 _ENVIRONMENT_UNSET = object()
 _ACTIVE_ENVIRONMENT: object | str | None = _ENVIRONMENT_UNSET
+_SHARED_CORPUS_ONLY = contextvars.ContextVar("brain_shared_corpus_only", default=False)
 
 # §21 Portable resolver installation. The manifest is deliberately outside
 # the repository and records only artifacts this installer may later replace.
@@ -793,6 +798,7 @@ def _read_nofollow_file(
     nofollow = getattr(os, "O_NOFOLLOW", 0)
     directory = getattr(os, "O_DIRECTORY", 0)
     cloexec = getattr(os, "O_CLOEXEC", 0)
+    nonblock = getattr(os, "O_NONBLOCK", 0)
     if nofollow and directory and os.open in getattr(os, "supports_dir_fd", set()):
         descriptors: list[int] = []
         try:
@@ -808,7 +814,7 @@ def _read_nofollow_file(
                 if not stat.S_ISDIR(os.fstat(current).st_mode):
                     raise OSError("unsafe vault-relative read")
             final = os.open(
-                parts[-1], os.O_RDONLY | nofollow | cloexec, dir_fd=current
+                parts[-1], os.O_RDONLY | nofollow | cloexec | nonblock, dir_fd=current
             )
             descriptors.append(final)
             before_read = os.fstat(final)
@@ -848,9 +854,11 @@ def _read_nofollow_file(
             raise OSError("unsafe vault-relative read")
         if index < len(parts) - 1 and not stat.S_ISDIR(info.st_mode):
             raise OSError("unsafe vault-relative read")
+        if index == len(parts) - 1 and not stat.S_ISREG(info.st_mode):
+            raise OSError("unsafe vault-relative read")
         paths.append(current_path)
         snapshots.append((info.st_dev, info.st_ino, stat.S_IFMT(info.st_mode)))
-    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | cloexec
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | cloexec | nonblock
     descriptor = os.open(paths[-1], flags)
     try:
         opened = os.fstat(descriptor)
@@ -1473,9 +1481,26 @@ def environment_metadata(data: dict, selected: str | None) -> dict:
 
 
 def _environment_for_corpus(root: Path) -> str | None:
+    if _SHARED_CORPUS_ONLY.get():
+        return None
     if _ACTIVE_ENVIRONMENT is not _ENVIRONMENT_UNSET:
         return _ACTIVE_ENVIRONMENT  # type: ignore[return-value]
     return select_environment(root)["slug"]
+
+
+@contextlib.contextmanager
+def shared_corpus_scope():
+    """Read shared content without choosing or impersonating an environment.
+
+    Applies to corpus discovery and environment-confined note reads, including
+    nested operations. Restores the caller's scope on success or failure. This
+    is a content boundary, not mutation authority or an environment registration.
+    """
+    token = _SHARED_CORPUS_ONLY.set(True)
+    try:
+        yield
+    finally:
+        _SHARED_CORPUS_ONLY.reset(token)
 
 
 def _environment_path_allowed(rel: str, selected: str | None) -> bool:
@@ -1509,6 +1534,10 @@ def walk_corpus(
     root: Path, *, selected_environment: object | str | None = _ENVIRONMENT_UNSET
 ) -> tuple[list[str], list[str]]:
     """Working corpus: (note paths, asset paths), vault-relative NFC, sorted."""
+    if _SHARED_CORPUS_ONLY.get():
+        if selected_environment is not _ENVIRONMENT_UNSET and selected_environment is not None:
+            raise EnvironmentSelectionError("shared-only-with-environment")
+        selected_environment = None
     if selected_environment is _ENVIRONMENT_UNSET:
         selected = _environment_for_corpus(root)
     else:
@@ -1585,20 +1614,28 @@ def index_corpus(root: Path) -> tuple[list[str], list[str]]:
 
 def _decode_note_bytes(raw: bytes) -> tuple[str | None, int]:
     """Normalize one already-authenticated note snapshot."""
-    try:
-        text = raw.decode("utf-8")
-    except UnicodeDecodeError:
-        norm = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-        return None, len(norm)
-    if text.startswith("﻿"):
-        text = text[1:]
-    text = text.replace("\r\n", "\n").replace("\r", "\n")
-    return text, len(text.encode("utf-8"))
+    snapshot = NoteSnapshot.from_bytes(raw)
+    return snapshot.text, snapshot.size_bytes
 
 
 def load_text(root: Path, rel: str) -> tuple[str | None, int]:
     """(normalized text or None on decode failure, sizeBytes)."""
     return _decode_note_bytes(_read_vault_bytes(root, rel))
+
+
+def capture_note_snapshots(root: Path, notes: list[str]) -> dict[str, NoteSnapshot | None]:
+    """Capture each note once through the normal environment-confined reader.
+
+    A command can observe different notes at different instants, but every
+    field derived from one note belongs to the same immutable source bytes.
+    """
+    snapshots: dict[str, NoteSnapshot | None] = {}
+    for rel in notes:
+        try:
+            snapshots[rel] = NoteSnapshot.from_bytes(_read_vault_bytes(root, rel))
+        except OSError:
+            snapshots[rel] = None
+    return snapshots
 
 
 # ---------------------------------------------------------------------------
@@ -2451,7 +2488,7 @@ def build_index(
     notes: list[str],
     assets: list[str],
     *,
-    note_snapshots: dict[str, bytes | None] | None = None,
+    note_snapshots: dict[str, bytes | NoteSnapshot | None] | None = None,
 ) -> dict:
     records: dict[str, dict] = {}
     for rel in notes:
@@ -2462,7 +2499,8 @@ def build_index(
                 raw = note_snapshots.get(rel)
                 if raw is None:
                     raise OSError("note snapshot unavailable")
-                text, size = _decode_note_bytes(raw)
+                snapshot = raw if isinstance(raw, NoteSnapshot) else NoteSnapshot.from_bytes(raw)
+                text, size = snapshot.text, snapshot.size_bytes
             read_error = "not-utf8" if text is None else None
         except OSError:
             # §3 read failure: broken symlink, permission denied, … — never fatal.
@@ -5052,6 +5090,139 @@ def restricted_transitions(root: Path, index: dict) -> list[dict]:
     return transitions
 
 
+def _derived_source_path(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and bool(value)
+        and not value.startswith("/")
+        and "\\" not in value
+        and ":" not in value
+        and all(part not in {"", ".", ".."} for part in value.split("/"))
+        and value.endswith(".md")
+    )
+
+
+def _indexed_rollup_sources(rel: str, rec: dict) -> set[str]:
+    """Only links in the generator-owned section are derivation edges.
+
+    Ordinary Area links, including deliberately private bare links, confer
+    no privacy classification and must not become dependencies here.
+    """
+    headings = rec.get("headings", [])
+    start = next((h for h in headings if h["level"] == 2 and h["text"] == "Active Projects"), None)
+    if start is None:
+        return set()
+    end = next((h["line"] for h in headings if h["line"] > start["line"] and h["level"] <= 2), float("inf"))
+    sources = set()
+    for link in rec.get("links", []):
+        if not start["line"] < link["line"] < end:
+            continue
+        target = link.get("resolved")
+        if not isinstance(target, str):
+            # A deleted or moved Project is still a dependency of the stored
+            # section; resolver failure must not silently make its prose public.
+            raw = link.get("destination") or link.get("target")
+            if not isinstance(raw, str):
+                continue
+            try:
+                parsed = urlsplit(raw)
+                if parsed.scheme or parsed.netloc or parsed.path.startswith("/"):
+                    continue
+                path = unquote_to_bytes(parsed.path).decode("utf-8")
+            except (UnicodeError, ValueError):
+                continue
+            target = posixpath.normpath(posixpath.join(posixpath.dirname(rel), path))
+        if PROJECT_ENTRY_RE.fullmatch(target) or ARCHIVED_PROJECT_ENTRY_RE.fullmatch(target):
+            sources.add(target)
+    return sources
+
+
+def effective_privacy(index: dict) -> dict[str, str]:
+    """Current public/private/unknown classification from one index snapshot.
+
+    Actual derivation edges are distinct from ordinary Markdown links.
+    Missing provenance is unknown, not a prohibition on local use. Private
+    generated content is permitted: only an explicitly public-only consumer
+    excludes private or unknown derived records.
+    """
+    notes = index["notes"]
+    dependencies: dict[str, set[str]] = {}
+    states = {
+        rel: "private" if is_restricted(rec) else "unknown" if rec.get("frontmatterErrors") else "public"
+        for rel, rec in notes.items()
+    }
+    original_states = dict(states)
+    for rel, rec in sorted(notes.items()):
+        if is_restricted(rec):
+            continue
+        if rel in {AYMT_RELPATH, HOME_RELPATH} or "privacy-sources" in rec["frontmatter"]:
+            sources = rec["frontmatter"].get("privacy-sources")
+            if not isinstance(sources, list) or any(not _derived_source_path(source) for source in sources):
+                states[rel] = "unknown"
+                continue
+            dependencies[rel] = set(sources)
+        if AREA_ENTRY_RE.fullmatch(rel):
+            dependencies.setdefault(rel, set()).update(_indexed_rollup_sources(rel, rec))
+        if rel in dependencies:
+            # A cycle cannot establish public provenance by vouching for itself.
+            states[rel] = "unknown"
+    changed = True
+    while changed:
+        changed = False
+        for rel, sources in sorted(dependencies.items()):
+            if states[rel] == "private":
+                continue
+            source_states = {states.get(source, "unknown") for source in sources}
+            state = (
+                "private" if "private" in source_states else
+                "unknown" if "unknown" in source_states or original_states[rel] == "unknown" else "public"
+            )
+            if state != states[rel]:
+                states[rel] = state
+                changed = True
+    return states
+
+
+def note_privacy_snapshot(
+    root: Path, source_bytes: dict[str, bytes] | None = None,
+) -> tuple[dict, dict[str, str]]:
+    """Classify immutable sources, preserving bytes already held by a writer.
+
+    Overrides retain moved/claimed Inbox sources and the bytes captured before
+    a concurrent edit. Never classify a reread while transforming older bytes.
+    """
+    notes, assets = walk_corpus(root)
+    snapshots = capture_note_snapshots(root, notes)
+    for rel, raw in (source_bytes or {}).items():
+        snapshots[rel] = NoteSnapshot.from_bytes(raw)
+    index = build_index(root, sorted(snapshots), assets, note_snapshots=snapshots)
+    return index, effective_privacy(index)
+
+
+def _privacy_metadata(rec: dict, state: str) -> dict:
+    """Conservative consumer flag plus unambiguous classification provenance."""
+    return {"restricted": state != "public", "privacy": state,
+            "explicitRestricted": is_restricted(rec)}
+
+
+def public_only_index(index: dict) -> dict:
+    """An explicit note-synthesis view; normal indexes retain every record."""
+    states = effective_privacy(index)
+    admitted = {rel for rel, state in states.items() if state == "public"}
+    notes = {
+        rel: {**rec, "backlinks": [source for source in rec.get("backlinks", []) if source in admitted]}
+        for rel, rec in index["notes"].items() if rel in admitted
+    }
+    counts = {key: 0 for key in index["linkCounts"]}
+    for rec in notes.values():
+        for link in rec.get("links", []):
+            counts[link["format"]] += 1
+            counts["legacy"] += int(link["format"] == "wikilink")
+            counts["placeholder"] += int(bool(link.get("placeholder")))
+            counts["unsupportedBlockReference"] += int(bool(link.get("fragment") and link["fragment"].startswith("^")))
+    return {**index, "notes": notes, "linkCounts": counts}
+
+
 def reduce_restricted(index: dict) -> dict:
     """§8.3: reduce restricted notes for the COMMITTED index — keep
     path/title/frontmatter(tags)/updated/sizeBytes/frontmatterErrors/links/
@@ -5061,7 +5232,12 @@ def reduce_restricted(index: dict) -> dict:
     structural target/resolution survives. Emptied/nulled, never omitted:
     the §8.1 shape holds, so no schemaVersion bump. In-memory query indexes
     stay unreduced (§8.3)."""
-    for rec in index["notes"].values():
+    states = effective_privacy(index)
+    for rel, rec in index["notes"].items():
+        if states[rel] == "private" and not is_restricted(rec):
+            rec["frontmatter"] = {**rec["frontmatter"], "tags": [*note_frontmatter_tags(rec), RESTRICTED_TAG]}
+        if rel in {AYMT_RELPATH, HOME_RELPATH} or AREA_ENTRY_RE.fullmatch(rel) or "privacy-sources" in rec["frontmatter"]:
+            rec["frontmatter"] = {**rec["frontmatter"], "effective-privacy": states[rel]}
         if is_restricted(rec):
             rec["headings"] = []
             rec["bodyTags"] = []
@@ -6543,7 +6719,7 @@ SEMANTIC_TOP_DEFAULT = 10
 
 def note_content_hash(text: str) -> str:
     """§17.1: SHA-256 hex over the note's full normalized text (§3)."""
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+    return content_hash(text)
 
 
 def _empty_store() -> dict:
@@ -6629,17 +6805,20 @@ def cosine(a: list[float], b: list[float]) -> float:
     return dot / (na * nb)
 
 
-def note_hashes(root: Path, index: dict) -> dict[str, str | None]:
+def note_hashes(
+    root: Path,
+    index: dict,
+    *,
+    note_snapshots: dict[str, NoteSnapshot | None] | None = None,
+) -> dict[str, str | None]:
     """path -> current content hash; None for notes that cannot be read or
     decoded (§3) — such notes are never embeddable."""
-    hashes: dict[str, str | None] = {}
-    for rel in index["notes"]:
-        try:
-            text, _ = load_text(root, rel)
-        except OSError:
-            text = None
-        hashes[rel] = None if text is None else note_content_hash(text)
-    return hashes
+    if note_snapshots is None:
+        note_snapshots = capture_note_snapshots(root, list(index["notes"]))
+    return {
+        rel: None if note_snapshots.get(rel) is None else note_snapshots[rel].digest
+        for rel in index["notes"]
+    }
 
 
 def fresh_entries(index: dict, store: dict, hashes: dict) -> dict[str, list[float]]:
@@ -6693,9 +6872,10 @@ def cmd_embed(root: Path, args) -> int:
     --status). Exit 0 success, 1 operational error; the sidecar is written
     only on a fully-validated update."""
     notes, assets = walk_corpus(root)
-    index = build_index(root, notes, assets)
+    snapshots = capture_note_snapshots(root, notes)
+    index = build_index(root, notes, assets, note_snapshots=snapshots)
     store = load_embeddings(root)
-    hashes = note_hashes(root, index)
+    hashes = note_hashes(root, index, note_snapshots=snapshots)
 
     if args.status:
         fresh = fresh_entries(index, store, hashes)
@@ -6728,27 +6908,44 @@ def cmd_embed(root: Path, args) -> int:
         except json.JSONDecodeError as e:
             print(f"error: --stdin-json input is not valid JSON: {e}", file=sys.stderr)
             return 1
-        if not isinstance(data, dict) or set(data) != {"model", "vectors"}:
+        if not isinstance(data, dict) or set(data) != {"schemaVersion", "model", "notes"}:
             print(
-                'error: input must be an object with exactly the keys "model" and "vectors"',
+                'error: embedding input requires schemaVersion 1, model, and notes '
+                '(each note must provide its source hash and vector)',
                 file=sys.stderr,
             )
+            return 1
+        if type(data["schemaVersion"]) is not int or data["schemaVersion"] != 1:
+            print("error: unsupported embedding input schemaVersion; expected 1", file=sys.stderr)
             return 1
         if not (isinstance(data["model"], str) and data["model"].strip()):
             print("error: model must be a non-empty string", file=sys.stderr)
             return 1
-        if not (isinstance(data["vectors"], dict) and data["vectors"]):
+        if not (isinstance(data["notes"], dict) and data["notes"]):
             print(
-                "error: vectors must be a non-empty object of note path -> number array",
+                "error: notes must be a non-empty object of note path -> {hash, vector}",
                 file=sys.stderr,
             )
             return 1
         model = data["model"].strip()
         vectors: dict[str, list[float]] = {}
+        source_hashes: dict[str, str] = {}
         dim: int | None = None
         unknown: list[str] = []
-        for key in sorted(data["vectors"]):
-            vec = data["vectors"][key]
+        for key in sorted(data["notes"]):
+            entry = data["notes"][key]
+            if (
+                not isinstance(entry, dict)
+                or set(entry) != {"hash", "vector"}
+                or not isinstance(entry["hash"], str)
+                or re.fullmatch(r"[0-9a-f]{64}", entry["hash"]) is None
+            ):
+                print(
+                    f"error: note {key!r} requires a lowercase SHA-256 source hash and vector",
+                    file=sys.stderr,
+                )
+                return 1
+            vec = entry["vector"]
             if not _valid_vector(vec):
                 print(
                     f"error: vector for {key!r} must be a non-empty array of finite numbers",
@@ -6768,10 +6965,25 @@ def cmd_embed(root: Path, args) -> int:
             if rel not in index["notes"]:
                 unknown.append(key)
                 continue
+            if rel in vectors:
+                print(f"error: duplicate normalized note path {rel!r}", file=sys.stderr)
+                return 1
             vectors[rel] = [float(x) for x in vec]
+            source_hashes[rel] = entry["hash"]
         if unknown:
             print(
                 "error: unknown note paths (nothing written): " + ", ".join(unknown),
+                file=sys.stderr,
+            )
+            return 1
+        stale = sorted(
+            rel for rel in vectors
+            if hashes[rel] is not None and source_hashes[rel] != hashes[rel]
+        )
+        if stale:
+            print(
+                "error: source hash mismatch (nothing written); re-embed changed notes: "
+                + ", ".join(stale),
                 file=sys.stderr,
             )
             return 1
@@ -6799,7 +7011,7 @@ def cmd_embed(root: Path, args) -> int:
                 if rel in index["notes"]
             }
         for rel, vec in vectors.items():
-            merged[rel] = {"hash": hashes[rel], "vector": vec}
+            merged[rel] = {"hash": source_hashes[rel], "vector": vec}
         save_embeddings(
             root,
             {"dim": dim, "model": model, "notes": merged, "schemaVersion": EMBED_SCHEMA_VERSION},
@@ -6844,8 +7056,7 @@ def cmd_embed(root: Path, args) -> int:
     todo = [rel for rel in embeddable_notes(index, hashes) if rel not in fresh]
     texts: list[str] = []
     for rel in todo:
-        text, _ = load_text(root, rel)  # readable by construction (hash present)
-        texts.append(text)
+        texts.append(snapshots[rel].text)  # readable by construction (hash present)
     vecs = encode(texts) if todo else []
     dim = store["dim"]
     merged = {rel: store["notes"][rel] for rel in fresh}
@@ -6881,12 +7092,14 @@ def cmd_embed(root: Path, args) -> int:
     return 0
 
 
-def semantic_search(root: Path, index: dict, args) -> int:
+def semantic_search(
+    root: Path, index: dict, args, *, note_snapshots: dict[str, NoteSnapshot | None]
+) -> int:
     """§18.4: hybrid semantic+keyword note ranking, degrading to the plain
     keyword search (exit 0, identical output shape) whenever semantic
     ranking is impossible."""
     store = load_embeddings(root)
-    hashes = note_hashes(root, index)
+    hashes = note_hashes(root, index, note_snapshots=note_snapshots)
     fresh = fresh_entries(index, store, hashes)
 
     def degrade(reason: str) -> int:
@@ -6895,7 +7108,7 @@ def semantic_search(root: Path, index: dict, args) -> int:
             "keyword search; populate the sidecar with `brain embed` (spec §18.4)",
             file=sys.stderr,
         )
-        emit_keyword_hits(keyword_hits(root, index, args.query, args.tag), args.json)
+        emit_keyword_hits(keyword_hits(root, index, args.query, args.tag, note_snapshots=note_snapshots), args.json)
         return 0
 
     if not fresh:
@@ -6934,7 +7147,8 @@ def semantic_search(root: Path, index: dict, args) -> int:
         return degrade("no query embedding source")
 
     kw_counts: dict[str, int] = {}
-    for h in keyword_hits(root, index, args.query, args.tag):
+    states = effective_privacy(index)
+    for h in keyword_hits(root, index, args.query, args.tag, note_snapshots=note_snapshots):
         kw_counts[h["path"]] = kw_counts.get(h["path"], 0) + 1
     rows: list[dict] = []
     for rel in sorted(index["notes"]):
@@ -6950,7 +7164,7 @@ def semantic_search(root: Path, index: dict, args) -> int:
             {
                 "keywordHits": kw,
                 "path": rel,
-                "restricted": is_restricted(rec),
+                **_privacy_metadata(rec, states[rel]),
                 "score": round(
                     SEMANTIC_WEIGHT * sem_raw + KEYWORD_WEIGHT * (1.0 if kw else 0.0), 6
                 ),
@@ -8460,16 +8674,13 @@ def _select_aymt_candidates(candidates: list[dict]) -> tuple[list[dict], dict]:
     return selected, summary
 
 
-def _aymt_note_allowed(rel: str, rec: dict, restricted_paths: set[str]) -> bool:
+def _aymt_note_allowed(rel: str) -> bool:
     if (
         rel in {AYMT_RELPATH, HOME_RELPATH}
         or rel.startswith(("07_Archives/", "09_Templates/", ENVIRONMENTS_RELPATH + "/"))
-        or rel in restricted_paths
     ):
         return False
-    # A non-restricted note pointing at a restricted note is excluded before
-    # any body-derived field can become an AYMT candidate.
-    return not any(link.get("resolved") in restricted_paths for link in rec.get("links", []))
+    return True
 
 
 def _aymt_seed_paths(raw: bytes) -> tuple[str, ...]:
@@ -8520,11 +8731,41 @@ def _aymt_heading_items(text: str | None, heading: str) -> list[str]:
     return items
 
 
-def _aymt_first_next_action(root: Path, rel: str, rec: dict) -> tuple[str, str]:
+def _project_next_action(task: dict, rec: dict) -> bool:
+    headings = rec.get("headings", [])
+    start = next((h for h in headings if h["level"] == 2 and fold(h["text"]) == "next actions"), None)
+    if start is None:
+        return False
+    end = next((h["line"] for h in headings if h["line"] > start["line"] and h["level"] <= 2), float("inf"))
+    return start["line"] < task["line"] < end
+
+
+def _aymt_task_ready(task: dict, today_d: date, text: str | None) -> bool:
+    """Honor start/scheduled tokens from the same captured task line.
+
+    The general task index intentionally retains its established schema;
+    availability is a recommendation rule, separate from task inventory.
+    """
+    lines = (text or "").split("\n")
+    raw = lines[task["line"] - 1] if 0 < task["line"] <= len(lines) else ""
+    availability = {}
+    for match in TASK_EMOJI_RE.finditer(raw):
+        field = TASK_DATE_EMOJI.get(match.group(1))
+        if field not in {"start", "scheduled"}:
+            continue
+        token = TASK_DATE_TOKEN_RE.match(raw, match.end())
+        availability[field] = iso_date(token.group(1)) if token else None
+    return all(value is not None and value <= today_d for value in availability.values())
+
+
+def _aymt_first_next_action(
+    root: Path, rel: str, rec: dict, *, today_d: date, text: str | None,
+) -> tuple[str, str]:
     for task in rec.get("tasks", []):
-        if task.get("status") == "open" and not task.get("malformed"):
+        if (task.get("status") == "open" and not task.get("malformed")
+                and _project_next_action(task, rec) and _aymt_task_ready(task, today_d, text)):
             return _aymt_text(task.get("text")), "The next project task is explicit."
-    return "Define the project's next concrete action.", "No open project task is recorded."
+    return "No current Next Action is recorded.", "Review the project before choosing further work."
 
 
 def _aymt_cadence_candidates(today_d: date, tracked_paths: set[str]) -> list[dict]:
@@ -8748,6 +8989,8 @@ def _load_aymt_github_input(path: str | None, stdin, as_of: date) -> list[dict]:
 
 
 def _aymt_environment(selection: dict, raw: bytes | None) -> dict:
+    if selection["state"] == "shared-only":
+        return {"freshness": None, "slug": None, "source": "shared-only", "state": "shared-only"}
     if selection["state"] == "unconfigured":
         return {"freshness": None, "slug": None, "source": "none", "state": "unconfigured"}
     slug = selection.get("slug")
@@ -8777,7 +9020,7 @@ def build_aymt(
     stdin=None,
     _context: dict | None = None,
 ) -> dict:
-    """Build a deterministic, tracked-corpus-only and privacy-filtered brief."""
+    """Build a deterministic complete internal brief over tracked sources."""
     today_d = today_d or vault_today(load_config(root)[0])
     stdin = stdin or sys.stdin
     if _context is None:
@@ -8889,6 +9132,13 @@ def build_aymt(
         for task in rec.get("tasks", []):
             if task.get("status") != "open":
                 continue
+            if project_directory and (
+                rel != f"04_Projects/{project_directory.group(1)}/PROJECT.md"
+                or not _project_next_action(task, rec)
+            ):
+                continue
+            if not _aymt_task_ready(task, today_d, snapshot_texts.get(rel)):
+                continue
             actionable_metadata = bool(
                 task.get("due") or task.get("priority") or task.get("malformed")
             )
@@ -8936,7 +9186,7 @@ def build_aymt(
                     caveat="Re-check surrounding note context before changing task status.",
                     sources=[_aymt_source(rel)],
                     urgency=urgency,
-                    leverage=3 if rel.startswith("04_Projects/") else 2,
+                    leverage=4 if rel.startswith("04_Projects/") and urgency >= 2 else 2,
                     effort=2,
                     confidence=4,
                     dependency=0,
@@ -8947,7 +9197,7 @@ def build_aymt(
         project = entities["projects"][slug]
         rel = project["path"]
         rec = allowed[rel]
-        next_step, caveat = _aymt_first_next_action(root, rel, rec)
+        next_step, caveat = _aymt_first_next_action(root, rel, rec, today_d=today_d, text=snapshot_texts.get(rel))
         target_d = iso_date(project["target"])
         days_until = (target_d - today_d).days if target_d else None
         urgent = project["overdue"] or (days_until is not None and days_until <= 7)
@@ -8976,7 +9226,7 @@ def build_aymt(
                 leverage=4,
                 effort=2,
                 confidence=4,
-                dependency=1 if "No open project task" in caveat else 0,
+                dependency=1 if next_step == "No current Next Action is recorded." else 0,
                 staleness=min(4, max(0, (today_d - iso_date(rec.get("updated"))).days // 30)) if iso_date(rec.get("updated")) else 0,
             )
         )
@@ -8993,7 +9243,7 @@ def build_aymt(
                 section="do-next" if debt else "keep-warm",
                 why_now=f"The tracked Inbox contains {len(inbox_paths)} notes; {debt} exceed the triage threshold.",
                 next_step="Run triage-inbox and review the oldest actionable capture first.",
-                caveat="The count excludes untracked and restricted material by design.",
+                caveat="The count covers eligible tracked internal notes, including private captures.",
                 sources=[_aymt_source("02_Inbox/README.md", "Inbox")],
                 urgency=4 if debt else 1,
                 leverage=4,
@@ -9076,6 +9326,8 @@ def build_aymt(
         "schemaVersion": AYMT_SCHEMA_VERSION,
         "summary": summary,
     }
+    inputs["privacySources"] = sorted(allowed)
+    inputs["privacy"] = context["privacy"]
     digest = _sha256_bytes(_canonical_json(inputs))
     return {**inputs, "inputDigest": digest}
 
@@ -9099,9 +9351,11 @@ def render_aymt(payload: dict) -> bytes:
         "  - audience/human",
         "  - type/meta",
         "  - workflow/canonical",
+        *([f"  - {RESTRICTED_TAG}"] if payload.get("privacy") == "private" else []),
         f"updated: {payload['date']}",
         f"expires: {tomorrow}",
         "generated: brain-aymt-v1",
+        "privacy-sources: " + json.dumps(payload["privacySources"], ensure_ascii=False),
         f'input-digest: "{payload["inputDigest"]}"',
         'content-digest: "PENDING"',
         "---",
@@ -9136,7 +9390,9 @@ def render_aymt(payload: dict) -> bytes:
             lines.append("")
     env = payload["environment"]
     lines.extend(["## Context", ""])
-    if env["state"] == "unconfigured":
+    if env["state"] == "shared-only":
+        lines.append("- **Environment:** shared-only scope; no environment selected.")
+    elif env["state"] == "unconfigured":
         lines.append("- **Environment:** not configured; shared tracked sources only.")
     else:
         freshness = env["freshness"]
@@ -9341,12 +9597,12 @@ def _build_action_context(root: Path, today_d: date, selection: dict) -> dict:
     freshness_index = build_index(
         root, notes, assets, note_snapshots=freshness_snapshots
     )
-    restricted = {rel for rel, rec in index["notes"].items() if is_restricted(rec)}
+    privacy_states = effective_privacy(freshness_index)
     allowed = {
         rel: rec
         for rel, rec in index["notes"].items()
         if snapshots.get(rel) is not None
-        and _aymt_note_allowed(rel, rec, restricted)
+        and _aymt_note_allowed(rel)
     }
     safe_notes = {rel: {**rec, "backlinks": []} for rel, rec in allowed.items()}
     for source, rec in safe_notes.items():
@@ -9384,6 +9640,8 @@ def _build_action_context(root: Path, today_d: date, selection: dict) -> dict:
         "environment": environment,
         "entities": entities,
         "index": index,
+        "privacy": ("private" if any(privacy_states.get(rel) == "private" for rel in allowed)
+                    else "unknown" if any(privacy_states.get(rel) != "public" for rel in allowed) else "public"),
         "indexFresh": _home_safe_index_fresh(committed_index, freshness_index),
         "report": report,
         "freshnessSnapshots": freshness_snapshots,
@@ -9534,12 +9792,12 @@ def build_home(
         }
         for slug in entities["activeProjects"]
         for project in [entities["projects"][slug]]
-    ][:HOME_ACTIVE_CAP]
+    ]
     active_areas = [
         _home_path_row(area["path"], allowed[area["path"]])
         for _slug, area in entities["areas"].items()
         if "status/active" in frontmatter_tags(allowed[area["path"]])
-    ][:HOME_ACTIVE_CAP]
+    ]
 
     review_rows = _home_review_rows(today_d, allowed)
 
@@ -9583,7 +9841,10 @@ def build_home(
 
     inputs = {
         "actions": actions,
-        "active": {"areas": active_areas, "projects": active_projects},
+        "active": {
+            "areaCount": len(active_areas), "areas": active_areas[:HOME_ACTIVE_CAP],
+            "projectCount": len(active_projects), "projects": active_projects[:HOME_ACTIVE_CAP],
+        },
         "aymt": {"inputDigest": aymt["inputDigest"], "summary": aymt["summary"]},
         "current": current_paths,
         "date": today_d.isoformat(),
@@ -9610,6 +9871,8 @@ def build_home(
         "schemaVersion": HOME_SCHEMA_VERSION,
         "tasks": {"due": due[:HOME_TASK_CAP], "overdue": overdue[:HOME_TASK_CAP]},
     }
+    inputs["privacySources"] = sorted(allowed)
+    inputs["privacy"] = context["privacy"]
     payload = {**inputs, "inputDigest": _sha256_bytes(_canonical_json(inputs))}
     try:
         _revalidate_action_context(root, context)
@@ -9643,9 +9906,11 @@ def render_home(payload: dict) -> bytes:
         "  - audience/human",
         "  - type/meta",
         "  - workflow/canonical",
+        *([f"  - {RESTRICTED_TAG}"] if payload.get("privacy") == "private" else []),
         f"updated: {payload['date']}",
         f"expires: {tomorrow}",
         "generated: brain-home-v1",
+        "privacy-sources: " + json.dumps(payload["privacySources"], ensure_ascii=False),
         f'input-digest: "{payload["inputDigest"]}"',
         'content-digest: "PENDING"',
         "---",
@@ -9698,6 +9963,9 @@ def render_home(payload: dict) -> bytes:
     lines.extend(["## Active work", ""])
     for heading, rows in (("Projects", payload["active"]["projects"]), ("Areas", payload["active"]["areas"])):
         lines.extend([f"### {heading}", ""])
+        total = payload["active"]["projectCount" if heading == "Projects" else "areaCount"]
+        if total > len(rows):
+            lines.extend([f"Showing {len(rows)} of {total} active {heading.lower()}; see the registry for the full inventory.", ""])
         if not rows:
             lines.append("_No safe tracked item is tagged active._")
         for row in rows:
@@ -9748,7 +10016,9 @@ def render_home(payload: dict) -> bytes:
 
     environment = payload["environment"]
     lines.extend(["## Current environment", ""])
-    if environment["state"] == "unconfigured":
+    if environment["state"] == "shared-only":
+        lines.append("- Shared-only scope; no environment selected.")
+    elif environment["state"] == "unconfigured":
         lines.append("- Not configured; Home used shared tracked sources only.")
     else:
         freshness = environment["freshness"]
@@ -10168,6 +10438,7 @@ def cmd_index(root: Path, args) -> int:
 def cmd_list(root: Path, args) -> int:
     notes, assets = walk_corpus(root)
     index = build_index(root, notes, assets)
+    states = effective_privacy(index)
     filters = list(args.tag)
     if args.type:
         filters.append(f"type/{args.type}")
@@ -10182,7 +10453,7 @@ def cmd_list(root: Path, args) -> int:
         rows.append(
             {
                 "path": rel,
-                "restricted": is_restricted(rec),
+                **_privacy_metadata(rec, states[rel]),
                 "title": rec["title"],
                 "updated": rec["updated"],
             }
@@ -10195,18 +10466,22 @@ def cmd_list(root: Path, args) -> int:
     return 0
 
 
-def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) -> list[dict]:
+def keyword_hits(
+    root: Path, index: dict, query: str, tag_filters: list[str],
+    *, note_snapshots: dict[str, NoteSnapshot | None],
+) -> list[dict]:
     """§9 search: case-insensitive substring hits over title, headings, and
     body. Shared by plain search, semantic degradation, and the §18.4 keyword
     component. Each hit carries the note's privacy classification (§9/R11 —
     KTD3): downstream agents must be able to preserve provenance."""
     query = query.lower()
     hits: list[dict] = []
+    states = effective_privacy(index)
     for rel in sorted(index["notes"]):
         rec = index["notes"][rel]
         if tag_filters and not all(tag_matches(t, effective_tags(rec)) for t in tag_filters):
             continue
-        restricted = is_restricted(rec)
+        privacy = _privacy_metadata(rec, states[rel])
 
         def hit(field: str, line: int | None, snippet: str) -> dict:
             # One row shape for every field type — a provenance key added here
@@ -10215,7 +10490,7 @@ def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) ->
                 "field": field,
                 "line": line,
                 "path": rel,
-                "restricted": restricted,
+                **privacy,
                 "snippet": snippet,
             }
 
@@ -10226,13 +10501,10 @@ def keyword_hits(root: Path, index: dict, query: str, tag_filters: list[str]) ->
             heading_lines.add(h["line"])
             if query in h["text"].lower():
                 hits.append(hit("heading", h["line"], h["text"]))
-        try:
-            text, _ = load_text(root, rel)
-        except OSError:  # §3 read failure: skip, best-effort
+        snapshot = note_snapshots.get(rel)
+        if snapshot is None or snapshot.text is None:
             continue
-        if text is None:
-            continue
-        for i, line in enumerate(text.split("\n"), start=1):
+        for i, line in enumerate(snapshot.text.split("\n"), start=1):
             if i in heading_lines:
                 continue
             if query in line.lower():
@@ -10263,10 +10535,13 @@ def emit_keyword_hits(hits: list[dict], as_json: bool) -> None:
 
 def cmd_search(root: Path, args) -> int:
     notes, assets = walk_corpus(root)
-    index = build_index(root, notes, assets)
+    snapshots = capture_note_snapshots(root, notes)
+    index = build_index(root, notes, assets, note_snapshots=snapshots)
+    if getattr(args, "public_only", False):
+        index = public_only_index(index)
     if args.semantic:
-        return semantic_search(root, index, args)
-    emit_keyword_hits(keyword_hits(root, index, args.query, args.tag), args.json)
+        return semantic_search(root, index, args, note_snapshots=snapshots)
+    emit_keyword_hits(keyword_hits(root, index, args.query, args.tag, note_snapshots=snapshots), args.json)
     return 0
 
 
@@ -10505,6 +10780,8 @@ def cmd_tags(root: Path, args) -> int:
 def cmd_show(root: Path, args) -> int:
     notes, assets = walk_corpus(root)
     index = build_index(root, notes, assets)
+    if getattr(args, "public_only", False):
+        index = public_only_index(index)
     rel = resolve_note_arg(index, args.note)
     if rel is None:
         print(f"error: note not found: {args.note}", file=sys.stderr)
@@ -10524,9 +10801,65 @@ def cmd_show(root: Path, args) -> int:
     return 0
 
 
+class NoteContextError(RuntimeError):
+    """Requested source context cannot be emitted within its explicit scope."""
+
+
+def read_note_context(root: Path, requested: list[str], *, public_only: bool = False) -> list[dict]:
+    """Capture, classify, and return complete notes from the same source bytes.
+
+    Public-only filtering happens before any source is returned. Ordinary
+    reads retain private content. Callers forming an autonomous public-only
+    reply context must start with these scoped sources; this cannot erase
+    private content that a caller has already loaded into model context.
+    """
+    notes, assets = walk_corpus(root)
+    snapshots = capture_note_snapshots(root, notes)
+    index = build_index(root, notes, assets, note_snapshots=snapshots)
+    states = effective_privacy(index)
+    if public_only:
+        index = public_only_index(index)
+    rows = []
+    seen = set()
+    for target in requested:
+        rel = resolve_note_arg(index, target)
+        if rel is None or snapshots.get(rel) is None:
+            scope = "public-only" if public_only else "local"
+            raise NoteContextError(f"requested note is unavailable in {scope} context")
+        if rel in seen:
+            continue
+        snapshot = snapshots[rel]
+        text = snapshot.text
+        if text is None:
+            raise NoteContextError("requested note is not readable text")
+        rows.append({"path": rel, "title": index["notes"][rel]["title"], "content": text,
+                     **_privacy_metadata(index["notes"][rel], states[rel]),
+                     "contentHash": snapshot.digest, "contentScope": "public-only" if public_only else "local"})
+        seen.add(rel)
+    return rows
+
+
+def cmd_read(root: Path, args) -> int:
+    try:
+        rows = read_note_context(root, args.notes, public_only=args.public_only)
+    except NoteContextError as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, sort_keys=True))
+        else:
+            print(f"error: {exc}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps(rows, ensure_ascii=False, indent=1, sort_keys=True))
+    else:
+        for row in rows:
+            print(f"Source: {row['path']} ({row['contentScope']})\n\n{row['content']}")
+    return 0
+
+
 def cmd_recent(root: Path, args) -> int:
     notes, assets = walk_corpus(root)
     index = build_index(root, notes, assets)
+    states = effective_privacy(index)
     entries = list(index["notes"].items())
     entries.sort(key=lambda kv: kv[0])
 
@@ -10542,7 +10875,7 @@ def cmd_recent(root: Path, args) -> int:
     rows = [
         {
             "path": rel,
-            "restricted": is_restricted(rec),
+            **_privacy_metadata(rec, states[rel]),
             "title": rec["title"],
             "updated": rec["updated"],
         }
@@ -10719,7 +11052,7 @@ def _bootstrap_section(rel: str, text: str) -> tuple[list[str], dict]:
         body[1:1] = ["", source_line]
     else:
         body[0:0] = [f"## {title}", "", source_line, ""]
-    return body, {"path": rel, "title": title, "updated": updated}
+    return body, {"path": rel, "title": title, "updated": updated, "restricted": RESTRICTED_TAG in _fm_tags(fm)}
 
 
 def build_bootstrap(root: Path) -> dict:
@@ -10741,6 +11074,7 @@ def build_bootstrap(root: Path) -> dict:
     updated = max(dates) if dates else "1970-01-01"
     body = "\n\n".join(sections) + "\n"
     digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+    restricted_tag = "  - restricted/private\n" if any(source["restricted"] for source in sources) else ""
     head = (
         "---\n"
         'title: "Bootstrap"\n'
@@ -10748,6 +11082,7 @@ def build_bootstrap(root: Path) -> dict:
         "  - type/meta\n"
         "  - audience/agent\n"
         "  - workflow/canonical\n"
+        f"{restricted_tag}"
         f"updated: {updated}\n"
         f"generated: {BOOTSTRAP_MARKER}\n"
         f'content-digest: "{digest}"\n'
@@ -11151,17 +11486,34 @@ def _replace_regular_file(directory: Path, name: str, target: Path, data: bytes)
         raise NoteWriteError(f"cannot replace {target.name}: {exc}") from exc
 
 
-def _unlink_note(root: Path, rel: str, *, expected_digest: str | None = None) -> None:
-    target = root / rel
-    if target.is_symlink() or not target.is_file():
-        raise NoteWriteError(f"refusing to delete {rel}: not a regular file")
-    if expected_digest is None:
-        target.unlink()
-        return
+def _note_removal_call(operation, *args, **kwargs):
+    try:
+        return operation(*args, **kwargs)
+    except note_removal.RemovalConflict as exc:
+        raise WriteConflictError(str(exc)) from exc
+    except (note_removal.RemovalError, OSError, InstallError) as exc:
+        raise NoteWriteError(f"note source operation refused: {exc}") from exc
+
+
+def _read_removal_source(root: Path, rel: str) -> tuple[bytes | None, dict | None]:
+    """Authenticate every ancestor, including when resuming a claimed source."""
+    return _note_removal_call(note_removal.read_source, root, rel, _read_nofollow_file)
+
+
+def _preflight_note_removal(root: Path, rel: str, expected_state: dict) -> None:
+    _note_removal_call(note_removal.preflight, root, rel, expected_state, _read_nofollow_file)
+
+
+def _unlink_note(
+    root: Path, rel: str, *, expected_digest: str, expected_state: dict
+) -> None:
+    """Remove the plan's claimed original; retain durable interrupted evidence."""
+    if expected_state["sha256"] != expected_digest:
+        raise WriteConflictError("source digest does not match the removal plan")
     with vault_write_lock(root):
-        if hashlib.sha256(target.read_bytes()).hexdigest() != expected_digest:
-            raise WriteConflictError(f"{rel} changed since this plan was computed — recompute the plan and retry")
-        target.unlink()
+        _note_removal_call(
+            note_removal.remove, root, rel, expected_state, _read_nofollow_file, _rename_external_at
+        )
 
 
 def _vault_relative_argument(value: str) -> str:
@@ -11282,9 +11634,9 @@ def triage_archive_plan(root: Path, report_rel: str, today_d: date, *, revise: b
     report_date = _report_date(report_rel)
     month = report_date.strftime("%Y-%m")
     log_rel = f"{TRIAGE_LOG_DIR}/{month}-triage-log.md"
-    source_path = root / report_rel
-    source_exists = source_path.is_file() and not source_path.is_symlink()
-    raw = _read_vault_bytes(root, report_rel) if source_exists else b""
+    raw, source_state = _read_removal_source(root, report_rel)
+    source_exists = raw is not None
+    raw = raw if raw is not None else b""
     text, _size = _decode_note_bytes(raw) if source_exists else (None, 0)
     if source_exists and text is None:
         raise NoteWriteError(f"{report_rel}: not UTF-8")
@@ -11293,7 +11645,8 @@ def triage_archive_plan(root: Path, report_rel: str, today_d: date, *, revise: b
     if source_exists:
         body, fm = transform_triage_report(text, report_rel, log_rel)
     tags = _fm_tags(fm)
-    restricted = RESTRICTED_TAG in tags
+    privacy = note_privacy_snapshot(root, {report_rel: raw})[1].get(report_rel, "unknown") if source_exists else "public"
+    restricted = privacy != "public"
     digest = hashlib.sha256(raw).hexdigest()
     identity = f"{report_rel} sha256:{digest}"
     title = fm.get("title") if isinstance(fm.get("title"), str) and fm.get("title") else posixpath.basename(report_rel)
@@ -11306,6 +11659,7 @@ def triage_archive_plan(root: Path, report_rel: str, today_d: date, *, revise: b
         "report": report_rel,
         "restricted": restricted,
         "sourcePresent": source_exists,
+        "_source_state": source_state,
     }
     if restricted:
         # A restricted report keeps the older path: its own archived note, so
@@ -11324,19 +11678,19 @@ def triage_archive_plan(root: Path, report_rel: str, today_d: date, *, revise: b
         plan.update({"archived": archived_rel, "archivedPresent": archived_exists, "base": {}})
         if source_exists:
             lines = text.split("\n")
-            _fm2, _e, body_start, _h = parse_frontmatter(lines)
-            head = lines[:body_start]
-            new_head = []
-            for line in head:
-                stripped = line.strip()
-                if stripped in ("- workflow/draft", "- workflow/review"):
-                    continue
-                new_head.append(line)
-            if "status/done" not in tags:
-                idx = next((i for i, l in enumerate(new_head) if l.startswith("tags:")), None)
-                if idx is None:
-                    raise NoteWriteError(f"{report_rel}: no tags: list to update")
-                new_head.insert(idx + 1, "  - status/done")
+            _fm2, errors, body_start, has = parse_frontmatter(lines)
+            if not has or errors or not isinstance(fm.get("tags"), list):
+                raise NoteWriteError(f"{report_rel}: malformed frontmatter cannot be archived")
+            new_head = lines[:body_start]
+            start = next(i for i in range(1, body_start - 1) if lines[i].startswith("tags:"))
+            end = start + 1
+            while end < body_start - 1 and (not lines[end].strip() or lines[end][0].isspace()):
+                end += 1
+            kept_tags = [tag for tag in tags if tag not in {"workflow/draft", "workflow/review"}]
+            for tag in (RESTRICTED_TAG, "status/done"):
+                if tag not in kept_tags:
+                    kept_tags.append(tag)
+            new_head[start:end] = ["tags: " + json.dumps(kept_tags, ensure_ascii=False)]
             rest = []
             for line, in_code in iter_fenced_lines(lines, body_start):
                 rest.append(line if in_code else rebase_markdown_links(line, posixpath.dirname(report_rel), TRIAGE_LOG_DIR))
@@ -11420,36 +11774,36 @@ def triage_archive_plan(root: Path, report_rel: str, today_d: date, *, revise: b
         base = _bump_updated(base, today_d)
         if not base.endswith("\n"):
             base += "\n"
-        plan["rendered"] = base + "\n" + plan["section"] + "\n"
+        plan["rendered"] = record_privacy_sources(base + "\n" + plan["section"] + "\n", fm.get("privacy-sources", []))
     return plan
 
 
 def apply_triage_archive(root: Path, plan: dict) -> list[str]:
-    """Apply a plan: write the log (or the moved note) first, then delete the
-    source. Every step is retry-safe: a rerun after an interruption finds the
-    identity (or the moved note) present and only finishes the deletion."""
-    steps: list[str] = []
-    action = plan["action"]
-    if action == "missing":
-        raise NoteWriteError(f"{plan['report']}: nothing to archive (source absent, not archived)")
-    if action == "conflict":
-        raise WriteConflictError(plan["conflict"])
-    if action == "done":
-        return ["already archived"]
-    digest = _archive_marker_parts(plan["identity"])[1]
-    if plan["restricted"]:
-        if action == "move":
-            _write_note_atomic(root, plan["archived"], plan["rendered"].encode("utf-8"), expected=None)
-            steps.append(f"wrote {plan['archived']}")
-        _unlink_note(root, plan["report"], expected_digest=digest)
+    """Publish the archive, then remove its authenticated, recoverable source."""
+    with vault_write_lock(root):
+        steps: list[str] = []
+        action = plan["action"]
+        if action == "missing":
+            raise NoteWriteError(f"{plan['report']}: nothing to archive (source absent, not archived)")
+        if action == "conflict":
+            raise WriteConflictError(plan["conflict"])
+        if action == "done":
+            return ["already archived"]
+        digest = _archive_marker_parts(plan["identity"])[1]
+        _preflight_note_removal(root, plan["report"], plan["_source_state"])
+        if plan["restricted"]:
+            if action == "move":
+                _write_note_atomic(root, plan["archived"], plan["rendered"].encode("utf-8"), expected=None)
+                steps.append(f"wrote {plan['archived']}")
+            _unlink_note(root, plan["report"], expected_digest=digest, expected_state=plan["_source_state"])
+            steps.append(f"deleted {plan['report']}")
+            return steps
+        if action in ("append", "create"):
+            _write_note_atomic(root, plan["log"], plan["rendered"].encode("utf-8"), expected=plan["base"][plan["log"]])
+            steps.append(f"{'created' if action == 'create' else 'appended'} {plan['log']}")
+        _unlink_note(root, plan["report"], expected_digest=digest, expected_state=plan["_source_state"])
         steps.append(f"deleted {plan['report']}")
         return steps
-    if action in ("append", "create"):
-        _write_note_atomic(root, plan["log"], plan["rendered"].encode("utf-8"), expected=plan["base"][plan["log"]])
-        steps.append(f"{'created' if action == 'create' else 'appended'} {plan['log']}")
-    _unlink_note(root, plan["report"], expected_digest=digest)
-    steps.append(f"deleted {plan['report']}")
-    return steps
 
 
 def cmd_triage_archive(root: Path, args) -> int:
@@ -11471,7 +11825,7 @@ def cmd_triage_archive(root: Path, args) -> int:
         else:
             print(f"error: {exc}", file=sys.stderr)
         return 1
-    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base")}
+    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base", "_source_state")}
     payload["steps"] = steps
     if validation is not None:
         payload["validation"] = validation
@@ -11595,13 +11949,32 @@ def _insert_in_section(text: str, heading: str, line: str) -> str:
     return "\n".join(lines)
 
 
+def record_privacy_sources(text: str, sources: list[str]) -> str:
+    """Merge substantive dependencies without rewriting unrelated frontmatter."""
+    if not sources:
+        return text
+    lines = text.split("\n")
+    fm, errors, body_start, has = parse_frontmatter(lines)
+    existing = fm.get("privacy-sources", [])
+    if (not has or errors or not isinstance(existing, list)
+            or any(not _derived_source_path(s) for s in [*existing, *sources])):
+        raise NoteWriteError("cannot preserve invalid derivative provenance")
+    value = "privacy-sources: " + json.dumps(sorted(set(existing) | set(sources)), ensure_ascii=False)
+    start = next((i for i in range(1, body_start - 1) if lines[i].startswith("privacy-sources:")), None)
+    if start is None:
+        lines.insert(body_start - 1, value)
+    else:
+        end = start + 1
+        while end < body_start - 1 and (not lines[end].strip() or lines[end][0].isspace()):
+            end += 1
+        lines[start:end] = [value]
+    return "\n".join(lines)
+
+
 def _note_title_and_restricted(root: Path, rel: str) -> tuple[str | None, bool]:
-    text, _ = load_text(root, rel)
-    if text is None:
-        return None, False
-    fm, _errors, _body_start, _has = parse_frontmatter(text.split("\n"))
-    title = fm.get("title") if isinstance(fm.get("title"), str) else None
-    return title, RESTRICTED_TAG in _fm_tags(fm)
+    index, states = note_privacy_snapshot(root)
+    rec = index["notes"].get(rel, {})
+    return rec.get("title"), states.get(rel, "unknown") != "public"
 
 
 def trace_plan(
@@ -11625,11 +11998,11 @@ def trace_plan(
     title, dest_restricted = _note_title_and_restricted(root, destination)
     label = _prose_only_line(summary)
     substance_dropped = False
-    if dest_restricted and title:
+    if dest_restricted:
         # A restricted destination is traced by bare link only (§10.2): the
         # summary would carry its substance into a non-restricted note.
-        label = _prose_only_line(title)
-        substance_dropped = summary.strip() != title.strip()
+        label = _prose_only_line(title or posixpath.basename(destination))
+        substance_dropped = summary.strip() != (title or posixpath.basename(destination)).strip()
     if not label:
         raise NoteWriteError("summary must not be empty")
     if kind is not None and kind not in WEEKLY_KIND_SECTIONS:
@@ -11692,6 +12065,8 @@ def trace_plan(
         rendered = text
         for section in sections:
             rendered = _insert_in_section(rendered, section, line)
+        if not dest_restricted:
+            rendered = record_privacy_sources(rendered, [destination])
         if exists:
             rendered = _bump_updated(rendered, today_d)
         notes.append(
@@ -11814,11 +12189,13 @@ def gap_row(
     identity = hashlib.sha256(f"{day.isoformat()}|{question}".encode("utf-8")).hexdigest()[:16]
     rendered_terms = [t for t in (_gap_term(t) for t in terms) if t]
     near: list[dict] = []
+    index, states = note_privacy_snapshot(root) if nearest else ({"notes": {}}, {})
     for raw in nearest:
         rel = _vault_relative_argument(raw)
         if not (root / rel).is_file():
             raise NoteWriteError(f"{rel}: nearest note does not exist")
-        title, restricted = _note_title_and_restricted(root, rel)
+        title = index["notes"].get(rel, {}).get("title")
+        restricted = states.get(rel, "unknown") != "public"
         sensitive = sensitive or restricted
         label = posixpath.basename(rel) if restricted else (title or posixpath.basename(rel))
         near.append({"label": _prose_only_line(label), "path": rel, "restricted": restricted})
@@ -11868,6 +12245,7 @@ def gap_plan(root: Path, *, day: date, question: str, terms: list[str], nearest:
             "---\n\n"
             f"# Vault answer gap — {day.isoformat()}\n\n{why}\n\n{row['render'](target)}\n"
         )
+        rendered = record_privacy_sources(rendered, [n["path"] for n in row["nearest"]])
         return {"action": "capture", "base": None, "path": target, "rendered": rendered, "restricted": row["sensitive"], "row": row["render"](target), "sensitive": row["sensitive"]}
     base = _current_note_bytes(root, GAP_QUEUE_RELPATH)
     text, _ = _decode_note_bytes(base) if base is not None else (None, 0)
@@ -11877,21 +12255,22 @@ def gap_plan(root: Path, *, day: date, question: str, terms: list[str], nearest:
     if row["identity"] in _marker_values(text, GAP_MARKER):
         return {"action": "skip", "base": base, "path": GAP_QUEUE_RELPATH, "rendered": text, "restricted": False, "row": line, "sensitive": False}
     rendered = _bump_updated(_insert_in_section(text, GAP_QUEUE_SECTION, line), day)
+    rendered = record_privacy_sources(rendered, [n["path"] for n in row["nearest"]])
     return {"action": "append", "base": base, "path": GAP_QUEUE_RELPATH, "rendered": rendered, "restricted": False, "row": line, "sensitive": False}
 
 
-def _inbox_capture_text(root: Path, rel: str) -> tuple[str, dict, bytes]:
+def _inbox_capture_text(root: Path, rel: str) -> tuple[str, dict, bytes, dict]:
     rel = _vault_relative_argument(rel)
     if not rel.startswith(INBOX_PREFIX) or "/" in rel[len(INBOX_PREFIX):]:
         raise NoteWriteError(f"{rel}: only a note directly under {INBOX_PREFIX} can be ingested")
-    raw = _current_note_bytes(root, rel)
+    raw, source_state = _read_removal_source(root, rel)
     if raw is None:
         raise NoteWriteError(f"{rel}: capture does not exist")
     text, _ = _decode_note_bytes(raw)
     if text is None:
         raise NoteWriteError(f"{rel}: not UTF-8")
     fm, _errors, _body_start, _has = parse_frontmatter(text.split("\n"))
-    return text, fm, raw
+    return text, fm, raw, source_state
 
 
 def gap_ingest_plan(root: Path, capture_rel: str, *, declassify: bool, today_d: date) -> dict:
@@ -11899,12 +12278,12 @@ def gap_ingest_plan(root: Path, capture_rel: str, *, declassify: bool, today_d: 
     public queue — once each, by identity marker — and delete the capture.
     A `restricted/private` capture is refused unless the owner declassifies
     it explicitly; links are rebased from the Inbox to the queue's directory."""
-    text, fm, raw = _inbox_capture_text(root, capture_rel)
+    text, fm, raw, source_state = _inbox_capture_text(root, capture_rel)
     capture_rel = _vault_relative_argument(capture_rel)
     title = fm.get("title") if isinstance(fm.get("title"), str) else ""
     if fm.get("author") != "brain" or not title.startswith(GAP_CAPTURE_TITLE_PREFIX):
         raise NoteWriteError(f"{capture_rel}: not a brain gap capture (author: brain, title '{GAP_CAPTURE_TITLE_PREFIX} — …')")
-    restricted = RESTRICTED_TAG in _fm_tags(fm)
+    restricted = note_privacy_snapshot(root, {capture_rel: raw})[1].get(capture_rel, "unknown") != "public"
     if restricted and not declassify:
         raise NoteWriteError(
             f"{capture_rel} is restricted/private: its row stays out of the public queue unless the owner "
@@ -11939,11 +12318,14 @@ def gap_ingest_plan(root: Path, capture_rel: str, *, declassify: bool, today_d: 
         ingested.append(identity)
     if ingested:
         rendered = _bump_updated(rendered, today_d)
+        if not declassify:
+            rendered = record_privacy_sources(rendered, fm.get("privacy-sources", []))
     return {
         "action": "ingest",
         "base": base,
         "capture": capture_rel,
         "captureDigest": hashlib.sha256(raw).hexdigest(),
+        "_source_state": source_state,
         "declassified": restricted,
         "ingested": ingested,
         "path": GAP_QUEUE_RELPATH,
@@ -11955,13 +12337,15 @@ def gap_ingest_plan(root: Path, capture_rel: str, *, declassify: bool, today_d: 
 
 
 def apply_gap_ingest(root: Path, plan: dict) -> list[str]:
-    steps: list[str] = []
-    if plan["ingested"]:
-        _write_note_atomic(root, plan["path"], plan["rendered"].encode("utf-8"), expected=plan["base"])
-        steps.append(f"appended {len(plan['ingested'])} row(s) to {plan['path']}")
-    _unlink_note(root, plan["capture"], expected_digest=plan["captureDigest"])
-    steps.append(f"deleted {plan['capture']}")
-    return steps
+    with vault_write_lock(root):
+        _preflight_note_removal(root, plan["capture"], plan["_source_state"])
+        steps: list[str] = []
+        if plan["ingested"]:
+            _write_note_atomic(root, plan["path"], plan["rendered"].encode("utf-8"), expected=plan["base"])
+            steps.append(f"appended {len(plan['ingested'])} row(s) to {plan['path']}")
+        _unlink_note(root, plan["capture"], expected_digest=plan["captureDigest"], expected_state=plan["_source_state"])
+        steps.append(f"deleted {plan['capture']}")
+        return steps
 
 
 def _table_rows(lines: list[str]) -> list[str]:
@@ -11981,9 +12365,9 @@ def accepted_ingest_plan(root: Path, report_rel: str, *, today_d: date) -> dict:
     """§29.4: copy the `## Accepted proposals` table rows of a retrospective
     report into the acceptance log — exact-row identity after link rebasing,
     so a re-triaged report adds nothing. The report itself is left in place."""
-    text, fm, raw = _inbox_capture_text(root, report_rel)
+    text, fm, raw, _source_state = _inbox_capture_text(root, report_rel)
     report_rel = _vault_relative_argument(report_rel)
-    if RESTRICTED_TAG in _fm_tags(fm):
+    if note_privacy_snapshot(root, {report_rel: raw})[1].get(report_rel, "unknown") != "public":
         raise NoteWriteError(f"{report_rel} is restricted/private: its rows cannot enter the public acceptance log")
     lines = text.split("\n")
     bounds = _section_bounds(lines, ACCEPTED_SECTION)
@@ -12027,6 +12411,7 @@ def accepted_ingest_plan(root: Path, report_rel: str, *, today_d: date) -> dict:
     rendered = "\n".join(log_lines)
     if ingested:
         rendered = _bump_updated(rendered, today_d)
+        rendered = record_privacy_sources(rendered, [report_rel])
     return {
         "action": "ingest",
         "base": base,
@@ -12111,7 +12496,7 @@ def cmd_gap(root: Path, args) -> int:
         else:
             print(f"error: {exc}", file=sys.stderr)
         return 1
-    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base")}
+    payload = {k: v for k, v in plan.items() if k not in ("rendered", "base", "_source_state")}
     payload["steps"] = steps
     if validation is not None:
         payload["validation"] = validation
@@ -12258,6 +12643,7 @@ def cmd_tasks(root: Path, args) -> int:
     today_iso = tasks_today.isoformat()
     notes, assets = walk_corpus(root)
     index = build_index(root, notes, assets)
+    states = effective_privacy(index)
     rows: list[dict] = []
     # Normalize like every other path input (§2): NFC, forward slashes,
     # no leading ./ — a macOS NFD prefix or backslash must still match.
@@ -12269,7 +12655,7 @@ def cmd_tasks(root: Path, args) -> int:
     for rel in sorted(index["notes"]):
         if project and not rel.startswith(project):
             continue
-        restricted = is_restricted(index["notes"][rel])
+        privacy = _privacy_metadata(index["notes"][rel], states[rel])
         for t in index["notes"][rel]["tasks"]:
             if args.open and t["status"] != "open":
                 continue
@@ -12281,7 +12667,7 @@ def cmd_tasks(root: Path, args) -> int:
                 t["status"] == "open" and t["due"] is not None and t["due"] < today_iso
             ):
                 continue
-            rows.append({**t, "path": rel, "restricted": restricted})
+            rows.append({**t, "path": rel, **privacy})
     rows.sort(key=lambda r: (r["due"] is None, r["due"] or "", r["path"], r["line"]))
     lines = []
     for r in rows:
@@ -14145,6 +14531,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="brain", description=__doc__)
     parser.add_argument("--vault", type=Path, default=None, help="vault root override")
     parser.add_argument(
+        "--shared-only", action="store_true",
+        help="use shared content only, without selecting an environment",
+    )
+    parser.add_argument(
         "--env",
         dest="requested_env",
         default=None,
@@ -14156,6 +14546,10 @@ def main(argv: list[str] | None = None) -> int:
     def add(name: str, **kwargs):
         p = sub.add_parser(name, **kwargs)
         p.add_argument("--json", action="store_true", help="machine-readable output")
+        p.add_argument(
+            "--shared-only", action="store_true", default=argparse.SUPPRESS,
+            help="use shared content only, without selecting an environment",
+        )
         p.add_argument(
             "--vault",
             type=Path,
@@ -14177,6 +14571,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tag", action="append", default=[], help="effective-tag filter (repeatable; trailing /* matches a namespace)")
     p.add_argument("--type", default=None, help="shorthand for --tag type/X")
     p = add("search", help="substring search over title, headings, body")
+    p.add_argument("--public-only", action="store_true", help="use only public notes and public-derived content for synthesis")
     p.add_argument("query")
     p.add_argument("--tag", action="append", default=[], help="effective-tag filter")
     p.add_argument(
@@ -14344,6 +14739,10 @@ def main(argv: list[str] | None = None) -> int:
     add("tags", help="tag usage counts by namespace")
     p = add("show", help="full index record for one note")
     p.add_argument("note")
+    p.add_argument("--public-only", action="store_true", help="exclude private and unknown derived records")
+    p = add("read", help="complete source notes from one captured context")
+    p.add_argument("notes", nargs="+")
+    p.add_argument("--public-only", action="store_true", help="return sources for a fresh public-only synthesis context")
     p = add("recent", help="notes by updated date, newest first")
     p.add_argument("n", nargs="?", type=int, default=10)
     p = add("validate", help="check vault conventions; exit 0 clean / 1 errors / 2 warnings")
@@ -14418,7 +14817,7 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument(
         "--stdin-json",
         action="store_true",
-        help="ingest precomputed vectors from stdin JSON ({model, vectors})",
+        help="ingest versioned source-hash/vector entries from stdin JSON ({schemaVersion: 1, model, notes})",
     )
     mode.add_argument(
         "--local",
@@ -14502,6 +14901,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("target")
 
     args = parser.parse_args(argv)
+    if args.shared_only:
+        if args.requested_env is not None:
+            parser.error("--shared-only cannot be combined with --env")
+        shared_commands = {
+            "list", "search", "links", "tags", "show", "read", "recent", "report",
+            "curate", "tasks", "validate", "context", "config", "projects",
+            "migrate-links", "index", "bootstrap", "artifacts", "aymt", "home",
+        }
+        if args.command not in shared_commands or (
+            args.command == "migrate-links" and args.write
+        ):
+            parser.error("--shared-only is unavailable for this operation")
     root = (getattr(args, "vault", None) or default_vault_root()).resolve()
     handlers = {
         "index": cmd_index,
@@ -14517,6 +14928,7 @@ def main(argv: list[str] | None = None) -> int:
         "notify": cmd_notify,
         "tags": cmd_tags,
         "show": cmd_show,
+        "read": cmd_read,
         "recent": cmd_recent,
         "validate": cmd_validate,
         "curate": cmd_curate,
@@ -14536,6 +14948,14 @@ def main(argv: list[str] | None = None) -> int:
     }
     previous_environment = _ACTIVE_ENVIRONMENT
     try:
+        if args.shared_only:
+            selection = {"slug": None, "source": "shared-only", "state": "shared-only"}
+            if args.command == "aymt":
+                args.aymt_selection = selection
+            elif args.command == "home":
+                args.home_selection = selection
+            with shared_corpus_scope():
+                return handlers[args.command](root, args)
         if args.command not in {
             "env",
             "validate",

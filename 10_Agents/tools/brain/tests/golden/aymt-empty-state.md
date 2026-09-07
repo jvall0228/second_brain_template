@@ -8,8 +8,9 @@ tags:
 updated: 2026-08-11
 expires: 2026-08-12
 generated: brain-aymt-v1
-input-digest: "cb63e41f3bb913f6adc03bdd9f1f887cf849f4b95fb185c6130b4517e86b517f"
-content-digest: "9756570d2b560e28b0f554a8cc15927f6e174815dda3d895fa3032f612d51294"
+privacy-sources: ["01_Profile/NOW.md", "02_Inbox/README.md", "10_Agents/skills/README.md"]
+input-digest: "ec338e36e82787fa8414ccc9af19641b9eb8c4aa02bc7a40fdfade5746b4cd82"
+content-digest: "79b6d53215c70772d1e532c7bad3b1cc5e6be3c36208253cafbe6765ca6bbcd0"
 ---
 
 <!-- generated-by: brain aymt v1; do not edit -->

@@ -307,7 +307,7 @@ class RestrictedQueryMetadataTests(unittest.TestCase):
             self.assertTrue(rows)
             for row in rows:
                 self.assertEqual(
-                    sorted(row), ["field", "line", "path", "restricted", "snippet"]
+                    sorted(row), ["explicitRestricted", "field", "line", "path", "privacy", "restricted", "snippet"]
                 )
             self.assertTrue(all(r["restricted"] for r in rows))
             rc, out = run_cli(root, "search", "Nothing", "--json")
@@ -336,7 +336,7 @@ class RestrictedQueryMetadataTests(unittest.TestCase):
             rows = json.loads(out)
             for row in rows:
                 self.assertEqual(
-                    sorted(row), ["path", "restricted", "title", "updated"]
+                    sorted(row), ["explicitRestricted", "path", "privacy", "restricted", "title", "updated"]
                 )
             by_path = {r["path"]: r for r in rows}
             self.assertTrue(by_path["secret.md"]["restricted"])
@@ -365,7 +365,7 @@ class RestrictedQueryMetadataTests(unittest.TestCase):
             self.assertEqual(rc, 0)
             rows = {row["path"]: row for row in json.loads(out)}
             for row in rows.values():
-                self.assertEqual(sorted(row), ["path", "restricted", "title", "updated"])
+                self.assertEqual(sorted(row), ["explicitRestricted", "path", "privacy", "restricted", "title", "updated"])
             self.assertTrue(rows["secret.md"]["restricted"])
             self.assertFalse(rows["plain.md"]["restricted"])
             rc, human = run_cli(root, "list")

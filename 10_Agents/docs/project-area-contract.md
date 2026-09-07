@@ -5,7 +5,7 @@ tags:
   - workflow/canonical
   - audience/agent
   - audience/human
-updated: 2026-08-18
+updated: 2026-09-07
 expires: 2027-08-18
 ---
 
@@ -54,11 +54,19 @@ An active Project has:
 
 An overdue Project remains structurally active. Reviews must confirm, recalibrate, deprioritize, or close it. `brain projects`, Home, and AYMT visibly distinguish estimated and overdue targets.
 
+## Next Actions
+
+`## Next Actions` in the Project entrypoint owns its currently established, executable steps. A step describes an action that can be taken, not the Project's finish condition. Move the existing checkbox from its backlog when it becomes actionable; do not keep a second live copy. Add due, scheduled, or start metadata only when supported by the owner's plan.
+
+An empty or missing section means no current next action is recorded; it does not mean the Project is done or inactive. Keep it empty when a Project remains active without a current commitment. Later steps, dependencies, historical or paused alternatives, and completed work remain outside this section. Completion criteria stay in `## Completion Criteria`.
+
+Both AYMT candidate paths use this section for Project-derived recommendations. Criteria, supporting-note tasks, and historical/paused tasks elsewhere cannot bypass that gate; ordinary task queries still expose the full task inventory. A task whose scheduled or start date is in the future is not an immediate recommendation.
+
 ## Review and Derived Surfaces
 
 `brain projects --json` is the canonical active-work inventory. It lists each active Project once with all Areas, target state, completion-criteria presence, overdue state, and attention signals. `01_Profile/NOW.md` is a curated priority view, not a competing complete registry, and may not list inactive Projects.
 
-Home and AYMT consume the same privacy-filtered entity registry. They do not promote supporting notes or stale NOW bullets into Projects, and they suppress tasks in inactive Project directories.
+Internal Home and AYMT consume the complete eligible entity registry, including private Projects and valid private links. They do not promote supporting notes or stale NOW bullets into Projects, and they suppress tasks in inactive Project directories. The bounded action brief may omit lower-ranked work without implying that it does not exist. Rendered private substance carries its classification and provenance; explicit public-only retrieval still excludes private or unknown derivatives under the [privacy contract](../../00_Meta/restricted-private.md).
 
 Validation constructs the path-based registry before checking identity tags. Project/Area findings are warning-only during ordinary editing. Focused migration and release checks require zero unresolved membership and lifecycle warnings. Free-form `project/*` and `area/*` identities are exempt from generic single-use and near-duplicate tag-drift hints, but must resolve to canonical entities.
 

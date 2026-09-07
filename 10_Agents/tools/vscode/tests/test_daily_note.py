@@ -5,35 +5,21 @@ Run via the tools runner:
     python3 10_Agents/tools/run_tests.py
 """
 
+import contextlib
 import datetime
+import io
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import daily_note  # noqa: E402
 
-TEMPLATE = """---
-title: "{{date}}"
-tags:
-  - type/journal
-updated: {{date}}
----
-
-# {{date}}
-
-- Weekly review: [Current weekly review]({{RELATED_WEEKLY_REVIEW}})
-- Yesterday: [Previous daily note]({{PREVIOUS_DAILY_NOTE}})
-
-### Backlog
-
-What goals and tasks need to carry over to the next day?
-
--
-
-### Health
-"""
+TEMPLATE = (
+    daily_note.ROOT / "09_Templates" / "template-daily-log.md"
+).read_text(encoding="utf-8")
 
 
 def make_root(tmp: str) -> Path:
@@ -88,6 +74,25 @@ class RenderTests(unittest.TestCase):
 
 
 class EnsureNoteTests(unittest.TestCase):
+    def test_untouched_shipped_template_produces_no_tasks_over_three_days(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            contents = []
+            for offset in range(3):
+                day = datetime.date(2026, 8, 11) + datetime.timedelta(days=offset)
+                target, created = daily_note.ensure_note(root, day)
+                self.assertTrue(created)
+                contents.append(target.read_text(encoding="utf-8"))
+            notes, assets = daily_note.brain.walk_corpus(root)
+            index = daily_note.brain.build_index(root, notes, assets)
+            task_counts = [
+                len(rec["tasks"]) for rel, rec in sorted(index["notes"].items())
+                if rel.startswith(daily_note.DAILY_DIR + "/")
+            ]
+        self.assertEqual(task_counts, [0, 0, 0])
+        self.assertTrue(all("{{" not in content for content in contents))
+        self.assertTrue(all("privacy-sources:" not in content for content in contents))
+
     def test_creates_note_once(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = make_root(tmp)
@@ -111,6 +116,34 @@ class EnsureNoteTests(unittest.TestCase):
             (root / "03_Journal" / "periodic" / "daily").rmdir()
             _, created = daily_note.ensure_note(root, datetime.date(2026, 8, 11))
             self.assertTrue(created)
+
+    def test_main_uses_configured_vault_date_across_utc_midnight(self):
+        class HostDate(datetime.date):
+            @classmethod
+            def today(cls):
+                return cls(2026, 8, 12)
+
+        class FrozenDatetime(datetime.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return cls(2026, 8, 12, 1, tzinfo=datetime.timezone.utc).astimezone(tz)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            (root / "00_Meta").mkdir()
+            (root / "00_Meta" / "config.yaml").write_text(
+                "timezone: America/New_York\n", encoding="utf-8"
+            )
+            with (
+                mock.patch.object(daily_note, "ROOT", root),
+                mock.patch.object(daily_note.datetime, "date", HostDate),
+                mock.patch.object(daily_note.brain, "datetime", FrozenDatetime),
+                mock.patch.object(daily_note.shutil, "which", return_value=None),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                self.assertEqual(daily_note.main(), 0)
+            self.assertTrue((root / daily_note.DAILY_DIR / "2026-08-11.md").exists())
+            self.assertFalse((root / daily_note.DAILY_DIR / "2026-08-12.md").exists())
 
 
 YESTERDAY_NOTE = """---
@@ -176,6 +209,84 @@ class CarryOverTests(unittest.TestCase):
             self.assertTrue(created)
             content = target.read_text(encoding="utf-8")
         self.assertNotIn("secret errand", content)
+
+    def test_derived_private_and_unknown_yesterday_carry_nothing(self):
+        for provenance in (
+            '["06_Resources/private.md"]',
+            '["06_Resources/missing.md"]',
+            'malformed',
+        ):
+            with self.subTest(provenance=provenance), tempfile.TemporaryDirectory() as tmp:
+                root = make_root(tmp)
+                resources = root / "06_Resources"
+                resources.mkdir()
+                (resources / "private.md").write_text(
+                    YESTERDAY_NOTE.replace("  - type/journal", "  - restricted/private"),
+                    encoding="utf-8",
+                )
+                write_yesterday(root, content=YESTERDAY_NOTE.replace(
+                    "updated:", f"privacy-sources: {provenance}\nupdated:", 1
+                ))
+                target, _ = daily_note.ensure_note(root, TODAY)
+                self.assertNotIn("carry me", target.read_text(encoding="utf-8"))
+
+    def test_carry_uses_classified_snapshot_and_keeps_reclassifiable_provenance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_root(tmp)
+            write_yesterday(root)
+            original_build = daily_note.brain.build_index
+
+            def replace_yesterday_after_capture(*args, **kwargs):
+                write_yesterday(root, content=YESTERDAY_NOTE.replace(
+                    "  - type/journal", "  - restricted/private"
+                ).replace("carry me", "new private task"))
+                return original_build(*args, **kwargs)
+
+            with mock.patch.object(
+                daily_note.brain, "build_index", side_effect=replace_yesterday_after_capture
+            ):
+                target, _ = daily_note.ensure_note(root, TODAY)
+            content = target.read_text(encoding="utf-8")
+            self.assertIn("- [ ] carry me", content)
+            self.assertNotIn("new private task", content)
+            notes, assets = daily_note.brain.walk_corpus(root)
+            states = daily_note.brain.effective_privacy(original_build(root, notes, assets))
+            self.assertEqual(states[target.relative_to(root).as_posix()], "private")
+            tomorrow, _ = daily_note.ensure_note(root, TODAY + datetime.timedelta(days=1))
+            self.assertNotIn("carry me", tomorrow.read_text(encoding="utf-8"))
+
+    def test_carry_merges_template_provenance_without_duplicates(self):
+        source = f"{daily_note.DAILY_DIR}/2026-08-10.md"
+        for provenance in (
+            f'["06_Resources/context.md", "{source}"]',
+            "\n  - 06_Resources/context.md",
+        ):
+            with self.subTest(provenance=provenance), tempfile.TemporaryDirectory() as tmp:
+                root = make_root(tmp)
+                template = root / "09_Templates" / "template-daily-log.md"
+                template.write_text(TEMPLATE.replace(
+                    "updated:", f"privacy-sources: {provenance}\nupdated:", 1
+                ), encoding="utf-8")
+                write_yesterday(root)
+                target, _ = daily_note.ensure_note(root, TODAY)
+                fm, errors, *_ = daily_note.brain.parse_frontmatter(
+                    target.read_text(encoding="utf-8").split("\n")
+                )
+                self.assertEqual(errors, [])
+                self.assertEqual(fm["privacy-sources"], [source, "06_Resources/context.md"])
+
+    def test_malformed_template_provenance_refuses_creation(self):
+        for provenance in ('malformed', '["../outside.md"]', '[]\nprivacy-sources: []'):
+            with self.subTest(provenance=provenance), tempfile.TemporaryDirectory() as tmp:
+                root = make_root(tmp)
+                template = root / "09_Templates" / "template-daily-log.md"
+                template.write_text(TEMPLATE.replace(
+                    "updated:", f"privacy-sources: {provenance}\nupdated:", 1
+                ), encoding="utf-8")
+                write_yesterday(root)
+                with self.assertRaises(daily_note.brain.NoteWriteError):
+                    daily_note.ensure_note(root, TODAY)
+                self.assertFalse((root / daily_note.DAILY_DIR / "2026-08-11.md").exists())
 
     def test_no_yesterday_note_means_no_carry_over(self):
         with tempfile.TemporaryDirectory() as tmp:

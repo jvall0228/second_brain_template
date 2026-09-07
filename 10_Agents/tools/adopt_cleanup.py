@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import builtins
 import contextlib
 import io
 import json
@@ -22,6 +23,10 @@ from typing import Any
 PLAN_SCHEMA_VERSION = 1
 MANIFEST_REL = "10_Agents/tools/adopt_examples.json"
 BRAIN_REL = "10_Agents/tools/brain/brain.py"
+BRAIN_SUPPORT = {
+    "note_removal": "10_Agents/tools/brain/note_removal.py",
+    "note_snapshots": "10_Agents/tools/brain/note_snapshots.py",
+}
 VAULT_INDEX_REL = "10_Agents/tools/brain/vault-index.json"
 LOCK_REL = ".adopt-cleanup.lock"
 TRANSACTION_PREFIX = ".adopt-transaction-"
@@ -360,27 +365,45 @@ def _read_bound_file(repo: Path, rel: str) -> bytes:
 
 
 def _load_brain(
-    repo: Path, *, source: bytes | None = None, expected_sha256: str | None = None
+    repo: Path, *, source: bytes | None = None,
+    expected_dependencies: dict[str, str] | None = None,
 ):
-    source = _read_bound_file(repo, BRAIN_REL) if source is None else source
-    digest = sha256_bytes(source)
-    if expected_sha256 is not None and digest != expected_sha256:
-        raise AdoptionError(f"stale cleanup plan: dependency changed during apply: {BRAIN_REL}")
-    module_name = (
-        f"adopt_brain_{sha256_bytes(str(repo).encode())[:12]}_{digest[:12]}"
-    )
-    module = types.ModuleType(module_name)
-    module.__file__ = str(repo / BRAIN_REL)
-    module.__package__ = ""
-    sys.modules[module_name] = module
+    # Capture and authenticate the whole validator before executing any part.
+    # Each load gets private module identities; an imported sibling from another
+    # fixture or checkout must never supply this repository's validation code.
+    sources = {BRAIN_REL: _read_bound_file(repo, BRAIN_REL) if source is None else source}
+    sources.update({rel: _read_bound_file(repo, rel) for rel in BRAIN_SUPPORT.values()})
+    digests = {rel: sha256_bytes(body) for rel, body in sources.items()}
+    if expected_dependencies is not None and digests != expected_dependencies:
+        raise AdoptionError("stale cleanup plan: validator dependency changed during apply")
+    identity = sha256_bytes(str(repo).encode() + canonical_json(digests))[:24]
+    modules = {}
+    registered = []
+    original_import = builtins.__import__
+
+    def bound_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if level == 0 and name in modules:
+            return modules[name]
+        return original_import(name, globals, locals, fromlist, level)
+
     try:
-        code = compile(source, module.__file__, "exec")
-        exec(code, module.__dict__)
-    except Exception as exc:  # the checked-in brain tool is a required boundary
-        if sys.modules.get(module_name) is module:
-            del sys.modules[module_name]
+        for name, rel in [*BRAIN_SUPPORT.items(), ("brain", BRAIN_REL)]:
+            module_name = f"adopt_{name}_{identity}"
+            module = types.ModuleType(module_name)
+            module.__file__ = str(repo / rel)
+            module.__package__ = ""
+            module.__dict__["__builtins__"] = {**vars(builtins), "__import__": bound_import}
+            sys.modules[module_name] = module
+            registered.append((module_name, module))
+            modules[name] = module
+            exec(compile(sources[rel], module.__file__, "exec"), module.__dict__)
+    except Exception as exc:
+        for name, module in registered:
+            if sys.modules.get(name) is module:
+                del sys.modules[name]
         raise AdoptionError(f"cannot import {BRAIN_REL}: {exc}") from exc
-    return module
+    modules["brain"]._adoption_dependencies = digests
+    return modules["brain"]
 
 
 def _deleted_notes(repo: Path, delete_rows: list[dict[str, Any]]) -> set[str]:
@@ -405,7 +428,7 @@ def _line_bytes(lines: list[bytes], line_number: int) -> bytes:
         raise AdoptionError(f"link index reported nonexistent line {line_number}") from exc
 
 
-def build_plan(repo: Path) -> dict[str, Any]:
+def build_plan(repo: Path, *, expected_dependencies: dict[str, str] | None = None) -> dict[str, Any]:
     repo = repo.resolve()
     manifest, manifest_raw = load_manifest(repo)
     delete_rows: list[dict[str, Any]] = []
@@ -430,8 +453,7 @@ def build_plan(repo: Path) -> dict[str, Any]:
 
     deleted_notes = _deleted_notes(repo, delete_rows)
     brain_source = _read_bound_file(repo, BRAIN_REL)
-    brain_sha256 = sha256_bytes(brain_source)
-    brain = _load_brain(repo, source=brain_source)
+    brain = _load_brain(repo, source=brain_source, expected_dependencies=expected_dependencies)
     notes, assets = brain.walk_corpus(repo)
     # The brain index follows regular file reads; reject symlinked note paths
     # first so a preview can never read through the clone boundary.
@@ -496,10 +518,8 @@ def build_plan(repo: Path) -> dict[str, Any]:
         "manifest": MANIFEST_REL,
         "manifestSha256": sha256_bytes(manifest_raw),
         "dependencies": [
-            {
-                "path": BRAIN_REL,
-                "sha256": brain_sha256,
-            }
+            {"path": rel, "sha256": digest}
+            for rel, digest in sorted(brain._adoption_dependencies.items())
         ],
         "delete": delete_rows,
         "edits": edit_rows,
@@ -601,23 +621,28 @@ def _atomic_write(path: Path, data: bytes, mode: int) -> None:
             pass
 
 
-def _plan_brain_sha256(plan: dict[str, Any]) -> str:
-    matches = [row for row in plan["dependencies"] if row.get("path") == BRAIN_REL]
-    if len(matches) != 1 or not isinstance(matches[0].get("sha256"), str):
-        raise AdoptionError(f"cleanup plan must bind exactly one {BRAIN_REL} dependency")
-    return matches[0]["sha256"]
+def _plan_brain_dependencies(plan: dict[str, Any]) -> dict[str, str]:
+    rows = plan.get("dependencies", [])
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise AdoptionError("malformed validator dependencies")
+    dependencies = {row.get("path"): row.get("sha256") for row in rows}
+    if (len(dependencies) != len(rows)
+            or set(dependencies) != {BRAIN_REL, *BRAIN_SUPPORT.values()}
+            or any(not isinstance(value, str) for value in dependencies.values())):
+        raise AdoptionError("cleanup plan must bind every validator dependency; regenerate the plan")
+    return dependencies
 
 
-def _trusted_index_bytes(repo: Path, expected_brain_sha256: str | None = None) -> bytes:
-    loaded = _load_brain(repo, expected_sha256=expected_brain_sha256)
+def _trusted_index_bytes(repo: Path, dependencies: dict[str, str]) -> bytes:
+    loaded = _load_brain(repo, expected_dependencies=dependencies)
     notes, assets = loaded.index_corpus(repo)
     return loaded.serialize(loaded.reduce_restricted(loaded.build_index(repo, notes, assets)))
 
 
 def _post_apply_validate(repo: Path, marker: str, plan: dict[str, Any]) -> None:
-    brain_sha256 = _plan_brain_sha256(plan)
+    dependencies = _plan_brain_dependencies(plan)
     _verify_plan_dependencies(repo, plan)
-    expected_index = _trusted_index_bytes(repo, brain_sha256)
+    expected_index = _trusted_index_bytes(repo, dependencies)
     regenerate = [row for row in plan["regenerate"] if row.get("path") == VAULT_INDEX_REL]
     if len(regenerate) != 1 or type(regenerate[0].get("mode")) is not int:
         raise AdoptionError(f"cleanup plan must bind exactly one {VAULT_INDEX_REL} output")
@@ -631,7 +656,7 @@ def _post_apply_validate(repo: Path, marker: str, plan: dict[str, Any]) -> None:
         )
 
     # A surviving marker line that still carries a link means cleanup was partial.
-    loaded = _load_brain(repo, expected_sha256=brain_sha256)
+    loaded = _load_brain(repo, expected_dependencies=dependencies)
     stdout = io.StringIO()
     stderr = io.StringIO()
     with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
@@ -852,7 +877,7 @@ def _verify_moved_state(
             if os.path.lexists(original):
                 raise AdoptionError(f"deletion target was recreated during apply: {operation['path']}")
         elif kind == "regenerate" and require_index:
-            expected = _trusted_index_bytes(repo, _plan_brain_sha256(plan))
+            expected = _trusted_index_bytes(repo, _plan_brain_dependencies(plan))
             if (
                 original.is_symlink()
                 or not original.is_file()
@@ -897,7 +922,9 @@ def _rollback_transaction(
                     discard = sha256_bytes(original.read_bytes()) == operation.get("desiredSha256")
                 elif operation["operation"] == "regenerate" and original.is_file() and not original.is_symlink():
                     try:
-                        discard = original.read_bytes() == _trusted_index_bytes(repo)
+                        discard = original.read_bytes() == _trusted_index_bytes(
+                            repo, _plan_brain_dependencies(journal)
+                        )
                     except AdoptionError:
                         discard = False
                 if discard:
@@ -953,7 +980,7 @@ def apply_plan(repo: Path, plan: dict[str, Any]) -> None:
     dirty = dirty_planned_paths(repo, plan)
     if dirty:
         raise AdoptionError("planned cleanup paths are dirty; refusing mutation:\n  " + "\n  ".join(dirty))
-    if build_plan(repo) != plan:
+    if build_plan(repo, expected_dependencies=_plan_brain_dependencies(plan)) != plan:
         raise AdoptionError("stale cleanup plan: repository state or manifest changed; generate a new preview")
 
     operations: list[dict[str, Any]] = []
@@ -993,6 +1020,7 @@ def apply_plan(repo: Path, plan: dict[str, Any]) -> None:
     journal: dict[str, Any] = {
         "schemaVersion": 1,
         "planId": plan["planId"],
+        "dependencies": plan["dependencies"],
         "status": "preparing",
         "operations": operations,
     }
@@ -1017,7 +1045,7 @@ def apply_plan(repo: Path, plan: dict[str, Any]) -> None:
         dirty = dirty_planned_paths(repo, plan)
         if dirty:
             raise AdoptionError("planned cleanup paths became dirty during apply")
-        if build_plan(repo) != plan:
+        if build_plan(repo, expected_dependencies=_plan_brain_dependencies(plan)) != plan:
             raise AdoptionError("stale cleanup plan: repository changed during final preflight")
 
         for index, operation in enumerate(operations):
