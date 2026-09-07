@@ -1,0 +1,4 @@
+#!/bin/sh
+# Inspect the actual outgoing ref tips, including commits made with --no-verify.
+root="$(git rev-parse --show-toplevel)" || exit 1
+exec python3 "$root/10_Agents/tools/skill_adapters/check_generated.py" --repo "$root" --pre-push

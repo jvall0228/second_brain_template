@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
@@ -14,13 +14,17 @@ expires: 2026-11-11
 
 Facts verified 2026-08-11 against [opencode.ai/docs](https://opencode.ai/docs) (see [research](../../../06_Resources/harness-opencode.md)); re-verify before relying on paths.
 
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md) currently supports project verification and read-only global preview. User-global installation, reconciliation, and uninstall are deferred; the user-global designs below are not executable setup instructions.
+
 ## Entrypoint loading
 
-opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over `CLAUDE.md`). It does **not** follow `@file` references or wikilinks, so the adapter makes the bootstrap sequence deterministic: the `instructions[]` array in `opencode.json` loads the must-read files as plain paths alongside `AGENTS.md` (see `opencode-example.json`). User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md`, then writes a marker-delimited plain-text instruction into `~/.config/opencode/AGENTS.md` telling opencode to read that shared registration when owner-specific context materially helps. Do not assume `~/.agents/second-brain/AGENTS.md` is automatically discovered, and do not embed the adopter's vault path in the opencode-owned file; the shared registration owns that runtime-specific path.
+opencode reads **`AGENTS.md` natively** (when both exist, `AGENTS.md` wins over `CLAUDE.md`). It does **not** follow `@file` references or wikilinks, so the adapter makes the bootstrap sequence deterministic: the `instructions[]` array in `opencode.json` loads the must-read files as plain paths alongside `AGENTS.md` (see `opencode-example.json`). Deferred user-scope design: a future `onboard-harness` backend would create `~/.agents/second-brain/AGENTS.md`, then write a marker-delimited plain-text instruction into `~/.config/opencode/AGENTS.md` telling opencode to read that shared registration when owner-specific context materially helps. Do not assume `~/.agents/second-brain/AGENTS.md` is automatically discovered, and do not embed the adopter's vault path in the opencode-owned file; the shared registration owns that runtime-specific path.
+
+The reference `opencode-example.json` injects personal bootstrap bodies for internal work. A session using that configuration cannot provide public-only isolation. Use a separate fresh context without that injection, or report unsupported isolation without synthesizing under the [privacy contract](../../../00_Meta/restricted-private.md#public-only-synthesis).
 
 ## Skills
 
-opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/`. A clean clone includes generated text adapters in the latter two paths, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval.
+opencode scans `.opencode/skills/`, `.claude/skills/`, and `.agents/skills/`. A clean clone includes generated text adapters in the latter two paths, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. User-global links/copies remain deferred; current onboarding only previews proposed targets.
 
 ## Hook installation
 

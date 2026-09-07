@@ -216,7 +216,7 @@ class HomeCollectorTests(unittest.TestCase):
         self.assertIn("../03_Journal/periodic/weekly/2026-W33-review.md", rendered)
         self.assertNotIn("No periodic review is due", rendered)
 
-    def test_restricted_target_untracked_seed_and_environment_bodies_never_contribute(self):
+    def test_private_links_allow_internal_tasks_but_excluded_sources_stay_out(self):
         self.vault.write("06_Resources/private.md", note("PRIVATE-TITLE", "PRIVATE-BODY", ("type/reference", "restricted/private")), tracked=True)
         self.vault.write("04_Projects/linked.md", note("LINKED-SECRET", "[private](../06_Resources/private.md)\n- [ ] LINKED-TASK 📅 2026-08-10"), tracked=True)
         self.vault.write("04_Projects/example-project/fake.md", note("SEED-SECRET", "- [ ] SEED-TASK 📅 2026-08-10"), tracked=True)
@@ -226,6 +226,9 @@ class HomeCollectorTests(unittest.TestCase):
         combined = json.dumps(payload) + brain.render_home(payload).decode()
         for secret in ("PRIVATE-TITLE", "LINKED-SECRET", "SEED-SECRET", "UNTRACKED-SECRET", "ENV-BODY-SECRET"):
             self.assertNotIn(secret, combined)
+        self.assertIn("LINKED-TASK", combined)
+        self.assertIn("06_Resources/private.md", payload["privacySources"])
+        self.assertEqual(payload["privacy"], "private")
 
     def test_tracked_symlink_cannot_import_external_body_or_path_signal(self):
         outside_dir = tempfile.TemporaryDirectory(prefix="home-outside-")
@@ -388,7 +391,7 @@ class HomeCollectorTests(unittest.TestCase):
         self.assertNotIn("MALFORMED-PRIVATE-BODY", combined)
         self.assertNotIn("DO-NOT-LEAK-TASK", combined)
 
-    def test_public_to_restricted_transition_marks_index_stale_without_disclosure(self):
+    def test_public_to_restricted_transition_marks_index_stale_and_preserves_provenance(self):
         rel = "06_Resources/privacy-transition.md"
         self.vault.write(
             rel,
@@ -417,9 +420,10 @@ class HomeCollectorTests(unittest.TestCase):
             "Was Public",
             "Now Private",
             "PRIVATE-TRANSITION-BODY",
-            rel,
         ):
             self.assertNotIn(sensitive, combined)
+        self.assertIn(rel, payload["privacySources"])
+        self.assertEqual(payload["privacy"], "private")
 
     def test_restricted_to_public_transition_also_marks_index_stale(self):
         # AE6's other direction: REMOVING restricted/private changes what the

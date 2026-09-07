@@ -1,0 +1,12 @@
+#!/bin/sh
+# Git computes an automatic merge's tree before invoking this hook. If generated
+# outputs change, pause the merge: a normal git commit will record the new index.
+root="$(git rev-parse --show-toplevel)" || exit 1
+before="$(git write-tree)" || exit 1
+"$root/.githooks/pre-commit" || exit 1
+after="$(git write-tree)" || exit 1
+if [ "$before" != "$after" ]; then
+    echo "pre-merge-commit: generated outputs refreshed and staged; run git commit to finish this merge" >&2
+    exit 1
+fi
+exit 0

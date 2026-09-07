@@ -1,0 +1,41 @@
+name: tool-tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tool-tests:
+    name: Tool tests and validation (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Run behavioral tests
+        run: python3 10_Agents/tools/run_tests.py
+      - name: Verify template adoption in a disposable vault
+        run: python3 10_Agents/tools/adopt_check.py
+      - name: Validate shared vault without writing
+        shell: bash
+        run: |
+          set +e
+          python3 10_Agents/tools/brain/brain.py validate --shared-only
+          result=$?
+          case "$result" in
+            0|2) exit 0 ;;
+            *) exit "$result" ;;
+          esac
+      - name: Confirm tracked files are unchanged
+        if: always()
+        run: git diff --exit-code HEAD --

@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-09-01
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
@@ -13,7 +13,7 @@ expires: 2026-11-11
 
 Per-harness adapters for the support tiers in [PRD](../../00_Meta/PRD.md) §8.3. **Standards-first:** the entrypoint (`AGENTS.md`), canonical skills in `10_Agents/skills/`, generated repository discovery adapters, and the `brain` CLI carry portable behavior. Each directory here carries **only what a cross-harness standard cannot**: exact config paths, import syntax, caps, and trust gates.
 
-Every adapter ships a `wiring.md` (entrypoint loading, skill discovery paths, hook installation, how the harness invokes `brain`, harness-specific caveats) and reference config files to copy or merge. The [onboard-harness](../skills/setup/onboard-harness/SKILL.md) skill verifies repository scope by default and gates optional user-global changes behind an exact preview and explicit apply approval.
+Every adapter ships a `wiring.md` (entrypoint loading, skill discovery paths, hook installation, invocation, and caveats) and reference configuration. [onboard-harness](../skills/setup/onboard-harness/SKILL.md) ships project verification and read-only global preview only. Global apply, reconciliation, and uninstall remain deferred; the wiring documents describe their future requirements, not an installer to improvise.
 
 ## Project skill compatibility
 
@@ -33,7 +33,7 @@ input and proves it discovers the checked-in `.agents/skills/` adapters.
 | opencode | `.agents/skills/`, `.claude/skills/` | Checked-in adapters and `AGENTS.md` are present | Project config may make bootstrap ordering more explicit; see wiring sources |
 | Pi | `.agents/skills/` | Checked-in adapters and `AGENTS.md` are present | Run `/trust`; headless runs silently omit untrusted project skills |
 | Cursor | `.agents/skills/`, `.claude/skills/` | Checked-in adapters and `AGENTS.md` are present | Workspace trust still applies; see wiring sources |
-| Copilot | `.agents/skills/`, `.claude/skills/` | Supported project adapter surfaces are checked in | Optional user scope uses copy/CLI registration; do not use symlinks |
+| Copilot | `.agents/skills/`, `.claude/skills/` | Supported project adapter surfaces are checked in | Deferred user scope uses copy/CLI registration; do not use symlinks |
 | Muse Code | `.agents/skills/` | Checked-in adapters and `AGENTS.md` are present on the documented surface | Volatile P1 surface; re-verify before relying on it |
 
 | Adapter | Tier | Wiring |
@@ -58,8 +58,8 @@ Every overlay contains a `manifest.json` describing what it installs, where, and
 - **Install methods:** `copy` (place the payload at the target; foreign files are never overwritten), `marker-block` (merge a marker-delimited block into a user-owned config file), `generate` (produce the target by running the recorded `generator` command, seeded from the payload template), `shipped-in-repo` (the artifact is tracked repo config present in every clone — nothing to install).
 - **Reverse methods:** `delete`, `remove-marker-block`, `none` (only valid for `shipped-in-repo` — removing tracked config is a repo change, not an uninstall action).
 
-Install and uninstall are performed by [onboard-harness](../skills/setup/onboard-harness/SKILL.md) under the **same M6 contract as everything else it touches** — idempotent, reversible, marker-managed where it merges into user-owned files, every action recorded in the machine-local manifest (`~/.agents/second-brain-manifest.json`); there is no second install model. The template portability invariant applies in full: overlay files and manifests are tracked template content, so targets use only portable placeholders (`<vault>`, `~`) and never an adopter-specific path. Manifest shape is enforced mechanically by `10_Agents/tools/brain/tests/test_harness_overlays.py`.
+Overlay installation and uninstall are deferred lifecycle requirements in [onboard-harness](../skills/setup/onboard-harness/SKILL.md). A future backend must be idempotent, reversible, marker-managed, and record ownership in `~/.agents/second-brain-manifest.json`; read-only preview does not perform these actions. Overlay payloads and manifests remain tracked template content, so targets use portable placeholders (`<vault>`, `~`) rather than adopter-specific paths. Manifest shape is checked by `10_Agents/tools/brain/tests/test_harness_overlays.py`.
 
-Shipped overlays: [Cursor](cursor/wiring.md) (glob-scoped Inbox rule installed by default, plus the owner-opt-in `.cursorignore` read-restriction template) and [Copilot](copilot/wiring.md) (`shipped-in-repo` catalogue of the `.github/` instructions shim + cloud-agent validate hook).
+Shipped overlay payloads: [Cursor](cursor/wiring.md) (Inbox rule and owner-opt-in `.cursorignore` template; installation deferred) and [Copilot](copilot/wiring.md) (`shipped-in-repo` catalogue of the already tracked `.github/` instructions shim and cloud-agent validate hook).
 
 Facts are grounded in [the 2026-08-11 harness research](../../06_Resources/harness-primitives-research.md) (sources linked there; its Copilot section was re-verified in depth the same day for the P0 promotion). Harness surfaces move fast — **re-verify a wiring doc against its sources before relying on it**, and bump `updated:` when you do.

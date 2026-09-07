@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-01
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -42,7 +42,7 @@ Restricted notes (§8.3): `tasks` is emptied to `[]` in the committed index — 
 - `--overdue` — open tasks whose due date is **strictly before** today (due today is not overdue).
 - `--project PREFIX` — note-path prefix match (e.g. `04_Projects/example-project/`).
 
-**Ordering (deterministic):** due date ascending with `null` due dates last, then path (code-point order), then line. JSON: an array of task records each extended with `path` and `restricted` (the containing note's §8.3 privacy classification — additive, R11/KTD3; task text is note substance, so rows must carry provenance). Human output: `path:line  [ ]|[x] text` plus a parenthesized suffix listing due date, priority, and malformed fields when present; rows from restricted notes get a trailing `  [restricted]` marker. The VS Code surface runs `tasks --open` via the "Brain: Tasks (open)" task (§6.5 parity).
+**Ordering (deterministic):** due date ascending with `null` due dates last, then path (code-point order), then line. JSON: an array of task records each extended with `path` and the §9 provenance fields `restricted`, `privacy`, and `explicitRestricted` (effective private/unknown admission flag, classification enum, and explicit tag respectively). Human output: `path:line  [ ]|[x] text` plus a parenthesized suffix listing due date, priority, and malformed fields when present; rows from restricted notes get a trailing `  [restricted]` marker. The VS Code surface runs `tasks --open` via the "Brain: Tasks (open)" task (§6.5 parity).
 
 ## 17.4 Config: `tasks.carry_over`
 
@@ -50,6 +50,6 @@ The `tasks` config key (§15.3) holds the module's settings; its sole subkey `ca
 
 ## 17.5 Surfacing: daily-note carry-over
 
-`daily_note.py` (the VS Code daily-note task), when **creating** today's note and the §17.4 toggle is on, copies **yesterday's unchecked task lines** — open checkboxes per §17.1, including nested ones, indentation preserved, fenced-code/inline-code exclusions applied via the shared `brain` parser — verbatim into the end of the new note's `### Backlog` section (before the section's trailing blank lines; if the instantiated template has no such heading, the section is appended). "Yesterday" is calendar yesterday (`today − 1 day`), so month, ISO-week, and year boundaries need no special casing; a missing, unreadable, or task-free yesterday note simply carries nothing, and a yesterday note tagged `restricted/private` carries nothing either (containment — task text must not flow from a restricted note into a new, non-restricted one). Existing notes are never rewritten — carry-over runs only at instantiation. The weekly-review template instead carries a prompt line pointing at `brain tasks --open` / `--overdue` (live query beats a stale snapshot at week granularity).
+`daily_note.py` (the VS Code daily-note task), when **creating** today's note and the §17.4 toggle is on, copies **yesterday's unchecked task lines** — open checkboxes per §17.1, including nested ones, indentation preserved, fenced-code/inline-code exclusions applied via the shared `brain` parser — verbatim into the end of the new note's `### Backlog` section (before the section's trailing blank lines; if the instantiated template has no such heading, the section is appended). "Yesterday" is calendar yesterday (`today − 1 day`), so month, ISO-week, and year boundaries need no special casing; a missing, unreadable, or task-free yesterday note simply carries nothing, and a private or unknown derivative carries nothing either. Admission and carried text come from one `read_note_context(..., public_only=True)` snapshot; a new note with carried tasks merges yesterday into `privacy-sources`, retaining existing dependencies and refusing malformed provenance. The actual shipped template is instantiated through the periodic renderer; absent CONTEXT/GOAL rows are dropped rather than becoming tasks. The editor entrypoint uses the configured vault-local date. Existing notes are never rewritten — carry-over runs only at instantiation. The weekly-review template instead carries a prompt line pointing at `brain tasks --open` / `--overdue` (live query beats a stale snapshot at week granularity).
 
 **Deferred surfacing (explicitly out of scope here):** VS Code task *views* and web-UI views (#27), notification/overdue digests (#21), external-tracker mirroring (#26 directionality).

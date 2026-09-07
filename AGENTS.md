@@ -4,7 +4,7 @@ tags:
   - audience/agent
   - type/meta
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -14,7 +14,9 @@ A personal knowledge vault for humans and AI agents. It is the source of truth f
 
 ## Bootstrap Sequence (Must-Read Order)
 
-**Minimum bootstrap** (required for all agents):
+**Public-only synthesis branches here, before loading personal context:** use the [policy-only route](00_Meta/restricted-private.md#public-only-synthesis) in a fresh context containing only policy instructions and admitted sources. Do not load the normal bootstrap below. If the harness cannot establish that isolation, report unsupported isolation without synthesizing; retrieval flags cannot cleanse earlier context.
+
+**Minimum bootstrap** (normal internal tasks):
 
 1. **[AGENTS](AGENTS.md)** — You are here. Repo purpose, structure, and rules.
 2. **[NOW](01_Profile/NOW.md)** — Current focus, active projects, key dates.
@@ -44,7 +46,7 @@ Write authority follows **execution class**: every run is **interactive** (a for
 
 Template-shipped skills/tools, `00_Meta/config.yaml`, and named tagless entrypoint, editor, and harness adapters are [canonical-by-policy](10_Agents/docs/write-authority.md#canonical-by-policy). See [README](02_Inbox/README.md) for triage instructions.
 
-**Before your first commit, arm the pre-commit hook:** `git config core.hooksPath .githooks` (once per clone). The committed vault index (`10_Agents/tools/brain/vault-index.json`) regenerates through that hook; committing without it ships a stale index. Claude Code sessions arm it automatically (`.claude/settings.json`); every other environment runs it manually — or run `./brain bootstrap --write` and `./brain index` (`brain bootstrap --write` / `brain index` after managed installation) before each commit. CI self-heals stragglers, but don't rely on it. In the same setup, install the generated-file merge driver: `git config merge.regenerate.driver true` (once per clone). It resolves merge conflicts in the three committed generated files (the vault index, `.vscode/second-brain.code-snippets`, and the compiled `00_Meta/BOOTSTRAP.md`) by keeping ours; the post-merge hook then regenerates all three, so generated content is never hand-merged. Without the driver, conflicts fall back to the recipe in [index-merge-conflicts](10_Agents/solutions/vault-tooling/index-merge-conflicts.md).
+**Before your first commit, configure the hooks:** `git config core.hooksPath .githooks` and `git config merge.regenerate.driver true` (once per clone). Commit and merge hooks generate and validate from the staged snapshot, preserving unstaged source edits. The merge driver keeps ours for generated conflicts; a merge needing regeneration pauses for `git commit` to record the fresh staged output. Automatic read-only CI checks committed consistency; manual repair is separate. Post-merge checks report stale committed content without changing history. Generated content is never hand-merged; see [index-merge-conflicts](10_Agents/solutions/vault-tooling/index-merge-conflicts.md). Use separate worktrees for concurrent agents; a shared checkout requires conflict-detecting publication and rollback.
 
 ## Tagging Rules (Summary)
 

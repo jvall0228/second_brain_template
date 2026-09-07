@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2026-11-11
 ---
 
@@ -14,13 +14,15 @@ expires: 2026-11-11
 
 Facts verified 2026-08-11 against [cursor.com/docs](https://cursor.com/docs) (see [research](../../../06_Resources/harness-cursor.md)); re-verify before relying on paths.
 
+[onboard-harness](../../skills/setup/onboard-harness/SKILL.md) currently supports project verification and read-only global preview. User-global installation, reconciliation, and uninstall are deferred; the user-global designs below are not executable setup instructions.
+
 ## Entrypoint loading
 
-Cursor reads **`AGENTS.md` natively** (IDE: root and nested levels; CLI also reads `CLAUDE.md`) — the vault bootstrap loads unmodified. User scope: `onboard-harness` creates `~/.agents/second-brain/AGENTS.md` and registers a marker-delimited reference to it through Cursor's documented user-rules surface. If the current Cursor surface documents a user-level instruction file or native include mechanism at install time, prefer that; otherwise use a plain user rule telling Cursor to read the shared registration when owner-specific context materially helps. Do not assume `~/.agents/second-brain/AGENTS.md` is automatically discovered, and never embed the adopter's vault path in the Cursor-specific adapter.
+Cursor reads **`AGENTS.md` natively** (IDE: root and nested levels; CLI also reads `CLAUDE.md`) — the vault bootstrap loads unmodified. Deferred user-scope design: a future `onboard-harness` backend would create `~/.agents/second-brain/AGENTS.md` and register a marker-delimited reference to it through Cursor's documented user-rules surface. If the current Cursor surface documents a user-level instruction file or native include mechanism at install time, prefer that; otherwise use a plain user rule telling Cursor to read the shared registration when owner-specific context materially helps. Do not assume `~/.agents/second-brain/AGENTS.md` is automatically discovered, and never embed the adopter's vault path in the Cursor-specific adapter.
 
 ## Skills
 
-Cursor supports Agent Skills and scans `.cursor/skills/`, `.agents/skills/`, and Claude-compat paths. A clean clone includes generated text adapters in `.agents/skills/` and `.claude/skills/`, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. Optional global mode keeps the manifest-owned user link/copy route after exact preview and approval. Commands are deprecated in favor of skills; ship none.
+Cursor supports Agent Skills and scans `.cursor/skills/`, `.agents/skills/`, and Claude-compat paths. A clean clone includes generated text adapters in `.agents/skills/` and `.claude/skills/`, each pointing to its canonical `SKILL.md` (`10_Agents/skills/<name>/SKILL.md` for a flat skill, `10_Agents/skills/<group>/<name>/SKILL.md` for a grouped one such as the setup skills); project use needs no link or user-scope write. User-global links/copies remain deferred; current onboarding only previews proposed targets. Commands are deprecated in favor of skills; ship none.
 
 ## Hook installation
 
@@ -44,7 +46,7 @@ brain <command> --json
 
 ## Restricted content → `.cursorignore` (opt-in owner-selected read restriction)
 
-The vault's privacy marking is the `restricted/private` tag — **publication classification, not agent access control** ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate) owns the contract). Agents read and use private content locally by default. If — and only if — the owner additionally wants this harness blocked from reading restricted notes, `.cursorignore` is the recipe: default overlay installation skips it (the artifact is marked `owner_opt_in` in `overlay/manifest.json`), and `onboard-harness` runs it only on the owner's explicit selection.
+The vault's privacy marking is the `restricted/private` tag — **publication classification, not agent access control** ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate) owns the contract). Agents read and use private content locally by default. If — and only if — the owner additionally wants this harness blocked from reading restricted notes, `.cursorignore` is the recipe: the artifact is marked `owner_opt_in` in `overlay/manifest.json`. Automated installation is deferred; current onboarding only verifies or previews. The manual recipe below requires the owner's explicit selection.
 
 When the owner chooses it, generate `.cursorignore` entries from the restricted-tagged paths:
 
@@ -62,4 +64,4 @@ Know what this does and does not give you — it is **path-based, Cursor-specifi
 
 ## Reference configs
 
-The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); [onboard-harness](../../skills/setup/onboard-harness/SKILL.md) performs the install): `overlay/rules/inbox-conventions.mdc` (copy into `.cursor/rules/`, default install) and `overlay/cursorignore-template.txt` (seed for `.cursorignore` — owner-opt-in only; the generation step above runs solely when the owner selects harness-level read restriction).
+The Cursor-native primitives now ship as an installable **overlay** — `overlay/manifest.json` describes what installs where and how each artifact reverses (see the Overlays section of [README](../README.md); installation through [onboard-harness](../../skills/setup/onboard-harness/SKILL.md) is deferred): `overlay/rules/inbox-conventions.mdc` (future default copy into `.cursor/rules/`) and `overlay/cursorignore-template.txt` (seed for `.cursorignore` — owner-opt-in only; the generation step above runs solely when the owner selects harness-level read restriction).

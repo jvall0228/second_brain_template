@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -103,6 +103,37 @@ available through live commands. `brain env list` is the sole all-environment
 diagnostic and emits only slug, registered/selected status, and freshness. It
 never emits class, surfaces, capabilities, fingerprint counts/digests, or
 capability values.
+
+### Explicit shared scope
+
+`brain --shared-only <command>` (also accepted after the command) deliberately
+uses shared content without selecting or registering an environment. It ignores
+the environment variable, clone-local selector, and machine fingerprint; it does
+not claim that this machine is a registered host. Combining it with any `--env`
+value, including `current`, is an error. Default selection remains fail-closed.
+
+Shared scope excludes every per-environment subtree before discovery and refuses
+environment note bodies at the normal confined-read boundary. This includes
+unmatched registrations, invalid manifests, and unregistered or malformed
+directory names. The shared `10_Agents/environments/README.md` landing note
+remains in scope. Query operations need no manifest reads; `validate` still
+checks all manifest envelopes as documented above.
+
+Supported commands are `list`, `search`, `links`, `tags`, `show`, `read`, `recent`,
+`report`, `curate`, `tasks`, `validate`, `context`, `config`, `projects`,
+`migrate-links` (preview/check only), and the owning shared generators `index`,
+`bootstrap`, `artifacts`, `aymt`, and `home`. Shared-only Home/AYMT records the
+explicit `shared-only` state with no selected slug or environment freshness.
+Environment operations, notifications, installation, and unsupported commands
+refuse the flag. Content scope does not grant write authority: permitted owning
+generator writes still follow the write-authority contract and their existing safeguards.
+
+Python callers can wrap compound read/query operations in
+`with brain.shared_corpus_scope():`. The scope covers `walk_corpus` and confined
+note reads, rejects an explicit per-environment corpus override, and restores the
+previous context even after exceptions. This is the supported scope for
+shared-corpus repository tests and foreign-clone/CI queries; do not select a
+registered host merely to make those tests pass.
 
 ## 20.4 Commands and migration
 

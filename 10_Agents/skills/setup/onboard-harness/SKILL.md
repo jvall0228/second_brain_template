@@ -1,12 +1,12 @@
 ---
 name: onboard-harness
-description: Verify this vault's repository-local agent skills and harness wiring, then optionally preview or apply an explicit user-global install. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code, or when checking, re-syncing, or uninstalling prior global wiring.
+description: Verify this vault's repository-local agent skills and harness wiring, then preview proposed user-global targets read-only. Use when setting up Claude Code, Codex, opencode, Pi, Cursor, Copilot, or Muse Code, or when checking global setup options; installation, re-sync, and uninstall are deferred.
 title: "Skill: Onboard Harness"
 tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -20,7 +20,7 @@ global availability outside this repository is a separate, optional operation.
 
 ## Inputs
 
-- **Mode**: `project` (default), `global-preview`, `global-apply`, re-sync, or uninstall.
+- **Executable modes**: `project` (default), `global-preview`. Global apply, re-sync, and uninstall remain design requirements below, without an implemented lifecycle engine.
 - **Harness**: needed for global or harness-specific checks (see `00_Meta/PRD.md` §8.3).
 - **Vault path**: derive the clone root without writing it into tracked files.
 
@@ -50,22 +50,25 @@ block.
 
 ## User-global approval boundary
 
-Global mode is never inferred from project setup. It has two distinct passes:
+Global mode is never inferred from project setup.
 
-1. **`global-preview` (read-only):** resolve and display every exact external
-   path, command registration, link/copy, marker block, config merge, overlay,
-   and manifest entry that would change. Label foreign collisions, shared
-   ownership, and reversible actions. The preview makes zero writes, including
-   to a supplied fake home. Run the executable base preview:
-   `python3 10_Agents/tools/skill_adapters/harness_setup.py global-preview --harness <harness> --home <resolved-home> --json`;
-   include wiring-doc overlay/config actions before approval. It has no apply command.
-2. **`global-apply`:** only after the owner explicitly selects global mode and
-   approves that exact preview. Re-run preflight immediately before mutation;
-   if any target changed, discard the preview and present a new one. Consent to
-   project verification, onboarding generally, or an earlier different preview
-   is not consent to apply.
+1. **`global-preview` (read-only):** run
+   `python3 10_Agents/tools/skill_adapters/harness_setup.py global-preview --harness <harness> --home <resolved-home> --json`.
+   It lists proposed registry, manifest, skill, and memory targets with their
+   current absent/existing/symlink state, or a provider command requiring
+   separate preflight. It performs zero writes, including to a supplied fake home.
+2. **Scope of the result:** this is a diagnostic preview, not an executable
+   mutation plan. It does not authenticate ownership, hashes, shared providers,
+   marker/config contents, or rollback state. Existing targets must not be
+   treated as managed merely because preview lists them. Provider CLI
+   registration is unverified until that provider is queried separately.
+3. **Future apply boundary:** global apply needs an owner-selected global task
+   and an implemented backend that previews a concrete mutation plan and
+   revalidates it before mutation. When approval is needed, the owner
+   approves that exact preview; stale previews are invalid. The requirements below describe
+   that future backend, not a shell algorithm agents should improvise.
 
-## User-global apply algorithm
+## Deferred user-global lifecycle requirements
 
 1. **Skills (symlink-first).** Create only the links/copies approved in the exact global preview from the harness's user-level skills discovery path back to the canonical folders:
    - `~/.agents/skills/<skill-name>` → that skill's canonical folder (`<vault>/10_Agents/skills/<skill-name>` for a flat skill, `<vault>/10_Agents/skills/<group>/<skill-name>` for a grouped one such as the setup skills — the link is always named by skill, never by group) — the shared standard path scanned by Codex, opencode, Pi, Cursor, and Muse Code (one install covers all five).
@@ -106,19 +109,19 @@ Global mode is never inferred from project setup. It has two distinct passes:
 7. **Overlay.** If `<vault>/10_Agents/harnesses/<harness>/overlay/manifest.json` exists, install its artifacts per that manifest (schema and method semantics: the Overlays section of `10_Agents/harnesses/README.md`). Overlays carry only harness-native primitives a cross-harness standard cannot express; most harnesses ship none, and that is not an error. **Skip every artifact whose `install` declares `owner_opt_in: true` by default** — such an artifact installs only after the owner explicitly selects it (e.g. Cursor's `.cursorignore` read restriction, chosen only if the owner wants harness-level read restriction on top of the `restricted/private` publication classification — `00_Meta/CONVENTIONS.md` §restricted/private); record the owner's selection (artifact id, decision, date) in the manifest entry, and never treat overlay or component approval in general as selection of an opt-in artifact. Apply each remaining (and each owner-selected) artifact by its declared `install.method` under the same contract as every step above: `copy` places the payload at the resolved target (an existing foreign file is never overwritten — report and skip; record a content hash for drift re-sync); `marker-block` merges a marker-delimited block into the user-owned target file, touching nothing outside the markers; `generate` seeds the target from the payload template and runs the manifest's recorded generator command (re-run on later syncs); `shipped-in-repo` artifacts are tracked repo config already present in every clone — install nothing, record nothing. Resolve `<vault>` and `~` placeholders only at install time; record each installed overlay artifact (id, resolved target, hash where applicable) under this vault's entry in the machine manifest.
 8. **Manifest.** Record every action in `~/.agents/second-brain-manifest.json`: stable `registration_id`, vault path, vault label, shared registration path, harness, and each created link / copy (with hash) / memory-file block / merged config entry / registered skills location / installed overlay artifact. Model the manifest as multiple vault entries plus shared resources (harness adapters and globally installed skills) with provider/consumer ownership so onboarding or removing one vault cannot overwrite or delete another vault's state. Idempotence and uninstall both read this file.
 
-## Optional: recommended components
+## Deferred recommended-component lifecycle
 
-After the core install, optionally install **recommended components** from the registry `10_Agents/components/manifest.json` ([README](../../../components/README.md), schema v1). Its `community` entries are the human-facing catalog [recommended-skills](../../../../06_Resources/recommended-skills.md) (links-only; the skill and memory-block items **track their upstream branch and install the latest** commit); its `first-party` entries are the harness overlays (step 7 above, surfaced here as components) and the vault-config presets. This step is **opt-in and additive** — skipping it changes nothing above. Drive it from the manifest, **group by `kind`**, apply each component's declared `install` method/scope/target under the same M6 contract as everything above, and record every action in the machine manifest so it stays reversible. There is no second install model.
+A future lifecycle backend may optionally install **recommended components** from the registry `10_Agents/components/manifest.json` ([README](../../../components/README.md), schema v1). Its `community` entries are the human-facing catalog [recommended-skills](../../../../06_Resources/recommended-skills.md) (links-only; the skill and memory-block items **track their upstream branch and install the latest** commit); its `first-party` entries are the harness overlays (step 7 above, surfaced here as components) and the vault-config presets. This step is **opt-in and additive** — skipping it changes nothing above. Drive it from the manifest, **group by `kind`**, apply each component's declared `install` method/scope/target under the same M6 contract as everything above, and record every action in the machine manifest so it stays reversible. There is no second install model.
 
 1. **Per-component sign-off.** Read each component's `signoff`. A `default-ok` component (the first-party overlays) may install without asking per item. An `owner-per-item` component — every `community` item, plus the vault-config presets — requires an **explicit yes from the owner, per item**, before anything is fetched or changed. Record each sign-off (component id, pinned ref where applicable, decision, date) in the manifest entry for the install. No sign-off, no install.
-2. **`skill` components (`install.method: copy`, scope user).** These **track their upstream branch and install the latest** commit — `source.track` names the branch (`main`). The vault ships each as a branch-tracking submodule under `.extern/` (`source.type: submodule`, the catalog's **Local checkout** field): run `git submodule update --init --remote .extern/<name>` to fetch the current tip of the tracked branch, then copy from the checked-out submodule. Skip any catalog item still marked `TODO-pin`. Because there is no frozen pin, the **per-item owner sign-off (step 1) happens against the content fetched at install time — that review is the supply-chain safeguard.** Copy into the harness user scope at `install.target` (`~/.agents/skills/<id>/` plus the Claude Code path, following the same discovery paths, foreign-file protections, and shared provider/consumer rules as step 1 of the install algorithm), with a content hash recorded so later runs detect drift and can re-offer an update.
-3. **`memory-block` components (`install.method: marker-block`, scope user).** When the block's `source.type` is `submodule` (the karpathy coding guidelines on `.extern/andrej-karpathy-skills`, tracking `main`), first run `git submodule update --init --remote .extern/<name>` to fetch the current tip of the tracked branch — exactly as for `skill` components in step 2 — so the per-item owner sign-off (step 1) reviews the freshly fetched content, not a stale checkout. Curated `AGENTS.md`/`CLAUDE.md` blocks install into the harness user-level instruction surface at `install.target` (and the shared `~/.agents` surface) as **their own marker-delimited blocks** (one per item, e.g. `<!-- BEGIN second-brain recommended <id> -->` … `<!-- END second-brain recommended <id> -->`) — offer the catalog's listed memory-file blocks here by name (currently the karpathy coding guidelines; see [recommended-skills](../../../../06_Resources/recommended-skills.md) § Recommended user-scope memory-file content) — managed exactly like the registration block in step 4 of the install algorithm: everything outside the markers is the user's own content, re-runs replace only the matching block, duplicates collapse to one.
-4. **`overlay` components (`install.method: shipped-in-repo`, scope project).** These make the harness overlays discoverable in the registry; each component just points at the harness's own `overlay/manifest.json`, which **remains the authority** for its artifacts. Install exactly as step 7 of the install algorithm — the same overlay engine, nothing new to run.
+2. **`skill` components (`install.method: copy`, scope user).** These **track their upstream branch and install the latest** commit — `source.track` names the branch (`main`). The vault ships each as a branch-tracking submodule under `.extern/` (`source.type: submodule`, the catalog's **Local checkout** field): run `git submodule update --init --remote .extern/<name>` to fetch the current tip of the tracked branch, then copy from the checked-out submodule. Skip any catalog item still marked `TODO-pin`. Because there is no frozen pin, the **per-item owner sign-off (step 1) happens against the content fetched at install time — that review is the supply-chain safeguard.** Copy into the harness user scope at `install.target` (`~/.agents/skills/<id>/` plus the Claude Code path, following the same discovery paths, foreign-file protections, and shared provider/consumer rules as step 1 of the deferred lifecycle requirements), with a content hash recorded so later runs detect drift and can re-offer an update.
+3. **`memory-block` components (`install.method: marker-block`, scope user).** When the block's `source.type` is `submodule` (the karpathy coding guidelines on `.extern/andrej-karpathy-skills`, tracking `main`), first run `git submodule update --init --remote .extern/<name>` to fetch the current tip of the tracked branch — exactly as for `skill` components in step 2 — so the per-item owner sign-off (step 1) reviews the freshly fetched content, not a stale checkout. Curated `AGENTS.md`/`CLAUDE.md` blocks install into the harness user-level instruction surface at `install.target` (and the shared `~/.agents` surface) as **their own marker-delimited blocks** (one per item, e.g. `<!-- BEGIN second-brain recommended <id> -->` … `<!-- END second-brain recommended <id> -->`) — offer the catalog's listed memory-file blocks here by name (currently the karpathy coding guidelines; see [recommended-skills](../../../../06_Resources/recommended-skills.md) § Recommended user-scope memory-file content) — managed exactly like the registration block in step 4 of the deferred lifecycle requirements: everything outside the markers is the user's own content, re-runs replace only the matching block, duplicates collapse to one.
+4. **`overlay` components (`install.method: shipped-in-repo`, scope project).** These make the harness overlays discoverable in the registry; each component just points at the harness's own `overlay/manifest.json`, which **remains the authority** for its artifacts. Install exactly as step 7 of the deferred lifecycle requirements — the same overlay engine, nothing new to run.
 5. **`vault-config-preset` components (`install.method: merge-config`, scope vault).** A preset is a config fragment merged into `00_Meta/config.yaml`. This is a **vault** write, not a user-scope one — onboard-harness does not perform it; [onboard-owner](../onboard-owner/SKILL.md) applies it under its live-session write exception. Its `reverse.method` is `restore-config`.
 6. **Manifest and reversibility.** Record each installed component in the manifest with its provenance (`community` items marked as such), pinned ref where applicable, content hash, sign-off record, and every file/block created. Uninstall removes exactly these recorded resources by each component's `reverse.method` (`delete` / `remove-marker-block` / `restore-config` / `none`), alongside the vault's own, under the same shared-ownership rules.
 7. **Separation invariant.** Community content is installed only into user scope on the adopter's machine — it is **never** written into the vault or committed to this repository. The vault carries only the curated pointers in [recommended-skills](../../../../06_Resources/recommended-skills.md).
 
-## Re-run and uninstall
+## Deferred re-run and uninstall
 
 - **Re-run** (same vault + harness): identify the vault by its persisted `registration_id`; recreate missing resources it owns, refresh drifted copies only when that vault is the recorded provider, replace only that vault's registry entry with its current path/label, and reconcile the shared harness adapter to exactly one canonical block. A fully-installed state is a no-op. If another registered vault provides a shared skill, compare hashes and record this vault as a consumer rather than stealing ownership. Overlay artifacts re-sync the same way, but only those the machine manifest records as installed — an `owner_opt_in` artifact the owner never selected stays skipped: re-apply a `copy` only on recorded-hash drift, reconcile a `marker-block` to exactly one canonical block, and re-run a `generate` artifact's generator; `shipped-in-repo` artifacts never need re-run work.
 - **Uninstall**: preflight shared ownership before changing anything. Remove exactly what that vault's manifest entry exclusively owns — its private links/copies/registrations and its marker-delimited registry entry. Shared harness adapters and global skills are reference-counted: remove them only when no remaining registered vault consumes them. If the departing vault is the provider for a shared skill and consumers remain, transfer the provider to a remaining vault **only when its recorded content hash matches**; if no remaining copy matches, stop before mutation and ask the owner which remaining version should become global. Never leave a broken symlink, silently change a shared skill version, delete another vault's entry, or alter user-owned surrounding config. Remove `~/.agents/second-brain/AGENTS.md` only when the registry has no remaining vault entries. Overlay artifacts reverse by their manifest-declared `reverse.method` and only when this vault's machine-manifest entry records them as installed: `delete` removes the created file, `remove-marker-block` strips exactly the managed block, and `shipped-in-repo` artifacts (`reverse: none`) are tracked repo config that uninstall never touches.
@@ -126,13 +129,13 @@ After the core install, optionally install **recommended components** from the r
 ## Rules
 
 - Project verification and every preview are read-only outside the clone.
-- Global apply requires an explicit global-mode request plus approval of the
-  exact external-path preview; stale previews are invalid.
+- Current onboarding never applies, reconciles, re-syncs, or uninstalls user-global state.
+  Do not improvise the deferred backend from these lifecycle requirements.
 - **Template portability invariant:** no adopter-specific filesystem path, username, home directory, repository location, machine identifier, or generated `registration_id` may be written into a tracked template file. Resolve machine-specific values only at install time; they may appear only in adopter-local configuration and the manifest.
-- User-global links/copies happen only during approved global apply — links are never committed to the repo (PRD §8.2 retired in-repo symlinks). Project discovery uses committed generated text adapters.
+- User-global links/copies remain deferred. They are never committed to the repo (PRD §8.2 retired in-repo symlinks). Project discovery uses committed generated text adapters.
 - No credentials or machine-specific paths ever get committed (PRD §16.2); the manifest and shared registration live in the home directory, not the vault.
 - A harness adapter should reference the stable shared registry rather than duplicate its contents or embed a vault path. Native include/import > documented config injection > plain-path instruction; never depend on undocumented automatic discovery of `~/.agents/second-brain/AGENTS.md`.
-- Report a summary at the end: created / already-correct / skipped-foreign / shared-managed / copied, the affected vault registry entry, and the harness instruction surfaces touched.
+- Report the project verification or proposed targets actually observed, the preview's limitations, and that no user-global changes occurred. Do not label targets already-correct, foreign, or shared-managed without evidence of their ownership and content.
 
 ## References
 

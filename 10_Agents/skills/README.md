@@ -5,7 +5,7 @@ tags:
   - audience/agent
   - audience/human
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -13,7 +13,7 @@ expires: 2027-08-11
 
 Harness-agnostic skills in the [Agent Skills format](https://agentskills.io): one folder per skill containing a `SKILL.md` whose frontmatter carries the standard `name` + `description` **plus** the vault contract (`title`, `tags`, `updated`) — a superset; harnesses ignore the extra keys, and `brain validate` enforces both contracts.
 
-Harnesses that scan the shared `.agents/skills/` path (or `.claude/skills/` for Claude Code) consume these unchanged — the [onboard-harness](setup/onboard-harness/SKILL.md) skill symlinks them into a harness's user config.
+Harnesses discover checked-in text adapters under `.agents/skills/` (or `.claude/skills/` for Claude Code), which point to the canonical workflow. [onboard-harness](setup/onboard-harness/SKILL.md) verifies project wiring and provides read-only global preview; it does not install user-scope links or copies.
 
 ## The CODE Loop in This Vault
 
@@ -63,7 +63,7 @@ System skills keep the machine itself healthy; onboarding skills set it up. Skil
 |-------|------|
 | [vault-maintenance](vault-maintenance/SKILL.md) | Run `brain validate`, fix findings, keep status/changelog current (mechanical integrity) |
 | [aymt](aymt/SKILL.md) | Rank tracked local signals into a reviewable 5–7-action brief; preview by default, dedicated exact-file write only on request |
-| [refresh-home](refresh-home/SKILL.md) | Preview or explicitly refresh the generated local Home from structured AYMT and safe tracked navigation/health data |
+| [refresh-home](refresh-home/SKILL.md) | Preview or explicitly refresh the generated local Home from structured AYMT and complete eligible tracked navigation/health data |
 | [generate-artifacts](generate-artifacts/SKILL.md) | Generate, check, and locally open the offline link graph and health dashboard from privacy-filtered tracked metadata |
 | [configure-notifications](configure-notifications/SKILL.md) | Configure, preview, inspect, and locally file-test push-only private owner notifications; real-provider sends remain owner-gated and unimplemented |
 | [curate](curate/SKILL.md) | Work the `brain curate` report: refresh, re-verify, propose archives/splits, semantic lint (epistemic integrity) |
@@ -81,12 +81,12 @@ Grouped under [setup/](setup/README.md) so the everyday catalog above stays flat
 | Skill | Does |
 |-------|------|
 | [onboard-owner](setup/onboard-owner/SKILL.md) | Guided first-run for a new (possibly non-technical) vault owner: teach by doing, fill the profile, orchestrate the other onboarding skills |
-| [onboard-harness](setup/onboard-harness/SKILL.md) | Symlink-first user-scope install into a harness + memory-file wiring + hook |
+| [onboard-harness](setup/onboard-harness/SKILL.md) | Verify project wiring and preview user-global registration read-only; apply/uninstall deferred |
 | [agent-orientation](setup/agent-orientation/SKILL.md) | Discover reachable context sources and generate access tooling + capture skills |
 
 ## Recommended community skills
 
-Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — branch-tracked upstreams (installs the latest), license and trust notes, per-item owner sign-off against the fetched content — lives at [recommended-skills](../../06_Resources/recommended-skills.md), backed by the machine-readable registry [10_Agents/components/manifest.json](../components/README.md) (which also carries first-party overlays and vault-config presets). Community content installs to the harness's user scope via [onboard-harness](setup/onboard-harness/SKILL.md) and is never vendored into this directory.
+Vault-canonical skills live above. A separate, curated **links-only** catalog of recommended third-party/community skill and memory-file content — branch-tracked upstreams (installs the latest), license and trust notes, per-item owner sign-off against the fetched content — lives at [recommended-skills](../../06_Resources/recommended-skills.md), backed by the machine-readable registry [10_Agents/components/manifest.json](../components/README.md) (which also carries first-party overlays and vault-config presets). Community content remains upstream and is never vendored into the repository. User-scope installation through [onboard-harness](setup/onboard-harness/SKILL.md) is deferred; its current global preview only inspects proposed targets.
 
 ## The Rhythm (cadence table)
 
@@ -104,7 +104,7 @@ Ad hoc, not scheduled: capture and retrieval ([inbox-capture](inbox-capture/SKIL
 
 ## Rules
 
-- Template-shipped skills are canonical ([PRD](../../00_Meta/PRD.md) §9.3): changes need human approval.
+- Template-shipped skills follow canonical change control in the [Write Authority Contract](../docs/write-authority.md).
 - Agent-generated skills may be added here directly, tagged `workflow/draft` until the human promotes them; they must pass `brain validate` (which checks `name` = folder name and a non-empty `description`).
 - Skills reference vault files by path and invoke `brain …`. A clean checkout uses `./brain` (POSIX) or `brain.cmd` (Windows); the universal fallback is `python3 10_Agents/tools/brain/brain.py …`. Managed installation is optional and preview-first (`brain install`).
 - Every skill that writes vault prose follows [Established Entity Links](../../00_Meta/CONVENTIONS.md#established-entity-links): search first, reuse the existing entity home, link the first meaningful mention, avoid duplicates. Privacy follows [restricted/private](../../00_Meta/CONVENTIONS.md#restrictedprivate): a bare link to a restricted note propagates nothing; a note that carries its private substance inherits the tag, and any tag flip is surfaced.

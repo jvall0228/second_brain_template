@@ -8,8 +8,9 @@ tags:
 updated: 2026-08-11
 expires: 2026-08-12
 generated: brain-home-v1
-input-digest: "75084d484f1ce45b5b87a4228e316457121bf514c6b8b501a9260eac54b86cbd"
-content-digest: "985f017a8770c419068bf18a483f99274310d393a1e80a59ac953846af28263a"
+privacy-sources: ["00_Meta/CHANGELOG.md", "00_Meta/INDEX.md", "00_Meta/STATUS.md", "01_Profile/NOW.md", "02_Inbox/README.md", "04_Projects/README.md", "05_Areas/README.md", "10_Agents/skills/README.md"]
+input-digest: "10b6c71e80780762c3b443882f07ca4277697bf706af864094020959a1b5b7fe"
+content-digest: "847517e4013c7fdca1ba46410a9109bb7cdb8896f53eb206b1068956ec20cd3d"
 ---
 
 <!-- generated-by: brain home v1; do not edit -->

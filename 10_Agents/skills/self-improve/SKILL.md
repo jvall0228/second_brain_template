@@ -6,7 +6,7 @@ tags:
   - type/reference
   - audience/agent
   - workflow/canonical
-updated: 2026-09-04
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -32,7 +32,7 @@ Gather evidence of friction from real usage — the loop proposes only what the 
 1. **`brain report` trends:** run `brain report` (spec §16) and compare against the previous cycle's report if one is archived (prior spec-retrospective notes in `02_Inbox/` or `07_Archives/`; or re-run with `--since <last cycle>` to scope tag drift and unresolved links to the period). Rising Inbox aging, recurring tag drift (unknown/single-use/near-duplicate tags), or persistent stale-active notes are convention-change candidates.
 2. **Git history:** `git log --stat` since the last cycle. Look for churn — the same file fixed repeatedly (candidate structural fix), recurring fix patterns across commits (candidate validate rule or convention), repeated manual edits that a template or skill step should absorb.
 3. **Triage outcomes:** what the owner rejects, rewrites, or re-files during Inbox triage. A capture pattern the owner always renames, a frontmatter shape they always correct, a section they always delete — each is a candidate change to the capture skill or template that produced it.
-4. **Skill usage:** [skill-runs](../../docs/skill-runs.log) — one line per skill invocation (timestamp, harness, skill, outcome) written by the harness hook. Skills that never run are candidates for merging or archiving; skills that fail repeatedly point at a broken step; a skill invoked far more than its cadence suggests is doing work a template or automation should absorb.
+4. **Skill usage:** [skill-runs](../../docs/skill-runs.log) records observed invocations, not complete usage. State the harness coverage and observed date window from [Claude Code wiring](../../harnesses/claude-code/wiring.md#skill-run-log); only its `Skill` hook is currently wired, and Codex file reads are uninstrumented. Missing rows or missing coverage mean **unknown**, not unused. Even within a known window, require independent evidence such as owner confirmation or corroborated task history before proposing a merge/archive for disuse. Positive observations can identify repeated failures or unusually frequent use, with their coverage limits attached.
 5. **Friction notes:** `10_Agents/solutions/` — solution notes record problems agents already hit; recurring ones point at the spec gap that caused them. Also: templates whose sections stay empty or always get renamed (issue #12 targets), tags invented ad hoc (taxonomy candidates), skills whose steps get overridden every run, preferences stated in conversation but recorded nowhere.
 
 Evidence is collected read-only. Owner content may be cited in proposals. A vault proposal note that quotes, summarizes, or transforms private substance from a `restricted/*` source inherits `restricted/private` ([CONVENTIONS](../../../00_Meta/CONVENTIONS.md#restrictedprivate)). PR titles and descriptions are an off-vault surface with a hard bar: private substance never enters them — when a proposal must carry it, put the substance in a restricted-tagged vault note and bare-link it from the PR body (bare links propagate nothing).

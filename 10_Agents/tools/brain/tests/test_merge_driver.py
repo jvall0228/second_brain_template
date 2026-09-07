@@ -152,12 +152,13 @@ class RepoContractTests(unittest.TestCase):
         text = (ROOT / ".gitattributes").read_text(encoding="utf-8")
         self.assertIn("git config merge.regenerate.driver true", text)
 
-    def test_post_merge_hook_exists_and_regenerates_both_files(self):
+    def test_post_merge_hook_checks_committed_revision_without_writes(self):
         hook = ROOT / ".githooks" / "post-merge"
         self.assertTrue(hook.is_file(), "post-merge hook missing")
         text = hook.read_text(encoding="utf-8")
-        self.assertIn("brain.py", text)
-        self.assertIn("gen_snippets.py", text)
+        self.assertIn("check_generated.py", text)
+        self.assertIn("--revision HEAD", text)
+        self.assertNotIn("--write", text)
         self.assertTrue(text.rstrip().endswith("exit 0"), "hook must never fail the merge")
 
 

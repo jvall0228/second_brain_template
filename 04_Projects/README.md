@@ -4,7 +4,7 @@ tags:
   - type/meta
   - audience/human
   - audience/agent
-updated: 2026-08-18
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -30,6 +30,7 @@ Each Project gets its own directory with an exact-uppercase entrypoint:
 - `04_Projects/<project-name>/PROJECT.md` — canonical entry note for the Project
 - Supporting notes inside the Project directory use descriptive kebab-case filenames.
 - `PROJECT.md` carries `project/<project-name>`, every related `area/*` tag, `target`, and `target_status`; supporting notes carry only the Project membership tag.
+- Keep executable work under `## Next Actions` in `PROJECT.md`; Home and AYMT use this section. Completion criteria describe evidence of done and remain separate.
 - Nested organizational directories use `README.md`; the PARA root remains `04_Projects/README.md`.
 
 ## Inventory and Lifecycle

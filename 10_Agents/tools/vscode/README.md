@@ -6,7 +6,7 @@ tags:
   - audience/human
   - topic/software
   - workflow/draft
-updated: 2026-08-11
+updated: 2026-09-07
 expires: 2027-08-11
 ---
 
@@ -21,7 +21,7 @@ VS Code requires workspace trust and one-time approval for automatic folder-open
 ## Contents
 
 - `gen_snippets.py` — generates `.vscode/second-brain.code-snippets` from `09_Templates/`, mapping `{{date}}` to VS Code's auto-filling date variables and other `{{...}}` tokens to tabstops. **The generated file is never edited by hand**; the pre-commit hook regenerates and re-stages it, so the snippet surface cannot drift from the canonical templates (editor-surface parity, §6.5). `--check` exits 1 if the committed file is stale.
-- `daily_note.py` — creates today's note in `03_Journal/periodic/daily/` from `template-daily-log.md` (all placeholders resolved to source-relative Markdown destinations; related notes linked only if they exist, since unresolved links are validate errors) and opens it via the `code` CLI when available. The VS Code stand-in for Obsidian's daily-notes plugin; the [daily-log](../../skills/daily-log/SKILL.md) skill remains the agent-side path.
+- `daily_note.py` — creates the vault-local day's note in `03_Journal/periodic/daily/` from `template-daily-log.md` (all placeholders resolved to source-relative Markdown destinations; related notes linked only if they exist, since unresolved links are validate errors; unfilled goal scaffold lines omitted) and opens it via the `code` CLI when available. Carry-over uses a classified source snapshot, excludes private or unknown sources, and records substantive dependencies. The VS Code stand-in for Obsidian's daily-notes plugin; the [daily-log](../../skills/daily-log/SKILL.md) skill remains the agent-side path.
 
 ## Sync contract
 

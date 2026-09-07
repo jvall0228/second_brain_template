@@ -1,33 +1,11 @@
 #!/bin/sh
-# Post-merge hook (issues #25/#82): regenerate committed generated files
-# after any merge, closing the stale window left by the merge=regenerate
-# driver (which keeps "ours" and defers correctness to regeneration).
-# Best-effort — a merge has already succeeded, so this hook never fails it;
-# on any problem it warns and exits 0 (the pre-commit hook and CI freshness
-# checks remain the enforcement backstop). Install once per clone:
-#
-#   git config core.hooksPath .githooks
-#
+# Successful automatic merges regenerate in pre-merge-commit. This read-only
+# check also covers fast-forwards; it never hides stale committed bytes behind
+# a newly regenerated dirty worktree. A failed check warns after the merge.
 root="$(git rev-parse --show-toplevel)" || exit 0
-brain="$root/10_Agents/tools/brain/brain.py"
-snippets="$root/10_Agents/tools/vscode/gen_snippets.py"
-skill_adapters="$root/10_Agents/tools/skill_adapters/gen_skill_adapters.py"
-
-if [ -f "$brain" ]; then
-    python3 "$brain" bootstrap --write >/dev/null 2>&1 ||
-        echo "post-merge: warning — brain bootstrap failed; run: python3 10_Agents/tools/brain/brain.py bootstrap --write" >&2
-    python3 "$brain" index >/dev/null 2>&1 ||
-        echo "post-merge: warning — brain index failed; run: python3 10_Agents/tools/brain/brain.py index" >&2
+checker="$root/10_Agents/tools/skill_adapters/check_generated.py"
+if [ -f "$checker" ]; then
+    python3 "$checker" --repo "$root" --revision HEAD ||
+        echo "post-merge: committed generated files are stale; regenerate, stage, and commit before pushing" >&2
 fi
-
-if [ -f "$snippets" ]; then
-    python3 "$snippets" >/dev/null 2>&1 ||
-        echo "post-merge: warning — snippet generation failed; run: python3 10_Agents/tools/vscode/gen_snippets.py" >&2
-fi
-
-if [ -f "$skill_adapters" ]; then
-    python3 "$skill_adapters" >/dev/null 2>&1 ||
-        echo "post-merge: warning — skill-adapter generation failed; run: python3 10_Agents/tools/skill_adapters/gen_skill_adapters.py" >&2
-fi
-
 exit 0

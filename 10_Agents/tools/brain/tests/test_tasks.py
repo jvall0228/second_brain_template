@@ -262,7 +262,7 @@ class TasksCommandTests(unittest.TestCase):
         for r in rows:
             self.assertEqual(
                 sorted(r),
-                ["due", "line", "malformed", "path", "priority", "restricted",
+                ["due", "explicitRestricted", "line", "malformed", "path", "priority", "privacy", "restricted",
                  "status", "text"],
             )
 
@@ -345,7 +345,7 @@ class TasksRestrictedMetadataTests(unittest.TestCase):
         for r in rows:
             self.assertEqual(
                 sorted(r),
-                ["due", "line", "malformed", "path", "priority", "restricted",
+                ["due", "explicitRestricted", "line", "malformed", "path", "priority", "privacy", "restricted",
                  "status", "text"],
             )
 

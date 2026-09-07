@@ -5,8 +5,9 @@ VS Code counterpart to Obsidian's daily-notes core plugin, wired to the
 "Daily Note: Open Today" task in .vscode/tasks.json. Instantiates
 09_Templates/template-daily-log.md into 03_Journal/periodic/daily/ with every
 placeholder resolved (frontmatter contract, PRD §10.1): {{date}} becomes
-today, the related-links tokens become yesterday's note and this ISO week's
-review. Existing notes are never overwritten. Prints the note path; opens it
+the vault-local date, the related-links tokens become yesterday's note and this
+ISO week's review, and unfilled goal scaffold lines are omitted. Existing notes
+are never overwritten. Prints the note path; opens it
 in the current VS Code window when the `code` CLI is on PATH.
 
 Task carry-over (brain spec §17.5, issue #28): when the vault config's
@@ -14,7 +15,8 @@ Task carry-over (brain spec §17.5, issue #28): when the vault config's
 checkbox tasks are copied verbatim into the new note's `### Backlog`
 section. Checkboxes inside fenced code blocks or inline code spans never
 carry (brain's §5.2 exclusion zones apply — detection is shared with
-`brain tasks`). No yesterday note, or the toggle off, means no carry-over.
+`brain tasks`). Private or unknown source classification also means no carry-over;
+carried tasks retain yesterday as a privacy-sources dependency.
 
 Stdlib-only, Python 3.10+.
 """
@@ -35,26 +37,35 @@ BACKLOG_HEADING = "### Backlog"
 
 def render_note(root: Path, today: datetime.date) -> str:
     """Instantiate the daily template for `today` with placeholders resolved."""
-    template = root / "09_Templates" / "template-daily-log.md"
-    daily_dir = root / "03_Journal" / "periodic" / "daily"
     iso_year, iso_week, _ = today.isocalendar()
     yesterday = today - datetime.timedelta(days=1)
-    weekly = f"03_Journal/periodic/weekly/{iso_year}-W{iso_week:02d}-review"
+    weekly = f"03_Journal/periodic/weekly/{iso_year}-W{iso_week:02d}-review.md"
+    weekly_link = f"../weekly/{iso_year}-W{iso_week:02d}-review.md"
+    previous_link = f"{yesterday.isoformat()}.md"
+    content = brain._instantiate_periodic(
+        root, "09_Templates/template-daily-log.md", f"{DAILY_DIR}/{today.isoformat()}.md",
+        {
+            "date": today.isoformat(),
+            "CONTEXT": None,
+            "GOAL": None,
+            "RELATED_WEEKLY_REVIEW": weekly_link,
+            "PREVIOUS_DAILY_NOTE": previous_link,
+        },
+        today,
+    )
     return (
-        template.read_text(encoding="utf-8")
-        .replace("{{date}}", today.isoformat())
         # Unresolved links are brain-validate errors, so link related
-        # notes only once they exist; plain text otherwise.
-        .replace(
-            "[Current weekly review]({{RELATED_WEEKLY_REVIEW}})",
-            f"[{iso_year}-W{iso_week:02d} review](../weekly/{iso_year}-W{iso_week:02d}-review.md)"
-            if (root / f"{weekly}.md").exists()
+        # notes only once they exist; preserve their established labels.
+        content.replace(
+            f"[Current weekly review]({weekly_link})",
+            f"[{iso_year}-W{iso_week:02d} review]({weekly_link})"
+            if (root / weekly).exists()
             else "not yet created",
         )
         .replace(
-            "[Previous daily note]({{PREVIOUS_DAILY_NOTE}})",
-            f"[{yesterday.isoformat()}]({yesterday.isoformat()}.md)"
-            if (daily_dir / f"{yesterday.isoformat()}.md").exists()
+            f"[Previous daily note]({previous_link})",
+            f"[{yesterday.isoformat()}]({previous_link})"
+            if (root / DAILY_DIR / previous_link).exists()
             else "none",
         )
     )
@@ -63,7 +74,7 @@ def render_note(root: Path, today: datetime.date) -> str:
 def carry_over_tasks(root: Path, today: datetime.date) -> list[str]:
     """Yesterday's unchecked task lines, verbatim (indentation preserved so
     nested subtasks keep their structure). Empty when the config toggle is
-    off, yesterday's note is absent/unreadable, or it has no open tasks."""
+    off, yesterday's note is absent/unreadable, private/unknown, or task-free."""
     config, _findings = brain.load_config(root)
     if not brain.tasks_carry_over(config):
         return []
@@ -72,21 +83,11 @@ def carry_over_tasks(root: Path, today: datetime.date) -> list[str]:
     if not (root / rel).exists():
         return []
     try:
-        text, _size = brain.load_text(root, rel)
-    except OSError:
+        rows = brain.read_note_context(root, [rel], public_only=True)
+    except (OSError, brain.NoteContextError):
         return []
-    if text is None:
-        return []
-    lines = text.split("\n")
-    # Containment (conventions § restricted/private): never copy task text
-    # out of a restricted note into a new, non-restricted daily note.
-    fm_probe, _e, _b, _h = brain.parse_frontmatter(lines)
-    raw_tags = fm_probe.get("tags")
-    tags = raw_tags if isinstance(raw_tags, list) else (
-        [raw_tags] if isinstance(raw_tags, str) else []
-    )
-    if "restricted/private" in tags:
-        return []
+    # Parse exactly the bytes admitted by the source classification snapshot.
+    lines = rows[0]["content"].split("\n")
     _fm, _errs, body_start, _has = brain.parse_frontmatter(lines)
     carried: list[str] = []
     for _lineno, raw, masked in brain.body_lines_masked(lines, body_start):
@@ -126,14 +127,20 @@ def ensure_note(root: Path, today: datetime.date) -> tuple[Path, bool]:
     target = daily_dir / f"{today.isoformat()}.md"
     if target.exists():
         return target, False
-    content = insert_backlog(render_note(root, today), carry_over_tasks(root, today))
+    content = render_note(root, today)
+    tasks = carry_over_tasks(root, today)
+    if tasks:
+        content = insert_backlog(content, tasks)
+        yesterday = today - datetime.timedelta(days=1)
+        content = brain.record_privacy_sources(content, [f"{DAILY_DIR}/{yesterday.isoformat()}.md"])
     daily_dir.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
     return target, True
 
 
 def main() -> int:
-    target, created = ensure_note(ROOT, datetime.date.today())
+    config, _findings = brain.load_config(ROOT)
+    target, created = ensure_note(ROOT, brain.vault_today(config))
     print(f"{'created' if created else 'exists '} {target.relative_to(ROOT)}")
 
     code_cli = shutil.which("code")

@@ -173,11 +173,12 @@ class IsolationTests(unittest.TestCase):
             notes, assets = brain.walk_corpus(root)
             note.unlink()
             os.symlink(outside, note)
-            index = brain.build_index(root, notes, assets)
+            snapshots = brain.capture_note_snapshots(root, notes)
+            index = brain.build_index(root, notes, assets, note_snapshots=snapshots)
             rendered = json.dumps(index, sort_keys=True)
             self.assertNotIn("EXTERNAL-SECRET-SENTINEL", rendered)
             self.assertIn("not-readable", rendered)
-            hits = brain.keyword_hits(root, index, "EXTERNAL-SECRET-SENTINEL", [])
+            hits = brain.keyword_hits(root, index, "EXTERNAL-SECRET-SENTINEL", [], note_snapshots=snapshots)
             self.assertEqual(hits, [])
 
     def test_two_sibling_forks_use_their_own_selectors(self):
@@ -234,9 +235,13 @@ class IsolationTests(unittest.TestCase):
             )
             payload = json.dumps(
                 {
+                    "schemaVersion": 1,
                     "model": "test",
-                    "vectors": {
-                        "10_Agents/environments/beta/current-note.md": [0.0, 1.0]
+                    "notes": {
+                        "10_Agents/environments/beta/current-note.md": {
+                            "hash": brain.note_content_hash("beta body"),
+                            "vector": [0.0, 1.0],
+                        }
                     },
                 }
             )
